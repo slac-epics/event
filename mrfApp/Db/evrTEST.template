@@ -1,0 +1,49 @@
+#==============================================================================
+#
+# Abs:  LCLS EVR IOC records for a test IOC
+#
+# Name: evrTEST.template
+#
+# Note: Signal names must be all uppercase and 12 chars or less to follow
+#       LCLS naming conventions.
+#
+# Macros:
+# Set LOCA to 4 char "micro" name uniquely identifying the IOC.
+#
+# Set UNIT = 1 for first EVR in crate, UNIT = 2 for second EVR, etc.
+#
+# For VME EVR modules, CARD must be set to the physical slot in the crate
+# where the EVR resides, starting from 1.  For PMC EVR modules, CARD must
+# be a unique number between 1 and 21 which is not already used by any 
+# EVR (VME or PMC) in the same crate.
+#
+#==============================================================================
+#
+file db/evr.db
+{
+#
+#	 Location Unit   Card       
+pattern { LOCA  , UNIT , CARD }
+	{ TEST  ,   1  ,  5   }
+}
+file db/evrEvent.db
+{
+#
+#	 Location Unit   Card  <--------------------------------  Event ----------------------------->       
+pattern { LOCA  , UNIT , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,VME,FLNK}
+	{ TEST  ,   1  ,   5  , EVENT1  , 1  , 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT2  , 2  , 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT3  , 3  , 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT4  , 4  , 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT5  , 5  , 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT6  , 6  , 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT7  , 7  , 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT8  , 8  , 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT9  , 9  , 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT10 , 10 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT11 , 11 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 , 0 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT12 , 12 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1 , 0 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT13 , 13 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 1 , 0 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT14 , 14 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 1 , 0 , 0  }
+	{ TEST  ,   1  ,   5  , EVENT15 , 15 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 1 , 1 , 0  }
+}

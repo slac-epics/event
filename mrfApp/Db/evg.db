@@ -1,0 +1,66 @@
+record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
+  field(DESC, "EVG $(UNIT) Control")
+  field(PINI, "YES")
+  field(DTYP, "MRF Event Generator")
+  field(OUT, "#C$(CARD) S0 @")
+  field(MOD1, "Alternate")
+# If it's Off, can anything really happen?
+  field(R1SP, "0")
+  field(MOD2, "Off")
+  field(R2SP, "0")
+  field(FIFO, "NO")
+  field(ENAB, "YES")
+  field(ETE0, "YES")
+  field(ET0, "0x7c")
+  field(ETE1, "NO")
+#field(ET1, "Ox0")
+  field(ETE2, "NO")
+  field(ET2, "0x0")
+  field(ETE3, "NO")
+  field(ET3, "0x0")
+  field(ETE4, "NO")
+  field(ET4, "0x0")
+  field(ETE5, "NO")
+  field(ET5, "0x0")
+  field(ETE6, "NO")
+  field(ET6, "0x0")
+  field(ETE7, "NO")
+  field(ET7, "0x0")
+}
+
+#record(waveform, "EVG:$(LOCA):$(UNIT):PATTERN") {
+#  field(DESC, "EVG $(UNIT) Timing Pattern")
+#  field(NELM, "4")
+#  field(DTYP, "EVG")
+#  field(INP, "#C$(CARD) S0 @")
+#  field(FTVL, "LONG")
+#}
+
+# In order to take care of the heart beat (0x7A) and time stamp reset/resync 
+# (0x7D) events, longout records are used that have their output links 
+# pointed to the VME field on the above EG record. When they are processed, 
+# the DOL field of the longout record is sent out on the event system.
+#record(longout, "EVG:$(LOCA):$(UNIT):HEARTBEAT") {
+#  field(DESC, "EVG $(UNIT) Heartbeat")
+#  field(SCAN, "1 second")
+#  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
+#  field(DOL, "122")
+#  field(OMSL, "closed_loop")
+#}
+#
+#record(longout, "EVG:$(LOCA):$(UNIT):RESYNC") {
+#  field(DESC, "EVG $(UNIT) Resynchronize")
+#  field(SCAN, "10 second")
+#  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
+#  field(DOL, "125")
+#  field(OMSL, "closed_loop")
+#}
+#
+#record(longout, "EVG:$(LOCA):$(UNIT):STARTXFER") {
+#  field(DESC, "EVG $(UNIT) Start Transfer")
+#  field(PINI, "YES")
+#  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME PP")
+#  field(DOL, "7")
+#  field(OMSL, "closed_loop")
+#}
+

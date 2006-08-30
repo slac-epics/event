@@ -1,0 +1,21 @@
+# ref: section 2.2 of http://www.slac.stanford.edu/grp/lcls/controls/global/subsystems/timing/globalEventV3.htm
+
+# purpose: sequence RAM is reloaded whenever DELY, ENM or UNIT values are changed
+
+record(egevent, "EVG:$(LOCA):$(UNIT):$(NAME)CTRL")
+{
+        field(DESC, "EVG $(UNIT) $(NAME) Control")
+        field(DTYP, "MRF Event Generator")
+	field(OUT, "#C$(CARD) S0 @") # EVG link this event is related to. card# only
+	field(ENM, "$(ID)") # event number to be placed into the sequence RAM
+##	field(RAM, "") # which RAM the event is to be placed into
+                       # ignored when the EVG is in "Alternate' mode
+	field(DELY, "0") # desired delay between trigger starting RAM seq
+			# and when this event should be sent
+##	field(ADLY, "") # actual delay (read-only)
+##	field(DPOS, "0") # desired position (doc says read-only!?)
+##	field(APOS, "") # actual position
+##	field(UNIT, "seconds") # delay specifier units -> error with "seconds"
+##	field(VAL, "") # unused
+	field(PINI, "YES") # needed to start things going
+}
