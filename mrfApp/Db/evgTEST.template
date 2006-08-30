@@ -1,0 +1,33 @@
+#==============================================================================
+#
+# Abs:  LCLS EVG IOC records for a test IOC
+#
+# Name: evgTEST.template
+#
+# Note: Signal names must be all uppercase and 12 chars or less to follow
+#       LCLS naming conventions.
+#
+# Macros:
+# Set LOCA to 4 char "micro" name uniquely identifying the IOC.
+#
+# Set UNIT = 1 for first EVG in crate, UNIT = 2 for second EVG, etc.
+#
+# CARD must be set to the physical slot in the crate
+# where the EVG resides, starting from 1.  
+#
+#==============================================================================
+#
+file db/evg.db
+{
+#
+#	 Location Unit   Card       
+pattern { LOCA  , UNIT , CARD }
+	{ TEST  ,   1  ,  4   }
+}
+#file db/evgEvent.db
+#{
+##
+##	 Location Unit   Card         
+#pattern { LOCA  , UNIT , CARD , NAME    , ID }
+#	{ TEST  ,   1  ,   4  , EVENT1  , 1  }
+#}
