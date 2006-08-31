@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-# $(TIMING)/timingApp/src/Makefile
+# $(TIMING)/mrfApp/src/Makefile
 #
 # Author:  Eric Bjorklund
 # Date:    19 December 2005
@@ -13,6 +13,7 @@
 # Modification History:
 #
 # 19 Dec 2005   Bjo     Original Release
+# 21 Aug 2006   Saa     Changes to build on RTEMS too.
 #
 #------------------------------------------------------------------------------
 
@@ -52,12 +53,16 @@ DBD += drvMrfEg.dbd
 DBD += devMrfEg.dbd
 DBD += drvMrfEr.dbd
 DBD += devMrfEr.dbd
+DBD += devMrfEgLib.dbd
+DBD += devMrfErLib.dbd
+devMrfEgLib_DBD += devMrfEg.dbd
+devMrfErLib_DBD += devMrfEr.dbd
 
 #---------------------
 # Build the Event Generator Library
 #
-PROD_IOC      += devMrfEgLib
-LIBRARY_IOC   += devMrfEg
+PROD_IOC_vxWorks += devMrfEgLib
+LIBRARY_IOC      += devMrfEg
 
 devMrfEg_OBJS += drvMrfEg
 devMrfEg_OBJS += devMrfEg
@@ -65,15 +70,15 @@ devMrfEg_OBJS += egRecord
 devMrfEg_OBJS += egeventRecord
 
 devMrfEgLib_OBJS += $(devMrfEg_OBJS)
-devMrfEgLib_SRCS += devMrfEg_registerRecordDeviceDriver.cpp
+devMrfEgLib_SRCS += devMrfEgLib_registerRecordDeviceDriver.cpp
 
-OBJS_IOC += $(devMrfEg_OBJS)
+OBJS_IOC_vxWorks += $(devMrfEg_OBJS)
 
 #---------------------
 # Build the Event Receiver Library
 #
-PROD_IOC      += devMrfErLib
-LIBRARY_IOC   += devMrfEr
+PROD_IOC_vxWorks += devMrfErLib
+LIBRARY_IOC      += devMrfEr
 
 devMrfEr_OBJS += drvMrfEr
 devMrfEr_OBJS += devMrfEr
@@ -81,22 +86,36 @@ devMrfEr_OBJS += erRecord
 devMrfEr_OBJS += ereventRecord
 
 devMrfErLib_OBJS += $(devMrfEr_OBJS)
-devMrfErLib_SRCS += devMrfEr_registerRecordDeviceDriver.cpp
+devMrfErLib_SRCS += devMrfErLib_registerRecordDeviceDriver.cpp
 
-OBJS_IOC += $(devMrfEr_OBJS)
+OBJS_IOC_vxWorks += $(devMrfEr_OBJS)
 
 #---------------------
 # Build the Library for Accessing VME-64X CR/CSR space
 #
-PROD_IOC       += mrfVme64xLib
-LIBRARY_IOC    += mrfVme64x
+PROD_IOC_vxWorks  += mrfVme64xLib
+LIBRARY_IOC       += mrfVme64x
 
 mrfVme64x_OBJS += mrfVme64x
 mrfVme64x_OBJS += $(CRCSR_PROBE_NAME)
 
 mrfVme64xLib_OBJS += $(mrfVme64x_OBJS)
 
-OBJS_IOC += $(mrfVme64x_OBJS)
+OBJS_IOC_vxWorks  += $(mrfVme64x_OBJS)
+
+#---------------------
+# Testing
+#
+#DBD += devMrf.dbd
+#devMrf_DBD += devMrfEg.dbd
+#devMrf_DBD += devMrfEr.dbd
+#
+#PROD_IOC  += devMrf
+#
+#devMrf_SRCS += devMrf_registerRecordDeviceDriver.cpp
+#
+#devMrf_LIBS += devMrfEg devMrfEr mrfVme64x
+#devMrf_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #---------------------
 # Install include files

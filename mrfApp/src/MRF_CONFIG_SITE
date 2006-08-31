@@ -56,8 +56,8 @@
 # set EPICS_SUPPORTS_CRCSR = NO
 #
 
-#EPICS_SUPPORTS_CRCSR = YES
-EPICS_SUPPORTS_CRCSR = NO
+EPICS_SUPPORTS_CRCSR = YES
+#EPICS_SUPPORTS_CRCSR = NO
 
 #------------------------------------------------------------------------------
 # Question 2:  Does your Board Support Package support CR/CSR Addressing
@@ -77,8 +77,8 @@ EPICS_SUPPORTS_CRCSR = NO
 # questions in this section.
 #
 
-#BSP_SUPPORTS_CRCSR = YES
-BSP_SUPPORTS_CRCSR = NO
+BSP_SUPPORTS_CRCSR = YES
+#BSP_SUPPORTS_CRCSR = NO
 
 #------------------------------------------------------------------------------
 # Question 3:  What is the path to your board support package's source code?
@@ -127,7 +127,7 @@ BSP_SUPPORTS_CRCSR = NO
 
 #EVENT_CLOCK_SPEED := CLOCK_124950_MHZ   # 124.950 MHz.
 #EVENT_CLOCK_SPEED := CLOCK_124907_MHZ   # 124.907 MHz.
-#EVENT_CLOCK_SPEED := CLOCK_119000_MHZ   # 119.000 MHz.
+EVENT_CLOCK_SPEED := CLOCK_119000_MHZ   # 119.000 MHz.
 #EVENT_CLOCK_SPEED := CLOCK_106250_MHZ   # 106.250 MHz.
 #EVENT_CLOCK_SPEED := CLOCK_100625_MHZ   # 100.625 MHz.
 #EVENT_CLOCK_SPEED := CLOCK_099956_MHZ   #  99.956 MHz.

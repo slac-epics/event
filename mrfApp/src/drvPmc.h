@@ -2,6 +2,13 @@
 #ifndef DRV_PMC_H
 #define DRV_PMC_H
 
+/*---------------------
+ * RTEMS-Specific Header Files
+ */
+#ifdef __rtems__
+#include <rtems.h>              /* for rtems_status_code */
+#include <rtems/pci.h>          /* for PCI_BASE_CLASS_MEMORY */          
+#endif
 
 volatile unsigned long getINTCSR(void);
 int getPCICRSAdrs(int Card, unsigned long baseAddr, volatile unsigned long *reg1);
