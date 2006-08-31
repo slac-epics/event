@@ -4,59 +4,9 @@
 
 # Define locations of top-level directories
 
-TEMPLATE_TOP=/ade/epics/supTop/share/lcsTemplates/makeBaseApp/top
-
-ADE_TOP = /ade/epics
-DOC_TOP = $(ADE_TOP)/docTop
-IOC_TOP = $(ADE_TOP)/iocTop
-SHARE_TOP = $(ADE_TOP)/supTop/share
-
-# The following supports installation of EDM screens
-#OPIROOT=${IOCTOP_RELEASE}/<App-directory>
-OPIROOT=${TOP}
-
-# If you don't want to install into $(TOP) then
-# define INSTALL_LOCATION_APP here
-#INSTALL_LOCATION_APP=<fullpathname>
-
-# ----------------------------------------------------------------------------
-# EPICS unbundled sequencer Support
-# ----------------------------------------------------------------------------
-#If using the sequencer, point SNCSEQ at its top directory:
-#SNCSEQ=$(SHARE_TOP)/seq/seq-2.0.10
-
-# ----------------------------------------------------------------------------
-# Sun RPC Support
-# ----------------------------------------------------------------------------
-# This module provides the configuration and rule files for building
-# Sun RPC clients and hosts.  To build RPC client and server software
-# in your application, uncomment the following two lines:
-# 
-#RPC = $(SHARE_TOP)/rpc/prod
-#-include $(RPC)/configure/CONFIG_RPC
-
-# ----------------------------------------------------------------------------
-# MRF timing hardware Support
-# ----------------------------------------------------------------------------
-# The is a common IOC component used by most IOCs to provide timing gates from
-# the MRF event receiver module.
-# 
-#TIMING=$(SHARE_TOP)/timing/prod
-
-# ----------------------------------------------------------------------------
-# LANSCE Knob Support
-# ----------------------------------------------------------------------------
-# This is a common IOC component used by most IOCs to provide access to 
-# the knob_advisor utility and also to the EPICS record/device/driver
-# support for IOCs with lansce knob hardware.
-# 
-#KNOB = $(SHARE_TOP)/lansce_knobs/prod
-
 #---------------------
 # EPICS_BASE usually appears last so other apps can override stuff:
 #
-EPICS_BASE=/ade/epics/supTop/base/prod
+include $(TOP)/../../configure/RELEASE-base
+include $(TOP)/../../configure/CONFIG_SITE-master
 
-#Capfast users may need the following definitions
-#CAPFAST_TEMPLATES=
-#SCH2EDIF_PATH=

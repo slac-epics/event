@@ -2,13 +2,7 @@
 include $(TOP)/configure/CONFIG_APP
 # Add any changes to make definitions here
 
-# The default "host" build is linux-x86.
-# Let's build for the MVM2101 "target" by default.
-# The Tornado 2.0.2 (i.e. vxWorks 5.4.2 target) is vxWorks-ppc603
-# The Tornado 2.2.1 (i.e. vxWorks 5.5.1 target) is vxWorks-ppc603_T2-2
-#CROSS_COMPILER_TARGET_ARCHS = vxWorks-ppc603 vxWorks-ppc603_T2-2
-
-
+CROSS_COMPILER_TARGET_ARCHS = RTEMS-beatnik
 
 
 # Use this when your IOC and the host use different paths
