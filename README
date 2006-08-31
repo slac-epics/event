@@ -1,0 +1,56 @@
+Instructions for EVR users                               3/31/2006 dayle
+--------------------------
+1. Add EPICS_SITE to configure/RELEASE:
+
+EPICS_SITE=/afs/slac/g/lcls/epics/site
+
+2. Link libraries into your app
+In xxxApp/src/Makefile:
+
+   xxx_LIBS += devErData
+   xxx_LIBS += devMrfEr
+   xxx_LIBS += mrfVme64x
+
+Note that mrfVme64x must be listed AFTER devMrfEr - order is important.
+
+3. Add the following .dbd files to xxxApp/src/Makefile
+   (or to xxxApp/src/xxxInclude.dbd):
+
+   xxx_DBD += devErData.dbd
+   xxx_DBD += devMrfEr.dbd
+
+4. Create .db file
+In xxxApp/Db/Makefile:
+
+   DB_INSTALLS += $(EPICS_SITE)/db/evr.db
+   DB_INSTALLS += $(EPICS_SITE)/db/evrEvent.db
+   DB_INSTALLS += $(EPICS_SITE)/db/evrData.db
+   DB += evr<ioc-name>.template
+
+Use /afs/slac/g/lcls/epics/site/db/evrXXXX.template to create
+a template for your own IOC, evr<ioc-name>.template.
+
+To do: Elaborate here. Build user databases with description of the events
+and how to trigger them.
+
+To do: Create a .db of EVR PNET data records, too, now that they are not 
+just read from PNET directly 
+
+5. For each EVR module, add to st.cmd (before iocInit): 
+dbLoadTemplate("db/evr<ioc-name>.template")
+For VME EVR:
+ErConfigure(<z>,0x300000,0x60,4,0)
+where z= physical slot number in the VME crate
+where 0x300000= card address for card 1, ???? for card 2
+where 0x60= interrupt vector
+where 4= interrupt level
+where 0 for VME
+For PMC EVR:
+ErConfigure(<z>,0,0,0,1)
+where z= unique number between 1 and 21 not already used by another EVR 
+         (VME or PMC) in the same crate.
+where 0= not used
+where 0= not used
+where 0= not used
+where 1= PMC
+
