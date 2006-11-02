@@ -1,19 +1,18 @@
-/* $Id: egDefs.h,v 1.2 2000/08/15 16:27:14 korhonen Exp $ */
+/* $Id: egDefs.h,v 1.1.1.1 2006/06/19 13:14:36 saa Exp $ */
 #ifndef EPICS_EGDEFS_H
 #define EPICS_EGDEFS_H
 
-typedef long (*EG_PROC_FUN)(struct egRecord *prec);
-typedef long (*EG_INIT_REC_FUN)(struct egRecord *prec);
-typedef long (*EG_INIT_DEV_FUN)(int pass);
+#ifdef INCdevSuph
 typedef struct
 {
   long	number;
   DEVSUPFUN       	report;
-  EG_INIT_DEV_FUN       init;
-  EG_INIT_REC_FUN       initRec;
+  DEVSUPFUN             init;
+  DEVSUPFUN             initRec;
   DEVSUPFUN       	get_ioint_info;
-  EG_PROC_FUN		proc;
+  DEVSUPFUN		proc;
 } EgDsetStruct;
+#endif
 
 #define EG_SEQ_RAM_SIZE                 (1024*512)
  
