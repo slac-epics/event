@@ -407,14 +407,14 @@ recordtype(eg) {
 		menu(menuYesNo)
 	}
 	field(ASQ1,DBF_MENU) {
-		prompt("External event 0 trigger by AC input")
+		prompt("SEQRAM 1 trigger by AC input divider")
 		promptgroup(GUI_DISPLAY)
 		pp(TRUE)
 		interest(1)
 		menu(menuYesNo)
 	}
 	field(ASQ2,DBF_MENU) {
-		prompt("SEQRAM 1 trigger by AC input divider")
+		prompt("SEQRAM 2 trigger by AC input divider")
 		promptgroup(GUI_DISPLAY)
 		pp(TRUE)
 		interest(1)
@@ -433,14 +433,14 @@ recordtype(eg) {
 		interest(1)
 	}
 	field(MSQ1,DBF_MENU) {
-		prompt("SEQRAM 1 trigger by Mux. counter 7")
+		prompt("SEQRAM 1 trigger by Mux. counter 0")
 		promptgroup(GUI_DISPLAY)
 		pp(TRUE)
 		interest(1)
 		menu(menuYesNo)
 	}
 	field(MSQ2,DBF_MENU) {
-		prompt("SEQRAM 2 trigger by Mux. counter 7")
+		prompt("SEQRAM 2 trigger by Mux. counter 1")
 		promptgroup(GUI_DISPLAY)
 		pp(TRUE)
 		interest(1)
