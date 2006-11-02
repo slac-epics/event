@@ -57,6 +57,7 @@
 #include <dbScan.h>             /* EPICS Database scan routines and definitions                   */
 
 #include <mrfCommon.h>          /* MRF event system constants and definitions                     */
+#include <egDefs.h>             /* Common EVG definitions                                         */
 
 /**************************************************************************************************/
 /*  Configuration Constants                   */
@@ -78,37 +79,28 @@
 #define EVG_MAX_CARDS           21
 
 /*---------------------
- * Event Generator Distriubted Data Stream Definitions
+ * Event Generator Distributed Data Stream Definitions
  */
 #define EVG_DBUF_TRIGGER    0x04
 #define EVG_DBUF_ENABLE     0x02
 #define EVG_DBUF_MODE       0x01
 
-/*---------------------
- * Event Generator Sequence RAM Definitions
- */
-#define EG_SEQ_RAM_SIZE                        (1024*512)
-#define EG_SEQ_RAM_EVENT_NULL                   0
-#define EG_SEQ_RAM_EVENT_END                    127
-#define EG_SEQ_RAM_EVENT_FREEZE                 126
-#define EG_SEQ_RAM_EVENT_RESET_TIME             125
-#define EG_SEQ_RAM_EVENT_TICK_TIME              124
-#define EG_SEQ_RAM_EVENT_RESET_PRESCALE         123
-#define EG_SEQ_RAM_EVENT_HEARTBEAT              122
+/**************************************************************************************************/
+/*  Define the Event Clock Source Bit Patterns for                                                */
+/*  Assumes:                                                                                      */
+/*	*Small form factor pluggable transceiver (up to 2.5 Gbit/s)                               */
+/*	*Lock gigabit clock to RF/reference clock                                                 */
+/*	*All data is transmitted directly through the MGT.                                        */
+/**************************************************************************************************/
 
-/*---------------------
- * Event Generator Record Defintions
- */
-#define REC_EGEVENT_UNIT_TICKS          (0)
-#define REC_EGEVENT_UNIT_FORTNIGHTS     (1)
-#define REC_EGEVENT_UNIT_WEEKS          (2)
-#define REC_EGEVENT_UNIT_DAYS           (3)
-#define REC_EGEVENT_UNIT_HOURS          (4)
-#define REC_EGEVENT_UNIT_MINUITES       (5)
-#define REC_EGEVENT_UNIT_SECONDS        (6)
-#define REC_EGEVENT_UNIT_MILLISECONDS   (7)
-#define REC_EGEVENT_UNIT_MICROSECONDS   (8)
-#define REC_EGEVENT_UNIT_NANOSECONDS    (9)
+#define CLOCK_SELECT_DIVBY_8     0x10           /* Divide by 8                                    */
+#define CLOCK_SELECT_DIVBY_10    0x12           /* Divide by 10                                   */
+#define CLOCK_SELECT_DIVBY_12    0x11           /* Divide by 12                                   */
+#define CLOCK_SELECT_SY87729L    0x14           /* Default = SY87729L Frac Synth Output           */
+#define CLOCK_SELECT_LVPECL_OSC  0x18           /* LVPECL oscillator (alias SLAC 119MHz)          */
+#define CLOCK_SELECT_DIVBY_4     0x1c           /* Divide by 4                                    */
+#define CLOCK_SELECT_DIVBY_5     0x1e           /* Divide by 5                                    */
+#define CLOCK_SELECT_DIVBY_6     0x1d           /* Divide by 6                                    */
 
 /*---------------------
  * Event Generator card structure prototype
