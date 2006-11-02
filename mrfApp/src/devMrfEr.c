@@ -87,6 +87,8 @@
 #include <erRecord.h>           /* Event Receiver (ER) Record structure                           */
 #include <ereventRecord.h>      /* Event Receiver Event (EREVENT) record structure                */
 #include <eventRecord.h>        /* Standard EPICS Event Record structure                          */
+#include <erDefs.h>             /* Common Event Receiver (ER) definitions                         */
+#include <ereventDefs.h>        /* Common Event Receiver (ER) event definitions                   */
 
 #include <devMrfEr.h>           /* MRF Event Receiver device support layer interface              */
 #include <drvMrfEr.h>           /* MRF Event Receiver driver support layer interface              */
@@ -101,22 +103,6 @@
 LOCAL_RTN void ErDevEventFunc (ErCardStruct*, epicsInt16, epicsUInt32);
 LOCAL_RTN void ErDevErrorFunc (ErCardStruct*, int);
 
-
-/**************************************************************************************************/
-/*  Common Structure Definitions                                                                  */
-/**************************************************************************************************/
-
-/*---------------------
- * Common Device Support Entry Table Definition
- */
-typedef struct DSET {
-    long        num_entries;            /* Number of entries in the Device Support Entry Table    */
-    DEVSUPFUN   report;                 /* Device report routine                                  */
-    DEVSUPFUN   device_init;            /* Device initialization routine                          */
-    DEVSUPFUN   record_init;            /* Device record initialization routine                   */
-    DEVSUPFUN   get_ioint_info;         /* I/O Interrupt information routine                      */
-    DEVSUPFUN   process;                /* Record processing routine                              */
-} DSET;
 
 /**************************************************************************************************/
 /*                     Event Receiver (ER) Record Device Support Routines                         */
@@ -134,7 +120,7 @@ LOCAL_RTN epicsStatus ErProcess    (erRecord*);
 /*  Device Support Entry Table (DSET)                                                             */
 /**************************************************************************************************/
 
-DSET devMrfEr = {
+static ErDsetStruct devMrfEr = {
     5,                                  /* Number of entries in the Device Support Entry Table    */
     (DEVSUPFUN)NULL,                    /* -- No device report routine                            */
     (DEVSUPFUN)ErFinishDrvInit,         /* Driver-Layer routine to complete the hardware init.    */
@@ -417,7 +403,7 @@ LOCAL_RTN epicsStatus ErEventProcess    (ereventRecord*);
 /*  Device Support Entry Table (DSET)                                                             */
 /**************************************************************************************************/
 
-DSET devMrfErevent = {
+static EreventDsetStruct devMrfErevent = {
     5,                                  /* Number of entries in the Device Support Entry Table    */
     (DEVSUPFUN)NULL,                    /* -- No device report routine                            */
     (DEVSUPFUN)NULL,                    /* -- No device initialization route                      */
@@ -703,7 +689,7 @@ LOCAL_RTN epicsStatus ErEpicsEventGetIoScan (int, eventRecord*, IOSCANPVT*);
 /*  Device Support Entry Table (DSET)                                                             */
 /**************************************************************************************************/
 
-DSET devMrfErEpicsEvent = {
+static EreventDsetStruct devMrfErEpicsEvent = {
     5,                                  /* Number of entries in the Device Support Entry Table    */
     (DEVSUPFUN)NULL,                    /* -- No device report routine                            */
     (DEVSUPFUN)NULL,                    /* -- No device initialization route                      */
