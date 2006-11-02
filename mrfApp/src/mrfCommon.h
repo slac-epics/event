@@ -53,6 +53,9 @@
 /**************************************************************************************************/
 
 #include <debugPrint.h>                        /* SLAC Debug print utility                        */
+#ifdef HAS_IOOPS_H
+#include <basicIoOps.h>
+#endif
 
 /**************************************************************************************************/
 /*  MRF Event System Constants                                                                    */
@@ -136,6 +139,26 @@
 
 #ifndef NULL
 #define NULL   ('\0')
+#endif
+
+/**************************************************************************************************/
+/*  Special Macros to Read and Write VME registers                                                */
+/**************************************************************************************************/
+
+#ifdef HAS_IOOPS_H
+#define MRF_VME_REG16_READ(address) in_be16((volatile void*)(address))
+#define MRF_VME_REG32_READ(address) in_be32((volatile void*)(address))
+#define MRF_VME_DUMMY_READ(address) 0
+#define MRF_VME_DELAY_HACK(value)   (value)=10
+#define MRF_VME_REG16_WRITE(address, value) out_be16((volatile void*)(address), (value))
+#define MRF_VME_REG32_WRITE(address, value) out_be32((volatile void*)(address), (value))
+#else
+#define MRF_VME_REG16_READ(address) *(address)
+#define MRF_VME_REG32_READ(address) *(address)
+#define MRF_VME_DUMMY_READ(address) *(address)
+#define MRF_VME_DELAY_HACK(value)   for((value)=0;(value)<10;(value)++)
+#define MRF_VME_REG16_WRITE(address, value) *(address) = (value)
+#define MRF_VME_REG32_WRITE(address, value) *(address) = (value)
 #endif
 
 #endif
