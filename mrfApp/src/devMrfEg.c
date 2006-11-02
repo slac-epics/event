@@ -80,9 +80,10 @@
 #include <recGbl.h>             /* EPICS Record Support global routine definitions                */
 #include <registryFunction.h>   /* EPICS Registry support library                                 */
 
-#include <egRecord.h>           /* Event Receiver (ER) Record structure                           */
-#include <egeventRecord.h>      /* Event Receiver Event (EREVENT) record structure                */
+#include <egRecord.h>           /* Event Generator (EG) Record structure                          */
+#include <egeventRecord.h>      /* Event Generator Event (EGEVENT) record structure               */
 #include <eventRecord.h>        /* Standard EPICS Event Record structure                          */
+#include <egDefs.h>             /* Common Event Generator (EG) definitions                        */
 
 #include <drvMrfEg.h>           /* MRF Series 200 Event Receiver driver support layer interface   
                                    for EgCheckCard 
@@ -107,20 +108,19 @@ LOCAL long EgPlaceRamEvent(egeventRecord *pRec);
 #define FRAME_CLOCK     125e6	/* Scale factor for time between mseconds and ticks */
                                 /* If this is correct, then all conversions in rec proc will work! */
 
+
+/**************************************************************************************************/
+/*                     Event Generator (EG) Record Device Support Routines                         */
+/*                                                                                                */
+
+
 /*LOCAL epicsMutexId	EgRamTaskEventSem;*/
 /*LOCAL int		ConfigureLock = 0;*/
 
 /** 
    Device Support Entry Table (dset) for EG records
  **/
-struct {
-  long	number;
-  long (*p1)();
-  long (*p2)();
-  long (*p3)();
-  long (*p4)();
-  long (*p5)();
-} devEg={ 5, NULL, EgInitDev, EgInitEgRec, NULL, EgProcEgRec};
+static EgDsetStruct devEg={ 5, NULL, EgInitDev, EgInitEgRec, NULL, EgProcEgRec};
 epicsExportAddress (dset, devEg);
 
 /**
@@ -204,16 +204,7 @@ LOCAL long EgInitEgRec(struct egRecord *pRec)
   if (pRec->fifo)
     EgEnableFifo(pCard);
   else
-    EgDisableFifo(pCard);
-                                                                                
-  {
-  volatile MrfEVGRegs *pEg = pCard->pEg;
-  if (pCard->RFselect != 0) {
-    pEg->RfSelect =  pCard->RFselect;
-  } else {
-    pEg->RfSelect = 0x0014;   /* Select internal RF syntethiser by default*/
-  }
-  }
+    EgDisableFifo(pCard);                                                                                
                                                                                 
   /* Disable these things so I can adjust them */
   EgEnableTrigger(pCard, 0, 0);
@@ -822,7 +813,7 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
                                                                                 
   if ( pRec->aphs != EgGetACinputDivisor(pCard, 1))
         EgSetACinputDivisor(pCard, pRec->aphs, 1);
-                                                                                
+  
   if ( pRec->msq1 != EgGetEnableMuxSeq(pCard, 1))
         EgEnableMuxSeq(pCard, 1, pRec->msq1);
                                                                                 
@@ -862,8 +853,8 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     if (pRec->tpro > 10)
       epicsPrintf("\n");
     if(pRec->rmax >  EG_SEQ_RAM_SIZE) {
-      pCard->MaxRamPos = pRec->rmax;
       pRec->rmax = EG_SEQ_RAM_SIZE;
+      pCard->MaxRamPos = pRec->rmax;
     } else {
       pCard->MaxRamPos = pRec->rmax;
     }
@@ -1071,14 +1062,7 @@ LOCAL long EgProcEgEventRec(struct egeventRecord *pRec)
 
 /* Device Support Table (dset) for egevent records */
  
-struct {
-  long	number;
-  long (*p1)();
-  long (*p2)();
-  long (*p3)();
-  long (*p4)();
-  long (*p5)();
-} devEgEvent={ 5, NULL, EgInitDev, EgInitEgEventRec, NULL, EgProcEgEventRec};
+static EgDsetStruct devEgEvent={ 5, NULL, EgInitDev, EgInitEgEventRec, NULL, EgProcEgEventRec};
 
 epicsExportAddress (dset, devEgEvent);
 
