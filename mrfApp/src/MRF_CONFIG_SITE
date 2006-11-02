@@ -93,6 +93,14 @@ BSP_SUPPORTS_CRCSR = YES
 
 #BSP_SOURCE_PATH = /ade/vxWorks/6.2/vxworks-6.2/target/config/mv5100
 
+#------------------------------------------------------------------------------
+# Question 4:  Do you use basic IO operations to read and write VME registers.
+#
+# RELEASE must include location of basicIoOps.h.
+#
+
+#HAS_IOOPS_H = NO
+HAS_IOOPS_H = YES
 
 ###############################################################################
 # PART II  -- Event Clock Speed
@@ -136,3 +144,21 @@ EVENT_CLOCK_SPEED := CLOCK_119000_MHZ   # 119.000 MHz.
 #EVENT_CLOCK_SPEED := CLOCK_049978_MHZ   #  47.978 MHz.
 
 #EVENT_CLOCK_SPEED := 0x009743AD         # User-specified (50 MHz in this case)
+
+#------------------------------------------------------------------------------
+# Question 2:  What is the event clock selection?
+# These values assume:
+#	*Small form factor pluggable transceiver (up to 2.5 Gbit/s)
+#	*Lock gigabit clock to RF/reference clock
+#	*All data is transmitted directly through the MGT.
+#
+
+#EVENT_CLOCK_SELECT := CLOCK_SELECT_SY87729L    # Default = SY87729L Frac Synth Output
+EVENT_CLOCK_SELECT := CLOCK_SELECT_LVPECL_OSC  # LVPECL oscillator (alias SLAC 119MHz)
+#EVENT_CLOCK_SELECT := CLOCK_SELECT_DIVBY_4     # Divide by 4
+#EVENT_CLOCK_SELECT := CLOCK_SELECT_DIVBY_5     # Divide by 5
+#EVENT_CLOCK_SELECT := CLOCK_SELECT_DIVBY_6     # Divide by 6
+#EVENT_CLOCK_SELECT := CLOCK_SELECT_DIVBY_8     # Divide by 8
+#EVENT_CLOCK_SELECT := CLOCK_SELECT_DIVBY_10    # Divide by 10
+#EVENT_CLOCK_SELECT := CLOCK_SELECT_DIVBY_12    # Divide by 12
+

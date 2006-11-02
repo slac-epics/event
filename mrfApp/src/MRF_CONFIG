@@ -74,9 +74,25 @@ else
 endif
 
 #-----------------------------------------------------------------------------#
+#  Set Basic IO Operations                                                    #
+#-----------------------------------------------------------------------------#
+
+ifeq ($(HAS_IOOPS_H),YES)
+    USR_CPPFLAGS += -DHAS_IOOPS_H
+endif
+
+#-----------------------------------------------------------------------------#
 #  Set the Event Clock Frequency                                              #
 #-----------------------------------------------------------------------------#
 
 ifneq ($(strip $(EVENT_CLOCK_SPEED)),)
     USR_CPPFLAGS += -DEVENT_CLOCK_SPEED=$(EVENT_CLOCK_SPEED)
+endif
+
+#-----------------------------------------------------------------------------#
+#  Set the Event Clock Selection                                              #
+#-----------------------------------------------------------------------------#
+
+ifneq ($(strip $(EVENT_CLOCK_SELECT)),)
+    USR_CPPFLAGS += -DEVENT_CLOCK_SELECT=$(EVENT_CLOCK_SELECT)
 endif
