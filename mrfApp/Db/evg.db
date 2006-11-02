@@ -1,31 +1,31 @@
 record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
   field(DESC, "EVG $(UNIT) Control")
-  field(PINI, "YES")
   field(DTYP, "MRF Event Generator")
   field(OUT, "#C$(CARD) S0 @")
-  field(MOD1, "Alternate")
-# If it's Off, can anything really happen?
-  field(R1SP, "0")
-  field(MOD2, "Off")
-  field(R2SP, "0")
-  field(FIFO, "NO")
+  field(PINI, "YES")
   field(ENAB, "YES")
-  field(ETE0, "YES")
-  field(ET0, "0x7c")
-  field(ETE1, "NO")
-#field(ET1, "Ox0")
-  field(ETE2, "NO")
-  field(ET2, "0x0")
-  field(ETE3, "NO")
-  field(ET3, "0x0")
-  field(ETE4, "NO")
-  field(ET4, "0x0")
-  field(ETE5, "NO")
-  field(ET5, "0x0")
-  field(ETE6, "NO")
-  field(ET6, "0x0")
-  field(ETE7, "NO")
-  field(ET7, "0x0")
+# Use "Clock Ticks" as UNIT (Delay Units) in the egEvent records.
+  field(R1SP, "0")
+  field(R2SP, "0")
+# Use external clock
+  field(R1CK, "0")
+  field(R2CK, "0")
+# Start with Sequence RAMs off so they can be set up during initialization
+  field(MOD1, "Alternate")
+  field(MOD2, "Alternate")
+# Only one EVG exists
+  field(FIFO, "NO")
+# For testing, use the AC input divider for sequence trigger enable
+  field(ASQ1, "YES")
+  field(ASQ2, "YES")
+# Don't trigger event output 0 from AC input divider.
+# field(AEV0, "NO")
+# Don't synchronize AC input trigger with multiplexed counter, don't divide it, and don't delay it.
+  field(ASYN, "NO")
+  field(ADIV, "1")
+  field(APHS, "0")
+# There are no input events, all ET* fields left at 0.
+# There is no multiplexed counter, all MC*,MD*,ME*,MS* fields left at 0.
 }
 
 #record(waveform, "EVG:$(LOCA):$(UNIT):PATTERN") {
@@ -35,7 +35,7 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
 #  field(INP, "#C$(CARD) S0 @")
 #  field(FTVL, "LONG")
 #}
-
+#
 # In order to take care of the heart beat (0x7A) and time stamp reset/resync 
 # (0x7D) events, longout records are used that have their output links 
 # pointed to the VME field on the above EG record. When they are processed, 
@@ -64,3 +64,16 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
 #  field(OMSL, "closed_loop")
 #}
 
+record(ao, "EVG:$(LOCA):$(UNIT):EVENT") {
+  field(DESC, "EVG $(UNIT) Event Code")
+  field(PINI, "YES")
+  field(DRVH, "111")
+  field(DRVL, "1")
+  field(HOPR, "100")
+  field(MDEL, "-1")
+}
+record(seq, "EVG:$(LOCA):$(UNIT):EVENTSEND") {
+  field(DESC, "EVG $(UNIT) Send Event Code")
+  field(DOL1, "EVG:$(LOCA):$(UNIT):EVENT")
+  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.VME")
+}

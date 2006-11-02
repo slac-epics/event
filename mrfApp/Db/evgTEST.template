@@ -20,14 +20,29 @@
 file db/evg.db
 {
 #
-#	 Location Unit   Card       
+#	 Location      
 pattern { LOCA  , UNIT , CARD }
 	{ TEST  ,   1  ,  4   }
 }
-#file db/evgEvent.db
-#{
-##
-##	 Location Unit   Card         
-#pattern { LOCA  , UNIT , CARD , NAME    , ID }
-#	{ TEST  ,   1  ,   4  , EVENT1  , 1  }
-#}
+file db/evgEvent.db
+{
+#                                       Event  Delay in 
+#	 Location                       Code   Clock Ticks
+pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
+	{ TEST  ,   1  ,   4  , EVENT1  , 1  ,  1   }
+	{ TEST  ,   1  ,   4  , EVENT2  , 2  ,  2   }
+	{ TEST  ,   1  ,   4  , EVENT3  , 3  ,  3   }
+	{ TEST  ,   1  ,   4  , EVENT4  , 4  ,  4   }
+	{ TEST  ,   1  ,   4  , EVENT5  , 5  ,  5   }
+	{ TEST  ,   1  ,   4  , EVENT6  , 6  ,  6   }
+	{ TEST  ,   1  ,   4  , EVENT7  , 7  ,  7   }
+	{ TEST  ,   1  ,   4  , EVENT8  , 8  ,  8   }
+	{ TEST  ,   1  ,   4  , EVENT9  , 9  ,  9   }
+	{ TEST  ,   1  ,   4  , EVENT10 , 10 ,  10  }
+	{ TEST  ,   1  ,   4  , EVENT11 , 11 ,  11  }
+	{ TEST  ,   1  ,   4  , EVENT12 , 12 ,  12  }
+	{ TEST  ,   1  ,   4  , EVENT13 , 13 ,  13  }
+	{ TEST  ,   1  ,   4  , EVENT14 , 14 ,  14  }
+	{ TEST  ,   1  ,   4  , EVENT15 , 15 ,  15  }
+	{ TEST  ,   1  ,   4  , EVENT16 , 16 ,  16  }
+}

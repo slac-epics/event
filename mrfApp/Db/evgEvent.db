@@ -8,14 +8,10 @@ record(egevent, "EVG:$(LOCA):$(UNIT):$(NAME)CTRL")
         field(DTYP, "MRF Event Generator")
 	field(OUT, "#C$(CARD) S0 @") # EVG link this event is related to. card# only
 	field(ENM, "$(ID)") # event number to be placed into the sequence RAM
-##	field(RAM, "") # which RAM the event is to be placed into
+	field(RAM, "RAM 1") # which RAM the event is to be placed into
                        # ignored when the EVG is in "Alternate' mode
-	field(DELY, "0") # desired delay between trigger starting RAM seq
+	field(DELY, "$(DELY)") # desired delay between trigger starting RAM seq
 			# and when this event should be sent
-##	field(ADLY, "") # actual delay (read-only)
-##	field(DPOS, "0") # desired position (doc says read-only!?)
-##	field(APOS, "") # actual position
-##	field(UNIT, "seconds") # delay specifier units -> error with "seconds"
-##	field(VAL, "") # unused
+	field(UNIT, "Clock Ticks") # delay specifier units
 	field(PINI, "YES") # needed to start things going
 }
