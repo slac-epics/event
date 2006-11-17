@@ -21,8 +21,8 @@ file db/evg.db
 {
 #
 #	 Location      
-pattern { LOCA  , UNIT , CARD }
-	{ TEST  ,   1  ,  4   }
+pattern { LOCA  , UNIT , CARD , CLK }
+	{ TEST  ,   1  ,  4   ,  0  }
 }
 file db/evgEvent.db
 {

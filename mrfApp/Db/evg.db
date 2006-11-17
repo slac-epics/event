@@ -8,8 +8,8 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
   field(R1SP, "0")
   field(R2SP, "0")
 # Use external clock
-  field(R1CK, "0")
-  field(R2CK, "0")
+  field(R1CK, "$(CLK)")
+  field(R2CK, "$(CLK)")
 # Start with Sequence RAMs off so they can be set up during initialization
   field(MOD1, "Alternate")
   field(MOD2, "Alternate")
