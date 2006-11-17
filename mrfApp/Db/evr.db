@@ -32,8 +32,8 @@ record(er, "EVR:$(LOCA):$(UNIT):CTRL") {
   field(OTL4, "Disabled")
   field(OTL5, "Disabled")
   field(OTL6, "Disabled")
-  field(DG0E, "Disabled")
-  field(DG1E, "Disabled")
-  field(DG2E, "Disabled")
-  field(DG3E, "Disabled")
+  field(DG0E, "Enabled")
+  field(DG1E, "Enabled")
+  field(DG2E, "Enabled")
+  field(DG3E, "Enabled")
 }
