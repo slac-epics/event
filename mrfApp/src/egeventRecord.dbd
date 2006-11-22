@@ -31,7 +31,6 @@ recordtype(egevent) {
 	field(LEVT,DBF_LONG) {
 		prompt("Last Event Number")
 		special(SPC_NOMOD)
-		pp(TRUE)
 		interest(1)
 	}
 	field(RAM,DBF_MENU) {
@@ -44,9 +43,13 @@ recordtype(egevent) {
 	field(LRAM,DBF_MENU) {
 		prompt("Last RAM")
 		special(SPC_NOMOD)
-		pp(TRUE)
 		interest(1)
 		menu(egeventRAM)
+	}
+	field(RAMV,DBF_LONG) {
+		prompt("RAM Value")
+		special(SPC_NOMOD)
+		interest(1)
 	}
 	field(DELY,DBF_FLOAT) {
 		prompt("Desired Delay Time")
