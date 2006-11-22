@@ -29,12 +29,12 @@
 #include "errMdef.h"
 #include "recSup.h"
 #include "recGbl.h"
+#include "epicsExport.h"
+#include "erDefs.h"
 
-#include "ereventDefs.h"
 #define GEN_SIZE_OFFSET
 #include "ereventRecord.h"
 #undef  GEN_SIZE_OFFSET
-#include "epicsExport.h"
 
 #define STATIC	static
 
@@ -85,7 +85,7 @@ epicsExportAddress(rset,ereventRSET);
 
 STATIC long ErEventInitRec(struct ereventRecord *pRec, int pass)
 {
-  EreventDsetStruct	*pDset = (EreventDsetStruct *) pRec->dset;
+  ErDsetStruct	*pDset = (ErDsetStruct *) pRec->dset;
 
   if (pass == 1)
   {
@@ -110,7 +110,7 @@ STATIC long ErEventInitRec(struct ereventRecord *pRec, int pass)
  ******************************************************************************/
 STATIC long ErEventProc(struct ereventRecord *pRec)
 {
-  EreventDsetStruct  *pDset = (EreventDsetStruct *) pRec->dset;
+  ErDsetStruct  *pDset = (ErDsetStruct *) pRec->dset;
 
   pRec->pact=TRUE;
 
