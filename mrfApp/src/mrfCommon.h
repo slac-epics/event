@@ -62,6 +62,7 @@
 /**************************************************************************************************/
 
 #define MRF_NUM_EVENTS              256        /* Number of possible events                       */
+#define MRF_MAX_SEQ_SIZE           2048        /* Maximum size of the sequence ram table          */
 #define MRF_MAX_DATA_BUFFER        2048        /* Maximum size of the distributed data buffer     */
 
 #define MRF_SN_BYTES                  6        /* Number of bytes in serial number                */
@@ -97,6 +98,23 @@
 #define CLOCK_080500_MHZ        0x0286822D      /*  80.500 Mhz.                                   */
 #define CLOCK_050000_MHZ        0x009743AD      /*  50.000 MHz.                                   */
 #define CLOCK_049978_MHZ        0x025B43AD      /*  47.978 MHz.                                   */
+
+/**************************************************************************************************/
+/*  Define the Event Clock Source Bit Patterns for                                                */
+/*  Assumes:                                                                                      */
+/*	*Small form factor pluggable transceiver (up to 2.5 Gbit/s)                               */
+/*	*Lock gigabit clock to RF/reference clock                                                 */
+/*	*All data is transmitted directly through the MGT.                                        */
+/**************************************************************************************************/
+
+#define CLOCK_SELECT_DIVBY_8     0x10           /* Divide by 8                                    */
+#define CLOCK_SELECT_DIVBY_10    0x12           /* Divide by 10                                   */
+#define CLOCK_SELECT_DIVBY_12    0x11           /* Divide by 12                                   */
+#define CLOCK_SELECT_SY87729L    0x14           /* Default = SY87729L Frac Synth Output           */
+#define CLOCK_SELECT_LVPECL_OSC  0x18           /* LVPECL oscillator (alias SLAC 119MHz)          */
+#define CLOCK_SELECT_DIVBY_4     0x1c           /* Divide by 4                                    */
+#define CLOCK_SELECT_DIVBY_5     0x1e           /* Divide by 5                                    */
+#define CLOCK_SELECT_DIVBY_6     0x1d           /* Divide by 6                                    */
 
 /**************************************************************************************************/
 /*  Special Macros to Document Global Vs Local Routines and Data                                  */
