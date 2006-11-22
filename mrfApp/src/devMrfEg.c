@@ -92,30 +92,16 @@
 
 #define EG_MONITOR			/* Include the EG monitor program */
 
-
 LOCAL long EgInitDev(int pass);
 LOCAL long EgInitEgRec(struct egRecord *pRec);
 LOCAL long EgProcEgRec(struct egRecord *pRec);
 LOCAL long EgPlaceRamEvent(egeventRecord *pRec);
-
-
-/* Parms for the event generator task */
-#define	EGRAM_NAME	"EgRam"
-#define	EGRAM_PRI	100
-/*#define EGRAM_OPT	VX_FP_TASK|VX_STDIO*/
-#define	EGRAM_STACK	4000
-#define NUM_EG_LINKS	(21)
-#define FRAME_CLOCK     125e6	/* Scale factor for time between mseconds and ticks */
-                                /* If this is correct, then all conversions in rec proc will work! */
 
 
 /**************************************************************************************************/
 /*                     Event Generator (EG) Record Device Support Routines                         */
 /*                                                                                                */
 
-
-/*LOCAL epicsMutexId	EgRamTaskEventSem;*/
-/*LOCAL int		ConfigureLock = 0;*/
 
 /** 
    Device Support Entry Table (dset) for EG records
@@ -177,24 +163,22 @@ LOCAL long EgInitEgRec(struct egRecord *pRec)
                                                                                 
   if (pCard == NULL)
   {
-    recGblRecordError(S_db_badField, (void *)pRec, "devApsEg::EgInitEgRec() bad card number");
+    recGblRecordError(S_db_badField, (void *)pRec, "devMrfEg::EgInitEgRec() bad card number");
     return(S_db_badField);
   }
                                                                                 
   if (pCard->pEgRec != NULL)
   {
-    recGblRecordError(S_db_badField, (void *)pRec, "devApsEg::EgInitEgRec() only one record allowed per card");
+    recGblRecordError(S_db_badField, (void *)pRec, "devMrfEg::EgInitEgRec() only one record allowed per card");
     return(S_db_badField);
   }
                                                                                 
   pCard->pEgRec = pRec;
-  pCard->Ram1Speed = pRec->r1sp;
-  pCard->Ram2Speed = pRec->r2sp;
-  if(pRec->rmax >  EG_SEQ_RAM_SIZE) {
-     pCard->MaxRamPos = pRec->rmax;
+  if(pRec->rmax > EG_SEQ_RAM_SIZE) {
      pRec->rmax = EG_SEQ_RAM_SIZE;
+     pCard->MaxRamPos = pRec->rmax;
   } else {
-    pCard->MaxRamPos = pRec->rmax;
+     pCard->MaxRamPos = pRec->rmax;
   }
                                                                                 
   /* Keep the thing off until we are dun setting it up */
@@ -316,18 +300,48 @@ LOCAL long EgInitEgRec(struct egRecord *pRec)
   pRec->lr1c = EgRamClockGet(pCard,1);
   pRec->lr2c = EgRamClockGet(pCard,2);
 
+  /* Determine clock speed for use in calculated RAM speeds */
+  if (pRec->r1sp > 0) {
+    pCard->ClockSpeed = pRec->r1sp;
+  } else {
+    pCard->ClockSpeed = 125e6;
+#ifdef EVENT_CLOCK_SPEED
+    {
+      epicsUInt32   eventClock = EVENT_CLOCK_SPEED;
+      switch (eventClock)
+      {
+        case 0x00FE816D:  pCard->ClockSpeed = 124.950e6; break;
+        case 0x0C928166:  pCard->ClockSpeed = 124.907e6; break;
+        case 0x018741AD:  pCard->ClockSpeed = 119.000e6; break;
+        case 0x049E81AD:  pCard->ClockSpeed = 106.250e6; break;
+        case 0x02EE41AD:  pCard->ClockSpeed = 100.625e6; break;
+        case 0x025B41ED:  pCard->ClockSpeed =  99.956e6; break;
+        case 0x0286822D:  pCard->ClockSpeed =  80.500e6; break;
+        case 0x009743AD:  pCard->ClockSpeed =  50.000e6; break;
+        case 0x025B43AD:  pCard->ClockSpeed =  47.978e6; break;
+      }
+    }
+#endif
+  }
+  
   /* set RAM speed if the internal clock divider is used */
   if (pRec->r1ck != 0) {
-    pRec->r1sp = FRAME_CLOCK / (pRec->r1ck+1);
+    if (pRec->r1sp <= 0) pRec->r1sp = pCard->ClockSpeed;
+    pRec->r1sp /= pRec->r1ck;
     pCard->Ram1Speed = pRec->r1sp;
     db_post_events(pRec, &pRec->r1sp, DBE_VALUE|DBE_LOG);
+  } else {
+    pCard->Ram1Speed = 0;
   }
   if (pRec->r2ck != 0) {
-    pRec->r2sp = FRAME_CLOCK / (pRec->r2ck+1);
+    if (pRec->r2sp <= 0) pRec->r2sp = pCard->ClockSpeed;
+    pRec->r2sp /= pRec->r2ck;
     pCard->Ram2Speed = pRec->r2sp;
     db_post_events(pRec, &pRec->r2sp, DBE_VALUE|DBE_LOG);
+  } else {
+    pCard->Ram2Speed = 0;
   }
-                                                                                
+  
   /* BUG -- have to deal with ALT mode... if either is ALT, both must be ALT */
   pRec->lmd1 = pRec->mod1;
   EgSetSeqMode(pCard, 1, pRec->mod1);
@@ -357,7 +371,7 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
   EgCardStruct  *pCard = EgGetCardStruct(pRec->out.value.vmeio.card);
                                                                                 
   if (pRec->tpro > 10)
-    epicsPrintf("devApsEg::proc(%s) link%d at %p\n", pRec->name,
+    printf("devMrfEg::proc(%s) link%d at %p\n", pRec->name,
         pRec->out.value.vmeio.card, (void *)pCard);
                                                                                 
   /* Check if the card is present */
@@ -375,13 +389,13 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
       if (pRec->enab == 0)
       {
         if (pRec->tpro > 10)
-          epicsPrintf(", Master Disable");
+          printf(", Master Disable");
         EgMasterDisable(pCard);
       }
       else
       {
         if (pRec->tpro > 10)
-          epicsPrintf(", Master Enable");
+          printf(", Master Enable");
         EgMasterEnable(pCard);
       }
       pRec->lena = pRec->enab;
@@ -391,7 +405,7 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     if (pRec->mod1 != pRec->lmd1)
     {
       if (pRec->tpro > 10)
-        epicsPrintf(", Mode1=%d", pRec->mod1);
+        printf(", Mode1=%d", pRec->mod1);
       if (pRec->mod1 == egMOD1_Alternate)
       {
         pRec->mod1 = egMOD1_Alternate;
@@ -416,7 +430,7 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     if (pRec->mod2 != pRec->lmd2)
     {
       if (pRec->tpro > 10)
-        epicsPrintf(", Mode2=%d", pRec->mod2);
+        printf(", Mode2=%d", pRec->mod2);
       if (pRec->mod2 == egMOD1_Alternate)
       {
         pRec->mod1 = egMOD1_Alternate;
@@ -445,13 +459,13 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
       if (pRec->fifo == 0)
       {
         if (pRec->tpro > 10)
-          epicsPrintf(", FIFO Disable");
+          printf(", FIFO Disable");
         EgDisableFifo(pCard);
       }
       else
       {
         if (pRec->tpro > 10)
-          epicsPrintf(", FIFO Enable");
+          printf(", FIFO Enable");
         EgEnableFifo(pCard);
       }
       pRec->lffo = pRec->fifo;
@@ -461,7 +475,7 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     if (pRec->trg1 != 0)
     {
       if (pRec->tpro > 10)
-        epicsPrintf(", Trigger-1");
+        printf(", Trigger-1");
       EgSeqTrigger(pCard, 1);
       pRec->trg1 = 0;
     }
@@ -477,14 +491,14 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     if (pRec->clr1 !=0)
     {
       if (pRec->tpro > 10)
-        epicsPrintf(", clear-1");
+        printf(", clear-1");
       EgClearSeq(pCard, 1);
       pRec->clr1 = 0;
     }
     if (pRec->clr2 !=0)
     {
       if (pRec->tpro > 10)
-        epicsPrintf(", clear-2");
+        printf(", clear-2");
       EgClearSeq(pCard, 2);
       pRec->clr2 = 0;
     }
@@ -493,7 +507,7 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     if (pRec->vme != 0)
     {
       if (pRec->tpro > 10)
-        epicsPrintf(", VME-%d", pRec->vme);
+        printf(", VME-%d", pRec->vme);
       EgGenerateVmeEvent(pCard, pRec->vme);
       pRec->vme = 0;
     }
@@ -501,7 +515,7 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     if (pRec->mcrs != 0)
     {
       if (pRec->tpro > 10)
-        epicsPrintf(", Reset MPX counters");
+        printf(", Reset MPX counters");
       EgResetMPX(pCard, pRec->mcrs);
       pRec->mcrs = 0;
     }
@@ -819,10 +833,8 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
                                                                                 
   if ( pRec->msq2 != EgGetEnableMuxSeq(pCard, 2))
         EgEnableMuxSeq(pCard, 2, pRec->msq2);
-                                                                                
-                                                                                
-                                                                                
-                                                                                
+
+  
     /* TAXI stuff? */
     if (EgCheckTaxi(pCard) != 0)
       pRec->taxi = 1;
@@ -830,33 +842,37 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
     /* clock change? */
     if (pRec->r1ck != pRec->lr1c)
       {
-        pRec->lr1c=EgRamClockGet(pCard,1);
         EgRamClockSet(pCard,1,pRec->r1ck);
+        pRec->lr1c=EgRamClockGet(pCard,1);
+        /* set RAM speed if the internal clock divider is used */
+        if (pRec->r1ck != 0) {
+          pRec->r1sp = pCard->ClockSpeed / pRec->r1ck;
+          pCard->Ram1Speed = pRec->r1sp;
+          db_post_events(pRec, &pRec->r1sp, DBE_VALUE|DBE_LOG);
+        } else {
+          pCard->Ram1Speed = 0;
+        }
       }
     if (pRec->r2ck != pRec->lr2c)
       {
-        pRec->lr2c=EgRamClockGet(pCard,2);
         EgRamClockSet(pCard,2,pRec->r2ck);
+        pRec->lr2c=EgRamClockGet(pCard,2);
+        if (pRec->r2ck != 0) {
+          pRec->r2sp = pCard->ClockSpeed / pRec->r2ck;
+          pCard->Ram2Speed = pRec->r2sp;
+          db_post_events(pRec, &pRec->r2sp, DBE_VALUE|DBE_LOG);
+        } else {
+          pCard->Ram2Speed = 0;
+        }
       }
-    /* set RAM speed if the internal clock divider is used */
-    if (pRec->r1ck != 0) {
-      pRec->r1sp = FRAME_CLOCK /  (pRec->r1ck+1);
-      pCard->Ram1Speed = pRec->r1sp;
-      db_post_events(pRec, &pRec->r1sp, DBE_VALUE|DBE_LOG);
-    }
-    if (pRec->r2ck != 0) {
-      pRec->r2sp = FRAME_CLOCK / (pRec->r2ck+1);
-      pCard->Ram2Speed = pRec->r2sp;
-      db_post_events(pRec, &pRec->r2sp, DBE_VALUE|DBE_LOG);
-    }
                                                                                 
     if (pRec->tpro > 10)
-      epicsPrintf("\n");
-    if(pRec->rmax >  EG_SEQ_RAM_SIZE) {
-      pRec->rmax = EG_SEQ_RAM_SIZE;
-      pCard->MaxRamPos = pRec->rmax;
+      printf("\n");
+    if(pRec->rmax > EG_SEQ_RAM_SIZE) {
+       pRec->rmax = EG_SEQ_RAM_SIZE;
+       pCard->MaxRamPos = pRec->rmax;
     } else {
-      pCard->MaxRamPos = pRec->rmax;
+       pCard->MaxRamPos = pRec->rmax;
     }
                                                                                 
   }
@@ -880,12 +896,13 @@ LOCAL long EgInitEgEventRec(struct egeventRecord *pRec)
 
   if (pCard == NULL)
   {
-    recGblRecordError(S_db_badField, (void *)pRec, "devApsEg::EgInitEgEventRec() bad card number");
+    recGblRecordError(S_db_badField, (void *)pRec, "devMrfEg::EgInitEgEventRec() bad card number");
     return(S_db_badField);
   }
-  
+
   pRec->self = pRec;
   pRec->lram = pRec->ram;
+  pRec->ramv = pRec->ram+1;
   pRec->levt = 0;		/* force program on first process */
 
   /* Scale delay to actual position */
@@ -896,51 +913,47 @@ LOCAL long EgInitEgEventRec(struct egeventRecord *pRec)
   
   switch (pRec->unit)
     {
-    case REC_EGEVENT_UNIT_TICKS:
+    case egeventUNIT_Clock_Ticks:
       pRec->dpos = pRec->dely;
       break;
-    case REC_EGEVENT_UNIT_FORTNIGHTS:
+    case egeventUNIT_Fortnights:
       pRec->dpos = ((float)pRec->dely * 60.0 * 60.0 * 24.0 * 14.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_WEEKS:
+    case egeventUNIT_Weeks:
       pRec->dpos = ((float)pRec->dely * 60.0 * 60.0 * 24.0 * 7.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_DAYS:
+    case egeventUNIT_Days:
       pRec->dpos = ((float)pRec->dely * 60.0 * 60.0 * 24.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_HOURS:
+    case egeventUNIT_Hours:
       pRec->dpos = ((float)pRec->dely * 60.0 *60.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_MINUITES:
+    case egeventUNIT_Minuites:
       pRec->dpos = ((float)pRec->dely * 60.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_SECONDS:
+    case egeventUNIT_Seconds:
       pRec->dpos = pRec->dely * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_MILLISECONDS:
+    case egeventUNIT_Milliseconds:
       pRec->dpos = ((float)pRec->dely/1000.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_MICROSECONDS:
+    case egeventUNIT_Microseconds:
       pRec->dpos = ((float)pRec->dely/1000000.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_NANOSECONDS:
+    case egeventUNIT_Nanoseconds:
       pRec->dpos = ((float)pRec->dely/1000000000.0) * RamSpeed;
       break;
     }
+  pRec->ldly = pRec->dely;
   
   /* Put the event record in the proper list */
   /*epicsEventWait(EgLink[pRec->out.value.vmeio.card].EgLock);*/
   epicsMutexLock(pCard->EgLock);
+  EgPlaceRamEvent(pRec);
   if (pRec->ram == egeventRAM_RAM_2)
-  {
-    EgPlaceRamEvent(pRec);
     pCard->Ram2Dirty = 1;
-  }
   else /* RAM_1 */
-  {
-    EgPlaceRamEvent(pRec);
     pCard->Ram1Dirty = 1;
-  }
   /*(epicsEventSignal(EgLink[pRec->out.value.vmeio.card].EgLock);*/
   epicsMutexUnlock(pCard->EgLock);
   return OK;
@@ -957,28 +970,27 @@ LOCAL long EgProcEgEventRec(struct egeventRecord *pRec)
   double	RamSpeed;
   
   if (pRec->tpro > 10)
-    epicsPrintf("devApsEg::EgProcEgEventRec(%s) link%d at %p\n", pRec->name,
+    printf("devMrfEg::EgProcEgEventRec(%s) link%d at %p\n", pRec->name,
         pRec->out.value.vmeio.card, (void *)pLink);
 
   /* Check if the card is present */
-  if (pCard == NULL)
-    recGblRecordError(S_db_badField, (void *)pRec, "devApsEg::EgProcEgEventRec() bad card number");
+    if (pCard == NULL) {
+    recGblRecordError(S_db_badField, (void *)pRec, "devMrfEg::EgProcEgEventRec() bad card number");
     return(S_db_badField);
-
+    }
+    
   /* Check for ram# change */
   if (pRec->ram != pRec->lram)
   {
+    pRec->ramv = pRec->ram + 1;
     pCard->Ram1Dirty = 1;
     pCard->Ram2Dirty = 1;
 
     if (pRec->tpro > 10)
-      epicsPrintf("devApsEg::EgProcEgEventRec(%s) ram-%d\n", pRec->name, pRec->ram);
+      printf("devMrfEg::EgProcEgEventRec(%s) ram-%d\n", pRec->name, pRec->ram);
 
-    /*epicsEventWait(EgLink[pRec->out.value.vmeio.card].EgLock);*/
-    epicsMutexLock(pCard->EgLock);
-    
+    epicsMutexLock(pCard->EgLock);    
     EgPlaceRamEvent(pRec);
-    /*epicsEventSignal(EgLink[pRec->out.value.vmeio.card].EgLock); */
     epicsMutexUnlock(pCard->EgLock);
     pRec->lram = pRec->ram;
   }
@@ -1003,46 +1015,43 @@ LOCAL long EgProcEgEventRec(struct egeventRecord *pRec)
     /* Scale delay to actual position */
     switch (pRec->unit)
     {
-    case REC_EGEVENT_UNIT_TICKS:
+    case egeventUNIT_Clock_Ticks:
       pRec->dpos = pRec->dely;
       break;
-    case REC_EGEVENT_UNIT_FORTNIGHTS:
+    case egeventUNIT_Fortnights:
       pRec->dpos = ((float)pRec->dely * 60.0 * 60.0 * 24.0 * 14.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_WEEKS:
+    case egeventUNIT_Weeks:
       pRec->dpos = ((float)pRec->dely * 60.0 * 60.0 * 24.0 * 7.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_DAYS:
+    case egeventUNIT_Days:
       pRec->dpos = ((float)pRec->dely * 60.0 * 60.0 * 24.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_HOURS:
+    case egeventUNIT_Hours:
       pRec->dpos = ((float)pRec->dely * 60.0 *60.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_MINUITES:
+    case egeventUNIT_Minuites:
       pRec->dpos = ((float)pRec->dely * 60.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_SECONDS:
+    case egeventUNIT_Seconds:
       pRec->dpos = pRec->dely * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_MILLISECONDS:
+    case egeventUNIT_Milliseconds:
       pRec->dpos = ((float)pRec->dely/1000.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_MICROSECONDS:
+    case egeventUNIT_Microseconds:
       pRec->dpos = ((float)pRec->dely/1000000.0) * RamSpeed;
       break;
-    case REC_EGEVENT_UNIT_NANOSECONDS:
+    case egeventUNIT_Nanoseconds:
       pRec->dpos = ((float)pRec->dely/1000000000.0) * RamSpeed;
       break;
     }
     if (pRec->tpro)
-      epicsPrintf("EgProcEgEventRec(%s) dpos=%d\n", pRec->name, pRec->dpos);
+      printf("EgProcEgEventRec(%s) dpos=%d\n", pRec->name, pRec->dpos);
     
-    /*epicsEventWait(EgLink[pRec->out.value.vmeio.card].EgLock);*/
     epicsMutexLock(pCard->EgLock);
-
     /* this line causes reprogramming of RAM after delay change */
     EgPlaceRamEvent(pRec);
-    /*epicsEventSignal(EgLink[pRec->out.value.vmeio.card].EgLock);*/
     epicsMutexUnlock(pCard->EgLock);
 
     pRec->ldly = pRec->dely;
@@ -1113,7 +1122,7 @@ LOCAL long EgPlaceRamEvent(struct egeventRecord *pRec)
     pNode=ellNth(pList,nth);
     if(pNode!=NULL) {
 #ifdef EG_DEBUG     
-      epicsPrintf("found record %s, remove from list before re-insert\n",(((EgEventNode *)pNode)->pRec)->name);
+      printf("found record %s, remove from list before re-insert\n",(((EgEventNode *)pNode)->pRec)->name);
 #endif     
       ellDelete(pList,pNode);
     }
@@ -1124,7 +1133,7 @@ LOCAL long EgPlaceRamEvent(struct egeventRecord *pRec)
   while((pNode !=NULL) & (!inserted)) {
       pListEvent = ((EgEventNode *)pNode)->pRec;
 #ifdef EG_DEBUG
-      epicsPrintf("considering record %s (%ld) vs %s (%ld)\n",pNew->name,pNew->dpos,
+      printf("considering record %s (%ld) vs %s (%ld)\n",pNew->name,pNew->dpos,
 		  pListEvent->name, pListEvent->dpos);
 #endif
       if (pNew->apos < pListEvent->apos )
@@ -1154,7 +1163,7 @@ LOCAL long EgPlaceRamEvent(struct egeventRecord *pRec)
       }
   if(!inserted)  ellAdd(pList, &(pNew->eln));
 #ifdef EG_DEBUG
-  epicsPrintf("record %s inserted \n",pNew->name);
+  printf("record %s inserted \n",pNew->name);
 #endif
   return OK;
 }
