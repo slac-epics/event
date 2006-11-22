@@ -15,7 +15,7 @@ typedef struct ErDsetStruct {
         long            number;
         DEVSUPFUN       report;
         DEVSUPFUN       init;
-        DEVSUPFUN       init_record;
+        DEVSUPFUN       initRec;
         DEVSUPFUN       get_ioint_info;
         DEVSUPFUN       proc;
 } ErDsetStruct;

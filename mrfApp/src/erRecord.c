@@ -66,8 +66,8 @@ DEVELOPMENT CENTER AT ARGONNE NATIONAL LABORATORY (708-252-2000).
 #include	<errMdef.h>
 #include	<recSup.h>
 #include	<recGbl.h>
-#include	<erDefs.h>
 #include	<epicsExport.h>
+#include	<erDefs.h>
 
 #define GEN_SIZE_OFFSET
 #include	<erRecord.h>
@@ -141,8 +141,8 @@ STATIC long ErInitRec(struct erRecord *pRec, int pass)
       recGblRecordError(S_dev_missingSup,(void *)pRec, "er: ErInitRec");
       return(S_dev_missingSup);
     }
-    if( pDset->init_record != NULL) 
-      return(*pDset->init_record)(pRec);
+    if( pDset->initRec != NULL) 
+      return(*pDset->initRec)(pRec);
   }
   pRec->taxi = 0;
 
