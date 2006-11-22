@@ -88,7 +88,6 @@
 #include <ereventRecord.h>      /* Event Receiver Event (EREVENT) record structure                */
 #include <eventRecord.h>        /* Standard EPICS Event Record structure                          */
 #include <erDefs.h>             /* Common Event Receiver (ER) definitions                         */
-#include <ereventDefs.h>        /* Common Event Receiver (ER) event definitions                   */
 
 #include <devMrfEr.h>           /* MRF Event Receiver device support layer interface              */
 #include <drvMrfEr.h>           /* MRF Event Receiver driver support layer interface              */
@@ -403,7 +402,7 @@ LOCAL_RTN epicsStatus ErEventProcess    (ereventRecord*);
 /*  Device Support Entry Table (DSET)                                                             */
 /**************************************************************************************************/
 
-static EreventDsetStruct devMrfErevent = {
+static ErDsetStruct devMrfErevent = {
     5,                                  /* Number of entries in the Device Support Entry Table    */
     (DEVSUPFUN)NULL,                    /* -- No device report routine                            */
     (DEVSUPFUN)NULL,                    /* -- No device initialization route                      */
@@ -689,7 +688,7 @@ LOCAL_RTN epicsStatus ErEpicsEventGetIoScan (int, eventRecord*, IOSCANPVT*);
 /*  Device Support Entry Table (DSET)                                                             */
 /**************************************************************************************************/
 
-static EreventDsetStruct devMrfErEpicsEvent = {
+static ErDsetStruct devMrfErEpicsEvent = {
     5,                                  /* Number of entries in the Device Support Entry Table    */
     (DEVSUPFUN)NULL,                    /* -- No device report routine                            */
     (DEVSUPFUN)NULL,                    /* -- No device initialization route                      */
