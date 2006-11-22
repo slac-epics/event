@@ -57,7 +57,6 @@
 #include <dbScan.h>             /* EPICS Database scan routines and definitions                   */
 
 #include <mrfCommon.h>          /* MRF event system constants and definitions                     */
-#include <egDefs.h>             /* Common EVG definitions                                         */
 
 /**************************************************************************************************/
 /*  Configuration Constants                   */
@@ -84,23 +83,6 @@
 #define EVG_DBUF_TRIGGER    0x04
 #define EVG_DBUF_ENABLE     0x02
 #define EVG_DBUF_MODE       0x01
-
-/**************************************************************************************************/
-/*  Define the Event Clock Source Bit Patterns for                                                */
-/*  Assumes:                                                                                      */
-/*	*Small form factor pluggable transceiver (up to 2.5 Gbit/s)                               */
-/*	*Lock gigabit clock to RF/reference clock                                                 */
-/*	*All data is transmitted directly through the MGT.                                        */
-/**************************************************************************************************/
-
-#define CLOCK_SELECT_DIVBY_8     0x10           /* Divide by 8                                    */
-#define CLOCK_SELECT_DIVBY_10    0x12           /* Divide by 10                                   */
-#define CLOCK_SELECT_DIVBY_12    0x11           /* Divide by 12                                   */
-#define CLOCK_SELECT_SY87729L    0x14           /* Default = SY87729L Frac Synth Output           */
-#define CLOCK_SELECT_LVPECL_OSC  0x18           /* LVPECL oscillator (alias SLAC 119MHz)          */
-#define CLOCK_SELECT_DIVBY_4     0x1c           /* Divide by 4                                    */
-#define CLOCK_SELECT_DIVBY_5     0x1e           /* Divide by 5                                    */
-#define CLOCK_SELECT_DIVBY_6     0x1d           /* Divide by 6                                    */
 
 /*---------------------
  * Event Generator card structure prototype
@@ -227,7 +209,7 @@ struct EgCardStruct {
     long                  Ram2Dirty;    /* needs to be reloaded                                  */
     ELLLIST               EgEvent;      /* RAM event list head. All events are kept in one list. */
     long                  MaxRamPos;    /* Operation limit of RAM                                */
-    unsigned int          RFselect;     /* RF source select word                                 */
+    double                ClockSpeed;   /* clock speed in MHz                                    */
 }; /*EgCardStruct*/
 
 /*---------------------
@@ -306,6 +288,8 @@ long EgEnableMuxSeq(EgCardStruct *pParm, unsigned int SeqNum, int state);
 unsigned long EgGetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel);
 unsigned long EgSetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel, unsigned long Divisor);
 long EgGetFpgaVersion(EgCardStruct *pParm);
+int EvgSeqRamRead(volatile MrfEVGRegs *pEvg, int ram, int address, int len);
+int EvgSeqRamWrite(volatile MrfEVGRegs *pEvg, int ram, int address, int len, MrfEvgSeqStruct *pSeq);
 int EvgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable);
 int EvgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable);
 int EvgDataBufferSetSize(volatile MrfEVGRegs *pEvg, int size);
