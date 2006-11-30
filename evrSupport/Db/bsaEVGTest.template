@@ -1,0 +1,26 @@
+file db/bsaEVGProcTest.db
+{
+#             Meas Defn   
+#	            Name      
+  pattern { DEV      , MD,  MDID   }
+	      {  $(DEVICE)  , 1,   1     }
+	      {  $(DEVICE)  , 2,   2     }
+	      {  $(DEVICE)  , 3,   3     }
+	      {  $(DEVICE)  , 4,   4     }
+	      {  $(DEVICE)  , 5,   5     }
+	      {  $(DEVICE)  , 6,   6     }
+	      {  $(DEVICE)  , 7,   7     }
+	      {  $(DEVICE)  , 8,   8     }
+	      {  $(DEVICE)  , 9,   9     }
+	      {  $(DEVICE)  ,10,   10    }
+	      {  $(DEVICE)  ,11,   11    }
+	      {  $(DEVICE)  ,12,   12    }
+	      {  $(DEVICE)  ,13,   13    }
+	      {  $(DEVICE)  ,14,   14    }
+	      {  $(DEVICE)  ,15,   15    }
+	      {  $(DEVICE)  ,16,   1HZ   }
+	      {  $(DEVICE)  ,17,  10HZ   }
+	      {  $(DEVICE)  ,18,  FULL   }
+	      {  $(DEVICE)  ,19,  F1     }
+	      {  $(DEVICE)  ,20,  F2     }
+}
