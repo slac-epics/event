@@ -10,8 +10,7 @@
 # Macros:
 # Set LOCA to 4 char location name.
 #
-# Set UNIT = xx01 for first EVR in crate, UNIT = xx02 for second EVR, etc.
-#     where xx = subsystem ID.
+# Set UNIT = EV01.
 #
 # CARD must be set to the physical slot in the crate
 # where the EVG resides, starting from 1.  
