@@ -1,0 +1,28 @@
+record(event, "EVR:$(LOCA):$(UNIT):$(NAME)") {
+  field(DESC, "EVR $(UNIT) $(NAME) Event")
+  field(DTYP, "MRF Event Receiver")
+  field(INP, "#C$(CARD) S$(ID) @")
+  field(SCAN, "I/O Intr")
+  field(PRIO, "HIGH")
+  field(VAL,  "$(ID)")
+}
+record(calc, "EVR:$(LOCA):$(UNIT):$(NAME)CNTFAST") {
+  field(DESC, "EVR $(UNIT) $(NAME) Counter")
+  field(SCAN, "Event")
+  field(EVNT, "$(ID)")
+  field(INPA, "EVR:$(LOCA):$(UNIT):$(NAME)CNTFAST")
+  field(CALC, "A+1")
+}
+record(ai, "EVR:$(LOCA):$(UNIT):$(NAME)CNT") {
+  field(DESC, "EVR $(UNIT) $(NAME) Counter")
+  field(INP,  "EVR:$(LOCA):$(UNIT):$(NAME)CNTFAST")
+  field(FLNK, "EVR:$(LOCA):$(UNIT):$(NAME)RATE")
+  field(SCAN, "1 second")
+}
+record(calc, "EVR:$(LOCA):$(UNIT):$(NAME)RATE") {
+  field(DESC, "EVR $(UNIT) $(NAME) Rate")
+  field(INPA, "EVR:$(LOCA):$(UNIT):$(NAME)RATE.B")
+  field(INPB,  "EVR:$(LOCA):$(UNIT):$(NAME)CNT")
+  field(CALC, "B-A")
+  field(EGU,  "Hz")
+}

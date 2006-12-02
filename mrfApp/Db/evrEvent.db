@@ -21,16 +21,3 @@ record(erevent, "EVR:$(LOCA):$(UNIT):$(NAME)CTRL") {
   field(OUTD, "$(P13)")
   field(VME,  "$(VME)")
 }
-record(event, "EVR:$(LOCA):$(UNIT):$(NAME)") {
-  field(DESC, "EVR $(UNIT) $(NAME) Event")
-  field(DTYP, "MRF Event Receiver")
-  field(INP, "#C$(CARD) S$(ID) @")
-  field(SCAN, "I/O Intr")
-  field(FLNK, "EVR:$(LOCA):$(UNIT):$(NAME)CNT")
-}
-record(calc, "EVR:$(LOCA):$(UNIT):$(NAME)CNT") {
-  field(DESC, "EVR $(UNIT) $(NAME) Counter")
-  field(INPA, "EVR:$(LOCA):$(UNIT):$(NAME)CNT")
-  field(CALC, "A+1")
-  field(FLNK, "$(FLNK)")
-}
