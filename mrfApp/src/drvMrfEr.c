@@ -840,8 +840,10 @@ int ErConfigure (
         * Initialize the hardware by making sure all interrupts are turned off
         * and all error flags are cleared.
         */
-        pEr->IrqEnables = 0;
-        pEr->Control = (pEr->Control & EVR_CSR_CONFIG_PRESERVE_MASK) | EVR_CSR_CONFIG_SET_FIELDS;
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, EVR_IRQ_OFF);
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_CONFIG_PRESERVE_MASK) |
+                            EVR_CSR_CONFIG_SET_FIELDS);
 
        /*---------------------
         * Now that we know all interrupts are disabled, try to connect the interrupt service rtn.
@@ -960,7 +962,7 @@ int ErConfigure (
         * initialize the hardware by making sure all interrupts are turned off
         * and all error flags are cleared.
         */
-        pEr->IrqEnables = 0; 
+        pEr->IrqEnables = EVR_IRQ_OFF; 
         pEr->Control = (pEr->Control & EVR_CSR_CONFIG_PRESERVE_MASK) | EVR_CSR_CONFIG_SET_FIELDS; /* check correct for pmc */
 
        /*---------------------
@@ -995,11 +997,11 @@ int ErConfigure (
     * Add the card structure to the list of known Event Receiver cards,
     * and return.
     */
-    pEr->IrqVector = IrqVector; 
-    pEr->FracDiv = FR_SYNTH_WORD;
-    epicsThreadSleep (epicsThreadSleepQuantum()*0.5);
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_RSRXVIO |
-                                   EVR_CSR_RSHRTBT | EVR_CSR_RSPLL; 
+    MRF_VME_REG16_WRITE(&pEr->IrqVector, IrqVector); 
+    MRF_VME_REG32_WRITE(&pEr->FracDiv, FR_SYNTH_WORD);
+    epicsThreadSleep (epicsThreadSleepQuantum());
+    MRF_VME_REG16_WRITE(&pEr->Control, (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) |
+                        EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT | EVR_CSR_RSPLL); 
    
     /* add the card structure to the list of known event receiver cards.  */
     ellAdd (&ErCardList, &pCard->Link); 
@@ -1048,7 +1050,7 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     epicsUInt16                   LoWord_2;     /* Second reading of the low-order word           */
     int                           Key;          /* Used to restore interrupt level after locking  */
     ErCardStruct                 *pCard;        /* Pointer to card structure for this card        */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /***********************************************************************************************/
    /*  Code                                                                                       */
@@ -1073,9 +1075,9 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     * Get the two halfs of the event counter.
     * Read the low-order word twice to check for rollover.
     */
-    LoWord = pEr->EventCounterLo;
-    HiWord = pEr->EventCounterHi;
-    LoWord_2 = pEr->EventCounterLo;
+    LoWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+    HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+    LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterLo);
 
    /*---------------------
     * If we had low-order word rollover, use the second low-order read.
@@ -1084,7 +1086,7 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     */
     if (LoWord_2 < LoWord) {
         LoWord = LoWord_2;
-        HiWord = pEr->EventCounterHi;
+        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
     }/*end if there was low-order word wraparound*/
 
    /*---------------------
@@ -1378,7 +1380,7 @@ void ErIrqHandler (ErCardStruct *pCard)
    /*  Local Variables                                                                            */
    /***********************************************************************************************/
 
-    register volatile MrfErRegs  *pEr;          /* Pointer to hardware registers                  */
+    volatile MrfErRegs           *pEr;          /* Pointer to hardware registers                  */
     epicsInt16                    bufferSize;   /* Size of data stream transmission               */
     epicsUInt16                   csr;          /* Initial value of the Control/Status register   */
     epicsUInt16                   DBuffCsr;     /* Value of Data Buffer Control/Status register   */
@@ -1398,10 +1400,10 @@ void ErIrqHandler (ErCardStruct *pCard)
     */
     pEr = (MrfErRegs *)pCard->pEr;
 
-    csr = pEr->Control & ~EVR_CSR_IRQEN;
-    pEr->Control = csr & EVR_CSR_WRITE_MASK;
+    csr = MRF_VME_REG16_READ(&pEr->Control) & ~EVR_CSR_IRQEN;
+    MRF_VME_REG16_WRITE(&pEr->Control, csr & EVR_CSR_WRITE_MASK);
 
-    DBuffCsr = pEr->DataBuffControl;
+    DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl);
 
    /*---------------------
     * Debug message on entry to interrupt handler
@@ -1417,7 +1419,7 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for receiver link errors
     */
     if (csr & EVR_CSR_RXVIO) {
-        pEr->Control = (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSRXVIO;
+        MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSRXVIO);
         pCard->RxvioCount++;
 
         if (pCard->DevErrorFunc != NULL)
@@ -1430,8 +1432,9 @@ void ErIrqHandler (ErCardStruct *pCard)
         * device support error callback routine.
         */
         if (csr & EVR_CSR_PLL_LOST) {
-            pEr->Control = (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSPLL;
-            pEr->IrqEnables = ~(EVR_IRQ_RXVIO) & pEr->IrqEnables; 
+            MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSPLL);
+            MRF_VME_REG16_WRITE(&pEr->IrqEnables,
+                                MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_RXVIO)); 
 
             if (pCard->DevErrorFunc != NULL)
                 (*pCard->DevErrorFunc)(pCard, ERROR_LOST_PLL);
@@ -1444,7 +1447,7 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for lost heartbeat errors
     */
     if (csr & EVR_CSR_HRTBT) {
-        pEr->Control = (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSHRTBT;
+        MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSHRTBT);
 
         if (pCard->DevErrorFunc != NULL)
             (*pCard->DevErrorFunc)(pCard, ERROR_HEART);
@@ -1455,7 +1458,7 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for events in the Event FIFO
     */
     if (csr & EVR_CSR_IRQFL) {
-        pEr->Control = (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSIRQFL;
+        MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSIRQFL);
 
         if (ErDebug > 10) {
             epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
@@ -1469,11 +1472,12 @@ void ErIrqHandler (ErCardStruct *pCard)
         * We limit the number of events that can be extracted per interrupt
         * in order to avoid getting into a long spin-loop at interrupt level.
         */
-        for (i=0; (pEr->Control & EVR_CSR_FNE) && (i < EVR_FIFO_EVENT_LIMIT);  i++) {
+        for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
+                  (i < EVR_FIFO_EVENT_LIMIT);  i++) {
 
            /* Get the event number and timestamp */
-            LoWord = pEr->EventFifo;
-            HiWord = pEr->EventTimeHi;
+            LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
+            HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
             EventNum = LoWord & 0x00ff;
             Time = (HiWord<<8) | (LoWord>>8);
 
@@ -1496,7 +1500,7 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for FIFO overflow
     */
     if (csr & EVR_CSR_FF) {
-        pEr->Control = (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSFF;
+        MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSFF);
 
         if (pCard->DevErrorFunc != NULL)
             (*pCard->DevErrorFunc)(pCard, ERROR_LOST);
@@ -1507,7 +1511,7 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for delayed interrupt
     */
     if (csr & EVR_CSR_DIRQ) {
-        pEr->Control = (csr & EVR_CSR_WRITE_MASK)| EVR_CSR_RSDIRQ;
+        MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK)| EVR_CSR_RSDIRQ);
 
        /* Output a message if the debug level is 11 or higher */
         if (ErDebug > 10) {
@@ -1553,10 +1557,12 @@ void ErIrqHandler (ErCardStruct *pCard)
 
             bufferSize = pCard->DBuffSize / 4;
             for (i=0;  i < bufferSize;  i++)
-                pCard->DataBuffer[i] = pEr->DataBuffer[i];
+                pCard->DataBuffer[i] = MRF_VME_REG32_READ(&pEr->DataBuffer[i]);
 
             (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
-            pEr->DataBuffControl = (pEr->DataBuffControl & EVR_DBUF_WRITE_MASK) | EVR_DBUF_DBENA;
+            MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
+                                (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
+                                EVR_DBUF_DBENA);
         }/*end if device support wants to know about Data Buffer Ready interrupts*/
 
        /*---------------------
@@ -1564,8 +1570,11 @@ void ErIrqHandler (ErCardStruct *pCard)
         * Turn off data buffer receives and disable the data buffer interrupt.
         */
         else {
-            pEr->DataBuffControl = (pEr->DataBuffControl & EVR_DBUF_DBMODE_EN) | EVR_DBUF_DBDIS;
-            pEr->IrqEnables &= ~(EVR_IRQ_DATABUF);
+            MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
+                                (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_DBMODE_EN) |
+                                EVR_DBUF_DBDIS);
+            MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) &
+                                ~(EVR_IRQ_DATABUF));
         }/*end if don't want data buffer ready interrupts*/
 
     }/*end if data buffer ready interrupt*/
@@ -1573,8 +1582,9 @@ void ErIrqHandler (ErCardStruct *pCard)
    /*===============================================================================================
     * Re-enable Board interrupts and return.
     */
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) |  EVR_CSR_IRQEN;
-    DBuffCsr = pEr->DataBuffControl; 
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
+    DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl); 
 
 }/*end ErIrqHandler()*/
 
@@ -1624,7 +1634,7 @@ epicsUInt16 ErEnableIrq (ErCardStruct *pCard, epicsUInt16 Mask)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the card's hardware registers.
@@ -1637,17 +1647,18 @@ epicsUInt16 ErEnableIrq (ErCardStruct *pCard, epicsUInt16 Mask)
      * If the "OFF" mask was specified, turn all interrupts off.
      */
     if (Mask == EVR_IRQ_OFF) {
-        pEr->IrqEnables = 0;
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & ~(EVR_CSR_IRQEN);
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, EVR_IRQ_OFF);
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) & ~(EVR_CSR_IRQEN));
     }/*end if "OFF" mask specified*/
 
    /*---------------------
     * If the "TELL" mask was specified, return the current interrupt mask.
     */
     else if (Mask == EVR_IRQ_TELL) {
-        if (pEr->Control & EVR_CSR_IRQEN) {
+        if (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_IRQEN) {
             epicsInterruptUnlock (Key);
-            return (pEr->IrqEnables & EVR_IRQ_ALL);
+            return (MRF_VME_REG16_READ(&pEr->IrqEnables) & EVR_IRQ_ALL);
         }/*end if interrupts are enabled*/
     }/*end if "TELL" mask was specified*/
 
@@ -1656,8 +1667,9 @@ epicsUInt16 ErEnableIrq (ErCardStruct *pCard, epicsUInt16 Mask)
     * interrupts are enabled.
     */
     else {
-        pEr->IrqEnables = Mask;
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN;
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, Mask);
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
     }/*end set specified bit mask*/
 
    /*---------------------
@@ -1694,7 +1706,7 @@ void ErDBuffIrq (ErCardStruct *pCard, epicsBoolean Enable)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the card's hardware registers.
@@ -1708,15 +1720,16 @@ void ErDBuffIrq (ErCardStruct *pCard, epicsBoolean Enable)
     * Also enable interrupts in general, in case they were turned off.
     */
     if (Enable) {
-        pEr->IrqEnables |= EVR_IRQ_DATABUF;
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN;
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) | EVR_IRQ_DATABUF);
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
     }/*end if we should enable the interrupt*/
 
    /*---------------------
     * Disable the Data Buffer Ready interrupt
     */
     else {
-        pEr->IrqEnables &= ~(EVR_IRQ_DATABUF);
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_DATABUF));
     }/*end if we should disable the interrupt*/
 
    /*---------------------
@@ -1754,7 +1767,7 @@ void ErTaxiIrq (ErCardStruct *pCard, epicsBoolean Enable)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the card's hardware registers.
@@ -1768,15 +1781,15 @@ void ErTaxiIrq (ErCardStruct *pCard, epicsBoolean Enable)
     * Also enable interrupts in general, in case they were turned off.
     */
     if (Enable) {
-        pEr->IrqEnables |= EVR_IRQ_RXVIO;
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN;
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) | EVR_IRQ_RXVIO);
+        MRF_VME_REG16_WRITE(&pEr->Control, (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
     }/*end if we should enable the interrupt*/
 
    /*---------------------
     * Disable the TAXI (Receive Link Framing Error) interrupt
     */
     else {
-        pEr->IrqEnables &= ~(EVR_IRQ_RXVIO);
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_RXVIO));
     }/*end if we should disable the interrupt*/
 
    /*---------------------
@@ -1813,7 +1826,7 @@ void ErEventIrq (ErCardStruct *pCard, epicsBoolean Enable)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the card's hardware registers.
@@ -1827,15 +1840,18 @@ void ErEventIrq (ErCardStruct *pCard, epicsBoolean Enable)
     * Also enable interrupts in general, in case they were turned off.
     */
     if (Enable) {
-        pEr->IrqEnables |= (EVR_IRQ_EVENT | EVR_IRQ_FIFO);
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN;
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables,
+                            MRF_VME_REG16_READ(&pEr->IrqEnables) | (EVR_IRQ_EVENT | EVR_IRQ_FIFO));
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
     }/*end if we should enable the interrupt*/
 
    /*---------------------
     * Disable the Event and FIFO-Full interrupts.
     */
     else {
-        pEr->IrqEnables &= ~(EVR_IRQ_EVENT | EVR_IRQ_FIFO);
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables,
+                            MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_EVENT | EVR_IRQ_FIFO));
     }/*end if we should disable the interrupt*/
 
    /*---------------------
@@ -1881,7 +1897,7 @@ epicsBoolean ErCheckPhaseLock (ErCardStruct *pCard)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the hardware registers.
@@ -1893,8 +1909,9 @@ epicsBoolean ErCheckPhaseLock (ErCardStruct *pCard)
    /*---------------------
     * If we have a "Lost Phase Lock" error, return "False" and reset the error bit.
     */
-    if (pEr->Control & EVR_CSR_PLL_LOST) {
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_RSPLL;
+    if (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_PLL_LOST) {
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_RSPLL);
         epicsInterruptUnlock (Key);
         return (epicsFalse);
     }/*end if receive link framing error detected*/
@@ -1940,7 +1957,7 @@ epicsBoolean ErCheckTaxi (ErCardStruct *pCard)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the hardware registers.
@@ -1953,8 +1970,9 @@ epicsBoolean ErCheckTaxi (ErCardStruct *pCard)
     * If we have a Receive Link framing error (TAXI Violation),
     * return "True" and reset the error bit.
     */
-    if (pEr->Control & EVR_CSR_RXVIO) {
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_RSRXVIO;
+    if (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RXVIO) {
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_RSRXVIO);
         epicsInterruptUnlock (Key);
         return (epicsTrue);
     }/*end if receive link framing error detected*/
@@ -1995,7 +2013,7 @@ void ErEnableDBuff (ErCardStruct *pCard, epicsBoolean Enable)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the card's hardware registers.
@@ -2010,9 +2028,11 @@ void ErEnableDBuff (ErCardStruct *pCard, epicsBoolean Enable)
     * Also enable interrupts in general, in case they were turned off.
     */
     if (Enable) {
-        pEr->DataBuffControl = EVR_DBUF_DBMODE_EN | EVR_DBUF_DBENA;
-        pEr->IrqEnables |= EVR_IRQ_DATABUF;     /* TODO: incompatible with PMC EVR */
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN;
+        MRF_VME_REG16_WRITE(&pEr->DataBuffControl,  EVR_DBUF_DBMODE_EN | EVR_DBUF_DBENA);
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables,
+                            MRF_VME_REG16_READ(&pEr->IrqEnables) | EVR_IRQ_DATABUF);     /* TODO: incompatible with PMC EVR */
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
     }/*end if we should enable the interrupt*/
 
    /*---------------------
@@ -2020,8 +2040,9 @@ void ErEnableDBuff (ErCardStruct *pCard, epicsBoolean Enable)
     * and disable the data buffer ready interrupt.
     */
     else {
-        pEr->IrqEnables &= ~(EVR_IRQ_DATABUF);  /* TODO: incompatible with PMC EVR */
-        pEr->DataBuffControl = EVR_DBUF_DBDIS;
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables,
+                            MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_DATABUF));  /* TODO: incompatible with PMC EVR */
+        MRF_VME_REG16_WRITE(&pEr->DataBuffControl, EVR_DBUF_DBDIS);
     }/*end if we should disable the interrupt*/
 
    /*---------------------
@@ -2060,7 +2081,7 @@ void ErEnableRam (ErCardStruct *pCard, int RamNumber)
     * Local variables
     */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the Event Receiver registers and disable
@@ -2073,19 +2094,22 @@ void ErEnableRam (ErCardStruct *pCard, int RamNumber)
     * If RAM 0 is requested, disable Event Mapping
     */
     if (RamNumber == 0)
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & ~EVR_CSR_MAPEN;
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) & ~EVR_CSR_MAPEN);
 
    /*---------------------
     * Enable Event Mapping RAM 1
     */
     else if (RamNumber == 1)
-        pEr->Control = (pEr->Control & EVR_CSR_RAM_ENABLE_MASK) | EVR_CSR_RAM1_ACTIVE;
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_ENABLE_MASK) | EVR_CSR_RAM1_ACTIVE);
 
    /*---------------------
     * Enable Event Mapping RAM 2
     */
     else if (RamNumber == 2)
-        pEr->Control = (pEr->Control & EVR_CSR_RAM_ENABLE_MASK) | EVR_CSR_RAM2_ACTIVE;
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_ENABLE_MASK) | EVR_CSR_RAM2_ACTIVE);
 
    /*---------------------
     * Invalid RAM number was specified.
@@ -2141,8 +2165,9 @@ void ErFlushFifo (ErCardStruct *pCard)
     */
     epicsUInt16                   Dummy;        /* Dummy variable for reading out the FIFO        */
     int                           Key;          /* Used to restore interrupt level after locking  */
+    int                           i;            /* Loop counter                                   */
     epicsUInt16                   MapEnable;    /* Previous state of the Event Map Enable Flag    */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the card's hardware registers.
@@ -2155,22 +2180,25 @@ void ErFlushFifo (ErCardStruct *pCard)
     * Disable event mapping while we empty the FIFO so that we don't
     * end up in an endless loop.
     */
-    MapEnable = pEr->Control & EVR_CSR_MAPEN;
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & ~(EVR_CSR_MAPEN);
+    MapEnable = MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_MAPEN;
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) & ~(EVR_CSR_MAPEN));
 
    /*---------------------
     * Loop to empty the event FIFO
     */
-    while (pEr->Control & EVR_CSR_FNE) {
-        Dummy = pEr->EventFifo;
-        Dummy = pEr->EventTimeHi;
+    for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
+              (i < EVR_FIFO_EVENT_LIMIT); i++) {
+        Dummy = MRF_VME_REG16_READ(&pEr->EventFifo);
+        Dummy = MRF_VME_REG16_READ(&pEr->EventTimeHi);
     }/*end while still events in the FIFO*/
 
    /*---------------------
     * Restore the previous value of the MAPEN flag,
     * Re-enable interrupts and return.
     */
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | MapEnable;
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | MapEnable);
     epicsInterruptUnlock (Key);
 
 }/*end ErFlushFifo()*/
@@ -2251,8 +2279,8 @@ ErCardStruct *ErGetCardStruct (int Card)
 GLOBAL_RTN
 epicsUInt16 ErGetFpgaVersion (ErCardStruct *pCard)
 {
-    register volatile MrfErRegs *pEr = (MrfErRegs *)pCard->pEr;
-    return (pEr->FPGAVersion);
+    volatile MrfErRegs          *pEr = (MrfErRegs *)pCard->pEr;
+    return (MRF_VME_REG16_READ(&pEr->FPGAVersion));
 
 }/*end ErGetFpgaVersion()*/
 
@@ -2288,13 +2316,13 @@ epicsBoolean ErGetRamStatus (ErCardStruct *pCard, int RamNumber)
     * Local variables
     */
     epicsUInt16                   csr;          /* Contents of the Control/Status register        */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the Event Receiver registers and read the Control/Status register
     */
     pEr = (MrfErRegs *)pCard->pEr;
-    csr = pEr->Control;
+    csr = MRF_VME_REG16_READ(&pEr->Control);
 
    /*---------------------
     * Return "False" if Event RAM mapping is not enabled
@@ -2346,8 +2374,8 @@ epicsBoolean ErGetRamStatus (ErCardStruct *pCard, int RamNumber)
 GLOBAL_RTN
 epicsBoolean ErMasterEnableGet (ErCardStruct *pCard)
 {
-    register volatile MrfErRegs  *pEr = (MrfErRegs *)pCard->pEr;
-    return ((pEr->Control & EVR_CSR_EVREN) != 0);
+    volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
+    return ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_EVREN) != 0);
 
 }/*end ErMasterEnableGet()*/
 
@@ -2373,19 +2401,21 @@ epicsBoolean ErMasterEnableGet (ErCardStruct *pCard)
 GLOBAL_RTN
 void ErMasterEnableSet (ErCardStruct *pCard, epicsBoolean Enable)
 {
-    register volatile MrfErRegs  *pEr = (MrfErRegs *)pCard->pEr;
+    volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
 
    /*---------------------
     * Enable the Event Receiver Card
     */
     if (Enable)
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_EVREN;
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_EVREN);
 
    /*---------------------
     * Disable the Event Receiver Card
     */
     else
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & ~(EVR_CSR_EVREN);
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) & ~(EVR_CSR_EVREN));
 
 }/*end ErMasterEnableSet()*/
 
@@ -2426,13 +2456,13 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
     */
     int                           j;            /* Loop counter                                   */
     int                           Key;          /* Used to restore interrupt level after locking  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Debug print
     */
     if (ErDebug)
-        errlogPrintf ("RAM download for RAM %d\n", RamNumber);
+        printf ("RAM download for RAM %d\n", RamNumber);
 
    /*---------------------
     * Get the address of the Event Receiver registers and disable
@@ -2447,7 +2477,7 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
     if (RamNumber == 1) {
 
        /* Abort if RAM 1 is active */
-        if ((pEr->Control & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM1_ACTIVE) {
+        if ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM1_ACTIVE) {
             epicsInterruptUnlock (Key);
             errlogPrintf ("ErProgramRam: Card %d.  Attempt to program RAM 1 while it is active\n",
                           pCard->Card);
@@ -2455,7 +2485,8 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
         }/*end if RAM 1 is active*/
 
        /* Enable read/write access to RAM 1 */
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & EVR_CSR_RAM1_WRITE;  
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) & EVR_CSR_RAM1_WRITE);  
 
     }/*end if RAM 1 is requested*/
 
@@ -2465,7 +2496,7 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
     else if (RamNumber == 2) {
 
        /* Abort if RAM 2 is active */
-        if ((pEr->Control & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM2_ACTIVE) {
+        if ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM2_ACTIVE) {
             epicsInterruptUnlock (Key);
             errlogPrintf ("ErProgramRam: Card %d.  Attempt to program RAM 2 while it is active\n",
                           pCard->Card);
@@ -2473,7 +2504,8 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
         }/*end if RAM 2 is active*/
 
        /* Enable read/write access to RAM 2 */
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_RAM2_WRITE;
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_RAM2_WRITE);
 
     }/*end if RAM 2 is requested*/
 
@@ -2488,30 +2520,22 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
     }/*end if RamNumber is illegal*/
 
    /*---------------------
-    * Reset the RAM address register and enable it for auto-incrementing
+    * Reset the RAM address register
     */
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_RSADR;
-    /*~~~~ pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_AUTOI; ~~~*/
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_RSADR);
     epicsInterruptUnlock (Key);
-    pEr->EventRamAddr = 0;  /*~~~ ????? ~~~*/
 
    /*---------------------
     * Write the Event Output Map to the selected RAM
     */
     for (j=0;  j < EVR_NUM_EVENTS; j++) {
-        pEr->EventRamAddr=j;              /*~~~ ??? ~~~*/
-        pEr->EventRamData = RamBuf[j];
-        if((ErDebug)&&(RamBuf[j] != 0))   /*~~~ ??? ~~~*/
-            printf("Event %d: write %d  read %d \n", j, RamBuf[j], pEr->EventRamData);
+        MRF_VME_REG16_WRITE(&pEr->EventRamAddr, j);
+        MRF_VME_REG16_WRITE(&pEr->EventRamData, RamBuf[j]);
+        if((ErDebug)&&(RamBuf[j] != 0))
+            printf("Event %d: write %d  read %d \n", j, RamBuf[j],
+                   MRF_VME_REG16_READ(&pEr->EventRamData));
     }/*end for each event*/
-
-   /*---------------------
-    * Reset the Event RAM address register and turn of auto-increment
-    */
-    Key = epicsInterruptLock();
-    pEr->EventRamAddr = 0;                /*~~~ ??? ~~~*/
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & ~EVR_CSR_AUTOI;    
-    epicsInterruptUnlock (Key);
 
 }/*end ErProgramRam()*/
 
@@ -2640,7 +2664,7 @@ void ErResetAll (ErCardStruct *pCard)
    /*---------------------
     * Local variables
     */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
     int                           Channel;      /* Channel number for resetting output parms      */
 
    /*---------------------
@@ -2654,7 +2678,9 @@ void ErResetAll (ErCardStruct *pCard)
     * Disable the card and event mapping.
     */
     pEr = (MrfErRegs *)pCard->pEr;
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & ~(EVR_CSR_EVREN | EVR_CSR_MAPEN);
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) &
+                        ~(EVR_CSR_EVREN | EVR_CSR_MAPEN));
 
    /*---------------------
     * Flush the Event FIFO
@@ -2681,53 +2707,55 @@ void ErResetAll (ErCardStruct *pCard)
    /*---------------------
     * Disable all pulse outputs
     */
-    pEr->OutputPulseEnables    = 0;     /* Disable all Programmable Width Pulse (OTP) outputs     */
-    pEr->OutputLevelEnables    = 0;     /* Disable all Level Output (OTL) outputs                 */
-    pEr->DelayPulseEnables     = 0;     /* Disable all Programmable Delay Pulse (DG) outputs      */
-    pEr->TriggerEventEnables   = 0;     /* Disable all Trigger Event Pulse (TRG) outputs          */
-    pEr->DBusEnables           = 0;     /* Disable all Distributed Data Bus outputs               */
+    MRF_VME_REG16_WRITE(&pEr->OutputPulseEnables    , 0);     /* Disable all Programmable Width Pulse (OTP) outputs     */
+    MRF_VME_REG16_WRITE(&pEr->OutputLevelEnables    , 0);     /* Disable all Level Output (OTL) outputs                 */
+    MRF_VME_REG16_WRITE(&pEr->DelayPulseEnables     , 0);     /* Disable all Programmable Delay Pulse (DG) outputs      */
+    MRF_VME_REG16_WRITE(&pEr->TriggerEventEnables   , 0);     /* Disable all Trigger Event Pulse (TRG) outputs          */
+    MRF_VME_REG16_WRITE(&pEr->DBusEnables           , 0);     /* Disable all Distributed Data Bus outputs               */
 
-    pEr->DelayPulseSelect      = 0;     /* Clear the OTP/DG selection register                    */
-    pEr->EventCounterPrescaler = 0;     /* Clear the event clock pre-scaler                       */
+    MRF_VME_REG16_WRITE(&pEr->DelayPulseSelect      , 0);     /* Clear the OTP/DG selection register                    */
+    MRF_VME_REG16_WRITE(&pEr->EventCounterPrescaler , 0);     /* Clear the event clock pre-scaler                       */
 
    /*---------------------
     * Disable all front panel outputs
     */
-    pEr->FP0Map = 0;
-    pEr->FP1Map = 0;
-    pEr->FP2Map = 0;
-    pEr->FP3Map = 0;
-    pEr->FP4Map = 0;
-    pEr->FP5Map = 0;
-    pEr->FP6Map = 0;
+    MRF_VME_REG16_WRITE(&pEr->FP0Map , 0);
+    MRF_VME_REG16_WRITE(&pEr->FP1Map , 0);
+    MRF_VME_REG16_WRITE(&pEr->FP2Map , 0);
+    MRF_VME_REG16_WRITE(&pEr->FP3Map , 0);
+    MRF_VME_REG16_WRITE(&pEr->FP4Map , 0);
+    MRF_VME_REG16_WRITE(&pEr->FP5Map , 0);
+    MRF_VME_REG16_WRITE(&pEr->FP6Map , 0);
 
    /*---------------------
     * Disable the data stream
     */
-    pEr->DataBuffControl = (pEr->DataBuffControl & EVR_DBUF_DBMODE_EN) | EVR_DBUF_DBDIS;
+    MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
+                        (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_DBMODE_EN) | EVR_DBUF_DBDIS);
 
    /*---------------------
     * Clear the Control/Status condition flags and clear Event Mapping RAM 1
     */
-    pEr->Control = EVR_CSR_RESET_1;                      /* Clear conditions & select RAM 1       */
-    pEr->Control = EVR_CSR_RESET_2;                      /* Clear Event Mapping RAM 1             */
+    MRF_VME_REG16_WRITE(&pEr->Control, EVR_CSR_RESET_1);                      /* Clear conditions & select RAM 1       */
+    MRF_VME_REG16_WRITE(&pEr->Control, EVR_CSR_RESET_2);                      /* Clear Event Mapping RAM 1             */
 
    /*---------------------
     * Wait for the RAM 1 to clear before we do RAM2
     */
-    while (pEr->Control & EVR_CSR_NFRAM)
+    while (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_NFRAM)
         epicsThreadSleep (epicsThreadSleepQuantum());
 
    /*---------------------
     * Clear the Control/Status condition flags and clear Event Mapping RAM 2
     */
-    pEr->Control = EVR_CSR_RESET_1 | EVR_CSR_RAM2_WRITE; /* Clear conditions & select RAM 2       */
-    pEr->Control = EVR_CSR_RESET_2 | EVR_CSR_RAM2_WRITE; /* Clear Event Mapping RAM 2             */
+    MRF_VME_REG16_WRITE(&pEr->Control, EVR_CSR_RESET_1 | EVR_CSR_RAM2_WRITE); /* Clear conditions & select RAM 2       */
+    MRF_VME_REG16_WRITE(&pEr->Control, EVR_CSR_RESET_2 | EVR_CSR_RAM2_WRITE); /* Clear Event Mapping RAM 2             */
 
    /*---------------------
     * Set the Master Card Enable, release the card lock, and return
     */
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_EVREN;
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_EVREN);
     epicsMutexUnlock (pCard->CardLock);
 
 }/*end ErResetAll()*/
@@ -2783,7 +2811,7 @@ void  ErSetDg (
 
     register epicsUInt16          EnableWord = 0; /* New enable/polarity values to set            */
     register epicsUInt16          Mask;           /* Enable/Polarity selection mask               */
-    register volatile MrfErRegs  *pEr;            /* Pointer to Event Receiver's register map     */
+    volatile MrfErRegs           *pEr;            /* Pointer to Event Receiver's register map     */
 
    /***********************************************************************************************/
    /*  Code                                                                                       */
@@ -2806,19 +2834,20 @@ void  ErSetDg (
     * Select the requested DG channel in the pulse selection register.
     */
     pEr  = (MrfErRegs *)pCard->pEr;
-    pEr->DelayPulseSelect = Channel;
+    MRF_VME_REG16_WRITE(&pEr->DelayPulseSelect, Channel);
 
    /*---------------------
     * Set the pulse delay, width, and prescaler
     */
-    pEr->DelayPrescaler = Prescaler;
-    pEr->ExtDelay = Delay;
-    pEr->ExtWidth = Width;
+    MRF_VME_REG16_WRITE(&pEr->DelayPrescaler, Prescaler);
+    MRF_VME_REG32_WRITE(&pEr->ExtDelay, Delay);
+    MRF_VME_REG32_WRITE(&pEr->ExtWidth, Width);
 
    /*---------------------
     * Set the pulse polarity and enable flags
     */
-    pEr->DelayPulseEnables = (pEr->DelayPulseEnables & ~Mask) | EnableWord;
+    MRF_VME_REG16_WRITE(&pEr->DelayPulseEnables,
+                        (MRF_VME_REG16_READ(&pEr->DelayPulseEnables) & ~Mask) | EnableWord);
 
 }/*end ErSetDg()*/
 
@@ -2862,13 +2891,13 @@ void ErSetDirq (ErCardStruct *pCard, epicsBoolean Enable, epicsUInt16 Delay, epi
    /*---------------------
     * Get the address of the hardware registers
     */
-    register volatile MrfErRegs  *pEr = (MrfErRegs *)pCard->pEr;
+    volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
 
    /*---------------------
     * If we are disabling the delayed interrupt, don't bother setting any of the other parameters.
     */
     if (!Enable) {
-        pEr->IrqEnables &= ~(EVR_IRQ_DIRQ);
+        MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_DIRQ));
         return;
     }/*end if we are disabling the delayed interrupt*/
 
@@ -2876,10 +2905,10 @@ void ErSetDirq (ErCardStruct *pCard, epicsBoolean Enable, epicsUInt16 Delay, epi
     * Delayed interrupt will be enabled.
     * Load the delayed interrupt delay and prescaler registers.
     */
-    pEr->DelayPulseSelect = EVR_PSEL_DIRQ;
-    pEr->PulseDelay = Delay;
-    pEr->DelayPrescaler = Prescaler;
-    pEr->IrqEnables |= EVR_IRQ_DIRQ;
+    MRF_VME_REG16_WRITE(&pEr->DelayPulseSelect,  EVR_PSEL_DIRQ);
+    MRF_VME_REG16_WRITE(&pEr->PulseDelay, Delay);
+    MRF_VME_REG16_WRITE(&pEr->DelayPrescaler, Prescaler);
+    MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) | EVR_IRQ_DIRQ);
 
 }/*end ErSetDirq()*/
 
@@ -2924,7 +2953,7 @@ epicsStatus ErSetFPMap (ErCardStruct *pCard, int Port, epicsUInt16 Map)
    /*---------------------
     * Get the address of the hardware registers
     */
-    register volatile MrfErRegs  *pEr = (MrfErRegs *)pCard->pEr;
+    volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
 
    /*---------------------
     * Make sure the arguments are in the correct range
@@ -2937,25 +2966,25 @@ epicsStatus ErSetFPMap (ErCardStruct *pCard, int Port, epicsUInt16 Map)
     */
     switch (Port) {
     case 0:
-        pEr->FP0Map = Map;
+        MRF_VME_REG16_WRITE(&pEr->FP0Map, Map);
         break;
     case 1:
-        pEr->FP1Map = Map;
+        MRF_VME_REG16_WRITE(&pEr->FP1Map, Map);
         break;
     case 2:
-        pEr->FP2Map = Map;
+        MRF_VME_REG16_WRITE(&pEr->FP2Map, Map);
         break;
     case 3:
-        pEr->FP3Map = Map;
+        MRF_VME_REG16_WRITE(&pEr->FP3Map, Map);
         break;
     case 4:
-        pEr->FP4Map = Map;
+        MRF_VME_REG16_WRITE(&pEr->FP4Map, Map);
         break;
     case 5:
-        pEr->FP5Map = Map;
+        MRF_VME_REG16_WRITE(&pEr->FP5Map, Map);
         break;
     case 6:
-        pEr->FP6Map = Map;
+        MRF_VME_REG16_WRITE(&pEr->FP6Map, Map);
         break;
     }/*end switch*/
 
@@ -2996,7 +3025,7 @@ GLOBAL_RTN
 void ErSetOtb (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 {
     epicsUInt16                   mask;         /* Mask to enable/disable the requested bus chan  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the hardware registers and compute the bitmask
@@ -3009,13 +3038,13 @@ void ErSetOtb (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
     * Enable the requested bus channel
     */
     if (Enable)
-        pEr->DBusEnables |= mask;
+        MRF_VME_REG16_WRITE(&pEr->DBusEnables, MRF_VME_REG16_READ(&pEr->DBusEnables) | mask);
 
    /*---------------------
     * Disable the requeste bus channel
     */
     else 
-        pEr->DBusEnables &= ~mask;
+        MRF_VME_REG16_WRITE(&pEr->DBusEnables, MRF_VME_REG16_READ(&pEr->DBusEnables) & ~mask);
 
 }/*end ErSetOtb()*/
 
@@ -3048,7 +3077,7 @@ GLOBAL_RTN
 void ErSetOtl (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 {
     epicsUInt16                   mask;         /* Mask to enable/disable the requested OTL chan  */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the hardware registers and compute the bitmask
@@ -3061,13 +3090,15 @@ void ErSetOtl (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
     * Enable the requested level output channel
     */
     if (Enable)
-        pEr->OutputLevelEnables |= mask;
+        MRF_VME_REG16_WRITE(&pEr->OutputLevelEnables,
+                            MRF_VME_REG16_READ(&pEr->OutputLevelEnables) | mask);
 
    /*---------------------
     * Disable the requested level output channel
     */
     else
-        pEr->OutputLevelEnables &= ~mask;
+        MRF_VME_REG16_WRITE(&pEr->OutputLevelEnables,
+                            MRF_VME_REG16_READ(&pEr->OutputLevelEnables) & ~mask);
 
 }/*end ErSetOtl()*/
 
@@ -3120,7 +3151,8 @@ void ErSetOtp (
 
     epicsUInt16                   EnaMask;      /* Mask for enabling or disabling the channel     */
     epicsUInt32                   PolMask;      /* Mask for setting the channel's polarity        */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver's register map       */
+    epicsUInt32                   ExtWidth;     /* 32bit desired width                            */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver's register map       */
 
    /***********************************************************************************************/
    /*  Code                                                                                       */
@@ -3132,43 +3164,47 @@ void ErSetOtp (
     * Select the requested OTP channel in the pulse selection register.
     */
     pEr  = (MrfErRegs *)pCard->pEr;
-    pEr->DelayPulseSelect = Channel | EVR_PSEL_OTP;
+    MRF_VME_REG16_WRITE(&pEr->DelayPulseSelect, Channel | EVR_PSEL_OTP);
 
    /*---------------------
     * Compute the masks for setting the pulse enable and polarity
     */
     EnaMask = 1 << Channel;
     PolMask = EVR_XPOL_OTP0 << Channel;
+    ExtWidth = Width;
 
    /*---------------------
     * Set the pulse width and delay
     */
-    pEr->PulseWidth = Width;
-    pEr->ExtDelay = Delay;
+    MRF_VME_REG16_WRITE(&pEr->ExtWidth, ExtWidth);
+    MRF_VME_REG32_WRITE(&pEr->ExtDelay, Delay);
 
    /*---------------------
     * Set the polarity
     */
     if (Pol)
-        pEr->OutputPol |= PolMask;
+        MRF_VME_REG32_WRITE(&pEr->OutputPol, MRF_VME_REG32_READ(&pEr->OutputPol) | PolMask);
     else
-        pEr->OutputPol &= ~PolMask;
+        MRF_VME_REG32_WRITE(&pEr->OutputPol, MRF_VME_REG32_READ(&pEr->OutputPol) & ~PolMask);
 
    /*---------------------
     * Enable or disable the pulse
     */
     if (Enable)
-        pEr->OutputPulseEnables |= EnaMask;
+        MRF_VME_REG16_WRITE(&pEr->OutputPulseEnables,
+                            MRF_VME_REG16_READ(&pEr->OutputPulseEnables) | EnaMask);
     else
-        pEr->OutputPulseEnables &= ~EnaMask;
+        MRF_VME_REG16_WRITE(&pEr->OutputPulseEnables,
+                            MRF_VME_REG16_READ(&pEr->OutputPulseEnables) & ~EnaMask);
 
    /*---------------------
     * Output a debug message if the debug level is 10 or higher
     */
     if(ErDebug > 9) {
-        errlogPrintf (
+        printf (
             "ErSetOtp(): Card %d, OTP Chan %d, Select Addr %x, Width = %d, Delay = %d\n", 
-             pCard->Card, Channel, pEr->DelayPulseSelect, pEr->PulseWidth, pEr->ExtDelay);
+             pCard->Card, Channel, MRF_VME_REG16_READ(&pEr->DelayPulseSelect),
+            MRF_VME_REG32_READ(&pEr->ExtWidth), MRF_VME_REG32_READ(&pEr->ExtDelay));
     }/*end if debug level is 10 or higher*/
 
 }/*end ErSetOtp()*/
@@ -3207,7 +3243,7 @@ void ErSetTrg (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
     * Local variables
     */
     epicsUInt16                   mask;         /* Mask to enable/disable the requested channel   */
-    register volatile MrfErRegs  *pEr;          /* Pointer to Event Receiver register map         */
+    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
 
    /*---------------------
     * Get the address of the hardware registers and compute the bitmask
@@ -3220,14 +3256,16 @@ void ErSetTrg (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
      * Enable the requested trigger channel
      */
     if (Enable) {
-        pEr->TriggerEventEnables |= mask;
+        MRF_VME_REG16_WRITE(&pEr->TriggerEventEnables,
+                            MRF_VME_REG16_READ(&pEr->TriggerEventEnables) | mask);
     }/*end if trigger channel should be enabled*/
 
    /*---------------------
     * Disable the requested trigger channel
     */
     else {
-        pEr->TriggerEventEnables &= ~mask;
+        MRF_VME_REG16_WRITE(&pEr->TriggerEventEnables,
+                            MRF_VME_REG16_READ(&pEr->TriggerEventEnables) & ~mask);
     }/*end if trigger channel should be disabled*/
 
 }/*end ErSetTrg()*/
@@ -3260,8 +3298,8 @@ void ErSetTrg (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 GLOBAL_RTN
 void ErSetTickPre (ErCardStruct *pCard, epicsUInt16 Counts)
 {
-    register volatile MrfErRegs  *pEr = (MrfErRegs *)pCard->pEr;
-    pEr->EventCounterPrescaler = Counts;
+    volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
+    MRF_VME_REG16_WRITE(&pEr->EventCounterPrescaler, Counts);
 
 }/*end ErSetTickPre()*/
 
@@ -3361,7 +3399,7 @@ void ErRebootFunc (void)
 LOCAL_RTN int ErRestart (ErCardStruct *pCard)
 {
     volatile MrfErRegs  *pEr = pCard->pEr;
-    pEr->IrqVector = pCard->IrqVector;
+    MRF_VME_REG16_WRITE(&pEr->IrqVector, pCard->IrqVector);
     ErEnableIrq(pCard->pEr, EVR_IRQ_EVENT);
     return OK;
 
@@ -3537,8 +3575,8 @@ void DiagDumpDataBuffer (ErCardStruct *pCard)
     * Get the address of the Event Receiver's registers.
     * Read the Data Buffer Status Register and get the number of bytes in the buffer.
     */
-    register volatile MrfErRegs  *pEr = (MrfErRegs *)pCard->pEr;
-    DBuffCsr = pEr->DataBuffControl;
+    volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
+    DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl);
     numWords = DBuffCsr & EVR_DBUF_SIZEMASK;
 
    /*---------------------
@@ -3591,7 +3629,7 @@ void DiagDumpDataBuffer (ErCardStruct *pCard)
 	    * Inner loop displays individual longwords
 	    */
 	    for (i=index;  i < lastIndex;  i++) {
-		printf (" %8.8X", pEr->DataBuffer[i]);
+		printf (" %8.8X", MRF_VME_REG32_READ(&pEr->DataBuffer[i]));
 	    }/*end for each long-word*/
 
 	    printf ("\n");
@@ -3626,19 +3664,21 @@ void DiagDumpEventFifo (ErCardStruct *pCard)
     */
     epicsUInt16   HiWord;	/* High order word of the most recent Event FIFO entry            */
     epicsUInt16   LoWord;       /* Low order word of the most recent Event FIFO entry             */
+    int           i;            /* Loop counter                                                   */
 
    /*---------------------
     * Get the pointer to the Event Receiver card's hardware register map.
     */
-    register volatile MrfErRegs  *pEr = (MrfErRegs *)pCard->pEr;
+    volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
 
    /*---------------------
     * Loop  to extract event code and timestamps from the Event FIFO
     * and display them on the local terminal.
     */
-    while (pEr->Control & EVR_CSR_FNE) {
-        LoWord = pEr->EventFifo;
-        HiWord = pEr->EventTimeHi;
+    for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
+              (i < EVR_FIFO_EVENT_LIMIT); i++) {
+        LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
+        HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
         printf ("FIFO event: %4.4X%4.4X\n", HiWord, LoWord);
     }/*end while*/
 
@@ -3672,7 +3712,7 @@ void DiagDumpRam (ErCardStruct *pCard, int Ram)
    /*---------------------
     * Local variables
     */
-    register volatile MrfErRegs  *pEr;		/* Pointer to Event Receiver's hardware registers */
+    volatile MrfErRegs           *pEr;		/* Pointer to Event Receiver's hardware registers */
     epicsUInt16                   Event;        /* Event number                                   */
     epicsUInt16                   Map;          /* Corresponding output map                       */
     int                           j;            /* Local loop counter                             */
@@ -3687,9 +3727,10 @@ void DiagDumpRam (ErCardStruct *pCard, int Ram)
     * Print a message if RAM 1 is the active Event Mapping RAM.
     */
     if (Ram == 1) {
-        if ((pEr->Control & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM1_ACTIVE)
+        if ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM1_ACTIVE)
             printf ("RAM 1 is Active!\n");
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & EVR_CSR_RAM1_WRITE;
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) & EVR_CSR_RAM1_WRITE);
     }/*end if RAM 1 is requested*/
 
    /*---------------------
@@ -3697,9 +3738,10 @@ void DiagDumpRam (ErCardStruct *pCard, int Ram)
     * Print a message if RAM 2 is the active Event Mapping RAM.
     */
     else if (Ram == 2) {
-        if ((pEr->Control & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM2_ACTIVE)
+        if ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM2_ACTIVE)
             printf ("RAM 2 is Active!\n");
-        pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_RAM2_WRITE;       
+        MRF_VME_REG16_WRITE(&pEr->Control,
+                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_RAM2_WRITE);
     }/*end if RAM2 is requested*/
 
    /*---------------------
@@ -3713,15 +3755,17 @@ void DiagDumpRam (ErCardStruct *pCard, int Ram)
    /*---------------------
     * Reset RAM address register and enable auto-incrementing
     */
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) | EVR_CSR_RSADR | EVR_CSR_AUTOI;
-    pEr->EventRamAddr = 0;
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) |
+                        EVR_CSR_RSADR | EVR_CSR_AUTOI);
+    MRF_VME_REG16_WRITE(&pEr->EventRamAddr,  0);
 
    /*---------------------
     * Loop to display all events that have associated output mappings
     */
     for (j=0;  j < EVR_NUM_EVENTS;  j++) {
-        Event = pEr->EventRamAddr & 0x00ff;
-        Map = pEr->EventRamData;
+        Event = MRF_VME_REG16_READ(&pEr->EventRamAddr) & 0x00ff;
+        Map = MRF_VME_REG16_READ(&pEr->EventRamData);
         if (Map != 0)
             printf ("RAM 0x%2.2X (=%3d), 0x%4.4X\n", Event, Event, Map);
     }/*end for each event in the selected Mapping RAM*/
@@ -3729,7 +3773,8 @@ void DiagDumpRam (ErCardStruct *pCard, int Ram)
    /*---------------------
     * Turn off auto-increment and return
     */
-    pEr->Control = (pEr->Control & EVR_CSR_WRITE_MASK) & ~EVR_CSR_AUTOI;    
+    MRF_VME_REG16_WRITE(&pEr->Control,
+                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) & ~EVR_CSR_AUTOI);    
 
 }/*end DiagDumpRam()*/
 
@@ -3756,30 +3801,36 @@ void DiagDumpRegs (ErCardStruct *pCard)
    /*---------------------
     * Local Variables
     */
-    register volatile MrfErRegs *pEr = (MrfErRegs *)pCard->pEr;
-    epicsUInt16                  Csr = pEr->Control;
+    volatile MrfErRegs          *pEr = (MrfErRegs *)pCard->pEr;
+    epicsUInt16                  Csr = MRF_VME_REG16_READ(&pEr->Control);
 
    /*---------------------
     * Display the contents of selected registers
     */
-    printf ("Control reg:    %4.4X\n", Csr);
-    printf ("RAM addr&data:  %4.4X %4.4X\n", pEr->EventRamAddr, pEr->EventRamData);
-    printf ("OTP, TEV, LVL:  %4.4X %4.4X %4.4X\n",
-           pEr->OutputPulseEnables, pEr->OutputLevelEnables, pEr->TriggerEventEnables);
-    printf ("PDP enab:       %4.4X\n", pEr->DelayPulseEnables);
-    printf ("Evt ctr hi,lo:  %4.4X %4.4X \n", pEr->EventCounterHi, pEr->EventCounterLo);
-    printf ("TS ctr hi, lo:  %4.4X %4.4X \n", pEr->TimeStampLo, pEr->TimeStampHi);
-    printf ("Evt fifo,time:  p%4.4X %4.4X \n", pEr->EventFifo, pEr->EventTimeHi);
-    printf ("PDP sel, dly,w: %4.4X %4.4X %4.4X \n",
-           pEr->DelayPulseSelect, pEr->PulseDelay, pEr->PulseWidth);
-    printf ("PDP prescaler:  %4.4X \n", pEr->DelayPrescaler);
-    printf ("EVT ctr presc:  %4.4X \n", pEr->EventCounterPrescaler);
-    printf ("IRQ vec, enab:  %4.4X %4.4X \n", pEr->IrqVector, pEr->IrqEnables);
-    printf ("DB enab, data:  %4.4X %4.4X \n", pEr->DBusEnables, pEr->DBusData);
-    printf ("Clock ctl:      %4.4X \n", pEr->ClockControl);
-    printf ("Ref clock ctl:  %8.8X \n", pEr->FracDiv);
-    printf ("Data buf ctl:   %4.4X \n", pEr->DataBuffControl);
-    printf ("FPGA version :  %4.4X\n", pEr->FPGAVersion);
+    printf ("Control reg:    %4.4X \n", Csr);
+    printf ("RAM addr&data:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->EventRamAddr),
+            MRF_VME_REG16_READ(&pEr->EventRamData));
+    printf ("OTP, LVL, TEV:  %4.4X %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->OutputPulseEnables),
+            MRF_VME_REG16_READ(&pEr->OutputLevelEnables), MRF_VME_REG16_READ(&pEr->TriggerEventEnables));
+    printf ("PDP enab:       %4.4X \n", MRF_VME_REG16_READ(&pEr->DelayPulseEnables));
+    printf ("Evt ctr hi,lo:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->EventCounterHi),
+            MRF_VME_REG16_READ(&pEr->EventCounterLo));
+    printf ("TS ctr hi, lo:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->TimeStampLo),
+            MRF_VME_REG16_READ(&pEr->TimeStampHi));
+    printf ("Evt fifo,time:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->EventFifo),
+            MRF_VME_REG16_READ(&pEr->EventTimeHi));
+    printf ("PDP sel, dly,w: %4.4X %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->DelayPulseSelect),
+            MRF_VME_REG16_READ(&pEr->PulseDelay), MRF_VME_REG16_READ(&pEr->PulseWidth));
+    printf ("PDP prescaler:  %4.4X \n", MRF_VME_REG16_READ(&pEr->DelayPrescaler));
+    printf ("EVT ctr presc:  %4.4X \n", MRF_VME_REG16_READ(&pEr->EventCounterPrescaler));
+    printf ("IRQ vec, enab:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->IrqVector),
+            MRF_VME_REG16_READ(&pEr->IrqEnables));
+    printf ("DB enab, data:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->DBusEnables),
+            MRF_VME_REG16_READ(&pEr->DBusData));
+    printf ("Clock ctl:      %4.4X \n", MRF_VME_REG16_READ(&pEr->ClockControl));
+    printf ("Ref clock ctl:  %8.8X \n", MRF_VME_REG32_READ(&pEr->FracDiv));
+    printf ("Data buf ctl:   %4.4X \n", MRF_VME_REG16_READ(&pEr->DataBuffControl));
+    printf ("FPGA version :  %4.4X \n", MRF_VME_REG16_READ(&pEr->FPGAVersion));
 
    /*---------------------
     * Display card status information
