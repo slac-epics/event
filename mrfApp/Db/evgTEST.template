@@ -8,9 +8,10 @@
 #       LCLS naming conventions.
 #
 # Macros:
-# Set LOCA to 4 char "micro" name uniquely identifying the IOC.
+# Set LOCA to 4 char location name.
 #
-# Set UNIT = 1 for first EVG in crate, UNIT = 2 for second EVG, etc.
+# Set UNIT = xx01 for first EVR in crate, UNIT = xx02 for second EVR, etc.
+#     where xx = subsystem ID.
 #
 # CARD must be set to the physical slot in the crate
 # where the EVG resides, starting from 1.  
@@ -22,27 +23,27 @@ file db/evg.db
 #
 #	 Location      
 pattern { LOCA  , UNIT , CARD }
-	{ TEST  ,   1  ,  4   }
+	{ TEST  , EV01 ,  4   }
 }
 file db/evgEvent.db
 {
 #                                       Event  Delay in 
 #	 Location                       Code   Clock Ticks
 pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
-	{ TEST  ,   1  ,   4  , EVENT1  , 1  ,  1   }
-	{ TEST  ,   1  ,   4  , EVENT2  , 2  ,  2   }
-	{ TEST  ,   1  ,   4  , EVENT3  , 3  ,  3   }
-	{ TEST  ,   1  ,   4  , EVENT4  , 4  ,  4   }
-	{ TEST  ,   1  ,   4  , EVENT5  , 5  ,  5   }
-	{ TEST  ,   1  ,   4  , EVENT6  , 6  ,  6   }
-	{ TEST  ,   1  ,   4  , EVENT7  , 7  ,  7   }
-	{ TEST  ,   1  ,   4  , EVENT8  , 8  ,  8   }
-	{ TEST  ,   1  ,   4  , EVENT9  , 9  ,  9   }
-	{ TEST  ,   1  ,   4  , EVENT10 , 10 ,  10  }
-	{ TEST  ,   1  ,   4  , EVENT11 , 11 ,  11  }
-	{ TEST  ,   1  ,   4  , EVENT12 , 12 ,  12  }
-	{ TEST  ,   1  ,   4  , EVENT13 , 13 ,  13  }
-	{ TEST  ,   1  ,   4  , EVENT14 , 14 ,  14  }
-	{ TEST  ,   1  ,   4  , EVENT15 , 15 ,  15  }
-	{ TEST  ,   1  ,   4  , EVENT16 , 16 ,  16  }
+	{ TEST  , EV01 ,   4  , EVENT1  , 1  ,  0   }
+	{ TEST  , EV01 ,   4  , EVENT2  , 2  ,  50  }
+	{ TEST  , EV01 ,   4  , EVENT3  , 3  , 100  }
+	{ TEST  , EV01 ,   4  , EVENT4  , 4  , 150  }
+	{ TEST  , EV01 ,   4  , EVENT5  , 5  , 200  }
+	{ TEST  , EV01 ,   4  , EVENT6  , 6  , 250  }
+	{ TEST  , EV01 ,   4  , EVENT7  , 7  , 300  }
+	{ TEST  , EV01 ,   4  , EVENT8  , 8  , 350  }
+	{ TEST  , EV01 ,   4  , EVENT9  , 9  , 400  }
+	{ TEST  , EV01 ,   4  , EVENT10 , 10 , 450  }
+	{ TEST  , EV01 ,   4  , EVENT11 , 11 , 500  }
+	{ TEST  , EV01 ,   4  , EVENT12 , 12 , 550  }
+	{ TEST  , EV01 ,   4  , EVENT13 , 13 , 600  }
+	{ TEST  , EV01 ,   4  , EVENT14 , 14 , 650  }
+	{ TEST  , EV01 ,   4  , EVENT15 , 15 , 700  }
+	{ TEST  , EV01 ,   4  , EVENT16 , 16 , 750  }
 }
