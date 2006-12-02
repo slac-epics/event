@@ -21,7 +21,7 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
   field(ASQ1, "YES")
   field(ASQ2, "YES")
 # Don't trigger event output 0 from AC input divider.
-# field(AEV0, "NO")
+  field(AEV0, "NO")
 # Don't synchronize AC input trigger with multiplexed counter, don't divide it, and don't delay it.
   field(ASYN, "NO")
 # ADIV of 0 means bypass phase and divide logic.
@@ -31,52 +31,48 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
 # There is no multiplexed counter, all MC*,MD*,ME*,MS* fields left at 0.
 }
 
-#record(waveform, "EVG:$(LOCA):$(UNIT):PATTERN") {
-#  field(DESC, "EVG $(UNIT) Timing Pattern")
-#  field(NELM, "4")
-#  field(DTYP, "EVG")
-#  field(INP, "#C$(CARD) S0 @")
-#  field(FTVL, "LONG")
-#}
-#
 # In order to take care of the heart beat (0x7A) and time stamp reset/resync 
 # (0x7D) events, longout records are used that have their output links 
 # pointed to the VME field on the above EG record. When they are processed, 
 # the DOL field of the longout record is sent out on the event system.
-#record(longout, "EVG:$(LOCA):$(UNIT):HEARTBEAT") {
-#  field(DESC, "EVG $(UNIT) Heartbeat")
-#  field(SCAN, "1 second")
-#  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
-#  field(DOL, "122")
-#  field(OMSL, "closed_loop")
-#}
-#
-#record(longout, "EVG:$(LOCA):$(UNIT):RESYNC") {
-#  field(DESC, "EVG $(UNIT) Resynchronize")
-#  field(SCAN, "10 second")
-#  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
-#  field(DOL, "125")
-#  field(OMSL, "closed_loop")
-#}
-#
-#record(longout, "EVG:$(LOCA):$(UNIT):STARTXFER") {
-#  field(DESC, "EVG $(UNIT) Start Transfer")
-#  field(PINI, "YES")
-#  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME PP")
-#  field(DOL, "7")
-#  field(OMSL, "closed_loop")
-#}
+record(longout, "EVG:$(LOCA):$(UNIT):HEARTBEAT") {
+  field(DESC, "EVG $(UNIT) Heartbeat")
+  field(SCAN, "1 second")
+  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
+  field(DOL, "122")
+  field(OMSL, "closed_loop")
+}
 
-record(ao, "EVG:$(LOCA):$(UNIT):EVENT") {
+record(longout, "EVG:$(LOCA):$(UNIT):RESYNC") {
+  field(DESC, "EVG $(UNIT) Resynchronize")
+  field(SCAN, "10 second")
+  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
+  field(DOL, "125")
+  field(OMSL, "closed_loop")
+}
+
+record(longout, "EVG:$(LOCA):$(UNIT):EVENT") {
   field(DESC, "EVG $(UNIT) Event Code")
   field(PINI, "YES")
-  field(DRVH, "111")
+  field(DRVH, "256")
   field(DRVL, "1")
-  field(HOPR, "100")
   field(MDEL, "-1")
 }
+
 record(seq, "EVG:$(LOCA):$(UNIT):EVENTSEND") {
   field(DESC, "EVG $(UNIT) Send Event Code")
   field(DOL1, "EVG:$(LOCA):$(UNIT):EVENT")
-  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.VME")
+  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.VME PP")
+}
+
+record(seq, "EVG:$(LOCA):$(UNIT):SEQ1SEND") {
+  field(DESC, "EVG $(UNIT) Send Seq 1")
+  field(DOL1, "1")
+  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.TRG1 PP")
+}
+
+record(seq, "EVG:$(LOCA):$(UNIT):SEQ2SEND") {
+  field(DESC, "EVG $(UNIT) Send Seq 2")
+  field(DOL1, "1")
+  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.TRG2 PP")
 }
