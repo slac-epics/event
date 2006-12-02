@@ -169,7 +169,7 @@ epicsStatus ErInitRecord (erRecord *pRec)
     * Output a debug message if the debug flag is set
     */
     if (ErDebug)
-        errlogPrintf ("devMrfEr::ErInitRecord(%s) entered\n", pRec->name);
+        printf ("devMrfEr::ErInitRecord(%s) entered\n", pRec->name);
 
    /*---------------------
     * Make sure the card number is valid by fetching its card structure
@@ -258,7 +258,7 @@ epicsStatus ErProcess (erRecord  *pRec)
     * Output a debug message if the debug flag is set.
     */
     if (ErDebug)
-        errlogPrintf ("devMrfEr: ErProcess (%s) entered\n", pRec->name);
+        printf ("devMrfEr: ErProcess (%s) entered\n", pRec->name);
 
    /*---------------------
     * Get the card structure.
@@ -449,7 +449,7 @@ epicsStatus ErEventInitRecord (ereventRecord *pRec)
     * Output a debug message if the debug flag is set.
     */
     if (ErDebug)
-        errlogPrintf ("devMrfEr::ErEventInitRec(%s)\n", pRec->name);
+        printf ("devMrfEr::ErEventInitRec(%s)\n", pRec->name);
 
    /*---------------------
     * Make sure the card number is valid
@@ -544,7 +544,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     */
     DebugFlag = (pRec->tpro > 10) || (ErDebug > 10);
     if (DebugFlag)
-        errlogPrintf ("ErEventProc(%s) entered.  ENAB = %s\n",
+        printf ("ErEventProc(%s) entered.  ENAB = %s\n",
                       pRec->name, pRec->enab?"True":"False");
 
    /*---------------------
@@ -582,7 +582,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         */
         if (pRec->enm != pRec->lenm) {
             if (DebugFlag)
-                errlogPrintf ("ErEventProc(%s) event number changed %d-%d\n", 
+                printf ("ErEventProc(%s) event number changed %d-%d\n", 
                               pRec->name, pRec->lenm, pRec->enm);
 
            /* Clear the entry for the previous event number */ 
@@ -600,7 +600,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         */
         if (Mask != pRec->lout) {
             if (DebugFlag)
-                errlogPrintf ("ErEventProc(%s) New RAM mask is 0x%4.4X\n", pRec->name, Mask);
+                printf ("ErEventProc(%s) New RAM mask is 0x%4.4X\n", pRec->name, Mask);
 
             pRec->lout = Mask;
             LoadMask = epicsTrue;
@@ -648,7 +648,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     */
     if (LoadRam) {
         if (DebugFlag)
-            errlogPrintf ("ErEventProc(%s) updating Event RAM\n", pRec->name);
+            printf ("ErEventProc(%s) updating Event RAM\n", pRec->name);
 
         if (Mask & EVR_MAP_INTERRUPT)
             ErEventIrq (pCard, epicsTrue);
@@ -661,7 +661,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     */
     epicsMutexUnlock (pCard->CardLock);
     if (DebugFlag)
-        errlogPrintf ("ErEventProc(%s) I/O operations complete\n", pRec->name);
+        printf ("ErEventProc(%s) I/O operations complete\n", pRec->name);
 
    /*---------------------
     * Raise the record severity to MAJOR, if the event number is not valid.
@@ -694,7 +694,7 @@ static ErDsetStruct devMrfErEpicsEvent = {
     (DEVSUPFUN)NULL,                    /* -- No device initialization route                      */
     (DEVSUPFUN)ErEpicsEventInitRec,     /* Record initialization routine                          */
     (DEVSUPFUN)ErEpicsEventGetIoScan,   /* Get I/O interrupt information routine                  */
-    (DEVSUPFUN)ErEventProcess           /* -- No Record processing routine                        */
+    (DEVSUPFUN)NULL                     /* -- No Record processing routine                        */
 };
 
 epicsExportAddress (dset, devMrfErEpicsEvent);
@@ -749,7 +749,7 @@ epicsStatus ErEpicsEventInitRec (eventRecord *pRec)
     * Output a debug message if the debug flag is set.
     */
     if (ErDebug)
-        errlogPrintf ("ErEpicsEventInitRec(%s) Card %d, Event %d\n",
+        printf ("ErEpicsEventInitRec(%s) Card %d, Event %d\n",
                       pRec->name, Card, Event);
 
    /*---------------------
@@ -1019,7 +1019,7 @@ epicsStatus ErRegisterEventHandler (int Card, USER_EVENT_FUNC EventFunc)
     ErCardStruct  *pCard;
 
     if (ErDebug){
-        errlogPrintf ("ErRegisterEventHandler(%d, %p)\n", Card, (void *)EventFunc);
+        printf ("ErRegisterEventHandler(%d, %p)\n", Card, (void *)EventFunc);
     }
 
     if (NULL == (pCard = ErGetCardStruct(Card))) {
@@ -1045,7 +1045,7 @@ epicsStatus ErRegisterErrorHandler (int Card, USER_ERROR_FUNC ErrorFunc)
     ErCardStruct  *pCard;
 
     if (ErDebug){
-        errlogPrintf ("ErRegisterErrorHandler(%d, %p)\n", Card, (void *)ErrorFunc);
+        printf ("ErRegisterErrorHandler(%d, %p)\n", Card, (void *)ErrorFunc);
     }
 
     if (NULL == (pCard = ErGetCardStruct(Card))) {
