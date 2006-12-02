@@ -13,6 +13,7 @@ include $(TOP)/configure/CONFIG
 
 DB += evr.db
 DB += evrEvent.db
+DB += evrEventRate.db
 DB += evrTEST.template
 
 DB += evg.db
