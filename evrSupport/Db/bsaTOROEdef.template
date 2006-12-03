@@ -1,0 +1,52 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition records for a single Toroid.
+#
+# Name: bsaTORO.template - revised
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+file db/bsaDevStates.db
+{
+#	    Device
+  pattern {  DEV    ,SECN1,SECN2,SECN3}
+	  {$(DEVICE), TMIT, TMIT, TMIT}
+}
+
+file db/bsaEdefAvg.db
+{
+#                                   Meas Defn
+#	      Device                Name Unit
+  pattern {DEV    ,SECN, MDID  ,MD,  IOC , EGU, HOPR , LOPR ,PREC, ADEL, MDEL , EIOC   , BIT}
+	  { $(DEVICE) ,TMIT,  1   , 1,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B0}
+	  { $(DEVICE) ,TMIT,  2   , 2,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B1}
+	  { $(DEVICE) ,TMIT,  3   , 3,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B2}
+	  { $(DEVICE) ,TMIT,  4   , 4,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B3}
+	  { $(DEVICE) ,TMIT,  5   , 5,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B4}
+	  { $(DEVICE) ,TMIT,  6   , 6,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B5}
+	  { $(DEVICE) ,TMIT,  7   , 7,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B6}
+	  { $(DEVICE) ,TMIT,  8   , 8,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B7}
+	  { $(DEVICE) ,TMIT,  9   , 9,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B8}
+	  { $(DEVICE) ,TMIT,  10  ,10,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B9}
+	  { $(DEVICE) ,TMIT,  11  ,11,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BA}
+	  { $(DEVICE) ,TMIT,  12  ,12,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BB}
+	  { $(DEVICE) ,TMIT,  13  ,13,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BC}
+	  { $(DEVICE) ,TMIT,  14  ,14,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BD}
+	  { $(DEVICE) ,TMIT,  15  ,15,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BE}
+	  { $(DEVICE) ,TMIT,  1HZ ,16,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BF}
+	  { $(DEVICE) ,TMIT,  10HZ,17,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B0}
+	  { $(DEVICE) ,TMIT,  FULL,18,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B1}
+	  { $(DEVICE) ,TMIT,  F1  ,19,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B2}
+	  { $(DEVICE) ,TMIT,  F2  ,20,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B3}
+}
+
+file db/bsaEdefFanouts.db
+{
+#	      Device           Name
+  pattern {DEV    ,SECN  }
+	  { $(DEVICE) ,TMIT  }
+}
+# For SIM - Hook up (DEV)FANOUT in bsaTestFanouts.db to (DEV):EDEFFAN(SECN) in above file
+# For real hw, link to (DEV):EDEFFAN(SECN) after processing the secondary
