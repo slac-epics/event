@@ -1,0 +1,51 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition records for a single 
+#	bunch length measurement.
+#
+# Name: bsaBLENEdef.template - revised
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+file db/bsaDevStates.db
+{
+#	    Device
+  pattern {  DEV    ,SECN1,SECN2,SECN3}
+	  {$(DEVICE)    ,WIDTH,WIDTH,WIDTH}
+}
+
+file db/bsaEdefAvg.db
+{
+  pattern {DEV    , SECN, MDID , MD,   IOC  ,EGU ,HOPR,LOPR,PREC,ADEL, MDEL, EIOC, BIT}
+	  { $(DEVICE) ,WIDTH,  1   , 1 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B0}
+	  { $(DEVICE) ,WIDTH,  2   , 2 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B1}
+	  { $(DEVICE) ,WIDTH,  3   , 3 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B2}
+	  { $(DEVICE) ,WIDTH,  4   , 4 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B3}
+	  { $(DEVICE) ,WIDTH,  5   , 5 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B4}
+	  { $(DEVICE) ,WIDTH,  6   , 6 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B5}
+	  { $(DEVICE) ,WIDTH,  7   , 7 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B6}
+	  { $(DEVICE) ,WIDTH,  8   , 8 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B7}
+	  { $(DEVICE) ,WIDTH,  9   , 9 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B8}
+	  { $(DEVICE) ,WIDTH,  10  ,10 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.B9}
+	  { $(DEVICE) ,WIDTH,  11  ,11 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.BA}
+	  { $(DEVICE) ,WIDTH,  12  ,12 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.BB}
+	  { $(DEVICE) ,WIDTH,  13  ,13 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.BC}
+	  { $(DEVICE) ,WIDTH,  14  ,14 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.BD}
+	  { $(DEVICE) ,WIDTH,  15  ,15 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.BE}
+	  { $(DEVICE) ,WIDTH, 1HZ  ,16 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A.BF}
+	  { $(DEVICE) ,WIDTH,10HZ  ,17 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), B.B0}
+      { $(DEVICE) ,WIDTH,FULL  ,18 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), B.B1}
+	  { $(DEVICE) ,WIDTH,  F1  ,19 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), B.B2}
+	  { $(DEVICE) ,WIDTH,  F2  ,20 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), B.B3}
+}
+
+file db/bsaEdefFanouts.db
+{
+#	      Device           Name
+  pattern {DEV    ,SECN  }
+	  { $(DEVICE) ,WIDTH }
+}
+# For SIM - Hook up (DEV)FANOUT in bsaTestFanouts.db to (DEV):EDEFFAN(SECN) in above file
+# For real hw, link to (DEV):EDEFFAN(SECN) after processing the secondary
