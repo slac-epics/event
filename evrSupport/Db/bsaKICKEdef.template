@@ -1,0 +1,53 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition records for a single 
+#	kicker (pulse amplitude only).
+#
+# Name: bsaKICKEdef.template
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+file db/bsaDevStates.db
+{
+#	    Device
+  pattern {  DEV    ,  SECN1  ,  SECN2  ,  SECN3  }
+	  {$(DEVICE),PULSEAMPL,PULSEAMPL,PULSEAMPL}
+}
+
+file db/bsaEdefAvg.db
+{
+#                                       Event Defn
+#	      Device                     Name Unit
+  pattern {DEV    ,   SECN  , MDID , MD, IOC   ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, EIOC   , BIT}
+	  { $(DEVICE) ,PULSEAMPL,  1   , 1 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B0}
+	  { $(DEVICE) ,PULSEAMPL,  2   , 2 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B1}
+	  { $(DEVICE) ,PULSEAMPL,  3   , 3 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B2}
+	  { $(DEVICE) ,PULSEAMPL,  4   , 4 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B3}
+	  { $(DEVICE) ,PULSEAMPL,  5   , 5 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B4}
+	  { $(DEVICE) ,PULSEAMPL,  6   , 6 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B5}
+	  { $(DEVICE) ,PULSEAMPL,  7   , 7 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B6}
+	  { $(DEVICE) ,PULSEAMPL,  8   , 8 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B7}
+	  { $(DEVICE) ,PULSEAMPL,  9   , 9 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B8}
+	  { $(DEVICE) ,PULSEAMPL,  10   ,10,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B9}
+	  { $(DEVICE) ,PULSEAMPL,  11   ,11,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BA}
+	  { $(DEVICE) ,PULSEAMPL,  12   ,12,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BB}
+	  { $(DEVICE) ,PULSEAMPL,  13   ,13,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BC}
+	  { $(DEVICE) ,PULSEAMPL,  14   ,14,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BD}
+	  { $(DEVICE) ,PULSEAMPL,  15   ,15,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BD}
+	  { $(DEVICE) ,PULSEAMPL, 1HZ   ,16,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BF}
+	  { $(DEVICE) ,PULSEAMPL,10HZ   ,17,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B0}
+	  { $(DEVICE) ,PULSEAMPL,FULL   ,18,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B1}
+	  { $(DEVICE) ,PULSEAMPL,  F1   ,19,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B2}
+	  { $(DEVICE) ,PULSEAMPL,  F2   ,20,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B3}
+}
+
+file db/bsaEdefFanouts.db
+{
+#	      Device           Name
+  pattern {DEV    ,SECN  }
+	  { $(DEVICE) ,PULSEAMPL }
+}
+# For SIM - Hook up (DEV)FANOUT in bsaTestFanouts.db to (DEV):EDEFFAN(SECN) in above file
+# For real hw, link to (DEV):EDEFFAN(SECN) after processing the secondary
