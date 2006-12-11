@@ -1,0 +1,30 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition and Control test records for a single
+#	bunch length measurement.
+#
+# Name: bsacBLENTest.template
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+file db/bsaTestInput.db
+{
+#                             
+#             Device          
+  pattern {    DEV    ,SECN , CALC,  A , B ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, RES,		TSEL	         }
+          { $(DEVICE) ,WIDTH, "A" , 299, 0 ,fsec,300, 100,  3 , .01,.001,.002, $(EIOC):PULSEID.TIME}
+}
+
+file db/bsaTestFanouts.db
+{
+  pattern {    DEV    ,SECN,PHAS,        
+	           LNK2                     ,LNK3                       ,     LNK4             ,
+               LNK5                     ,LNK6                       ,     FLNK             ,
+	           LNK7                     ,LNK8                       ,     LNK9             }
+          { $(DEVICE) , WIDTH ,  0,
+	          "$(DEVICE):STATUS PP"     ,"$(DEVICE):EFWIDTH PP" , "$(DEVICE):FANOUTSLC PP",                
+	          ""                        , ""                        , ""                   ,
+              ""                        , ""                        , ""                   }
+}
