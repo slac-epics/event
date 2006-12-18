@@ -1,0 +1,24 @@
+#==============================================================================
+#
+# Abs:  LCLS IOC records for Pattern Processing from Waveform
+#
+# Name: evrPatternProc.template
+#
+# Note: Signal names must be all uppercase and 12 chars or less to follow
+#       LCLS naming conventions.
+#
+# Macros:
+# Set PRIM to IOC.
+# Set LOCA to 4 char location name.
+# Set UNIT = xxyy. where xx = subsystem ID and yy=index of that subsystem in LOCA.
+#
+#==============================================================================
+#
+file db/evrPatternProc.db
+{
+#
+#	  Location             
+pattern {DEV       }
+	{${DEVICE} }
+ 
+}
