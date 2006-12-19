@@ -1,0 +1,7 @@
+include "evrTime.dbd"
+include "evrPattern.dbd"
+include "mpgPattern.dbd"
+include "edef.dbd"
+include "generalTimeNonVx.dbd"
+include "sSubRecord.dbd"
+include "timestampRecord.dbd"
