@@ -1,0 +1,285 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition and Control records for a single IOC.
+#
+# Name: bsacEVGEdef.template
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+file db/bsaEdef.db
+{
+#                   Meas Defn                    0=Off
+#	         #    ID      Name               1=On 
+pattern   {SYS , MD, MDID  ,  NAME    ,USER,NAVG,CTRL,NMEAS, MODE , DEV       }
+# First 15 measurement definitions for HLA and CA users
+	  {$(SYSI),  1,   1   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  2,   2   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  3,   3   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  4,   4   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  5,   5   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  6,   6   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  7,   7   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  8,   8   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI),  9,   9   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI), 10,  10   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI), 11,  11   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI), 12,  12   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI), 13,  13   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI), 14,  14   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+	  {$(SYSI), 15,  15   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
+# Next 4 measurement definitions for 1Hz, 10Hz, and Full 
+	  {$(SYSI), 16,  1HZ  , "1HZ"    ,SYS ,  1 ,  1 , -1,  0  , $(DEVICE) }
+	  {$(SYSI), 17, 10HZ  ,"10HZ"    ,SYS ,  1 ,  1 , -1,  0  , $(DEVICE) }
+	  {$(SYSI), 18, FULL  , "FULL"   ,SYS ,  1 ,  1 , -1,  0  , $(DEVICE) }
+# Last 2 measurement definitions for fast feedback
+	  {$(SYSI), 19,$(F1ID), $(FBCK1) ,SYS ,  1,   1 , -1,  0  , $(DEVICE) }
+	  {$(SYSI), 20,$(F2ID), $(FBCK2) ,SYS ,  1,   1 , -1,  0  , $(DEVICE) }
+}
+file db/bsaEdefMask.db
+{
+#                  Meas 
+#	            #            <----2 16 bit masks---->
+  pattern {SYS, MD,   SECN   ,      A    ,      B    }
+	  {$(SYSI),  1,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  2,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  3,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  4,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  5,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  6,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  7,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  8,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  9,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 10,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 11,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 12,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 13,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 14,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 15,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 16,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 17,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 18,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 19,INCLUSION1,      0    ,      0    }
+	  {$(SYSI), 20,INCLUSION1,      0    ,      0    }
+	  {$(SYSI),  1,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  2,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  3,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  4,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  5,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  6,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  7,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  8,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  9,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 10,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 11,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 12,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 13,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 14,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 15,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 16,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 17,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 18,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 19,INCLUSION2,      0    ,      0    }
+	  {$(SYSI), 20,INCLUSION2,      0    ,      0    }
+	  {$(SYSI),  1,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  2,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  3,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  4,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  5,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  6,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  7,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  8,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  9,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 10,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 11,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 12,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 13,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 14,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 15,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 16,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 17,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 18,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 19,INCLUSION3,      0    ,      0    }
+	  {$(SYSI), 20,INCLUSION3,      0    ,      0    }
+	  {$(SYSI),  1,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  2,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  3,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  4,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  5,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  6,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  7,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  8,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  9,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 10,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 11,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 12,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 13,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 14,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 15,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 16,INCLUSION4,      1    ,      0    }
+	  {$(SYSI), 17,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 18,INCLUSION4,      0    ,      0    }
+	  {$(SYSI), 19,INCLUSION4,      1    ,      0    }
+	  {$(SYSI), 20,INCLUSION4,      0    ,      0    }
+	  {$(SYSI),  1,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  2,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  3,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  4,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  5,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  6,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  7,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  8,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  9,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 10,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 11,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 12,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 13,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 14,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 15,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 16,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 17,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 18,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 19,INCLUSION5,      0    ,      0    }
+	  {$(SYSI), 20,INCLUSION5,      0    ,      0    }
+	  {$(SYSI),  1,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  2,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  3,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  4,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  5,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  6,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  7,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  8,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  9,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 10,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 11,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 12,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 13,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 14,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 15,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 16,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 17,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 18,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 19,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI), 20,EXCLUSION1,      0    ,      0    }
+	  {$(SYSI),  1,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  2,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  3,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  4,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  5,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  6,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  7,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  8,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  9,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 10,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 11,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 12,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 13,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 14,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 15,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 16,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 17,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 18,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 19,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI), 20,EXCLUSION2,      0    ,      0    }
+	  {$(SYSI),  1,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  2,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  3,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  4,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  5,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  6,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  7,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  8,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  9,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 10,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 11,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 12,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 13,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 14,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 15,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 16,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 17,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 18,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 19,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI), 20,EXCLUSION3,      0    ,      0    }
+	  {$(SYSI),  1,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  2,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  3,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  4,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  5,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  6,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  7,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  8,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  9,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 10,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 11,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 12,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 13,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 14,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 15,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 16,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 17,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 18,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 19,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI), 20,EXCLUSION4,      0    ,      0    }
+	  {$(SYSI),  1,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  2,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  3,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  4,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  5,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  6,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  7,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  8,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  9,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 10,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 11,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 12,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 13,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 14,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 15,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 16,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 17,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 18,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 19,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI), 20,EXCLUSION5,      0    ,      0    }
+	  {$(SYSI),  1,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  2,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  3,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  4,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  5,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  6,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  7,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  8,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  9,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 10,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 11,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 12,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 13,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 14,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 15,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 16,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 17,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 18,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 19,MODIFIER4,      0    ,      0    }
+	  {$(SYSI), 20,MODIFIER4,      0    ,      0    }
+	  {$(SYSI),  1,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  2,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  3,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  4,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  5,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  6,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  7,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  8,MODIFIER5,      0    ,      0    }
+	  {$(SYSI),  9,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 10,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 11,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 12,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 13,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 14,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 15,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 16,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 17,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 18,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 19,MODIFIER5,      0    ,      0    }
+	  {$(SYSI), 20,MODIFIER5,      0    ,      0    }
+}
