@@ -27,7 +27,7 @@ include $(TOP)/configure/CONFIG
 include $(SOURCE_DIR)/MRF_CONFIG
 
 #USR_CFLAGS += -pedantic
-USR_CFLAGS += -DDEBUG_PRINT
+USR_CFLAGS += -DDEBUG_PRINT -DPCI
 
 #---------------------
 # Only build for "hardware" IOC's
@@ -82,6 +82,7 @@ LIBRARY_IOC      += devMrfEr
 
 devMrfEr_OBJS += drvMrfEr
 devMrfEr_OBJS += devMrfEr
+devMrfEr_OBJS_RTEMS += devLibPMC
 devMrfEr_OBJS += erRecord
 devMrfEr_OBJS += ereventRecord
 

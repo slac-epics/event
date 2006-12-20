@@ -278,7 +278,7 @@ struct ErCardStruct {
     ELLNODE         Link;                   /* Linked list node structure                         */
     void           *pRec;                   /* Pointer to the ER record                           */
     epicsInt16      Card;                   /* Card number                                        */
-    epicsInt16      IrqVector;              /* IRQ Vector                                         */
+    epicsInt32      IrqVector;              /* IRQ Vector 21nov2006 dayle chg'd from 16 to accom PMC*/
     epicsInt32      IrqLevel;               /* Interrupt level                                    */
     void           *pEr;                    /* Pointer to the event receiver register map         */
     epicsMutexId    CardLock;               /* Mutex to lock acces to the card                    */
