@@ -4,6 +4,8 @@ include $(TOP)/configure/CONFIG
 
 DIRS += configure
 DIRS += mrfApp
-#DIRS += xxxApp
+DIRS += evrSupport
+DIRS += mpgSupport
+#DIRS += dataSupport
 
 include $(TOP)/configure/RULES_TOP
