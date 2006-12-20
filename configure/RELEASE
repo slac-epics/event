@@ -8,5 +8,7 @@
 # EPICS_BASE usually appears last so other apps can override stuff:
 #
 include $(TOP)/../../configure/RELEASE-base
+include $(TOP)/../../configure/RELEASE-sncseq
+include $(TOP)/../../configure/RELEASE-generalTime
 include $(TOP)/../../configure/CONFIG_SITE-master
 
