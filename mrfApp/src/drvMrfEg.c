@@ -2069,25 +2069,28 @@ int EvgDataBufferSetSize(volatile MrfEVGRegs *pEvg, int size)
 }
 int EvgDataBufferLoad(int Card, epicsUInt32 *data, int nelm) 
 {
-  volatile MrfEVGRegs *pEvg;
-  int ii;
- 
-  /* OLD: pEvg = EgLink[Card].pEg; */
-  /* NEW: */
-  EgCardStruct  *pCard;
-  pCard = EgGetCardStruct(Card);
+  EgCardStruct  *pCard = EgGetCardStruct(Card);
   if (pCard == NULL) {
     DEBUGPRINT(DP_ERROR, drvMrfEgFlag, ("EvgDataBufferLoad: Null EgCardStruct for card=%d\n",Card));
     return ERROR;
   }
 
-  pEvg = pCard->pEg;
+  /* Update registers and send */
+  EvgDataBufferUpdate(pCard, data, nelm);
+
+  return OK;
+}
+int EvgDataBufferUpdate(EgCardStruct *pParm, epicsUInt32 *data, int nelm) 
+{
+  volatile MrfEVGRegs *pEvg;
+  int ii; 
+
+  pEvg = pParm->pEg;
   for (ii = 0; ii < nelm; ii++) {
     MRF_VME_REG32_WRITE(&pEvg->DataBuffer[ii], data[ii]);
   }
-
-  /* Trigger the transfer */
-  EvgDataBufferSend(pEvg);
+  MRF_VME_REG32_WRITE(&pEvg->DataBufControl,
+                      MRF_VME_REG32_READ(&pEvg->DataBufControl) | EVG_DBUF_TRIGGER);
 
   return OK;
 }

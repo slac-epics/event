@@ -294,6 +294,7 @@ int EvgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable);
 int EvgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable);
 int EvgDataBufferSetSize(volatile MrfEVGRegs *pEvg, int size);
 int EvgDataBufferLoad(int Card, epicsUInt32 *data, int nelm);
+int EvgDataBufferUpdate(EgCardStruct *pParm, epicsUInt32 *data, int nelm);
 void EvgDataBufferSend(volatile MrfEVGRegs *pEvg);
 int EvgDataBufferInit(int Card, int nelm);
 EgCardStruct *EgGetCardStruct (int Card);
