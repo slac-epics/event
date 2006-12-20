@@ -10,5 +10,11 @@
 include $(TOP)/../../configure/RELEASE-base
 include $(TOP)/../../configure/RELEASE-sncseq
 include $(TOP)/../../configure/RELEASE-generalTime
-include $(TOP)/../../configure/CONFIG_SITE-master
+EPICS_SITE=$(TOP)/../..
+
+# Libraries used by EVR IOCs
+EVR_IOC_LIBS=evrSupport sSubRecord generalTime
+
+# Libraries used by MPG IOCs
+MPG_IOC_LIBS=mpgSupport evrSupport sSubRecord std generalTime seq pv
 
