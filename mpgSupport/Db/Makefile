@@ -20,14 +20,14 @@ DB += mpgPatternProc.db
 DB += bsaEdef.db
 DB += bsaEdefMask.db
 DB += bsaEVGmask.db
+DB += bsaEVGmask.template
 DB += bsaEVGmaskConst.db 
 DB += bsaEdef.template
 DB += bsaEVGmaskUnits.template
 
-#----------------------------------------------------
-# If <anyname>.db template is not named <anyname>*.template add
-# <anyname>_TEMPLATE = <templatename>
-
 include $(TOP)/configure/RULES
+#----------------------------------------
+#  ADD RULES AFTER THIS LINE
+include $(TOP)/configure/RULES.Db
 
 
