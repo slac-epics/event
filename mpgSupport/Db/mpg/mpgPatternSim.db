@@ -1,0 +1,18 @@
+record(sub, "$(DEV):PATTERNSIM") {
+  field(INPD, "$(SIM):MODIFIER1")
+  field(INPE, "$(SIM):MODIFIER2")
+  field(INPF, "$(SIM):MODIFIER3")
+  field(INPG, "$(SIM):MODIFIER4")
+  field(INPJ, "$(SIM):BEAMCODE")
+  field(INPK, "$(SIM):YY")
+  field(INAM, "mpgPatternInit")
+  field(SNAM, "mpgPatternSim")
+}
+
+record(fanout, "$(DEV):FANOUTSIM") {
+  field(DESC, "Sim Fanout")
+  field(SCAN, ".1 second")
+  field(LNK1, "$(SIM):FANOUT")
+  field(LNK4, "$(DEV):PATTERNSIM")
+  field(PHAS, "0")
+}
