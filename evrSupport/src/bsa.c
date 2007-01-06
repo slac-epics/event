@@ -107,10 +107,15 @@ static int bsaInit(sSubRecord *psub)
 ==============================================================================*/
 static long bsaSecnAvg(sSubRecord *psub)
 {
+/* linux uses system time; rtems general time */
+#ifndef linux
   epicsTimeStamp  timeEVR; 
   epicsTimeStamp  timeSecn;  /* for comparison */
+#endif
 
   psub->x = 0;    /* default to history buff disable */
+
+#ifndef linux
 
   /*EVR timestamp:*/
   if (dbGetTimeStamp(&psub->inpf, &timeEVR)){
@@ -130,7 +135,7 @@ static long bsaSecnAvg(sSubRecord *psub)
 	psub->w++;
 	return -1;
   }
-
+#endif
   /*  if (psub->n < 2) psub->n++; *//* increment first-time flag */
 
   /* Reinit for a new average */
