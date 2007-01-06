@@ -30,12 +30,12 @@ pattern   {SYS , MD, MDID  ,  NAME    ,USER,NAVG,CTRL,NMEAS, MODE , DEV       }
 	  {$(SYSI), 14,  14   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
 	  {$(SYSI), 15,  15   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) }
 # Next 4 measurement definitions for 1Hz, 10Hz, and Full 
-	  {$(SYSI), 16,  1HZ  , "1HZ"    ,SYS ,  1 ,  1 , -1,  0  , $(DEVICE) }
-	  {$(SYSI), 17, 10HZ  ,"10HZ"    ,SYS ,  1 ,  1 , -1,  0  , $(DEVICE) }
-	  {$(SYSI), 18, FULL  , "FULL"   ,SYS ,  1 ,  1 , -1,  0  , $(DEVICE) }
+	  {$(SYSI), 16,  1HZ  , "1HZ"    ,SYS ,  1 ,  1 , -1,  1  , $(DEVICE) }
+	  {$(SYSI), 17, 10HZ  ,"10HZ"    ,SYS ,  1 ,  1 , -1,  1  , $(DEVICE) }
+	  {$(SYSI), 18, FULL  , "FULL"   ,SYS ,  1 ,  1 , -1,  1  , $(DEVICE) }
 # Last 2 measurement definitions for fast feedback
-	  {$(SYSI), 19,$(F1ID), $(FBCK1) ,SYS ,  1,   1 , -1,  0  , $(DEVICE) }
-	  {$(SYSI), 20,$(F2ID), $(FBCK2) ,SYS ,  1,   1 , -1,  0  , $(DEVICE) }
+	  {$(SYSI), 19,$(F1ID), $(FBCK1) ,SYS ,  1,   1 , -1,  1  , $(DEVICE) }
+	  {$(SYSI), 20,$(F2ID), $(FBCK2) ,SYS ,  1,   1 , -1,  1  , $(DEVICE) }
 }
 file db/bsaEdefMask.db
 {
