@@ -65,14 +65,20 @@ record(seq, "EVG:$(LOCA):$(UNIT):EVENTSEND") {
   field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.VME PP")
 }
 
-record(seq, "EVG:$(LOCA):$(UNIT):SEQ1SEND") {
+record(bo, "EVG:$(LOCA):$(UNIT):SEQ1SEND") {
   field(DESC, "EVG $(UNIT) Send Seq 1")
-  field(DOL1, "1")
-  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.TRG1 PP")
+  field(ZNAM, "No Trigger")
+  field(ONAM, "Trigger")
+  field(DOL,  "1")
+  field(OMSL, "closed_loop")
+  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.TRG1 PP")
 }
 
-record(seq, "EVG:$(LOCA):$(UNIT):SEQ2SEND") {
+record(bo, "EVG:$(LOCA):$(UNIT):SEQ2SEND") {
   field(DESC, "EVG $(UNIT) Send Seq 2")
-  field(DOL1, "1")
-  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.TRG2 PP")
+  field(ZNAM, "No Trigger")
+  field(ONAM, "Trigger")
+  field(DOL,  "1")
+  field(OMSL, "closed_loop")
+  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.TRG2 PP")
 }
