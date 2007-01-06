@@ -51,7 +51,6 @@
 #include "errlog.h"           /* errlogPrintf               */
 #include "evrQueue.h"         /* for EVR_QUEUE_PATTERN*     */
 #include "evrTime.h"          /* for evrTime* prototypes    */
-#include "evrPattern.h"       /* for definitions            */
 #include "pnetSeqCheck.h"     /* for pnetSeqCheck* protos   */
 #ifdef __rtems__
 #include "drvMrfEg.h"         /* for EvgDataBufferLoad proto*/
