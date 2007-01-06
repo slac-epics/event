@@ -16,6 +16,7 @@ DB += evg.db
 DB += evgEvent.db
 # MPG 360Hz processing
 DB += mpgPatternProc.db
+DB += mpgPatternSim.db
 # Beam-synchronous acquisition event definitions
 DB += bsaEdef.db
 DB += bsaEdefMask.db
