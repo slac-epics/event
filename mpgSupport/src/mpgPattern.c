@@ -7,6 +7,7 @@
            mpgPatternProcInit  - MPG Pattern Setup Initialization
            mpgPatternProc      - 360Hz MPG Pattern Setup
            mpgPatternState     - Pattern Processing State and Diagnostics
+	   mpgPatternCheck     - Check Pattern against Event Definitions
 
   Abs: This file contains all subroutine support for the MPG IOC processing
        of the incoming Pnet pattern and outgoing MPG pattern.
@@ -47,19 +48,19 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction  */
 #include "epicsTime.h"        /* for epicsTimeGetCurrent    */
 #include "dbAccess.h"         /* DBADDR typedef and protos  */
-#include "evrPattern.h"       /* for evrPattern* prototypes */
+#include "errlog.h"           /* errlogPrintf               */
+#include "evrQueue.h"         /* for EVR_QUEUE_PATTERN*     */
 #include "evrTime.h"          /* for evrTime* prototypes    */
+#include "evrPattern.h"       /* for definitions            */
 #include "pnetSeqCheck.h"     /* for pnetSeqCheck* protos   */
 #ifdef __rtems__
 #include "drvMrfEg.h"         /* for EvgDataBufferLoad proto*/
 #endif
+void pnetSend(void *message);
 
 /* Modifier 1 Bit Masks */
 #define PNET_MPG_IPLING         (0x00004000)  /* Set when SLC MPG is IPLing  */
 #define PNET_MODULO720_RESYNC   (0x00008000)  /* Set to sync modulo 720      */
-
-/* This number should rollover every 69 days at 360 Hz */
-#define MPG_MAX_INT	       (2147483647)  /* 4 byte int - 1 bit for sign */
 
 /* VAL values set by subroutines */
 #define EVG_OK                0
@@ -82,10 +83,14 @@ int mpgPatternFlag = 0;
 #endif
 
 static unsigned int msgCount         = 0; /* # waveforms processed since boot/reset */ 
-static unsigned int msgRolloverCount = 0; /* # time msgCount reached MPG_MAX_INT    */ 
+static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
 static unsigned int resyncCount      = 0; /* # of times 6min 2s rollover happened since boot/reset */
+static unsigned int patternErrCount       = 0; /* # bad PNET waveforms       */
 static unsigned int pulseIDSyncErrCount   = 0; /* # of pulse ID  sync errors */
 static unsigned int modulo720SyncErrCount = 0; /* # of modulo720 sync errors */
+static unsigned int seqCheck1ErrCount     = 0;
+static unsigned int seqCheck2ErrCount     = 0;
+static unsigned int seqCheck3ErrCount     = 0;
 
 /*=============================================================================
 
@@ -113,7 +118,7 @@ static int mpgPatternInit(subRecord *psub)
         ------------------- ----------- ---------- ----------------------------
         subRecord *         psub        read       point to subroutine record
 
-  Rem:  Initialization subroutine for EVG:IN20:EV01:PATTERNPNET
+  Rem:  Initialization subroutine for IOC:LOCA:UNIT:PNET
 
   Inputs:
        A - Pnet waveform, used to access waveform data
@@ -128,7 +133,7 @@ static int mpgPatternPnetInit(subRecord *psub)
   /*
    * inpa must be a DB link and must be the proper type.
    */
-  if (wfAddr && (wfAddr->field_type == DBF_LONG))
+  if (wfAddr && (wfAddr->field_type == DBF_ULONG))
     psub->dpvt = (void *)wfAddr->pfield;
   else
     psub->dpvt = 0;
@@ -146,7 +151,7 @@ static int mpgPatternPnetInit(subRecord *psub)
         ------------------- ----------- ---------- ----------------------------
         subRecord *         psub        read       point to subroutine record
 
-  Rem:  Subroutine for EVG:IN20:EV01:PATTERNPNET
+  Rem:  Subroutine for IOC:LOCA:UNIT:PNET
 
   Inputs:
        A - Pnet waveform, used to access waveform data
@@ -163,7 +168,7 @@ static int mpgPatternPnetInit(subRecord *psub)
        G - Pnet Modifier 4
        I - Modulo 720 Count
        J - Beam Code
-       K - YY
+       K - Spare
        L - Pulse ID
        VAL = Error flag:
              0 = OK
@@ -183,16 +188,17 @@ static int mpgPatternPnetInit(subRecord *psub)
 static long mpgPatternPnet(subRecord *psub)
 {
   DBADDR                *wfAddr = dbGetPdbAddrFromLink(&psub->inpa);
-  evrPatternPnet_ts     *evrPatternPnet_ps = (evrPatternPnet_ts *)psub->dpvt;
+  epicsUInt32           *pnet_a = (epicsUInt32 *)psub->dpvt;
   int                    pulsid, pulsid_resync, modulo720Count;
   int                    errFlag = EVG_OK;
   unsigned char          traveling_one;
   unsigned char          seq_chk;
-  static unsigned int    pulseIDSync   = 0; /* EVG and SLC MPG pulse ID synced  */
+  static unsigned int    pulseIDSync   = 0; /* EVG and SLC MPG pulse ID  synced */
   static unsigned int    modulo720Sync = 0; /* EVG and SLC MPG modulo720 synced */
+  static unsigned int    seqCheckSync  = 0; /* sequence checking         synced */
 
   /* Keep a count of messages and reset before overflow */
-  if (msgCount < MPG_MAX_INT) {
+  if (msgCount < EVR_MAX_INT) {
     msgCount++;
   } else {
     msgRolloverCount++;
@@ -201,71 +207,80 @@ static long mpgPatternPnet(subRecord *psub)
   
   /* if waveform is invalid or has invalid size or type            */
   /*   set record invalid and pulse id to 0 and set flag           */
-  /*   evr timestamp/status to last good time with invalid status */
+  /*   evr timestamp/status to last good time with invalid status  */
 
-  if (psub->b ||
-      (psub->c < (sizeof(evrPatternPnet_ts)/sizeof(epicsUInt32))) ||
+  if (psub->b || (psub->c != EVR_PNET_MODIFIER_MAX) ||
       (!psub->dpvt) || (!wfAddr)) {
-    psub->d       = 0.0;
-    psub->e       = 0.0;
-    psub->f       = 0.0;
-    psub->g       = 0.0;
-    psub->j       = 0.0;
-    psub->i       = 0.0;
-    psub->k       = 0.0;
-    psub->l       = 0.0;
+    if (psub->b) patternErrCount++;
+    psub->d = psub->e = psub->f = psub->g = psub->i = psub->j = psub->l = 0.0;
     psub->val     = EVG_INVALID_WF;
     pulseIDSync   = 0;
     modulo720Sync = 0;
+    seqCheckSync  = 0;
     return -1;
   }		
   /* read from the waveform now */
   dbScanLock(wfAddr->precord);
   /* set outputs to the modifiers */
-  psub->d = (double)(evrPatternPnet_ps->modifier1);
-  psub->e = (double)(evrPatternPnet_ps->modifier2);
-  psub->f = (double)(evrPatternPnet_ps->modifier3);
-  psub->g = (double)(evrPatternPnet_ps->modifier4);
+  psub->d = (double)(pnet_a[0]);
+  psub->e = (double)(pnet_a[1]);
+  psub->f = (double)(pnet_a[2]);
+  psub->g = (double)(pnet_a[3]);
   /* beamcode decoded from modifier 1*/ 
-  psub->j = (double)((evrPatternPnet_ps->modifier1 >> 8) & BEAMCODE_BIT_MASK);
-  /* yy decoded from modifier 1 bits */
-  psub->k = (double)(evrPatternPnet_ps->modifier1 & YY_BIT_MASK);
+  psub->j = (double)((pnet_a[0] >> 8) & BEAMCODE_BIT_MASK);
   
   /* Check if SLC MPG is rebooting */
-  if (evrPatternPnet_ps->modifier1 & PNET_MPG_IPLING) {
+  if (pnet_a[0] & PNET_MPG_IPLING) {
     psub->i       = 0.0;
     psub->l       = 0.0;
     psub->val     = EVG_MPG_IPLING;
     pulseIDSync   = 0;
     modulo720Sync = 0;
+    seqCheckSync  = 0;
     dbScanUnlock(wfAddr->precord);
     return -1;
   }
   
   /* Do sequence checking if requested */
   if (psub->h > 0.5) { 
-    traveling_one = (unsigned char)(evrPatternPnet_ps->modifier2 & TIMESLOT_MASK);
-    if (!pnetSeqCheckData1(traveling_one)) /* "traveling 1" check */
+    traveling_one = (unsigned char)(pnet_a[1] & TIMESLOT_MASK);
+    seq_chk       = (unsigned char)((pnet_a[3] >> 29) & PNET_SEQ_CHECK);
+    if (pnetSeqCheckData1(traveling_one, seqCheckSync)) { /* "traveling 1" check */
       errFlag = EVG_SEQ_CHECK1_ERR;
-
-    seq_chk = (unsigned char)((evrPatternPnet_ps->modifier4 >> 29) & PNET_SEQ_CHECK);
-    if (!pnetSeqCheckData2(seq_chk))  /* 0-5 looping counter check */
+      seqCheck1ErrCount++;
+    } else if (pnetSeqCheckData2(seq_chk, seqCheckSync)) { /* 0-5 looping counter check */
+    /* Need to do more here to really handle this condition. TEG says
+       if MPG gets "off" chances are beam is hitting the sides. The
+       reaction of choice is for the micro to start sending zero beam
+     */
       errFlag = EVG_SEQ_CHECK2_ERR;
-
-    if (!pnetSeqCheckData3(traveling_one, seq_chk)) {/* check that two checksum values stay in sync */ 
-      if (errFlag == EVG_OK) errFlag = EVG_SEQ_CHECK2_ERR;
+      seqCheck2ErrCount++;
+    } else if (pnetSeqCheckData3(traveling_one, seq_chk)) {/* check that two checksum values stay in sync */ 
+      errFlag = EVG_SEQ_CHECK3_ERR;
+      seqCheck3ErrCount++;
     }
-  }
+    /* Both pulse ID and modulo 720 will need to be resync'ed too */
+    if (errFlag != EVG_OK) {
+      pulseIDSync   = 0;
+      modulo720Sync = 0;
+    }
+    seqCheckSync = 1;
+  } else {
+    seqCheckSync = 0;
+  } 
 
   /* Check if modulo-720 can be resynchronized on this pulse. */
-  modulo720Count = psub->i + 1.5;
-  if (evrPatternPnet_ps->modifier1 & PNET_MODULO720_RESYNC) {
+  modulo720Count = psub->i + 1.1;
+  if (pnet_a[0] & PNET_MODULO720_RESYNC) {
     /* If we should be sync'ed but are not, update a counter */
     if (modulo720Sync && (modulo720Count != 720)) {
       modulo720SyncErrCount++;
-      DEBUGPRINT(DP_INFO, mpgPatternFlag, ("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d", modulo720Count));
+      errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
+                   modulo720Count);
+      /* Assume pulse ID is also out-of-sync */
+      pulseIDSync = 0;
     }
-    modulo720Count = 1;
+    modulo720Count = 0;
     modulo720Sync  = 1;
   } else if (!modulo720Sync) {
     modulo720Count = 0;
@@ -277,18 +292,23 @@ static long mpgPatternPnet(subRecord *psub)
      data.  If found, it resets upper 4 bits of the pulse ID (lower bit
      will be zero).  Otherwise, the pulse ID is set to 1 if the last value
      is the rollover value.  Otherwise, the pulse ID is simply incremented.*/
-  pulsid        = psub->l + 1.5;
-  pulsid_resync = (evrPatternPnet_ps->modifier1>>3) & PULSEID_RESYNC;
+  pulsid        = psub->l + 1.1;
+  pulsid_resync = (pnet_a[0] >> 3) & PULSEID_RESYNC;
   if (pulsid_resync) {
     /* If we should be sync'ed but are not, update a counter */
     if ((pulseIDSync) && (pulsid != pulsid_resync)) {
       pulseIDSyncErrCount++;
-      DEBUGPRINT(DP_INFO, mpgPatternFlag, ("mpgPatternPnet: Pulse IDs not synchronized, mpg_pulsid = %d, evg_pulsid = %d\n", pulsid_resync, pulsid));
+      errlogPrintf("mpgPatternPnet: Pulse IDs not synchronized, MPG = %d, EVG = %d\n",
+                   pulsid_resync, pulsid);
+      /* Assume modulo 720 out-of-sync too unless the RESYNC bit is set */
+      if (!(pnet_a[0] & PNET_MODULO720_RESYNC)) {
+        modulo720Sync  = 0;
+        errFlag = EVG_MODULO720_NO_SYNC;
+      }
     }
     pulseIDSync = 1;
     pulsid = pulsid_resync;
-  }
-  else if (!pulseIDSync) {
+  } else if (!pulseIDSync) {
     pulsid  = 1;
     errFlag = EVG_PULSEID_NO_SYNC;
   } else if (pulsid > PULSEID_MAX) {    
@@ -315,7 +335,7 @@ static long mpgPatternPnet(subRecord *psub)
         ------------------- ----------- ---------- ----------------------------
         subRecord *         psub        read       point to subroutine record
 
-  Rem:  Initialization subroutine for EVG:IN20:EV01:PATTERN
+  Rem:  Initialization subroutine for IOC:LOCA:UNIT:PATTERN
 
   Inputs:
        A - EVG Card Number
@@ -333,7 +353,7 @@ static int mpgPatternProcInit(subRecord *psub)
    */
 #ifdef __rtems__
   if (psub->a > 0.5) {
-    EvgDataBufferInit((int)psub->a, sizeof(evrPatternWaveform_ts));
+    EvgDataBufferInit((int)psub->a, sizeof(evrQueuePattern_ts));
     psub->dpvt = (EgCardStruct *)EgGetCardStruct((int)psub->a);
     if (psub->dpvt) return 0;
     else            return -1;
@@ -352,7 +372,7 @@ static int mpgPatternProcInit(subRecord *psub)
         ------------------- ----------- ---------- ----------------------------
         subRecord *         psub        read       point to subroutine record
 
-  Rem:  Subroutine for EVG:IN20:EV01:PATTERN
+  Rem:  Subroutine for IOC:LOCA:UNIT:PATTERN
 
   Inputs:
     DPVT - Pointer to EVG Card Structure
@@ -369,7 +389,7 @@ static int mpgPatternProcInit(subRecord *psub)
                0 = don't process this pulse, 1 = process this pulse.
        I - Bunch Charge
        J - Beam Code
-       K - YY
+       K - Spare
        L - Pulse ID
      
   Outputs:
@@ -392,7 +412,7 @@ static int mpgPatternProcInit(subRecord *psub)
 ==============================================================================*/
 static long mpgPatternProc(subRecord *psub)
 {
-  evrPatternWaveform_ts  evrPatternWF_s;
+  evrQueuePattern_ts     evrPatternWF_s;
   epicsTimeStamp         prev_time;
   double                 delta_time;
   int                    status = 0;
@@ -400,8 +420,8 @@ static long mpgPatternProc(subRecord *psub)
   psub->val = psub->b;
   
   /* Do nothing until the pattern is valid and synchronized */
-  if (psub->val >= EVG_INVALID_WF) {
-    psub->d = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = psub->k = 0.0;
+  if (psub->val > EVG_OK) {
+    psub->d = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
     status = -1;
   /* Initialize EVR timestamp to system time */
   } else if (epicsTimeGetCurrent(&evrPatternWF_s.time)) {
@@ -434,24 +454,25 @@ static long mpgPatternProc(subRecord *psub)
     psub->l = PULSEID_INVALID;
     evrTimePut (0, evrTimeInvalid);
   } else {
-    evrPatternWF_s.header_s.type    = EVR_WF_PATTERN;
-    evrPatternWF_s.header_s.version = EVR_WF_PATTERN_VERSION;
-    evrPatternWF_s.pnet_s.modifier1 = psub->d;
-    evrPatternWF_s.pnet_s.modifier2 = psub->e;
-    evrPatternWF_s.pnet_s.modifier3 = psub->f;
-    evrPatternWF_s.pnet_s.modifier4 = psub->g;
+    evrPatternWF_s.header_s.type    = EVR_QUEUE_PATTERN;
+    evrPatternWF_s.header_s.version = EVR_QUEUE_PATTERN_VERSION;
+    evrPatternWF_s.modifier_a[0]    = psub->d;
+    evrPatternWF_s.modifier_a[1]    = psub->e;
+    evrPatternWF_s.modifier_a[2]    = psub->f;
+    evrPatternWF_s.modifier_a[3]    = psub->g;
     evrPatternWF_s.modifier5        = psub->h;
     evrPatternWF_s.bunchcharge      = psub->i;
 #ifdef __rtems__
     if (psub->dpvt) {
       EvgDataBufferUpdate((EgCardStruct *)psub->dpvt,
                           (epicsUInt32 *)&evrPatternWF_s,
-                          sizeof(evrPatternWaveform_ts)/sizeof(epicsUInt32));
+                          sizeof(evrQueuePattern_ts)/sizeof(epicsUInt32));
     }
 #endif
   }
   return status;
 }
+
 /*=============================================================================
 
   Name: mpgPatternState
@@ -462,9 +483,9 @@ static long mpgPatternProc(subRecord *psub)
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
+        sSubRecord *        psub        read       point to subroutine record
 
-  Rem:  Subroutine for EVG:IN20:EV01:PATTERNSTATE
+  Rem:  Subroutine for IOC:LOCA:UNIT:PATTERNSTATE
 
   Inputs:
        A - Error Flag from mpgPatternProc
@@ -472,15 +493,19 @@ static long mpgPatternProc(subRecord *psub)
        C - Spare
      
   Outputs:
-       D - Number of pulse Id 6min 2sec cycles that have transpired since boot
-       E - Number of waveforms processed by this subroutine
-       F - Number of times E has rolled over
-       G - Number of seq check 1 errors
-       H - Number of seq check 2 errors
-       I - Number of seq check 3 errors
-       J - Number of unexpected unsynchronized pulse IDs
-       K - Number of unexpected unsynchronized modulo720s
-       L - Spare
+       D - Number of waveforms processed by mpgPatternPnet
+       E - Number of times D has rolled over
+       F - Number of bad waveforms
+           The following G-I outputs are pop'ed by a call to proc. evrQueueCounts()
+       G - Number of times ISR tried to send a message
+       H - Number of times G has rolled over
+       I - Number of times ISR failed to send a message
+       J - Number of pulse Id 6min 2sec cycles that have transpired since reset
+       K - Number of unexpected unsynchronized pulse IDs
+       L - Number of unexpected unsynchronized modulo720s
+       M - Number of seq check 1 errors
+       N - Number of seq check 2 errors
+       O - Number of seq check 3 errors
        VAL = Last Error flag (see mpgPatternProc for values)
 
   Side: File-scope counters may be reset.
@@ -488,82 +513,177 @@ static long mpgPatternProc(subRecord *psub)
   Ret:  0 = OK
 
 ==============================================================================*/
-static long mpgPatternState(subRecord *psub)
+static long mpgPatternState(sSubRecord *psub)
 {
   psub->val = psub->a;
   if (psub->b > 0.5) {
     psub->b = 0.0;
     msgCount              = 0;
     msgRolloverCount      = 0;
+    patternErrCount       = 0;
     resyncCount           = 0;
     seqCheck1ErrCount     = 0;
     seqCheck2ErrCount     = 0;
     seqCheck3ErrCount     = 0;
     pulseIDSyncErrCount   = 0;
     modulo720SyncErrCount = 0;
+    evrQueueCountReset(EVR_QUEUE_PNET);
   }
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
-  psub->e = msgRolloverCount;  /* # time msgCount reached MPG_MAX_INT    */
-  psub->f = resyncCount;       /* # of times 6min 2s rollover happened since boot/reset */
-  psub->g = seqCheck1ErrCount;
-  psub->h = seqCheck2ErrCount;
-  psub->i = seqCheck3ErrCount;
-  psub->j = pulseIDSyncErrCount;
-  psub->k = modulo720SyncErrCount;
+  psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
+  psub->f = patternErrCount;
+  evrQueueCounts (EVR_QUEUE_PNET,&psub->g,&psub->h,&psub->i); 
+  psub->j = resyncCount;       /* # of times 6min 2s rollover happened since boot/reset */
+  psub->k = pulseIDSyncErrCount;
+  psub->l = modulo720SyncErrCount;
+  psub->m = seqCheck1ErrCount;
+  psub->n = seqCheck2ErrCount;
+  psub->o = seqCheck3ErrCount;
   return 0;
 }
+
 /*=============================================================================
 
-  Name: mpgPatternEdefEnables
+  Name: mpgPatternCheck
 
-  Abs:  Create Modifier5 from the 20 Patterncheck values
-        360Hz Processing
+  Abs:  360Hz Processing
+        Check to see if current beam pulse is to be used in any
+		current event measurement definition.
+		Keep running measurement count.
+                Keep done flag.
+		Keep pattern match flag (val).
+		
+
+  Args: Type	            Name        Access	   Description
+        ------------------- -----------	---------- ----------------------------
+        sSubRecord *        psub        read       point to sSub subroutine record
+
+  Rem:   Subroutine for PATTERNCHECK
+
+  Inputs
+        INPA - Spare
+        INPB - Beam Code
+        INPC - Spare 
+        INPD - Pnet Modifier 1
+        INPE - Pnet Modifier 2
+        INPF - Pnet Modifier 3 
+        INPG - Pnet Modifier 4 
+        INPH - Modifier 5 without EDEF bits       
+        INPI - EDEF Beam Code
+        INPJ - Spare (ie for future beam codes)
+        INPK - Spare (ie for future beam codes)
+        INPL - Spare (ie for future beam codes)
+        INPM - EDEF INCLUSION1
+        INPN - EDEF INCLUSION2
+        INPO - EDEF INCLUSION3
+        INPP - EDEF INCLUSION4
+        INPQ - EDEF INCLUSION5
+        INPR - EDEF EXCLUSION1
+        INPS - EDEF EXCLUSION2
+        INPT - EDEF EXCLUSION3
+        INPU - EDEF EXCLUSION4
+        INPV - EDEF EXCLUSION5
+        INPW - Beam Code SEVR
+        INPX - EDEF CNTMAX (avg cnt * meas cnt)
+		
+  Outputs
+	   VAL = Pattern match = 1
+     	 no match = 0; enable/disable for bsacMeasCount
+           Y   = Measurement Count
+	   Z   = Done =1; not done measuring = 0
+  Ret:  none
+
+==============================================================================*/
+static long mpgPatternCheck(sSubRecord *psub)
+{
+  psub->val = 0;
+
+  /* Allow for X = -1 = forever */
+  if ((psub->y >= psub->x) && (psub->x > 0)) {
+    /* we're done with measurement */
+    psub->z=1;
+  }
+  
+  /* are we done? - if so exit now */
+  /* Note: the sequence disables this record upon DONE, so this shouldn't happen */
+  if (psub->z) return 0;
+
+  /* check for bad data - do nothing with this pulse and return bad status */
+  if (psub->w) return(-1);
+  
+  /* if Pattern beam code == EDEF beamcode.. */
+  if (psub->b==psub->i) {
+	/* check inclusion mask */
+	DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
+                   ("\t mpgPatternCheck: Beam Codes match \n"));	  
+	if (    (((unsigned long)psub->d & (unsigned long)psub->m) ==
+                 (unsigned long)psub->m) &&
+                (((unsigned long)psub->e & (unsigned long)psub->n) ==
+                 (unsigned long)psub->n) &&
+                (((unsigned long)psub->f & (unsigned long)psub->o) ==
+                 (unsigned long)psub->o) &&
+                (((unsigned long)psub->g & (unsigned long)psub->p) ==
+                 (unsigned long)psub->p) &&
+                (((unsigned long)psub->h & (unsigned long)psub->q) ==
+                 (unsigned long)psub->q)) {
+          DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
+                     ("mpgPatternCheck: inclusion match\n"));	  
+	  if (  (((unsigned long)psub->r & (unsigned long)psub->d) == 0) &&
+                (((unsigned long)psub->s & (unsigned long)psub->e) == 0) &&
+                (((unsigned long)psub->t & (unsigned long)psub->f) == 0) &&
+                (((unsigned long)psub->u & (unsigned long)psub->g) == 0) &&
+                (((unsigned long)psub->v & (unsigned long)psub->h) == 0)) {
+		DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
+                           ("mpgPatternCheck: exclusion match\n"));
+		psub->val = 1;  /* pattern match*/
+		psub->y++;      /* inc. meas. count */
+          }
+        }
+  }
+  return 0;
+}
+
+/*=============================================================================
+
+  Name: mpgPatternSim
+
+  Abs:  Simulate PNET data stream.
 		
   Args: Type	            Name        Access	   Description
         ------------------- -----------	---------- ----------------------------
         subRecord *         psub        read       point to subroutine record
 
-  Rem:  Subroutine for pattern MODIFIER5
+  Rem:  Subroutine for IOC:LOCA:UNIT:PATTERNSIM
 
-  Side:
-
+  Side: Sends a message to the PNET pattern queue.
+  
   Sub Inputs/ Outputs:
-   Inputs:
-    A-U - EDEF PATTERNCHECK1-20
-    
-   Outputs:   
-	VAL = MODIFIER5
+    Simulated inputs:
+    D - MODIFIER1
+    E - MODIFIER2
+    F - MODIFIER3
+    G - MODIFIER4
+    J - BEAMCODE
+    K - YY
   Ret:  0
 
 ==============================================================================*/
-static long mpgPatternEdefEnables (sSubRecord *psub)
+static long mpgPatternSim(subRecord *psub)
 { 
-  unsigned long mod5 = 0;
+  epicsUInt32            modifier_a[EVR_PNET_MODIFIER_MAX];
 
-  mod5 |= (unsigned long)psub->a;
-  mod5 |= ( ((unsigned long)psub->b) << 1 );
-  mod5 |= ( ((unsigned long)psub->c) << 2 );
-  mod5 |= ( ((unsigned long)psub->d) << 3 );
-  mod5 |= ( ((unsigned long)psub->e) << 4 );
-  mod5 |= ( ((unsigned long)psub->f) << 5 );
-  mod5 |= ( ((unsigned long)psub->g) << 6 );
-  mod5 |= ( ((unsigned long)psub->h) << 7 );
-  mod5 |= ( ((unsigned long)psub->i) << 8 );
-  mod5 |= ( ((unsigned long)psub->j) << 9 );
-  mod5 |= ( ((unsigned long)psub->k) << 10 );
-  mod5 |= ( ((unsigned long)psub->l) << 11 );
-  mod5 |= ( ((unsigned long)psub->m) << 12 );
-  mod5 |= ( ((unsigned long)psub->n) << 13 );
-  mod5 |= ( ((unsigned long)psub->o) << 14 );
-  mod5 |= ( ((unsigned long)psub->p) << 15 );
-  mod5 |= ( ((unsigned long)psub->q) << 16 );
-  mod5 |= ( ((unsigned long)psub->r) << 17 );
-  mod5 |= ( ((unsigned long)psub->s) << 18 );
-  mod5 |= ( ((unsigned long)psub->u) << 19 );
+/*------------- parse input into sub outputs ----------------------------*/
 
-  psub->val = (double)mod5;
+    modifier_a[0]    = ((epicsUInt32)psub->d) & 0xFFFFE000;
+    modifier_a[0]   |= ((((epicsUInt32)psub->j) << 8) & 0x1F00);
+    modifier_a[0]   |= ( ((epicsUInt32)psub->k) & YY_BIT_MASK);
+    modifier_a[1]    = psub->e;
+    modifier_a[2]    = psub->f;
+    modifier_a[3]    = psub->g;
 
-  return 0;
+    /* Send the pattern to the PNET pattern queue */
+    pnetSend(modifier_a);
+    return 0;
 }
 epicsRegisterFunction(mpgPatternInit);
 epicsRegisterFunction(mpgPatternPnetInit);
@@ -571,4 +691,5 @@ epicsRegisterFunction(mpgPatternPnet);
 epicsRegisterFunction(mpgPatternProcInit);
 epicsRegisterFunction(mpgPatternProc);
 epicsRegisterFunction(mpgPatternState);
-epicsRegisterFunction(mpgPatternEdefEnables);
+epicsRegisterFunction(mpgPatternCheck);
+epicsRegisterFunction(mpgPatternSim);
