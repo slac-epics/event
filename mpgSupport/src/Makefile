@@ -11,6 +11,7 @@ USR_CFLAGS_linux-x86 += -g
 # for debug print statements and slc-awareness
 USR_CFLAGS += -DDEBUG_PRINT
 
+SRC_DIRS += $(TOP)/drvSupport/src
 SRC_DIRS += $(TOP)/evrSupport/src
 SRC_DIRS += $(TOP)/mrfApp/src
 
@@ -22,10 +23,10 @@ LIBRARY_IOC = mpgSupport
 
 mpgSupport_SRCS += pnetSeqCheck.c
 mpgSupport_SRCS += mpgPattern.c
-mpgSupport_SRCS += edef.c
-mpgSupport_SRCS += edefReserve.st edefRelease.st edefMask.st
+mpgSupport_SRCS += edefReserve.st edefMask.st
 
 mpgSupport_LIBS += evrSupport
+mpgSupport_LIBS += drvSupport
 mpgSupport_LIBS += sSubRecord
 mpgSupport_LIBS += std
 mpgSupport_LIBS += generalTime
