@@ -69,6 +69,28 @@ evrTime_ts evrTimeLastGood_s;
 
 /* EVR Time Timestamp RWMutex */
 epicsMutexId evrTimeRWMutex_ps;
+
+/*=============================================================================
+
+  Name: evrTimeGetSystem
+
+  Abs:  Returns system time and status of call
+  
+==============================================================================*/
+
+static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
+{
+  if ( epicsTimeGetCurrent (epicsTime_ps) ) {
+	DEBUGPRINT(DP_ERROR, evrTimeFlag, 
+			   ("evrTimeGetSystem: Unable to epicsTimeGetCurrent!\n"));	
+	return epicsTimeERROR;
+  }
+  /* Set pulse ID to invalid */
+  evrTimePutPulseID(epicsTime_ps, PULSEID_INVALID);
+
+  return epicsTimeOK;
+}
+
 /*=============================================================================
 
   Name: evrTimeGet
@@ -81,11 +103,11 @@ epicsMutexId evrTimeRWMutex_ps;
   Args: Type     Name           Access	   Description
         -------  -------	---------- ----------------------------
   epicsTimeStamp * epicsTime_ps write  ptr to epics timestamp to be returned
-        evrTimeId_te  id        read   timestamp pipeline index;
-	                                  1=time associated w this pulse
-					  2=time associated w next pulse
-                                          3=time assoc'ed w pulse 2 ahead
-                                          4=time assoc'ed w pulse 3 ahead
+  evrTimeId_te   id             read   timestamp pipeline index;
+	                                  0=time associated w this pulse
+					  1=time associated w next pulse
+                                          2=time assoc'ed w pulse 2 ahead
+                                          3=time assoc'ed w pulse 3 ahead
 
   Rem:  Routine to get the epics timestamp from the evr timestamp table
         that is populated from incoming broadcast from EVG
@@ -97,24 +119,31 @@ epicsMutexId evrTimeRWMutex_ps;
 
 int evrTimeGet (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 {
-  int index = id-1;
   int status;
   
+  if ((id < 0) || (id > MAX_EVR_TIME)) {
+    DEBUGPRINT(DP_ERROR,evrTimeFlag,("evrTimeGet: Bad event! %d\n", id));
+    status = epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
-  if ( evrTimeRWMutex_ps){
+  } else if (evrTimeRWMutex_ps) {
     epicsMutexMustLock( evrTimeRWMutex_ps);
-    *epicsTime_ps = evrTime_as[index].time;
-    if (evrTime_as[index].status == evrTimeInvalid) status = epicsTimeERROR;
-    else                                            status = epicsTimeOK;
+    *epicsTime_ps = evrTime_as[id].time;
+    if (evrTime_as[id].status != evrTimeInvalid) {
+      *epicsTime_ps = evrTime_as[id].time;
+      status = epicsTimeOK;
+    } else {
+      status = epicsTimeERROR;
+    }
     epicsMutexUnlock(evrTimeRWMutex_ps);
-  }
   /* invalid mutex id */
-  else {
+  } else {
     DEBUGPRINT(DP_ERROR,evrTimeFlag,("evrTimeGet: Bad TimeRWMutex! \n"));
     status = epicsTimeERROR;
   }
+  if (status == epicsTimeERROR) status = evrTimeGetSystem(epicsTime_ps, id);
   return status; 
 }
+
 /*=============================================================================
 
   Name: evrTimePut
@@ -139,16 +168,14 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 
 int evrTimePut (epicsTimeStamp  *epicsTime_ps, evrTimeStatus_te status)
 {
-  int index = evrTimeNext3-1;
-
   if (evrTimeRWMutex_ps){
     epicsMutexMustLock( evrTimeRWMutex_ps);
-    evrTime_as[index].status = status;
+    evrTime_as[evrTimeNext3].status = status;
     if (status != evrTimeOK) {
-      evrTime_as[index].time = evrTimeLastGood_s.time;
+      evrTime_as[evrTimeNext3].time = evrTimeLastGood_s.time;
     }
     else {
-      evrTime_as[index].time = *epicsTime_ps;
+      evrTime_as[evrTimeNext3].time = *epicsTime_ps;
       evrTimeLastGood_s.time = *epicsTime_ps;
     }
     epicsMutexUnlock(evrTimeRWMutex_ps);
@@ -160,6 +187,7 @@ int evrTimePut (epicsTimeStamp  *epicsTime_ps, evrTimeStatus_te status)
   }		
   return epicsTimeOK;
 }
+
 /*=============================================================================
 
   Name: evrTimePutStatus
@@ -171,12 +199,12 @@ int evrTimePut (epicsTimeStamp  *epicsTime_ps, evrTimeStatus_te status)
 		
   Args: Type     Name           Access	   Description
         -------  -------	---------- ----------------------------
-   evrTime_te evrTimeIndex   read   timestamp pipeline index;
-	                                  1=time associated w this pulse
-					  2=time associated w next pulse
-                                          3=time assoc'ed w pulse 2 ahead
-                                          4=time assoc'ed w pulse 3 ahead
-  evrTimeStatus  status     read  status
+  evrTime_te     evrTimeIndex   read   timestamp pipeline index;
+	                                  0=time associated w this pulse
+					  1=time associated w next pulse
+                                          2=time assoc'ed w pulse 2 ahead
+                                          3=time assoc'ed w pulse 3 ahead
+  evrTimeStatus  status         read  status
 
   Rem:  Routine to update the timestamp status in the evr timestamp table
         that is populated from incoming broadcast from EVG
@@ -188,12 +216,10 @@ int evrTimePut (epicsTimeStamp  *epicsTime_ps, evrTimeStatus_te status)
 
 static int evrTimePutStatus (evrTimeId_te id, evrTimeStatus_te status)
 {
-  int index = id-1;
-
   if ( evrTimeRWMutex_ps){
 	epicsMutexMustLock( evrTimeRWMutex_ps);
-	if (status > evrTime_as[index].status)
-          evrTime_as[index].status = status;
+	if (status > evrTime_as[id].status)
+          evrTime_as[id].status = status;
 	epicsMutexUnlock(evrTimeRWMutex_ps);
   }
   /* invalid mutex id */
@@ -224,27 +250,7 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   }
   return epicsTimeOK;
 }
-
-/*=============================================================================
-
-  Name: evrTimeGetSystem
-
-  Abs:  Returns system time and status of call
-  
-==============================================================================*/ 
-int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
-{
-  if ( epicsTimeGetCurrent (epicsTime_ps) ) {
-	DEBUGPRINT(DP_ERROR, evrTimeFlag, 
-			   ("evrTimeGetSystem: Unable to epicsTimeGetCurrent!\n"));	
-	return epicsTimeERROR;
-  }
-  /* Set pulse ID to invalid */
-  evrTimePutPulseID(epicsTime_ps, PULSEID_INVALID);
-
-  return epicsTimeOK;
-}
-
+
 /*=============================================================================
 
   Name: evrTimeDiagInit
@@ -258,9 +264,9 @@ int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 ==============================================================================*/ 
 static int evrTimeDiagInit(subRecord *psub)
 {
-
-  return 0;
+  return epicsTimeOK;
 }
+
 /*=============================================================================
 
   Name: evrTimeDiag
@@ -268,19 +274,20 @@ static int evrTimeDiagInit(subRecord *psub)
   Abs:  Expose time from the table to pvs
   
   Outputs:
-  A  secPastEpoch for timestamp 1, n (diagTime_as[0])
-  B  nsec for timestamp 1, n
+  A  secPastEpoch for timestamp 0, n (evrTime_as[0])
+  B  nsec for timestamp 0, n
   C  status "
-  D  secPastEpoch for timestamp 2, n-1 (diagTime_as[1])
-  E  nsec for timestamp 2, n-1 (diagTime_as[1])
+  D  secPastEpoch for timestamp 1, n-1 (evrTime_as[1])
+  E  nsec for timestamp 1, n-1 (evrTime_as[1])
   F  status "
-  G  secPastEpoch for timestamp 3, n-2 (diagTime_as[2])
-  H  nsec for timestamp 3, n-2 (diagTime_as[2])
+  G  secPastEpoch for timestamp 2, n-2 (evrTime_as[2])
+  H  nsec for timestamp 2, n-2 (evrTime_as[2])
   I  status "
-  J  secPastEpoch for timestamp 4, n-3 (diagTime_as[3])
-  K  nsec for timestamp 4, n-3 (diagTime_as[3])
+  J  secPastEpoch for timestamp 3, n-3 (evrTime_as[3])
+  K  nsec for timestamp 3, n-3 (evrTime_as[3])
   L  status "
 ==============================================================================*/ 
+
 static long evrTimeDiag (subRecord *psub)
 {
   unsigned short n;
@@ -303,11 +310,11 @@ static long evrTimeDiag (subRecord *psub)
   else {
 	DEBUGPRINT(DP_ERROR, evrTimeFlag, 
 			   ("evrTimeDiag: Invalid evrTimeRWMutex_ps!\n"));	
-	return -1;
+	return epicsTimeERROR;
   }
-  return 0;
+  return epicsTimeOK;
 }
-
+
 /*=============================================================================
 
   Name: evrTimeInit
@@ -317,16 +324,13 @@ static long evrTimeDiag (subRecord *psub)
 		The evr timestamp table is initialized to system time
 		and invalid status. During processing, if a timestamp status goes
 		invalid, the time is overwritten to the last good evr timestamp.
-		All records that want to use one of these timestamps must set the TSE 
-		field to the proper event so epicsTimeGetEvent.  For most (probably all)
-		records, TSE is 1.  
 
   Side: EVR Time Timestamp table
-  TSE  pulse pipeline n  , status - 0=OK; 1=invalid
-  1 = current pulse (Pn), status
-  2 = next (upcoming) pulse (Pn-1), status
-  3 = two pulses in the future (Pn-2), status
-  4 = three pulses in the future (Pn-3), status
+  pulse pipeline n  , status - 0=OK; 1=last good; 2=invalid
+  0 = current pulse (Pn), status
+  1 = next (upcoming) pulse (Pn-1), status
+  2 = two pulses in the future (Pn-2), status
+  3 = three pulses in the future (Pn-3), status
 
   Status is invalid when
   1) Bootup - System time is entered (as opposed to evr timestamp).
@@ -342,34 +346,34 @@ static int evrTimeInit(subRecord *psub)
   if (!evrTimeRWMutex_ps) {
 	/* begin to init times with system time */
 	if ( evrTimeGetSystem (&sys_time, evrTimeCurrent) ) {
-	  return -1;
+	  return epicsTimeERROR;
 	}
 	else {
 	  /* init structure to invalid status & system time*/
 	  for (i=0;i<MAX_EVR_TIME;i++) {
-		evrTime_as[i].time = sys_time;
+		evrTime_as[i].time   = sys_time;
 		evrTime_as[i].status = evrTimeInvalid;      /* invalid=2*/
 	  }
 	}
 	evrTimeLastGood_s.time = sys_time;
 	evrTimeRWMutex_ps = epicsMutexCreate();
 	if (!evrTimeRWMutex_ps) {
-	  DEBUGPRINT(DP_ERROR, evrTimeFlag, ("evrTimeInit: Unable to create TimeRWMutex!\n"));
-	  return -1;
+	  DEBUGPRINT(DP_ERROR, evrTimeFlag,
+                     ("evrTimeInit: Unable to create TimeRWMutex!\n"));
+	  return epicsTimeERROR;
 	}
-	DEBUGPRINT(DP_DEBUG, evrTimeFlag, ("evrTimeInit: system time sec= %d; nsec = %d!\n",
-									   sys_time.secPastEpoch, sys_time.nsec));	
+	DEBUGPRINT(DP_DEBUG, evrTimeFlag,
+                   ("evrTimeInit: system time sec= %d; nsec = %d!\n",
+                    sys_time.secPastEpoch, sys_time.nsec));	
   }
   /* For IOCs that support iocClock (RTEMS and vxWorks), register
-     evrTimeGet with generalTime so it is used by epicsTimeGetEvent
-     for records with the TSE field set to 1 to 4 */
+     evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
 #ifdef __rtems__
   if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
-                            (pepicsTimeGetEvent)evrTimeGet      )) return -1;
-  if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
-                            (pepicsTimeGetEvent)evrTimeGetSystem)) return -1;
+                            (pepicsTimeGetEvent)evrTimeGet))
+    return epicsTimeERROR;
 #endif
-  return 0;
+  return epicsTimeOK;
 }
 /* For IOCs that don't support iocClock (linux), supply a dummy
    iocClockRegister to keep the linker happy. */
@@ -379,6 +383,7 @@ void iocClockRegister(pepicsTimeGetCurrent getCurrent,
 {
 }
 #endif
+
 /*=============================================================================
 
   Name: evrTimeProc
@@ -400,11 +405,11 @@ void iocClockRegister(pepicsTimeGetCurrent getCurrent,
     triggers (EVR) or event codes (EVG). 
 
 Timestamp table evrTime_as after advancement:
-TSE  pulse pipeline n  , status - 0=OK; 1=invalid
- 1 = current pulse (P0), status
- 2 = next (upcoming) pulse (Pn-1), status
- 3 = two pulses in the future (Pn-2), status
- 4 = three pulses in the future (Pn-3), status
+pulse pipeline n  , status - 0=OK; 1=last good; 2=invalid
+ 0 = current pulse (P0), status
+ 1 = next (upcoming) pulse (Pn-1), status
+ 2 = two pulses in the future (Pn-2), status
+ 3 = three pulses in the future (Pn-3), status
 
 		
   Args: Type	            Name        Access	   Description
@@ -430,11 +435,10 @@ TSE  pulse pipeline n  , status - 0=OK; 1=invalid
    A - PULSEIDN-3
    B - PULSEIDN-2
    C - PULSEIDN-1
-   D - PULSEID
-   
-   I - Reset Counters
+   D - PULSEID   
    
    Input/Outputs:
+   I   A - D
    J   SAMEPULSECNT
    K   SKIPPULSECNT
    VAL = Error Flag
@@ -446,16 +450,11 @@ static int evrTimeProc (subRecord *psub)
   int errFlag = EVR_TIME_OK;
   int n;
 
-  if (psub->i) {
-   	psub->j = 0;
-	psub->k = 0;
-	psub->i = 0;
-	DEBUGPRINT(DP_DEBUG,evrTimeFlag,("evrTimeProc Reset counters \n"));
-  }
   /* error check the pulseids of n-1,n-2,n-3 */
+  /* pulse ID may have rolled over */
   /*   if n-3 and n-2 are not consecutive, set error flag */
-
-  if ( (psub->a - psub->d)!= 3) {
+  psub->i = psub->a - psub->d;
+  if ((psub->i != 3) && (psub->i != -PULSEID_MAX_MINUS_2)) {
 	errFlag = EVR_TIME_INVALID;
 	++psub->k;  /* skipped pulse (non-consecutive) in the pipeline somewhere */
 	/* determine if newest is the same as last pulse? */
@@ -470,7 +469,7 @@ static int evrTimeProc (subRecord *psub)
   /* advance the evr timestamps in the pipeline*/
   if ( evrTimeRWMutex_ps){
 	epicsMutexMustLock( evrTimeRWMutex_ps);
-	for (n=0;n<MAX_EVR_TIME-1;n++) {
+	for (n=0;n<evrTimeNext3;n++) {
 	  evrTime_as[n] = evrTime_as[n+1];
 	}	
 	epicsMutexUnlock(evrTimeRWMutex_ps);
@@ -481,9 +480,9 @@ static int evrTimeProc (subRecord *psub)
   }
   psub->val = (double) errFlag;
   if (errFlag){
-	return -1;
+	return epicsTimeERROR;
   }
-  return 0;
+  return epicsTimeOK;
 }
 
 epicsRegisterFunction(evrTimeInit);
