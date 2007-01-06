@@ -25,8 +25,8 @@
 
 =============================================================================*/
 #include <stdio.h>            /* printf prototype     */
+#include "errlog.h"           /* errlogPrintf proto   */
 #include "evrPattern.h"       /* TIMESLOT definitions */
-#define PNET_SEQ_GLOBAL
 #include "pnetSeqCheck.h"     /* pnetSeqCheck protos  */
 
 #define SEQ_CHECK1_BUF 		(100)		/* last n checksum 1 values */
@@ -56,45 +56,41 @@ static unsigned int  seqCheck2BufIndex = 0;
   is reset. 
 
 =============================================================================*/
-int pnetSeqCheckData1(unsigned char currentSeqCheck1) {
+int pnetSeqCheckData1(unsigned char currentSeqCheck1,
+                      unsigned int  seqCheckSynced) {
   static unsigned char seqCheck1 = 0;
-  static unsigned int  seqCheck1First = 1;   /* used to start/reset the data validity checking */
+  int status = 0;
   
   /* the 6 bit "traveling one" pattern for this beam pulse */
 
   /* synch up the first time or after an error by setting what was read 
      to be the baseline */
-  if (seqCheck1First) {
-    seqCheck1 = currentSeqCheck1;
-    seqCheck1First = 0; /* now reset */
-    seqCheck1BufIndex = 0;
-  }
-  else {
+  if (seqCheckSynced) {
     seqCheck1BufIndex++;
     if (seqCheck1BufIndex >= SEQ_CHECK1_BUF) {
       seqCheck1BufIndex = 0;
     }
+  }
+  else {
+    seqCheck1 = currentSeqCheck1;
+    seqCheck1BufIndex = 0;
   }
     
   /* Good or bad, store in a ring buffer of last SEQ_CHECK1_BUF chars, so
      it can be accessed */
   seqCheck1Buf[seqCheck1BufIndex] = currentSeqCheck1;
 
-  if (seqCheck1 == currentSeqCheck1) {
-    /* data frame is fine. increment traveling_one for next time */
-
-    if (seqCheck1 == TIMESLOT6_MASK) { 
-      seqCheck1 = TIMESLOT1_MASK;
-    } else {
-      seqCheck1 = (seqCheck1 << 1);
-    }
-  } else {
-    /* Data is not fine. flag and set flag to resync */
-    seqCheck1ErrCount++;
-    seqCheck1First = 1;
-    return -1;
+  if (seqCheck1 != currentSeqCheck1) { /* Data is not fine. */
+    errlogPrintf("pnetSeqCheck1: Unexpected time slot pattern, MPG = %#x, EVG = %#x\n",
+                 currentSeqCheck1, seqCheck1);
+    seqCheck1 = currentSeqCheck1;
+    status = -1;
   }
-  return 0;
+  /* increment traveling_one for next time */
+  if (seqCheck1 == TIMESLOT6_MASK) seqCheck1 = TIMESLOT1_MASK;
+  else                             seqCheck1 = (seqCheck1 << 1);
+  
+  return status;
 }
 
 /*=============================================================================
@@ -117,49 +113,42 @@ int pnetSeqCheckData1(unsigned char currentSeqCheck1) {
   is reset.  
 
 =============================================================================*/
-int pnetSeqCheckData2(unsigned char currentSeqCheck2) {
+int pnetSeqCheckData2(unsigned char currentSeqCheck2,
+                      unsigned int  seqCheckSynced) {
   static unsigned char seqCheck2 = 0;
-  static unsigned int  seqCheck2First = 1;   /* used to start/reset the data validity checking */
+  int status = 0;
   
   /* the 3 bit counter for this beam pulse */
 
 
   /* synch up the first time or after an error by setting what was read 
      to be the baseline */
-  if (seqCheck2First) {
-    seqCheck2 = currentSeqCheck2;
-    seqCheck2First = 0; /* now reset */
-    seqCheck2BufIndex = 0;
-  }
-  else {
+  if (seqCheckSynced) {
     seqCheck2BufIndex++;
     if (seqCheck2BufIndex >= SEQ_CHECK2_BUF) {
       seqCheck2BufIndex = 0;
     }
+  }
+  else {
+    seqCheck2 = currentSeqCheck2;
+    seqCheck2BufIndex = 0;
   }
 
   /* Good or bad, store in a ring buffer of last SEQ_CHECK2_BUF chars, so
      it can be accessed */
   seqCheck2Buf[seqCheck2BufIndex] = currentSeqCheck2;
 
-  if (seqCheck2 == currentSeqCheck2) {
-    /* End of data frame is fine. increment seqchk for next time */
-    if (seqCheck2 == 6) { /* 6 time slots */
-      seqCheck2 = 1;
-    } else {
-      seqCheck2++;
-    }
-  } else {
-    /* End of data frame is not fine. flag and set flag to resync */
-    /* Need to do more here to really handle this condition. TEG says
-       if MPG gets "off" chances are beam is hitting the sides. The
-       reaction of choice is for the micro to start sending zero beam
-     */
-    seqCheck2ErrCount++;
-    seqCheck2First = 1;
-    return -1;
+  if (seqCheck2 != currentSeqCheck2) { /* End of data frame is not fine. */
+    errlogPrintf("pnetSeqCheck2: Unexpected time slot, MPG = %d, EVG = %d\n",
+                 currentSeqCheck2, seqCheck2);
+    seqCheck2 = currentSeqCheck2;
+    status = -1;
   }
-  return 0;
+  /* increment seqchk for next time */
+  if (seqCheck2 == 6) seqCheck2 = 1;  /* 6 time slots */
+  else                seqCheck2++;
+  
+  return status;
 }
 
 /*=============================================================================
@@ -185,50 +174,33 @@ int pnetSeqCheckData2(unsigned char currentSeqCheck2) {
 =============================================================================*/
 int pnetSeqCheckData3(unsigned char currentSeqCheck1,
                       unsigned char currentSeqCheck2) {
+  int status = 0;
 
   switch(currentSeqCheck1) {
-    case TIMESLOT1_MASK: if ((int) currentSeqCheck2 != 1) {
-              seqCheck3ErrCount++;
-              return -1;
-            }
+    case TIMESLOT1_MASK: if ((int) currentSeqCheck2 != 1) status = -1;
             break;
           
-    case TIMESLOT2_MASK: if ((int) currentSeqCheck2 != 2) {
-              seqCheck3ErrCount++;
-              return -1;
-            }
+    case TIMESLOT2_MASK: if ((int) currentSeqCheck2 != 2) status = -1;
             break;
 
-    case TIMESLOT3_MASK: if ((int) currentSeqCheck2 != 3) {
-              seqCheck3ErrCount++;
-              return -1;
-            }
+    case TIMESLOT3_MASK: if ((int) currentSeqCheck2 != 3) status = -1;
             break;
 
-    case TIMESLOT4_MASK: if ((int) currentSeqCheck2 != 4) {
-              seqCheck3ErrCount++;
-              return -1;
-            }
+    case TIMESLOT4_MASK: if ((int) currentSeqCheck2 != 4) status = -1;
             break;
 
-    case TIMESLOT5_MASK: if ((int) currentSeqCheck2 != 5) {
-              seqCheck3ErrCount++;
-              return -1;
-            }
+    case TIMESLOT5_MASK: if ((int) currentSeqCheck2 != 5) status = -1;
             break;
 
-    case TIMESLOT6_MASK: if ((int) currentSeqCheck2 != 6) {
-              seqCheck3ErrCount++;
-              return -1;
-            }
+    case TIMESLOT6_MASK: if ((int) currentSeqCheck2 != 6) status = -1;
             break;
-    default: 
-            seqCheck3ErrCount++;
-            return -1;
+    default:
+            status = -1;
             break; 
     }
-
-    return 0;
+  if (status) errlogPrintf("pnetSeqCheck3: Time slot pattern %#x and time slot %d are inconsistent\n",
+                           currentSeqCheck1, currentSeqCheck2);
+  return status;
 }
 
 /*=============================================================================
