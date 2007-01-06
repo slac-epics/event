@@ -1,7 +1,2 @@
-function(edefInit)
-function(edefPatternCheck)
-function(edefEnableMask)
-function(edefPatternCheckSim)
 registrar(edefReserveRegistrar)
-registrar(edefReleaseRegistrar)
 registrar(edefMaskRegistrar)
