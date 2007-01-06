@@ -1,6 +1,5 @@
 function(evrPatternInit)
+function(evrPatternProcInit)
 function(evrPatternProc)
-function(evrPatternSimInit)
-function(evrPatternSimProc)
-function(evrPatternSimMod5)
-
+function(evrPatternState)
+function(evrPatternSim)
