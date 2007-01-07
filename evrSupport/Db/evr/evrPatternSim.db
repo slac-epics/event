@@ -4,18 +4,18 @@
 #! DBDEND
 
 
-record(sSub, "$(DEV):PATTERN") {
-  field(INPM, "$(SIM):MODIFIER1")
-  field(INPN, "$(SIM):MODIFIER2")
-  field(INPO, "$(SIM):MODIFIER3")
-  field(INPP, "$(SIM):MODIFIER4")
-  field(INPQ, "$(SIM):MODIFIER5.VAL")
-  field(INAM, "evrPatternSimInit")
-  field(SNAM, "evrPatternSimProc")
-  field(INPU, "$(SIM):BUNCHARGE")
-  field(INPV, "$(SIM):PULSEID")
-  field(INPW, "$(SIM):YY")
-  field(INPX, "$(SIM):BEAMCODE")
+record(sub, "$(DEV):PATTERNSIM") {
+  field(INPD, "$(SIM):MODIFIER1")
+  field(INPE, "$(SIM):MODIFIER2")
+  field(INPF, "$(SIM):MODIFIER3")
+  field(INPG, "$(SIM):MODIFIER4")
+  field(INPH, "$(SIM):MODIFIER5")
+  field(INAM, "evrPatternInit")
+  field(SNAM, "evrPatternSim")
+  field(INPI, "$(SIM):BUNCHARGE")
+  field(INPJ, "$(SIM):BEAMCODE")
+  field(INPK, "$(SIM):YY")
+  field(INPL, "$(SIM):PULSEID")
 }
 
 
@@ -24,14 +24,14 @@ record(fanout, "$(DEV):FANOUTSIM") {
   field(SCAN, ".1 second")
   field(LNK1, "$(SIM):FANOUT")
   field(LNK2, "$(SIM):MODIFIER5")
-  field(LNK4, "$(DEV):PATTERN")
-  field(PHAS, "0")
   field(LNK3, "$(DEV):FIDUCIAL")
+  field(LNK4, "$(DEV):PATTERNSIM")
+  field(PHAS, "0")
 }
 
 record(sSub, "$(SIM):MODIFIER5") {
   field(INAM, "evrPatternInit")
-  field(SNAM, "evrPatternSimMod5")
+  field(SNAM, "evrModifier5")
   field(INPA, "$(SIM):MODMATCH1")
   field(INPB, "$(SIM):MODMATCH2")
   field(INPC, "$(SIM):MODMATCH3")
@@ -51,7 +51,7 @@ record(sSub, "$(SIM):MODIFIER5") {
   field(INPQ, "$(SIM):MODMATCH10HZ")
   field(INPR, "$(SIM):MODMATCHFULL")
   field(INPS, "$(SIM):MODMATCHF1")
-  field(INPU, "$(SIM):MODMATCHF2")
+  field(INPT, "$(SIM):MODMATCHF2")
 }
 
 record(fanout, "$(DEV):FANOUTDEVSIM") {
@@ -60,23 +60,23 @@ record(fanout, "$(DEV):FANOUTDEVSIM") {
 
 #! Further lines contain data used by VisualDCT
 #! View(2012,3052,1.2)
-#! Record("$(DEV):PATTERN",2627,2741,0,0,"$(DEV):PATTERN")
-#! Field("$(DEV):PATTERN.INPM",16777215,1,"$(DEV):PATTERN.INPM")
-#! Field("$(DEV):PATTERN.INPN",16777215,1,"$(DEV):PATTERN.INPN")
-#! Field("$(DEV):PATTERN.INPO",16777215,1,"$(DEV):PATTERN.INPO")
-#! Field("$(DEV):PATTERN.INPP",16777215,1,"$(DEV):PATTERN.INPP")
-#! Field("$(DEV):PATTERN.INPQ",16777215,0,"$(DEV):PATTERN.INPQ")
-#! Link("$(DEV):PATTERN.INPQ","$(SIM):MODIFIER5.VAL")
-#! Field("$(DEV):PATTERN.INPU",16777215,1,"$(DEV):PATTERN.INPU")
-#! Field("$(DEV):PATTERN.INPV",16777215,1,"$(DEV):PATTERN.INPV")
-#! Field("$(DEV):PATTERN.INPW",16777215,1,"$(DEV):PATTERN.INPW")
-#! Field("$(DEV):PATTERN.INPX",16777215,1,"$(DEV):PATTERN.INPX")
+#! Record("$(DEV):PATTERNSIM",2627,2741,0,0,"$(DEV):PATTERNSIM")
+#! Field("$(DEV):PATTERNSIM.INPD",16777215,1,"$(DEV):PATTERNSIM.INPD")
+#! Field("$(DEV):PATTERNSIM.INPE",16777215,1,"$(DEV):PATTERNSIM.INPE")
+#! Field("$(DEV):PATTERNSIM.INPF",16777215,1,"$(DEV):PATTERNSIM.INPF")
+#! Field("$(DEV):PATTERNSIM.INPG",16777215,1,"$(DEV):PATTERNSIM.INPG")
+#! Field("$(DEV):PATTERNSIM.INPH",16777215,0,"$(DEV):PATTERNSIM.INPH")
+#! Link("$(DEV):PATTERNSIM.INPH","$(SIM):MODIFIER5.VAL")
+#! Field("$(DEV):PATTERNSIM.INPI",16777215,1,"$(DEV):PATTERNSIM.INPI")
+#! Field("$(DEV):PATTERNSIM.INPJ",16777215,1,"$(DEV):PATTERNSIM.INPJ")
+#! Field("$(DEV):PATTERNSIM.INPK",16777215,1,"$(DEV):PATTERNSIM.INPK")
+#! Field("$(DEV):PATTERNSIM.INPL",16777215,1,"$(DEV):PATTERNSIM.INPL")
 #! Record("$(DEV):FANOUTSIM",1903,2676,0,1,"$(DEV):FANOUTSIM")
 #! Field("$(DEV):FANOUTSIM.LNK1",16777215,1,"$(DEV):FANOUTSIM.LNK1")
 #! Field("$(DEV):FANOUTSIM.LNK2",16777215,1,"$(DEV):FANOUTSIM.LNK2")
 #! Link("$(DEV):FANOUTSIM.LNK2","$(SIM):MODIFIER5")
 #! Field("$(DEV):FANOUTSIM.LNK4",16777215,1,"$(DEV):FANOUTSIM.LNK4")
-#! Link("$(DEV):FANOUTSIM.LNK4","$(DEV):PATTERN")
+#! Link("$(DEV):FANOUTSIM.LNK4","$(DEV):PATTERNSIM")
 #! Field("$(DEV):FANOUTSIM.LNK3",16777215,1,"$(DEV):FANOUTSIM.LNK3")
 #! Record("$(SIM):MODIFIER5",2248,2570,0,0,"$(SIM):MODIFIER5")
 #! Field("$(SIM):MODIFIER5.INPA",16777215,1,"$(SIM):MODIFIER5.INPA")
