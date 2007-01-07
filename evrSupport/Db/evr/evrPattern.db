@@ -49,22 +49,14 @@ record(longin, "$(DEV):BEAMCODE$(N)") {
   field(DESC, "BEAMCODE$(N)")
   field(DTYP, "Soft Channel")
   field(INP, "$(DEV):$(INP7) MS")
-  field(FLNK, "$(DEV):YY$(N)")
-  field(LOPR, "31")
-}
-
-record(longin, "$(DEV):YY$(N)") {
-  field(DESC, "YY$(N)")
-  field(DTYP, "Soft Channel")
-  field(INP, "$(DEV):$(INP8) MS")
   field(FLNK, "$(DEV):PULSEID$(N)")
-  field(HOPR, "256")
+  field(LOPR, "31")
 }
 
 record(longin, "$(DEV):PULSEID$(N)") {
   field(DESC, "PULSEID$(N)")
   field(DTYP, "Soft Channel")
-  field(INP, "$(DEV):$(INP9) MS")
+  field(INP, "$(DEV):$(INP8) MS")
   field(HOPR, "131039")
 }
 
@@ -101,11 +93,7 @@ record(longin, "$(DEV):MODIFIER5$(N)") {
 #! Record("$(DEV):BEAMCODE$(N)",2485,2474,0,1,"$(DEV):BEAMCODE$(N)")
 #! Field("$(DEV):BEAMCODE$(N).INP",16777215,1,"$(DEV):BEAMCODE$(N).INP")
 #! Field("$(DEV):BEAMCODE$(N).FLNK",16777215,1,"$(DEV):BEAMCODE$(N).FLNK")
-#! Link("$(DEV):BEAMCODE$(N).FLNK","$(DEV):YY$(N)")
-#! Record("$(DEV):YY$(N)",2527,2694,0,1,"$(DEV):YY$(N)")
-#! Field("$(DEV):YY$(N).INP",16777215,1,"$(DEV):YY$(N).INP")
-#! Field("$(DEV):YY$(N).FLNK",16777215,1,"$(DEV):YY$(N).FLNK")
-#! Link("$(DEV):YY$(N).FLNK","$(DEV):PULSEID$(N)")
+#! Link("$(DEV):BEAMCODE$(N).FLNK","$(DEV):PULSEID$(N)")
 #! Record("$(DEV):PULSEID$(N)",2554,2927,0,1,"$(DEV):PULSEID$(N)")
 #! Field("$(DEV):PULSEID$(N).INP",16777215,1,"$(DEV):PULSEID$(N).INP")
 #! Record("$(DEV):MODIFIER5$(N)",2068,3194,0,0,"$(DEV):MODIFIER5$(N)")
