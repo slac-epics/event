@@ -937,8 +937,6 @@ int ErConfigure (
         unsigned int configRegAddr;
         epicsPciConfigInLong((unsigned char) pciBusNo, (unsigned char) pciDevNo,
           (unsigned char) pciFuncNo, PCI_BASE_ADDRESS_0, &configRegAddr); 
-        printf("ErConfigure: epicsPciConfigInLong for bus %d, dev %d, func %d at PCI_BASE_ADDRESS_0 (0x%08x) returns PCI addr 0x%08x\n", 
-          pciBusNo, pciDevNo, pciFuncNo, (unsigned int) PCI_BASE_ADDRESS_0, (unsigned int) configRegAddr);
 
 #ifdef WITH_NEW_DEVLIB
        /*---------------------
@@ -985,6 +983,8 @@ int ErConfigure (
 
         epicsPciConfigInLong((unsigned char) pciBusNo, (unsigned char) pciDevNo,
           (unsigned char) pciFuncNo, PCI_BASE_ADDRESS_2, &configRegAddr); 
+        printf("ErConfigure: epicsPciConfigInLong for bus %d, dev %d, func %d at PCI_BASE_ADDRESS_2 (0x%08x) returns PCI addr 0x%08x\n", 
+          pciBusNo, pciDevNo, pciFuncNo, (unsigned int) PCI_BASE_ADDRESS_2, (unsigned int) configRegAddr);
 
 #ifdef WITH_NEW_DEVLIB
        /*---------------------
@@ -2341,6 +2341,12 @@ ErCardStruct *ErGetCardStruct (int Card)
     */
     ErCardStruct  *pCard;
 
+  /* Use card = -1 to send back ptr to first Er in the list.
+     Device support uses this and by doing it this way, we
+     can avoid making ErCardList global 3/31/2006 dayle */
+  if (Card == -1) {
+    return (ErCardStruct *)ellFirst(&ErCardList);
+  }
    /*---------------------
     * Loop to see if the requested card is in the linked list of known
     * Event Receiver card structures.
@@ -3068,29 +3074,55 @@ epicsStatus ErSetFPMap (ErCardStruct *pCard, int Port, epicsUInt16 Map)
    /*---------------------
     * Write the map value into the appropriate front panel map register
     */
-    switch (Port) {
-    case 0:
+    if (pCard->FormFactor == VME_EVR) {
+      switch (Port) {
+      case 0:
         MRF_VME_REG16_WRITE(&pEr->FP0Map, Map);
         break;
-    case 1:
+      case 1:
         MRF_VME_REG16_WRITE(&pEr->FP1Map, Map);
         break;
-    case 2:
+      case 2:
         MRF_VME_REG16_WRITE(&pEr->FP2Map, Map);
         break;
-    case 3:
+      case 3:
         MRF_VME_REG16_WRITE(&pEr->FP3Map, Map);
         break;
-    case 4:
+      case 4:
         MRF_VME_REG16_WRITE(&pEr->FP4Map, Map);
         break;
-    case 5:
+      case 5:
         MRF_VME_REG16_WRITE(&pEr->FP5Map, Map);
         break;
-    case 6:
+      case 6:
         MRF_VME_REG16_WRITE(&pEr->FP6Map, Map);
         break;
-    }/*end switch*/
+      }/*end switch*/
+    } else if (pCard->FormFactor == PMC_EVR) {
+      switch (Port) {
+      case 0:
+        MRF_VME_REG16_WRITE(&pEr->FP1Map, Map);
+        break;
+      case 1:
+        MRF_VME_REG16_WRITE(&pEr->FP0Map, Map);
+        break;
+      case 2:
+        MRF_VME_REG16_WRITE(&pEr->FP3Map, Map);
+        break;
+      case 3:
+        MRF_VME_REG16_WRITE(&pEr->FP2Map, Map);
+        break;
+      case 4:
+        MRF_VME_REG16_WRITE(&pEr->FP5Map, Map);
+        break;
+      case 5:
+        MRF_VME_REG16_WRITE(&pEr->FP4Map, Map);
+        break;
+      case 6:
+        MRF_VME_REG16_WRITE(&pEr->FP6Map, Map);
+        break;
+      }/*end switch*/
+    }
 
    /*---------------------
     * Return success code
