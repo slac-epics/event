@@ -12,8 +12,8 @@ file db/bsaTestInput.db
 {
 #                             
 #             Device          
-  pattern {    DEV    ,SECN, CALC                   , A    , B   ,EGU,  HOPR,  LOPR,PREC, ADEL, MDEL, RES ,TSEL }
-          { $(DEVICE) ,TMIT, "C>=A?1E10:C+(RNDM*B)" ,"3E10","5E9", "","3E10","1E10",  3 ,"1E8","1E7","6E7",$(EIOC):PULSEID.TIME}
+  pattern {    DEV    ,SECN, CALC                   , A    , B   ,EGU,  HOPR,  LOPR,PREC, ADEL, MDEL, RES  }
+          { $(DEVICE) ,TMIT, "C>=A?1E10:C+(RNDM*B)" ,"3E10","5E9", "","3E10","1E10",  3 ,"1E8","1E7","6E7" }
 }
 
 file db/bsaTestFanouts.db

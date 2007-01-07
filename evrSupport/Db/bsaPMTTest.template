@@ -13,9 +13,9 @@ file db/bsaTestInput.db
 {
 #                             
 #             Device          
-  pattern {    DEV    ,SECN,  CALC              , A  , B ,EGU    ,HOPR,LOPR,PREC,ADEL,MDEL, RES,	TSEL		  }
-          { $(DEVICE) ,LOSS,  "A"               , 87 , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002,$(EIOC):PULSEID.TIME}
-#         { $(DEVICE) ,LOSS,  "C>=100?0:C+RNDM" , 0  , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002,$(EIOC):PULSEID.TIME}
+  pattern {    DEV    ,SECN,  CALC              , A  , B ,EGU    ,HOPR,LOPR,PREC,ADEL,MDEL, RES	}
+          { $(DEVICE) ,LOSS,  "A"               , 87 , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002 }
+#         { $(DEVICE) ,LOSS,  "C>=100?0:C+RNDM" , 0  , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002 }
 }
 file db/bsaTestFanouts.db
 {

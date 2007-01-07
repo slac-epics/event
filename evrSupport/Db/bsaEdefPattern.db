@@ -6,7 +6,6 @@
 
 
 record(compress, "$(DEV):$(PTRN)$(MDID)") {
-  field(TSEL, "$(DEV):PULSEID.TIME")
   field(DISV, "0")
   field(SDIS, "$(DEV):MODIFIER5$(BIT)")
   field(INP, "$(DEV):$(INP)")
@@ -23,4 +22,3 @@ record(compress, "$(DEV):$(PTRN)$(MDID)") {
 #! Record("$(DEV):$(PTRN)$(MDID)",2326,2260,0,1,"$(DEV):$(PTRN)$(MDID)")
 #! Field("$(DEV):$(PTRN)$(MDID).INP",16777215,1,"$(DEV):$(PTRN)$(MDID).INP")
 #! Field("$(DEV):$(PTRN)$(MDID).SDIS",16777215,1,"$(DEV):$(PTRN)$(MDID).SDIS")
-#! Field("$(DEV):$(PTRN)$(MDID).TSEL",16777215,1,"$(DEV):$(PTRN)$(MDID).TSEL")

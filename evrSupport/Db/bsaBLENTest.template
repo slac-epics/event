@@ -13,8 +13,8 @@ file db/bsaTestInput.db
 {
 #                             
 #             Device          
-  pattern {    DEV    ,SECN , CALC,  A , B ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, RES,		TSEL	         }
-          { $(DEVICE) ,WIDTH, "A" , 299, 0 ,fsec,300, 100,  3 , .01,.001,.002, $(EIOC):PULSEID.TIME}
+  pattern {    DEV    ,SECN , CALC,  A , B ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, RES }
+          { $(DEVICE) ,WIDTH, "A" , 299, 0 ,fsec,300, 100,  3 , .01,.001,.002 }
 }
 
 file db/bsaTestFanouts.db

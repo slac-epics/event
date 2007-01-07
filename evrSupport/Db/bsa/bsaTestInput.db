@@ -18,7 +18,6 @@ record(calc, "$(DEV):$(SECN)") {
   field(MDEL, "$(MDEL)")
   field(INPC, "$(DEV):$(SECN)")
   field(FLNK, "$(DEV):$(SECN)HST")
-  field(TSEL, "$(TSEL)")
 }
 
 record(compress, "$(DEV):$(SECN)HST") {
@@ -51,11 +50,10 @@ record(ao, "$(DEV):$(SECN)RES") {
 #! Link("$(DEV):$(SECN).INPC","$(DEV):$(SECN).VAL")
 #! Field("$(DEV):$(SECN).FLNK",16777215,1,"$(DEV):$(SECN).FLNK")
 #! Link("$(DEV):$(SECN).FLNK","$(DEV):$(SECN)HST")
-#! Field("$(DEV):$(SECN).TSEL",16777215,1,"$(DEV):$(SECN).TSEL")
 #! Record("$(DEV):$(SECN)HST",2440,2492,0,0,"$(DEV):$(SECN)HST")
 #! Field("$(DEV):$(SECN)HST.INP",16777215,0,"$(DEV):$(SECN)HST.INP")
 #! Link("$(DEV):$(SECN)HST.INP","$(DEV):$(SECN).VAL")
 #! Record("$(DEV):$(SECN)RES",2140,2572,0,1,"$(DEV):$(SECN)RES")
-#! TextBox(TB4,2360,2160,2700,2440,0,"Dialog",12,1,16777215,"Macros:\nDEV = PRIM:LOCA:UNIT\nSECN = for BPMS- TMIT, X, Y\n            = for TORO- TMIT\n            = for ARRY- DATA\n            = for pattern - PULSEID, YY, PP, MODIFIER1 to 5\nCALC = Calculation based on A and B\nA = First Input to Calculation\nB = Second Input to Calculation\nEGU = Engineering Units \nHOPR, LOPR  =High and Low Operating Limits\nPREC = Precision (# after the decimal point)\nADEL = Archive Delta Amount\nMDEL = Monitor Delta Amount\nTSEL = Source of timestamp\n        = \"\" for IOC:LOCA:IOCUNIT:PULSEID\n        = IOC:LOCA:IOCUNIT:PULSEID.TIME for all other signals",null)
+#! TextBox(TB4,2360,2160,2700,2440,0,"Dialog",12,1,16777215,"Macros:\nDEV = PRIM:LOCA:UNIT\nSECN = for BPMS- TMIT, X, Y\n            = for TORO- TMIT\n            = for ARRY- DATA\n            = for pattern - PULSEID, YY, PP, MODIFIER1 to 5\nCALC = Calculation based on A and B\nA = First Input to Calculation\nB = Second Input to Calculation\nEGU = Engineering Units \nHOPR, LOPR  =High and Low Operating Limits\nPREC = Precision (# after the decimal point)\nADEL = Archive Delta Amount\nMDEL = Monitor Delta Amount\n,null)
 #! TextBox(TB3,2120,2140,2340,2180,0,"Dialog",14,1,16777215,"Simulated BSAC Input",null)
 #! TextBox(TB1,2047,2511,2307,2571,0,"Dialog",12,0,16777215,"$(DEV):$(SECN)\n  is processed by $(DEV):FANOUT.LNKx\n",null)
