@@ -1101,10 +1101,10 @@ long EgSetACinputDivisor(EgCardStruct *pParm, unsigned short Divisor, unsigned s
   control &= ~0x0200;
   if(DlySel) {
     control |= 0x0100;
-    /* a divisor of zero means bypass the phase and divide logic */
-    if (Divisor == 0) control |= 0x0800;
   } else {
     control &= ~0x0100;
+    /* a divisor of zero means bypass the phase and divide logic */
+    if (Divisor == 0) control |= 0x0800;
   }
   MRF_VME_REG16_WRITE(&pEg->ACinputControl, control);        
      
@@ -2089,8 +2089,8 @@ int EvgDataBufferUpdate(EgCardStruct *pParm, epicsUInt32 *data, int nelm)
   for (ii = 0; ii < nelm; ii++) {
     MRF_VME_REG32_WRITE(&pEvg->DataBuffer[ii], data[ii]);
   }
-  MRF_VME_REG32_WRITE(&pEvg->DataBufControl,
-                      MRF_VME_REG32_READ(&pEvg->DataBufControl) | EVG_DBUF_TRIGGER);
+  MRF_VME_REG16_WRITE(&pEvg->DataBufControl,
+                      MRF_VME_REG16_READ(&pEvg->DataBufControl) | EVG_DBUF_TRIGGER);
 
   return OK;
 }
@@ -2099,9 +2099,9 @@ void EvgDataBufferSend(volatile MrfEVGRegs *pEvg)
 {
   int mask;
 
-  mask = MRF_VME_REG32_READ(&pEvg->DataBufControl);
+  mask = MRF_VME_REG16_READ(&pEvg->DataBufControl);
   mask |= EVG_DBUF_TRIGGER;
-  MRF_VME_REG32_WRITE(&pEvg->DataBufControl, mask);
+  MRF_VME_REG16_WRITE(&pEvg->DataBufControl, mask);
 }
 
 int EvgDataBufferInit(int Card, int nelm) {
