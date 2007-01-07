@@ -20,12 +20,12 @@ file db/evrPattern.db
 {
 #
 #     Location     ,pattern#,     Pattern Inputs      
-pattern { DEV      , N      , INP1          , INP2         , INP3         , INP4         ,  INP5         , INP6         , INP7        , INP8          ,  INP9        }
+pattern { DEV      , N      , INP1          , INP2         , INP3         , INP4         ,  INP5         , INP6         , INP7        , INP8          }
 
-      {  ${DEVICE} , ""     , "MODIFIER1N-1","MODIFIER2N-1","MODIFIER3N-1","MODIFIER4N-1","MODIFIER5N-1" ,"BUNCHARGEN-1","BEAMCODEN-1" ,"YYN-1"       ,"PULSEIDN-1"  }
-      {  ${DEVICE} , "N-1"  , "MODIFIER1N-2","MODIFIER2N-2","MODIFIER3N-2","MODIFIER4N-2","MODIFIER5N-2" ,"BUNCHARGEN-2","BEAMCODEN-2" ,"YYN-2"       ,"PULSEIDN-2"  }
-      {  ${DEVICE} , "N-2"  , "MODIFIER1N-3","MODIFIER2N-3","MODIFIER3N-3","MODIFIER4N-3","MODIFIER5N-3" ,"BUNCHARGEN-3","BEAMCODEN-3" ,"YYN-3"       ,"PULSEIDN-3"  }
-      {  ${DEVICE} , "N-3"  , "PATTERN.D"   ,"PATTERN.E"   ,"PATTERN.F"   ,"PATTERN.G"   ,"PATTERN.H"    ,"PATTERN.I"   ,"PATTERN.J"   ,"PATTERN.K"   ,"PATTERN.L"}
+      {  ${DEVICE} , ""     , "MODIFIER1N-1","MODIFIER2N-1","MODIFIER3N-1","MODIFIER4N-1","MODIFIER5N-1" ,"BUNCHARGEN-1","BEAMCODEN-1" ,"PULSEIDN-1"  }
+      {  ${DEVICE} , "N-1"  , "MODIFIER1N-2","MODIFIER2N-2","MODIFIER3N-2","MODIFIER4N-2","MODIFIER5N-2" ,"BUNCHARGEN-2","BEAMCODEN-2" ,"PULSEIDN-2"  }
+      {  ${DEVICE} , "N-2"  , "MODIFIER1N-3","MODIFIER2N-3","MODIFIER3N-3","MODIFIER4N-3","MODIFIER5N-3" ,"BUNCHARGEN-3","BEAMCODEN-3" ,"PULSEIDN-3"  }
+      {  ${DEVICE} , "N-3"  , "PATTERN.D"   ,"PATTERN.E"   ,"PATTERN.F"   ,"PATTERN.G"   ,"PATTERN.H"    ,"PATTERN.I"   ,"PATTERN.J"   ,"PATTERN.L"}
 
 }
 
@@ -35,19 +35,19 @@ file db/evrPattern.db
 {
 #
 #     Location     ,pattern#,     Pattern Inputs      
-pattern { DEV      , N      , INP1          , INP2         , INP3         , INP4         ,  INP5         , INP6         , INP7        , INP8   ,  INP9       }
+pattern { DEV      , N      , INP1          , INP2         , INP3         , INP4         ,  INP5         , INP6         , INP7        ,  INP8       }
 
-      {  ${DEVICE} , "D"    , "MODIFIER1"   ,"MODIFIER2"   ,"MODIFIER3"   ,"MODIFIER4"   ,"MODIFIER5"    ,"BUNCHARGE"   ,"BEAMCODE"   ,"YY"    ,"PULSEID"    }
-      {  ${DEVICE} , "D-1"  , "MODIFIER1N-1","MODIFIER2N-1","MODIFIER3N-1","MODIFIER4N-1","MODIFIER5N-1" ,"BUNCHARGEN-1","BEAMCODEN-1","YYN-1" ,"PULSEIDN-1" }
-      {  ${DEVICE} , "D-2"  , "MODIFIER1N-2","MODIFIER2N-2","MODIFIER3N-2","MODIFIER4N-2","MODIFIER5N-2" ,"BUNCHARGEN-2","BEAMCODEN-2","YYN-2" ,"PULSEIDN-2" }
-      {  ${DEVICE} , "D-3"  , "MODIFIER1N-3","MODIFIER2N-3","MODIFIER3N-3","MODIFIER4N-3","MODIFIER5N-3" ,"BUNCHARGEN-3","BEAMCODEN-3","YYN-3" ,"PULSEIDN-3" }
+      {  ${DEVICE} , "D"    , "MODIFIER1"   ,"MODIFIER2"   ,"MODIFIER3"   ,"MODIFIER4"   ,"MODIFIER5"    ,"BUNCHARGE"   ,"BEAMCODE"   ,"PULSEID"    }
+      {  ${DEVICE} , "D-1"  , "MODIFIER1N-1","MODIFIER2N-1","MODIFIER3N-1","MODIFIER4N-1","MODIFIER5N-1" ,"BUNCHARGEN-1","BEAMCODEN-1","PULSEIDN-1" }
+      {  ${DEVICE} , "D-2"  , "MODIFIER1N-2","MODIFIER2N-2","MODIFIER3N-2","MODIFIER4N-2","MODIFIER5N-2" ,"BUNCHARGEN-2","BEAMCODEN-2","PULSEIDN-2" }
+      {  ${DEVICE} , "D-3"  , "MODIFIER1N-3","MODIFIER2N-3","MODIFIER3N-3","MODIFIER4N-3","MODIFIER5N-3" ,"BUNCHARGEN-3","BEAMCODEN-3","PULSEIDN-3" }
 }
 
 file db/evrFiducial.db
 {
 #     Location  ,               PATTERNFO links       
-pattern { DEV        ,    LNK4    ,    LNK5    ,    LNK6    ,    FLNK    }
-	{ ${DEVICE}  , "${LINK4}" , "${LINK5}" , "${LINK6}" , "${LINK7}" }
+pattern { DEV        ,    LNK4    ,    LNK5    ,    LNK6    ,    FLNK    ,    LNKD    }
+	{ ${DEVICE}  , "${LINK4}" , "${LINK5}" , "${LINK6}" , "${LINK7}" , "${LINKD}" }
 }
 
 file db/generalTimeNonVx.template
