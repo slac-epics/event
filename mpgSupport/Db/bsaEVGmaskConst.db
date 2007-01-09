@@ -4,13 +4,6 @@
 #! DBDEND
 
 
-record(ao, EVG:SYS0:1:MASKMAXCOUNT) {
-  field(DESC, "MAX NO EDEF INCM & EXCM")
-  field(PINI, "YES")
-  field(VAL, "160")
-  field(EGU, "NUMBER")
-}
-
 record(stringout, EDEF:SYS0:1:INCMS1) {
 }
 
@@ -491,9 +484,12 @@ record(stringout, EDEF:SYS0:16:EXCMS3) {
 record(stringout, EDEF:SYS0:16:EXCMS4) {
 }
 
+record(stringout, IOC:SYS0:1:EDEFNAME) {
+  field(DESC, "Fill to request an edef")
+}
+
 #! Further lines contain data used by VisualDCT
-#! View(277,2553,1.1)
-#! Record(EVG:SYS0:1:MASKMAXCOUNT,380,408,0,1,"EVG:SYS0:1:MASKMAXCOUNT")
+#! View(375,425,1.1)
 #! Record(EDEF:SYS0:1:INCMS1,380,543,0,1,"EDEF:SYS0:1:INCMS1")
 #! Record(EDEF:SYS0:1:INCMS2,540,543,0,1,"EDEF:SYS0:1:INCMS2")
 #! Record(EDEF:SYS0:1:INCMS3,700,543,0,1,"EDEF:SYS0:1:INCMS3")
@@ -654,3 +650,4 @@ record(stringout, EDEF:SYS0:16:EXCMS4) {
 #! Record(EDEF:SYS0:16:EXCMS2,540,2703,0,1,"EDEF:SYS0:16:EXCMS2")
 #! Record(EDEF:SYS0:16:EXCMS3,700,2703,0,1,"EDEF:SYS0:16:EXCMS3")
 #! Record(EDEF:SYS0:16:EXCMS4,860,2703,0,1,"EDEF:SYS0:16:EXCMS4")
+#! Record(IOC:SYS0:1:EDEFNAME,380,450,0,1,"IOC:SYS0:1:EDEFNAME")
