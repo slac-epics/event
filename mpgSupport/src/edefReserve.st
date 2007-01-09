@@ -1,16 +1,18 @@
 program edefReserve
 
+option -a;  /* All pvGets must be synchronous */
+option +c;  /* All connections must be made before execution begins */
+option +d;  /* Turn on runtime debug messages */
+
 %%#include <stdio.h>
 
-#include "pvMacros.st"
-
-string edefRequestName;
-assign edefRequestName to "EVG:SYS0:1:EDEFNAME";
+string  edefRequestName;
+assign  edefRequestName to "IOC:SYS0:1:EDEFNAME";
 monitor edefRequestName;
+evflag  edefRequestName_ef;
+sync    edefRequestName edefRequestName_ef;
 
 int edefMaxNumber;
-assign edefMaxNumber to "EVG:SYS0:1:EDEFMAXCOUNT";
-
 int edefNumber;
 int edefReserveAttempt;
 int edefCheckAttempt;
@@ -52,74 +54,74 @@ string EXCLUSIONpvSHORT;
 
 entry
 {
-	delay_time = 0.03;
+	edefMaxNumber = 20;
 
 	sprintf (edefRequestName, "");
-	PVPUT (edefRequestName);
+	pvPut (edefRequestName);
 
 	sprintf (edefNAVG, "1");
 	sprintf (edefNRPOS, "1");
 
-	PVGET (edefMaxNumber);
-
-        epicsThreadSleep (10.0); /* wait for mask setup */
+        epicsThreadSleep (10.0); /* {} wait for mask setup */
 
 	/* Start all canned edefs */
 	for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
           sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefNumber);
-          PVASSIGN (edefName, edefNamePV);
-          PVGET (edefName);
+          pvAssign (edefName, edefNamePV);
+          pvGet (edefName);
           if (0 == strlen(edefName)) {
             /* nothing to do */
             }
           else {
             sprintf (edefNamePV, "EDEF:SYS0:%d:CTRL", edefNumber);
-            PVASSIGN (edefName, edefNamePV);
+            pvAssign (edefName, edefNamePV);
             sprintf (edefName, "ON");
-            PVPUT (edefName);
+            pvPut (edefName);
             };
 	  };
 
         edefNumber = 0;
         edefReserveAttempt = 0;
         edefCheckAttempt = 0;
-
 }
 
 ss edefReserveStateSet
 {
 	state waiting 
 	{
-	    when(strlen(edefRequestName)>0)
+	    entry
+	    {
+		efClear(edefRequestName_ef);
+	    }
+	    when(efTest(edefRequestName_ef))
 	    {
 		edefCheckAttempt = 0;
 	    } state checking 
-	    when(delay(1.0))
-	    {
-	    } state waiting
 	}
+
 	state checking
 	{	
 	    when ((edefCheckAttempt < edefMaxNumber) && (strlen(edefRequestName)>0))
 	    {
 		edefCheckAttempt++;
                 sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefCheckAttempt);
-                PVASSIGN (edefName, edefNamePV);
-                PVGET (edefName);
+                pvAssign (edefName, edefNamePV);
+                pvGet (edefName);
 		if (0 == strcmp(edefName,edefRequestName))
 		{
 		  sprintf (edefRequestName, "");
-                  PVPUT (edefRequestName);
+                  pvPut (edefRequestName);
 		}
 	    } state checking
 	    when ((edefCheckAttempt >= edefMaxNumber) && (strlen(edefRequestName)>0))
 	    {
 		edefReserveAttempt = 0;
 	    } state reserving
-	    when(delay(delay_time))
+	    when(1)
 	    {
 	    } state waiting
 	}
+
 	state reserving
 	{
 	    when(strlen(edefRequestName)>0)
@@ -128,57 +130,57 @@ ss edefReserveStateSet
 		edefNumber++;
 		if (edefNumber > edefMaxNumber) edefNumber = 1;
 		sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefNumber);
-		PVASSIGN (edefName, edefNamePV);
-		PVGET (edefName);
+		pvAssign (edefName, edefNamePV);
+		pvGet (edefName);
 		if (0 == strlen(edefName))
 		{
 		  sprintf (edefName, "%s", edefRequestName);
-		  PVPUT (edefName);
+		  pvPut (edefName);
 		  sprintf (edefUserNamePV, "EDEF:SYS0:%d:USERNAME", edefNumber);
-		  PVASSIGN (edefUserName, edefUserNamePV);
+		  pvAssign (edefUserName, edefUserNamePV);
 		  sprintf (edefUserName, "Client");
-		  PVPUT (edefUserName);
+		  pvPut (edefUserName);
 		  sprintf (edefNAVGPV, "EDEF:SYS0:%d:AVGCNTMAX", edefNumber);
-		  PVASSIGN (edefNAVG, edefNAVGPV);
-		  PVPUT (edefNAVG);
+		  pvAssign (edefNAVG, edefNAVGPV);
+		  pvPut (edefNAVG);
 		  sprintf (edefNRPOSPV, "EDEF:SYS0:%d:MEASCNTMAX", edefNumber);
-		  PVASSIGN (edefNRPOS, edefNRPOSPV);
-		  PVPUT (edefNRPOS);
+		  pvAssign (edefNRPOS, edefNRPOSPV);
+		  pvPut (edefNRPOS);
                   for (i=0; i<3; i++) {
                     dgrpSHORT = dgrpINCM[i] & 0x00FF;
                     sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dA", edefNumber, 1+i);
-                    PVASSIGN (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
+                    pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                     INCLUSIONvalSHORT = dgrpSHORT;
-                    PVPUT (INCLUSIONvalSHORT);
+                    pvPut (INCLUSIONvalSHORT);
 
                     dgrpSHORT = (dgrpINCM[i] & 0xFF00) >> 16;
                     sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dB", edefNumber, 1+i);
-                    PVASSIGN (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
+                    pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                     INCLUSIONvalSHORT = dgrpSHORT;
-                    PVPUT (INCLUSIONvalSHORT);
+                    pvPut (INCLUSIONvalSHORT);
 
                     dgrpSHORT = dgrpEXCM[i] & 0x00FF;
                     sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dA", edefNumber, 1+i);
-                    PVASSIGN (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
+                    pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                     EXCLUSIONvalSHORT = dgrpSHORT;
-                    PVPUT (EXCLUSIONvalSHORT);
+                    pvPut (EXCLUSIONvalSHORT);
 
                     dgrpSHORT = (dgrpEXCM[i] & 0xFF00) >> 16;
                     sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dB", edefNumber, 1+i);
-                    PVASSIGN (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
+                    pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                     EXCLUSIONvalSHORT = dgrpSHORT;
-                    PVPUT (EXCLUSIONvalSHORT);
+                    pvPut (EXCLUSIONvalSHORT);
                     };
                   sprintf (edefRequestName, "");
-                  PVPUT (edefRequestName);
+                  pvPut (edefRequestName);
 		}
 		else if (edefReserveAttempt > edefMaxNumber) 
 		{
 		  sprintf (edefRequestName, "");
-		  PVPUT (edefRequestName);
+		  pvPut (edefRequestName);
 		}
 	    } state reserving
-	    when(delay(delay_time))
+	    when(1)
 	    {
 	    } state waiting
 	}
