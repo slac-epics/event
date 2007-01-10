@@ -44,8 +44,6 @@ record(seq, "$(DEV):RESETSEQ$(MD)") {
   field(DOL6, "0")
   field(LNK6, "$(DEV):DONE$(MDID)")
   field(DOL1, "1")
-  field(DOL7, "0")
-  field(LNK7, "EDEF:SYS0:$(MD):CTRL CA")
   field(DOL8, "0")
   field(LNK8, "$(DEV):INIT$(MDID) PP")
   field(SDIS, "EDEF:SYS0:$(MD):INIT CPP")

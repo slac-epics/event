@@ -18,9 +18,9 @@ DB += bsaDevStates.db
 DB += bsaTestFanouts.db
 DB += bsaTestInput.db
 # BSA simulation - evr/evg support
-DB += bsaEVGProcTest.db 
+DB += bsaProcTest.db 
+DB += bsaProcTest.template
 DB += bsaEVRTestFanouts.db
-DB += bsaEVGTest.template
 # Device Simulation
 DB += bsaBPMSTest.template
 DB += bsaTOROTest.template
