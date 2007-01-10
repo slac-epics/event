@@ -1,0 +1,40 @@
+#==============================================================================
+#
+# Abs:  MPG Pattern Simulation and Processing 
+#
+# Name: mpgPatternTest.template
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+file db/bsaTestInput.db
+{
+# Instantiate simulators for the EVG data that is put into the PNET waveform.
+#
+#             Device
+  pattern {    DEV                ,  SECN     ,      CALC         , A , B ,EGU,  HOPR,LOPR,PREC,ADEL,MDEL,RES }
+          { ESIM:$(SYSI):$(UNITI) ,PULSEID  ,"C>=131039?0:C+1"  , 0 , 0 , "",    131039,0 , 0  , 36 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,BEAMCODE ,"A"                , 1 , 0 , "",    10    ,1 , 0  ,  0 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,MODIFIER1,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,MODIFIER2,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,MODIFIER3,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,MODIFIER4,"C>=10?1:C+1"      , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,MODIFIER5,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,YY       ,"C>=50?1:C+1"      , 0 , 0 , "",    256   ,0 , 0  ,  0 , 0  , 0  }
+          { ESIM:$(SYSI):$(UNITI) ,BUNCHARGE,"C>=1000?200:C+1"  , 0 , 0 , "",   1000 ,200 , 0  ,  0 , 0  , 0  }
+}
+file db/mpgPatternProc.db
+{
+#
+#        Location
+pattern { LOCA  ,  UNIT  , CARD , ELOCA , CHECK }
+        {$(SYSI),$(UNITI),  0   ,$(SYSI),   0   }
+}
+file db/mpgPatternSim.db
+{
+#
+#        Location
+pattern { SIM                  }
+        { ESIM:$(SYSI):$(UNITI) }
+}
