@@ -78,7 +78,7 @@ void pnetSend(void *message);
   /* ENUM with values: DP_FATAL, DP_ERROR, DP_WARN, DP_INFO, DP_DEBUG
      Anything less than or equal to mpgPatternFlag gets printed out. Can
      be set to 0 here and altered via prompt or in st.cmd file */
-int mpgPatternFlag = 0;
+int mpgPatternFlag = DP_INFO;
 #endif
 
 static unsigned int msgCount         = 0; /* # waveforms processed since boot/reset */ 
@@ -264,59 +264,69 @@ static long mpgPatternPnet(subRecord *psub)
       modulo720Sync = 0;
     }
     seqCheckSync = 1;
-  } else {
-    seqCheckSync = 0;
-  } 
 
-  /* Check if modulo-720 can be resynchronized on this pulse. */
-  modulo720Count = psub->i + 1.1;
-  if (pnet_a[0] & PNET_MODULO720_RESYNC) {
-    /* If we should be sync'ed but are not, update a counter */
-    if (modulo720Sync && (modulo720Count != 720)) {
-      modulo720SyncErrCount++;
-      errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
-                   modulo720Count);
-      /* Assume pulse ID is also out-of-sync */
-      pulseIDSync = 0;
-    }
-    modulo720Count = 0;
-    modulo720Sync  = 1;
-  } else if (!modulo720Sync) {
-    modulo720Count = 0;
-    errFlag = EVG_MODULO720_NO_SYNC;
-  }
-  psub->i = (double)modulo720Count;
-
-  /* Check for a non-zero value in the 4 bit pulsid_resync field of Pnet
-     data.  If found, it resets upper 4 bits of the pulse ID (lower bit
-     will be zero).  Otherwise, the pulse ID is set to 1 if the last value
-     is the rollover value.  Otherwise, the pulse ID is simply incremented.*/
-  pulsid        = psub->l + 1.1;
-  pulsid_resync = (pnet_a[0] >> 3) & PULSEID_RESYNC;
-  if (pulsid_resync) {
-    /* If we should be sync'ed but are not, update a counter */
-    if ((pulseIDSync) && (pulsid != pulsid_resync)) {
-      pulseIDSyncErrCount++;
-      errlogPrintf("mpgPatternPnet: Pulse IDs not synchronized, MPG = %d, EVG = %d\n",
-                   pulsid_resync, pulsid);
-      /* Assume modulo 720 out-of-sync too unless the RESYNC bit is set */
-      if (!(pnet_a[0] & PNET_MODULO720_RESYNC)) {
-        modulo720Sync  = 0;
-        errFlag = EVG_MODULO720_NO_SYNC;
+    /* Check if modulo-720 can be resynchronized on this pulse. */
+    modulo720Count = psub->i + 1.1;
+    if (pnet_a[0] & PNET_MODULO720_RESYNC) {
+      /* If we should be sync'ed but are not, update a counter */
+      if (modulo720Sync && (modulo720Count != 720)) {
+        modulo720SyncErrCount++;
+        errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
+                     modulo720Count);
+        /* Assume pulse ID is also out-of-sync */
+        pulseIDSync = 0;
       }
+      modulo720Count = 0;
+      modulo720Sync  = 1;
+    } else if (!modulo720Sync) {
+      modulo720Count = 0;
+      errFlag = EVG_MODULO720_NO_SYNC;
+    } else if (modulo720Count >= 720) {
+        errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
+                     modulo720Count);
     }
-    pulseIDSync = 1;
-    pulsid = pulsid_resync;
-  } else if (!pulseIDSync) {
-    pulsid  = 1;
-    errFlag = EVG_PULSEID_NO_SYNC;
-  } else if (pulsid > PULSEID_MAX) {    
-    /* Aha. Time to rollover, so THIS pulse will be set back to zero */
-    pulsid = 0;
-    resyncCount++;
-    DEBUGPRINT(DP_INFO, mpgPatternFlag, ("mpgPatternPnet: Rollover, pulsid+1 = %d", pulsid));
+      
+    psub->i = (double)modulo720Count;
+
+    /* Check for a non-zero value in the 4 bit pulsid_resync field of Pnet
+       data.  If found, it resets upper 4 bits of the pulse ID (lower bit
+       will be zero).  Otherwise, the pulse ID is set to 1 if the last value
+       is the rollover value.  Otherwise, the pulse ID is simply incremented.*/
+    pulsid        = psub->l + 1.1;
+    pulsid_resync = (pnet_a[0] >> 3) & PULSEID_RESYNC;
+    if (pulsid_resync) {
+      /* If we should be sync'ed but are not, update a counter */
+      if ((pulseIDSync) && (pulsid != pulsid_resync)) {
+        pulseIDSyncErrCount++;
+        errlogPrintf("mpgPatternPnet: Pulse IDs not synchronized, MPG = %d, EVG = %d\n",
+                     pulsid_resync, pulsid);
+        /* Assume modulo 720 out-of-sync too unless the RESYNC bit is set */
+        if (!(pnet_a[0] & PNET_MODULO720_RESYNC)) {
+          modulo720Sync  = 0;
+          errFlag = EVG_MODULO720_NO_SYNC;
+        }
+      }
+      pulseIDSync = 1;
+      pulsid = pulsid_resync;
+    } else if (!pulseIDSync) {
+      pulsid  = 1;
+      errFlag = EVG_PULSEID_NO_SYNC;
+    } else if (pulsid > PULSEID_MAX) {    
+      /* Aha. Time to rollover, so THIS pulse will be set back to zero */
+      pulsid = 0;
+      resyncCount++;
+      DEBUGPRINT(DP_INFO, mpgPatternFlag, ("mpgPatternPnet: Rollover, pulsid+1 = %d", pulsid));
+    }
+    psub->l = (double)pulsid;
+  } else {
+    pulseIDSync   = 0;
+    modulo720Sync = 0;
+    seqCheckSync  = 0;
+    psub->i++;
+    if (psub->i >= 720) psub->i = 0.0;
+    psub->l++;
+    if (psub->l > PULSEID_MAX) psub->l = 0.0;
   }
-  psub->l = (double)pulsid;
   
   dbScanUnlock(wfAddr->precord);
   psub->val = (double)errFlag;
@@ -596,9 +606,8 @@ static long mpgPatternState(sSubRecord *psub)
 static long mpgPatternCheck(sSubRecord *psub)
 {
   psub->val = 0;
-
   /* Allow for X = -1 = forever */
-  if ((psub->y >= psub->x) && (psub->x > 0)) {
+  if ((psub->y >= psub->x) && (psub->x > 0.1)) {
     /* we're done with measurement */
     psub->z=1;
   }

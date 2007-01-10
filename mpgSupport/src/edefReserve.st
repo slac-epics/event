@@ -6,6 +6,8 @@ option +d;  /* Turn on runtime debug messages */
 
 %%#include <stdio.h>
 
+/* {} Note: I probably shouldn't hard code "SYS0", but pass it in as a macro - MIke Zelazny 10-Jan-2007 */
+
 string  edefRequestName;
 assign  edefRequestName to "IOC:SYS0:1:EDEFNAME";
 monitor edefRequestName;
