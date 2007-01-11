@@ -11,8 +11,6 @@ option +d;  /* Turn on runtime debug messages */
 string  edefRequestName;
 assign  edefRequestName to "IOC:SYS0:1:EDEFNAME";
 monitor edefRequestName;
-evflag  edefRequestName_ef;
-sync    edefRequestName edefRequestName_ef;
 
 int edefMaxNumber;
 int edefNumber;
@@ -54,6 +52,10 @@ unsigned short EXCLUSIONvalSHORT;
 assign EXCLUSIONvalSHORT to "";
 string EXCLUSIONpvSHORT;
 
+int MaskSetupDone;
+assign MaskSetupDone to "IOC:SYS0:1:MASKSETUP";
+monitor MaskSetupDone;
+
 entry
 {
 	edefMaxNumber = 20;
@@ -64,24 +66,6 @@ entry
 	sprintf (edefNAVG, "1");
 	sprintf (edefNRPOS, "1");
 
-        epicsThreadSleep (10.0); /* {} wait for mask setup */
-
-	/* Start all canned edefs */
-	for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
-          sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefNumber);
-          pvAssign (edefName, edefNamePV);
-          pvGet (edefName);
-          if (0 == strlen(edefName)) {
-            /* nothing to do */
-            }
-          else {
-            sprintf (edefNamePV, "EDEF:SYS0:%d:CTRL", edefNumber);
-            pvAssign (edefName, edefNamePV);
-            sprintf (edefName, "ON");
-            pvPut (edefName);
-            };
-	  };
-
         edefNumber = 0;
         edefReserveAttempt = 0;
         edefCheckAttempt = 0;
@@ -89,13 +73,31 @@ entry
 
 ss edefReserveStateSet
 {
+	state waitforMaskSetup
+	{	
+	    when (1 == MaskSetupDone)
+	    {
+		/* Start all canned edefs */
+		for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
+		  sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefNumber);
+		  pvAssign (edefName, edefNamePV);
+		  pvGet (edefName);
+		  if (0 == strlen(edefName)) {
+		    /* nothing to do */
+		    }
+		  else {
+		    sprintf (edefNamePV, "EDEF:SYS0:%d:CTRL", edefNumber);
+		    pvAssign (edefName, edefNamePV);
+		    sprintf (edefName, "ON");
+		    pvPut (edefName);
+		  };
+		};
+	    } state waiting
+	} /* state waitforMaskSetup */
+
 	state waiting 
 	{
-	    entry
-	    {
-		efClear(edefRequestName_ef);
-	    }
-	    when(efTest(edefRequestName_ef))
+	    when(strlen(edefRequestName)>0)
 	    {
 		edefCheckAttempt = 0;
 	    } state checking 
