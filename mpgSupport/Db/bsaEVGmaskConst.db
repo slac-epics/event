@@ -488,8 +488,23 @@ record(stringout, IOC:SYS0:1:EDEFNAME) {
   field(DESC, "Fill to request an edef")
 }
 
+record(bo, IOC:SYS0:1:MASKSETUP) {
+  field(DESC, "eDefMask.st initialized")
+  field(PINI, "YES")
+  field(ZNAM, "Incomplete")
+  field(ONAM, "Done")
+}
+
+record(event, IOC:SYS0:1:MASKCHG) {
+  field(DESC, "INCLUSION or EXCLUSION")
+}
+
+record(event, IOC:SYS0:1:BITCHG) {
+  field(DESC, "INCM or EXCM change")
+}
+
 #! Further lines contain data used by VisualDCT
-#! View(375,425,1.1)
+#! View(375,420,1.1)
 #! Record(EDEF:SYS0:1:INCMS1,380,543,0,1,"EDEF:SYS0:1:INCMS1")
 #! Record(EDEF:SYS0:1:INCMS2,540,543,0,1,"EDEF:SYS0:1:INCMS2")
 #! Record(EDEF:SYS0:1:INCMS3,700,543,0,1,"EDEF:SYS0:1:INCMS3")
@@ -651,3 +666,6 @@ record(stringout, IOC:SYS0:1:EDEFNAME) {
 #! Record(EDEF:SYS0:16:EXCMS3,700,2703,0,1,"EDEF:SYS0:16:EXCMS3")
 #! Record(EDEF:SYS0:16:EXCMS4,860,2703,0,1,"EDEF:SYS0:16:EXCMS4")
 #! Record(IOC:SYS0:1:EDEFNAME,380,450,0,1,"IOC:SYS0:1:EDEFNAME")
+#! Record(IOC:SYS0:1:MASKSETUP,560,408,0,1,"IOC:SYS0:1:MASKSETUP")
+#! Record(IOC:SYS0:1:MASKCHG,740,450,0,1,"IOC:SYS0:1:MASKCHG")
+#! Record(IOC:SYS0:1:BITCHG,920,450,0,1,"IOC:SYS0:1:BITCHG")
