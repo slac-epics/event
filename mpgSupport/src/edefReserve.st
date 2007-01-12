@@ -6,10 +6,8 @@ option +d;  /* Turn on runtime debug messages */
 
 %%#include <stdio.h>
 
-/* {} Note: I probably shouldn't hard code "SYS0", but pass it in as a macro - MIke Zelazny 10-Jan-2007 */
-
 string  edefRequestName;
-assign  edefRequestName to "IOC:SYS0:1:EDEFNAME";
+assign  edefRequestName to "IOC:{SYS}:1:EDEFNAME";
 monitor edefRequestName;
 
 int edefMaxNumber;
@@ -53,8 +51,10 @@ assign EXCLUSIONvalSHORT to "";
 string EXCLUSIONpvSHORT;
 
 int MaskSetupDone;
-assign MaskSetupDone to "IOC:SYS0:1:MASKSETUP";
+assign MaskSetupDone to "IOC:{SYS}:1:MASKSETUP";
 monitor MaskSetupDone;
+
+char * SYS;
 
 entry
 {
@@ -69,6 +69,8 @@ entry
         edefNumber = 0;
         edefReserveAttempt = 0;
         edefCheckAttempt = 0;
+
+	SYS = macValueGet("SYS");
 }
 
 ss edefReserveStateSet
@@ -79,14 +81,14 @@ ss edefReserveStateSet
 	    {
 		/* Start all canned edefs */
 		for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
-		  sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefNumber);
+		  sprintf (edefNamePV, "EDEF:%s:%d:NAME", SYS, edefNumber);
 		  pvAssign (edefName, edefNamePV);
 		  pvGet (edefName);
 		  if (0 == strlen(edefName)) {
 		    /* nothing to do */
 		    }
 		  else {
-		    sprintf (edefNamePV, "EDEF:SYS0:%d:CTRL", edefNumber);
+		    sprintf (edefNamePV, "EDEF:%s:%d:CTRL", SYS, edefNumber);
 		    pvAssign (edefName, edefNamePV);
 		    sprintf (edefName, "ON");
 		    pvPut (edefName);
@@ -108,7 +110,7 @@ ss edefReserveStateSet
 	    when ((edefCheckAttempt < edefMaxNumber) && (strlen(edefRequestName)>0))
 	    {
 		edefCheckAttempt++;
-                sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefCheckAttempt);
+                sprintf (edefNamePV, "EDEF:%s:%d:NAME", SYS, edefCheckAttempt);
                 pvAssign (edefName, edefNamePV);
                 pvGet (edefName);
 		if (0 == strcmp(edefName,edefRequestName))
@@ -133,44 +135,44 @@ ss edefReserveStateSet
 		edefReserveAttempt++;
 		edefNumber++;
 		if (edefNumber > edefMaxNumber) edefNumber = 1;
-		sprintf (edefNamePV, "EDEF:SYS0:%d:NAME", edefNumber);
+		sprintf (edefNamePV, "EDEF:%s:%d:NAME", SYS, edefNumber);
 		pvAssign (edefName, edefNamePV);
 		pvGet (edefName);
 		if (0 == strlen(edefName))
 		{
 		  sprintf (edefName, "%s", edefRequestName);
 		  pvPut (edefName);
-		  sprintf (edefUserNamePV, "EDEF:SYS0:%d:USERNAME", edefNumber);
+		  sprintf (edefUserNamePV, "EDEF:%s:%d:USERNAME", SYS, edefNumber);
 		  pvAssign (edefUserName, edefUserNamePV);
 		  sprintf (edefUserName, "Client");
 		  pvPut (edefUserName);
-		  sprintf (edefNAVGPV, "EDEF:SYS0:%d:AVGCNTMAX", edefNumber);
+		  sprintf (edefNAVGPV, "EDEF:%s:%d:AVGCNTMAX", SYS, edefNumber);
 		  pvAssign (edefNAVG, edefNAVGPV);
 		  pvPut (edefNAVG);
-		  sprintf (edefNRPOSPV, "EDEF:SYS0:%d:MEASCNTMAX", edefNumber);
+		  sprintf (edefNRPOSPV, "EDEF:%s:%d:MEASCNTMAX", SYS, edefNumber);
 		  pvAssign (edefNRPOS, edefNRPOSPV);
 		  pvPut (edefNRPOS);
                   for (i=0; i<3; i++) {
                     dgrpSHORT = dgrpINCM[i] & 0x00FF;
-                    sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dA", edefNumber, 1+i);
+                    sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dA", SYS, edefNumber, 1+i);
                     pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                     INCLUSIONvalSHORT = dgrpSHORT;
                     pvPut (INCLUSIONvalSHORT);
 
                     dgrpSHORT = (dgrpINCM[i] & 0xFF00) >> 16;
-                    sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dB", edefNumber, 1+i);
+                    sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dB", SYS, edefNumber, 1+i);
                     pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                     INCLUSIONvalSHORT = dgrpSHORT;
                     pvPut (INCLUSIONvalSHORT);
 
                     dgrpSHORT = dgrpEXCM[i] & 0x00FF;
-                    sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dA", edefNumber, 1+i);
+                    sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dA", SYS, edefNumber, 1+i);
                     pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                     EXCLUSIONvalSHORT = dgrpSHORT;
                     pvPut (EXCLUSIONvalSHORT);
 
                     dgrpSHORT = (dgrpEXCM[i] & 0xFF00) >> 16;
-                    sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dB", edefNumber, 1+i);
+                    sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dB", SYS, edefNumber, 1+i);
                     pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                     EXCLUSIONvalSHORT = dgrpSHORT;
                     pvPut (EXCLUSIONvalSHORT);
