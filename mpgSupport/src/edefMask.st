@@ -7,13 +7,13 @@ option +d;  /* Turn on runtime debug messages */
 %%#include <string.h> 	   /* sprintf prototype */
 
 int maskChanged;
-assign maskChanged to "IOC:SYS0:1:MASKCHG";
+assign maskChanged to "IOC:{SYS}:1:MASKCHG";
 monitor maskChanged;
 evflag maskChanged_ef;
 sync maskChanged maskChanged_ef;
 
 int bitChanged;
-assign bitChanged to "IOC:SYS0:1:BITCHG";
+assign bitChanged to "IOC:{SYS}:1:BITCHG";
 monitor bitChanged;
 evflag bitChanged_ef;
 sync bitChanged bitChanged_ef;
@@ -27,7 +27,7 @@ assign dgrpEXCM to "VX00:DGRP:1150:EXCM";
 monitor dgrpEXCM;
 
 int initDone;
-assign initDone to "IOC:SYS0:1:MASKSETUP";
+assign initDone to "IOC:{SYS}:1:MASKSETUP";
 
 unsigned short dgrpSHORT;
 short i;
@@ -108,6 +108,8 @@ string EXCLUSIONpvSHORT;
 int sort_done;
 int debug_flag;
 
+char * SYS;
+
 entry {
 
   debug_flag = 0;
@@ -125,6 +127,8 @@ entry {
   pnbnMaxNumber = 124;
   pnbnNumber = 0;
   sprintf (PNBNval, "");
+
+  SYS = macValueGet("SYS");
 
   } /* edefMask entry*/
 
@@ -163,12 +167,12 @@ ss edefMaskStateSet {
         if (debug_flag) printf (".");
         maskCount++;
         /* Put the name in INCM DESC */
-        sprintf (DESC1pv, "EDEF:SYS0:1:INCM%d.DESC", maskCount);
+        sprintf (DESC1pv, "EDEF:%s:1:INCM%d.DESC", SYS, maskCount);
         pvAssign (DESC1val, DESC1pv);
         sprintf (DESC1val, "%s", PNBNval);
         pvPut (DESC1val);
         /* Put the BITP & BITW into the EXCM DESC */
-        sprintf (DESC1pv, "EDEF:SYS0:1:EXCM%d.DESC", maskCount);
+        sprintf (DESC1pv, "EDEF:%s:1:EXCM%d.DESC", SYS, maskCount);
         pvAssign (DESC1val, DESC1pv);
         sprintf (DESC1val, "%3.3d %3.3d", BITPval, BITWval);
         pvPut (DESC1val);
@@ -201,10 +205,10 @@ ss edefMaskStateSet {
       if (debug_flag) printf (".");
       sort_done = 1;
       for (maskNumber = 1; maskNumber < maskCount; maskNumber++) {
-        sprintf (DESC1pv, "EDEF:SYS0:1:INCM%d.DESC", maskNumber);
+        sprintf (DESC1pv, "EDEF:%s:1:INCM%d.DESC", SYS, maskNumber);
         pvAssign (DESC1val, DESC1pv);
         pvGet (DESC1val);
-        sprintf (DESCpv, "EDEF:SYS0:1:INCM%d.DESC", 1+maskNumber);
+        sprintf (DESCpv, "EDEF:%s:1:INCM%d.DESC", SYS, 1+maskNumber);
         pvAssign (DESCval, DESCpv);
         pvGet (DESCval);
         if (strcmp (DESC1val, DESCval) > 0) {
@@ -216,10 +220,10 @@ ss edefMaskStateSet {
           pvPut (DESC1val);
           pvPut (DESCval);
           /* switch EXCM DESC's */
-          sprintf (DESC1pv, "EDEF:SYS0:1:EXCM%d.DESC", maskNumber);
+          sprintf (DESC1pv, "EDEF:%s:1:EXCM%d.DESC", SYS, maskNumber);
           pvAssign (DESC1val, DESC1pv);
           pvGet (DESC1val);
-          sprintf (DESCpv, "EDEF:SYS0:1:EXCM%d.DESC", 1+maskNumber);
+          sprintf (DESCpv, "EDEF:%s:1:EXCM%d.DESC", SYS, 1+maskNumber);
           pvAssign (DESCval, DESCpv);
           pvGet (DESCval);
           sprintf (PNBNval, "%s", DESC1val);
@@ -238,22 +242,22 @@ ss edefMaskStateSet {
       }
     when (1) {
       for (maskNumber = 1; maskNumber <= maskCount; maskNumber++) {
-        sprintf (DESC1pv, "EDEF:SYS0:1:INCM%d.DESC", maskNumber);
+        sprintf (DESC1pv, "EDEF:%s:1:INCM%d.DESC", SYS, maskNumber);
         pvAssign (DESC1val, DESC1pv);
         pvGet (DESC1val);
         for (edefNumber = 2; edefNumber <= edefMaxNumber; edefNumber++) {
-          sprintf (DESCpv, "EDEF:SYS0:%d:INCM%d.DESC", edefNumber, maskNumber);
+          sprintf (DESCpv, "EDEF:%s:%d:INCM%d.DESC", SYS, edefNumber, maskNumber);
           pvAssign (DESCval, DESCpv);
           sprintf (DESCval, "%s", DESC1val);
           pvPut (DESCval);
           }; /* for each edef */
         }; /* for each mask */
       for (maskNumber = 1; maskNumber <= maskCount; maskNumber++) {
-        sprintf (DESC1pv, "EDEF:SYS0:1:EXCM%d.DESC", maskNumber);
+        sprintf (DESC1pv, "EDEF:%s:1:EXCM%d.DESC", SYS, maskNumber);
         pvAssign (DESC1val, DESC1pv);
         pvGet (DESC1val);
         for (edefNumber = 2; edefNumber <= edefMaxNumber; edefNumber++) {
-          sprintf (DESCpv, "EDEF:SYS0:%d:EXCM%d.DESC", edefNumber, maskNumber);
+          sprintf (DESCpv, "EDEF:%s:%d:EXCM%d.DESC", SYS, edefNumber, maskNumber);
           pvAssign (DESCval, DESCpv);
           sprintf (DESCval, "%s", DESC1val);
           pvPut (DESCval);
@@ -271,25 +275,25 @@ ss edefMaskStateSet {
       for (i=0; i<3; i++) {
         for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
           dgrpSHORT = dgrpINCM[i] & 0x00FF;
-          sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dA", edefNumber, 1+i);
+          sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dA", SYS, edefNumber, 1+i);
           pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
           INCLUSIONvalSHORT = dgrpSHORT;
           pvPut (INCLUSIONvalSHORT);
 
           dgrpSHORT = (dgrpINCM[i] & 0xFF00) >> 16;
-          sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dB", edefNumber, 1+i);
+          sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dB", SYS, edefNumber, 1+i);
           pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
           INCLUSIONvalSHORT = dgrpSHORT;
           pvPut (INCLUSIONvalSHORT);
 
           dgrpSHORT = dgrpEXCM[i] & 0x00FF;
-          sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dA", edefNumber, 1+i);
+          sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dA", SYS, edefNumber, 1+i);
           pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
           EXCLUSIONvalSHORT = dgrpSHORT;
           pvPut (EXCLUSIONvalSHORT);
 
           dgrpSHORT = (dgrpEXCM[i] & 0xFF00) >> 16;
-          sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dB", edefNumber, 1+i);
+          sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dB", SYS, edefNumber, 1+i);
           pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
           EXCLUSIONvalSHORT = dgrpSHORT;
           pvPut (EXCLUSIONvalSHORT);
@@ -309,35 +313,35 @@ ss edefMaskStateSet {
       } state incm_excm_set
     when (1) {
       for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
-        sprintf (NAMEpv, "EDEF:SYS0:%d:NAME", edefNumber);
+        sprintf (NAMEpv, "EDEF:%s:%d:NAME", SYS, edefNumber);
         pvAssign (NAMEval, NAMEpv);
         pvGet (NAMEval);
         if (0 == strncmp (NAMEval, INCMSval, strlen(INCMSval))) {
           for (maskNumber = 1; maskNumber <= maskCount; maskNumber++) {
-            sprintf (DESCpv, "EDEF:SYS0:%d:INCM%d.DESC", edefNumber, maskNumber);
+            sprintf (DESCpv, "EDEF:%s:%d:INCM%d.DESC", SYS, edefNumber, maskNumber);
             pvAssign (DESCval, DESCpv);
             pvGet (DESCval);
             if (0 == strncmp (DESCval, PNBNval, strlen(PNBNval))) {
-              sprintf (DESCpv, "EDEF:SYS0:%d:EXCM%d.DESC", edefNumber, maskNumber);
+              sprintf (DESCpv, "EDEF:%s:%d:EXCM%d.DESC", SYS, edefNumber, maskNumber);
               pvAssign (DESCval, DESCpv);
               pvGet (DESCval);
               sscanf (DESCval, "%3d %3d", &BITPval, &BITWval);
               for (eachBit = 0; eachBit < BITWval; eachBit++) {
                 bitp = BITPval + eachBit;
-                j = 0; /* EDEF:SYS0:[edefNumbner]:INCLUSION[j] */
+                j = 0; /* EDEF:SYS:[edefNumbner]:INCLUSION[j] */
                 while (bitp > 31) {
                   j++;
                   bitp = bitp - 32;
                   };
                 if (bitp < 16) {
-                  sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dA", edefNumber, j);
+                  sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dA", SYS, edefNumber, j);
                   pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                   pvGet (INCLUSIONvalSHORT);
                   INCLUSIONvalSHORT += (1 << bitp);
                   pvPut (INCLUSIONvalSHORT);
                   }
                 else {
-                  sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dB", edefNumber, j);
+                  sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dB", SYS, edefNumber, j);
                   pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                   pvGet (INCLUSIONvalSHORT);
                   bitp = bitp - 16;
@@ -370,21 +374,21 @@ ss edefMaskStateSet {
     when(1) {
       for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
         iINCMS=1;
-        sprintf (INCMSpv, "EDEF:SYS0:%d:INCMS%d", edefNumber, iINCMS);
+        sprintf (INCMSpv, "EDEF:%s:%d:INCMS%d", SYS, edefNumber, iINCMS);
         pvAssign (INCMSval, INCMSpv);
         sprintf (INCMSval, "");
         iEXCMS=1;
-        sprintf (EXCMSpv, "EDEF:SYS0:%d:EXCMS%d", edefNumber, iEXCMS);
+        sprintf (EXCMSpv, "EDEF:%s:%d:EXCMS%d", SYS, edefNumber, iEXCMS);
         pvAssign (EXCMSval, EXCMSpv);
         sprintf (EXCMSval, "");
         for (maskNumber = 1; maskNumber <= maskCount; maskNumber++) {
           i = 0; /* index into INCLUSION & EXCLUSION */
           /* Is my BITP set? */
-          sprintf (DESCpv, "EDEF:SYS0:%d:EXCM%d.DESC", edefNumber, maskNumber);
+          sprintf (DESCpv, "EDEF:%s:%d:EXCM%d.DESC", SYS, edefNumber, maskNumber);
           pvAssign (DESCval, DESCpv);
           pvGet (DESCval);
           sscanf (DESCval, "%3d", &BITPval);
-          sprintf (DESCpv, "EDEF:SYS0:%d:INCM%d.DESC", edefNumber, maskNumber);
+          sprintf (DESCpv, "EDEF:%s:%d:INCM%d.DESC", SYS, edefNumber, maskNumber);
           pvAssign (DESCval, DESCpv);
           pvGet (DESCval);
           sprintf (PNBNval, "%s", DESCval); /* remove trailing blanks */
@@ -394,21 +398,21 @@ ss edefMaskStateSet {
             i++;
             BITPval = BITPval - 32;
             };
-          sprintf (INCLUSIONpv, "EDEF:SYS0:%d:INCLUSION%d", edefNumber, i);
+          sprintf (INCLUSIONpv, "EDEF:%s:%d:INCLUSION%d", SYS, edefNumber, i);
           pvAssign (INCLUSIONval, INCLUSIONpv);
           pvGet (INCLUSIONval);
-          sprintf (EXCLUSIONpv, "EDEF:SYS0:%d:EXCLUSION%d", edefNumber, i);
+          sprintf (EXCLUSIONpv, "EDEF:%s:%d:EXCLUSION%d", SYS, edefNumber, i);
           pvAssign (EXCLUSIONval, EXCLUSIONpv);
           pvGet (EXCLUSIONval);
-          sprintf (INCMpv, "EDEF:SYS0:%d:INCM%d", edefNumber, maskNumber);
+          sprintf (INCMpv, "EDEF:%s:%d:INCM%d", SYS, edefNumber, maskNumber);
           pvAssign (INCMval, INCMpv);
-          sprintf (EXCMpv, "EDEF:SYS0:%d:EXCM%d", edefNumber, maskNumber);
+          sprintf (EXCMpv, "EDEF:%s:%d:EXCM%d", SYS, edefNumber, maskNumber);
           pvAssign (EXCMval, EXCMpv);
           if (INCLUSIONval & (1 << BITPval)) {
             INCMval = 1;
             if ((strlen(INCMSval) + strlen(PNBNval)) > 38) {
               pvPut (INCMSval);
-              sprintf (INCMSpv, "EDEF:SYS0:%d:INCMS%d", edefNumber, ++iINCMS);
+              sprintf (INCMSpv, "EDEF:%s:%d:INCMS%d", SYS, edefNumber, ++iINCMS);
               pvAssign (INCMSval, INCMSpv);
               sprintf (INCMSval, "");
               };
@@ -429,7 +433,7 @@ ss edefMaskStateSet {
             EXCMval = 1;
             if ((strlen(EXCMSval) + strlen(PNBNval)) > 38) {
               pvPut (EXCMSval);
-              sprintf (EXCMSpv, "EDEF:SYS0:%d:EXCMS%d", edefNumber, ++iEXCMS);
+              sprintf (EXCMSpv, "EDEF:%s:%d:EXCMS%d", SYS, edefNumber, ++iEXCMS);
               pvAssign (EXCMSval, EXCMSpv);
               sprintf (EXCMSval, "");
               };
@@ -449,13 +453,13 @@ ss edefMaskStateSet {
           }; /* for each Mask */
         while (iINCMS < 5) {
           pvPut (INCMSval);
-          sprintf (INCMSpv, "EDEF:SYS0:%d:INCMS%d", edefNumber, ++iINCMS);
+          sprintf (INCMSpv, "EDEF:%s:%d:INCMS%d", SYS, edefNumber, ++iINCMS);
           pvAssign (INCMSval, INCMSpv);
           sprintf (INCMSval, "");
           };
         while (iEXCMS < 5) {
           pvPut (EXCMSval);
-          sprintf (EXCMSpv, "EDEF:SYS0:%d:EXCMS%d", edefNumber, ++iEXCMS);
+          sprintf (EXCMSpv, "EDEF:%s:%d:EXCMS%d", SYS, edefNumber, ++iEXCMS);
           pvAssign (EXCMSval, EXCMSpv);
           sprintf (EXCMSval, "");
           };
@@ -471,11 +475,11 @@ ss edefMaskStateSet {
     when(1) {
       for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
         for (maskNumber = 1; maskNumber <= maskCount; maskNumber++) {
-          sprintf (INCMpv, "EDEF:SYS0:%d:INCM%d", edefNumber, maskNumber);
+          sprintf (INCMpv, "EDEF:%s:%d:INCM%d", SYS, edefNumber, maskNumber);
           pvAssign (INCMval, INCMpv);
           pvGet (INCMval);
           savedINCM[edefNumber-1][maskNumber-1] = INCMval;
-          sprintf (EXCMpv, "EDEF:SYS0:%d:EXCM%d", edefNumber, maskNumber);
+          sprintf (EXCMpv, "EDEF:%s:%d:EXCM%d", SYS, edefNumber, maskNumber);
           pvAssign (EXCMval, EXCMpv);
           pvGet (EXCMval);
           savedEXCM[edefNumber-1][maskNumber-1] = EXCMval;
@@ -498,24 +502,24 @@ ss edefMaskStateSet {
     when (efTest(bitChanged_ef)) {
       for (edefNumber = 1; edefNumber <= edefMaxNumber; edefNumber++) {
         for (maskNumber = 1; maskNumber <= maskCount; maskNumber++) {
-          sprintf (INCMpv, "EDEF:SYS0:%d:INCM%d", edefNumber, maskNumber);
+          sprintf (INCMpv, "EDEF:%s:%d:INCM%d", SYS, edefNumber, maskNumber);
           pvAssign (INCMval, INCMpv);
           pvGet (INCMval);
           if (savedINCM[edefNumber-1][maskNumber-1] != INCMval) {
             /* Set INCLUSION[1..5][A|B] */
-            sprintf (DESCpv, "EDEF:SYS0:%d:EXCM%d.DESC", edefNumber, maskNumber);
+            sprintf (DESCpv, "EDEF:%s:%d:EXCM%d.DESC", SYS, edefNumber, maskNumber);
             pvAssign (DESCval, DESCpv);
             pvGet (DESCval);
             sscanf (DESCval, "%3d %3d", &BITPval, &BITWval);
             for (eachBit = 0; eachBit < BITWval; eachBit++) {
               bitp = BITPval + eachBit;
-              j = 0; /* EDEF:SYS0:[edefNumbner]:INCLUSION[j] */
+              j = 0; /* EDEF:SYS:[edefNumbner]:INCLUSION[j] */
               while (bitp > 31) {
                 j++;
                 bitp = bitp - 32;
                 };
               if (bitp < 16) {
-                sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dA", edefNumber, j);
+                sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dA", SYS, edefNumber, j);
                 pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                 pvGet (INCLUSIONvalSHORT);
                 if (INCMval) {
@@ -527,7 +531,7 @@ ss edefMaskStateSet {
                 pvPut (INCLUSIONvalSHORT);
                 }
               else {
-                sprintf (INCLUSIONpvSHORT, "EDEF:SYS0:%d:INCLUSION%dB", edefNumber, j);
+                sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dB", SYS, edefNumber, j);
                 pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                 pvGet (INCLUSIONvalSHORT);
                 bitp = bitp - 16;
@@ -542,24 +546,24 @@ ss edefMaskStateSet {
               }; /* for each BITW */
             }; /* Set INCLUSION[1..5][A|B] */
 
-          sprintf (EXCMpv, "EDEF:SYS0:%d:EXCM%d", edefNumber, maskNumber);
+          sprintf (EXCMpv, "EDEF:%s:%d:EXCM%d", SYS, edefNumber, maskNumber);
           pvAssign (EXCMval, EXCMpv);
           pvGet (EXCMval);
           if (savedEXCM[edefNumber-1][maskNumber-1] != EXCMval) {
             /* Set EXCLUSION[1..5][A|B] */
-            sprintf (DESCpv, "EDEF:SYS0:%d:EXCM%d.DESC", edefNumber, maskNumber);
+            sprintf (DESCpv, "EDEF:%s:%d:EXCM%d.DESC", SYS, edefNumber, maskNumber);
             pvAssign (DESCval, DESCpv);
             pvGet (DESCval);
             sscanf (DESCval, "%3d %3d", &BITPval, &BITWval);
             for (eachBit = 0; eachBit < BITWval; eachBit++) {
               bitp = BITPval + eachBit;
-              j = 0; /* EDEF:SYS0:[edefNumbner]:EXCLUSION[j] */
+              j = 0; /* EDEF:SYS:[edefNumbner]:EXCLUSION[j] */
               while (bitp > 31) {
                 j++;
                 bitp = bitp - 32;
                 };
               if (bitp < 16) {
-                sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dA", edefNumber, j);
+                sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dA", SYS, edefNumber, j);
                 pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                 pvGet (EXCLUSIONvalSHORT);
                 if (EXCMval) {
@@ -571,7 +575,7 @@ ss edefMaskStateSet {
                 pvPut (EXCLUSIONvalSHORT);
                 }
               else {
-                sprintf (EXCLUSIONpvSHORT, "EDEF:SYS0:%d:EXCLUSION%dB", edefNumber, j);
+                sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dB", SYS, edefNumber, j);
                 pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                 pvGet (EXCLUSIONvalSHORT);
                 bitp = bitp - 16;
