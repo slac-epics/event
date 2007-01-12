@@ -4,7 +4,6 @@
         pnetInitialise - hardware initialisation
         pnetReport     - driver report
         pnetISR        - interrupt service routine
-        ...
 
   Abs:  Driver support for VME PNET Receiver module. 
   
@@ -44,7 +43,7 @@
 #include <errlog.h>		/* for errlogPrintf */
 #include <epicsExport.h> 	/* for epicsExportAddress */
 #include <debugPrint.h>		/* for DEBUGPRINT */
-#include <evrQueue.h>		/* for evrQueueCreate */
+#include <evrMessage.h>		/* for evrMessage* protos */
 
 #define PNET_IRQ_LEVEL 		(1)	/* PNET interrupt level */
 #define PNET_IRQ_VECTOR 	(0xAA)	/* PNET interrupt vector */
@@ -83,8 +82,6 @@ static unsigned long    vmePnetAddr = PNET_DEF_BASE_ADDRESS; /* base addr of PNE
 #ifdef __rtems__
 static epicsUInt32     *pLocalBuf   = NULL; /* keep pLocalBuf a ptr for devRegAddr */
 #endif
-
-static evrQueueId       pnetQueue   = 0;    /* PNET data queue information */
 
 #ifdef PNET_TIMING
   static unsigned long isrStart[PNET_ISR_TIMING_SIZE];
@@ -142,18 +139,17 @@ int pnetGetIsrTimes() {
 
   Abs: Driver support registered function for reporting system info
 
-  Note: Although this routine takes an input "interest", it is not used
-        except as the return value (silly).  
-
 =============================================================================*/
 static int pnetReport( int interest )
 {
-  evrQueueReport(pnetQueue, EVR_QUEUE_PNET_NAME);
+  if (interest > 0) {
+    evrMessageReport(EVR_MESSAGE_PNET, EVR_MESSAGE_PNET_NAME);
   
-  #ifdef PNET_TIMING
-  pnetGetIsrTimes();
-  #endif
-  return interest; 	/* silly */
+    #ifdef PNET_TIMING
+    pnetGetIsrTimes();
+    #endif
+  }
+  return interest;
 }
 
 #ifdef __rtems__
@@ -196,7 +192,7 @@ static void pnetISR (
   void *arg 
 ) {
   unsigned long ii;
-  volatile epicsUInt32 modifier_a[EVR_PNET_MODIFIER_MAX];
+  evrMessage_tu message_u;
 
   #ifdef PNET_TIMING
   /* Start counting the clock ticks to see how long spent in here */
@@ -206,11 +202,11 @@ static void pnetISR (
  /* Take a local copy of the message into the NEXT space so that it won't be
      accessed */
   for (ii=0; ii<EVR_PNET_MODIFIER_MAX; ii++) {
-    modifier_a[ii] = in_be32((volatile void *)&(pLocalBuf[ii]));
+    message_u.pnet_s.modifier_a[ii] = in_be32((volatile void *)&(pLocalBuf[ii]));
   }
   /* Send the data on to the waveform record.*/
   
-  evrQueueSend(pnetQueue, (void *)modifier_a);
+  evrMessageWrite(EVR_MESSAGE_PNET, &message_u);
   
   #ifdef PNET_TIMING
   /* Stop counting the clock ticks to see how long spent in here */
@@ -310,31 +306,12 @@ static int pnetInitialise() {
     return -1;
   }
 #endif  /* ifdef __rtems__ */
-  pnetQueue = evrQueueCreate(EVR_QUEUE_PNET_NAME,
-                             sizeof(epicsUInt32)*EVR_PNET_MODIFIER_MAX);
-  if (!pnetQueue) {
-    errlogPrintf("pnetInitialise: %s message queue creation failed\n",
-                 EVR_QUEUE_PNET_NAME);
+  if (evrMessageCreate(EVR_MESSAGE_PNET_NAME, sizeof(evrMessagePnet_ts)))
     return -1;
-  }
 
   /* enable the interrupt. Note: if this code is executed,
      the LED on the PNET board starts flashing */
   if(pnetEnableIntr()) return -1;
 
   return (0);
-}
-
-/*=============================================================================
- 
-  Name: pnetSend
-
-  Abs: Called by a subroutine record for the PNET simulator.
-
-  Rem:
-  
-=============================================================================*/
-void pnetSend(void *message)
-{
-  evrQueueSend(pnetQueue, message);
 }

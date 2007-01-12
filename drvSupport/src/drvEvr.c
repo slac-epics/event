@@ -26,7 +26,7 @@
 #endif
 #include <errlog.h>		/* for errlogPrintf */
 #include <epicsExport.h> 	/* for epicsExportAddress */
-#include <evrQueue.h>		/* for evrQueueCreate */
+#include <evrMessage.h>		/* for evrQueueCreate */
 
 static int evrReport();
 static int evrInitialise();
@@ -36,9 +36,6 @@ struct drvet drvEvr = {
   (DRVSUPFUN) evrInitialise 	/* subroutine defined in this file */
 };
 epicsExportAddress(drvet, drvEvr);
-
-static evrQueueId patternQueue = 0;  /* EVR pattern queue information */
-static evrQueueId dataQueue    = 0;  /* EVR data queue information    */
 
 /*=============================================================================
 
@@ -46,15 +43,14 @@ static evrQueueId dataQueue    = 0;  /* EVR data queue information    */
 
   Abs: Driver support registered function for reporting system info
 
-  Note: Although this routine takes an input "interest", it is not used
-        except as the return value (silly).  
-
 =============================================================================*/
 static int evrReport( int interest )
 {
-  evrQueueReport(patternQueue, EVR_QUEUE_PATTERN_NAME);
-  evrQueueReport(dataQueue,    EVR_QUEUE_DATA_NAME);
-  return interest; 	/* silly */
+  if (interest > 0) {
+    evrMessageReport(EVR_MESSAGE_PATTERN, EVR_MESSAGE_PATTERN_NAME);
+    evrMessageReport(EVR_MESSAGE_DATA,    EVR_MESSAGE_DATA_NAME);
+  }
+  return interest;
 }
 
 /*=============================================================================
@@ -62,7 +58,7 @@ static int evrReport( int interest )
   Name: evrSend
 
   Abs: Called by either ErIrqHandler to put each buffer of EVR data
-       into the proper message queue or by a subroutine record for
+       into the proper message area or by a subroutine record for
        the EVR simulator.
 
   Rem: Keep this routine to a minimum, so that CPU not blocked 
@@ -90,40 +86,32 @@ static int evrReport( int interest )
 =============================================================================*/
 void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 {
-  evrQueueHeader_ts *header_ps = (evrQueueHeader_ts *)message;
-
-  if      (header_ps->type == EVR_QUEUE_PATTERN)
-    evrQueueSend(patternQueue, message);
-  else if (header_ps->type == EVR_QUEUE_DATA)
-    evrQueueSend(dataQueue,    message);
+  evrMessageWrite(((evrMessageHeader_ts *)message)->type,
+                  (evrMessage_tu *)message);
 }
 
 static int evrInitialise()
 {
 #ifdef __rtems__
   ErCardStruct  *pCard;
+#endif
 
+  /* Initialize space to hold EVR data buffer - for now,
+     only pattern is supported */
+  if (!evrMessageCreate(EVR_MESSAGE_PATTERN_NAME,
+                        sizeof(evrMessagePattern_ts))) return -1;
+#ifdef __rtems__
   /* Get first EVR in the list */
   pCard = ErGetCardStruct(-1);
   if (!pCard) {
     errlogPrintf("evrInitialise: cannot find an EVR module\n");
-  }
-#endif
-  /* Create queues to hold EVR data buffer - for now, only pattern is supported */
-  patternQueue = evrQueueCreate(EVR_QUEUE_PATTERN_NAME,
-                                sizeof(evrQueuePattern_ts));
-  if (!patternQueue) {
-    errlogPrintf("evrInitialise: %s message queue creation failed\n",
-                 EVR_QUEUE_PATTERN_NAME);
-    return -1;
-  }
-#ifdef __rtems__
   /* Register the ISR function in this file with the EVR */
-  ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
-
-  /* Finally, enable the data stream on the EVR */
-  ErEnableDBuff(pCard, TRUE);
+  } else {
+    ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
+    /* Finally, enable the data stream on the EVR */
+    ErEnableDBuff(pCard, 1);
+  }
 #endif
   
-  return (0);
+  return 0;
 }

@@ -14,16 +14,16 @@ USR_CFLAGS += -DDEBUG_PRINT
 
 SRC_DIRS += $(TOP)/mrfApp/src
 
-DBD += devWFevrQueue.dbd
+DBD += devWFevrMessage.dbd
 DBD += drvPnet.dbd
 DBD += drvEvr.dbd
 
 LIBRARY_IOC = drvSupport
 
-drvSupport_SRCS += devWFevrQueue.c
+drvSupport_SRCS += devWFevrMessage.c
 drvSupport_SRCS += drvPnet.c
 drvSupport_SRCS += drvEvr.c
-drvSupport_SRCS += evrQueue.c
+drvSupport_SRCS += evrMessage.c
 drvSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
