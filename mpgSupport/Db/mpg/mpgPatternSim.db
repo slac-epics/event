@@ -11,6 +11,7 @@ record(sub, "$(SIM):PATTERNSIM") {
   field(INPG, "$(SIM):MODIFIER4 PP")
   field(INPJ, "$(SIM):BEAMCODE  PP")
   field(INPK, "$(SIM):YY PP")
+  field(INPL, "$(SIM):PULSEID PP")
   field(INAM, "mpgPatternInit")
   field(SNAM, "mpgPatternSim")
 }
