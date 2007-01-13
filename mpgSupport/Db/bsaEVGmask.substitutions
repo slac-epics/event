@@ -1,44 +1,24 @@
 # One set of exclusion and inclusion masks for eDef
 file bsaEVGmaskUnits.template {
-  pattern {S_MD, S_MASK}
-	  { 1, INCM}
-	  { 2, INCM}
-	  { 3, INCM}
-	  { 4, INCM}
-	  { 5, INCM}
-	  { 6, INCM}
-	  { 7, INCM}
-	  { 8, INCM}
-	  { 9, INCM}
-	  {10, INCM}
-          {11, INCM}
-          {12, INCM}
-          {13, INCM}
-          {14, INCM}
-          {15, INCM}
-          {16, INCM}
-          {17, INCM}
-          {18, INCM}
-          {19, INCM}
-          {20, INCM}
-          { 1, EXCM}
-          { 2, EXCM}
-          { 3, EXCM}
-          { 4, EXCM}
-          { 5, EXCM}
-          { 6, EXCM}
-          { 7, EXCM}
-          { 8, EXCM}
-          { 9, EXCM}
-          {10, EXCM}
-          {11, EXCM}
-          {12, EXCM}
-          {13, EXCM}
-          {14, EXCM}
-          {15, EXCM}
-          {16, EXCM}
-          {17, EXCM}
-          {18, EXCM}
-          {19, EXCM}
-          {20, EXCM}
+  pattern {S_MD,S_SYS,S_LOCA ,S_UNIT}
+	  { 1, $(SY) , $(LO) , $(UN)}
+	  { 2, $(SY) , $(LO) , $(UN)}
+	  { 3, $(SY) , $(LO) , $(UN)}
+	  { 4, $(SY) , $(LO) , $(UN)}
+	  { 5, $(SY) , $(LO) , $(UN)}
+	  { 6, $(SY) , $(LO) , $(UN)}
+	  { 7, $(SY) , $(LO) , $(UN)}
+	  { 8, $(SY) , $(LO) , $(UN)}
+	  { 9, $(SY) , $(LO) , $(UN)}
+	  {10, $(SY) , $(LO) , $(UN)}
+          {11, $(SY) , $(LO) , $(UN)}
+          {12, $(SY) , $(LO) , $(UN)}
+          {13, $(SY) , $(LO) , $(UN)}
+          {14, $(SY) , $(LO) , $(UN)}
+          {15, $(SY) , $(LO) , $(UN)}
+          {16, $(SY) , $(LO) , $(UN)}
+          {17, $(SY) , $(LO) , $(UN)}
+          {18, $(SY) , $(LO) , $(UN)}
+          {19, $(SY) , $(LO) , $(UN)}
+          {20, $(SY) , $(LO) , $(UN)}
 }
