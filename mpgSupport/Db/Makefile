@@ -11,9 +11,6 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 
-# EVG setup
-DB += evg.db
-DB += evgEvent.db
 # MPG 360Hz processing
 DB += mpgPatternProc.db
 DB += mpgPatternSim.db
@@ -22,7 +19,6 @@ DB += mpgPatternTest.template
 DB += bsaEdef.db
 DB += bsaEdefMask.db
 DB += bsaEVGmask.db
-DB += bsaEVGmask.template
 DB += bsaEdef.template
 DB += bsaEVGmask.template
 
