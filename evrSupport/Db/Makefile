@@ -20,7 +20,6 @@ DB += bsaTestInput.db
 # BSA simulation - evr/evg support
 DB += bsaProcTest.db 
 DB += bsaProcTest.template
-DB += bsaEVRTestFanouts.db
 # Device Simulation
 DB += bsaBPMSTest.template
 DB += bsaTOROTest.template
@@ -42,14 +41,9 @@ DB += evrPatternProc.db
 DB += evrFiducial.db
 DB += evrPattern.template
 DB += evrPatternProc.template
-# low-level evr databases
-DB += evr.db
-DB += evrEvent.db
-DB += evrEventRate.db
 # evrPattern sim support
 DB += evrPatternSim.db
 DB += evrPatternTest.template
-
 # bsa using EDEFs
 DB += bsaEdefAvg.db
 DB += bsaEdefFanouts.db
