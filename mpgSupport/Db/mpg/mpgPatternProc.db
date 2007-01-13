@@ -17,7 +17,7 @@ record(waveform, "IOC:$(LOCA):$(UNIT):PATTERNDATA") {
 record(bo, "IOC:$(LOCA):$(UNIT):PNETCHECK") {
   field(DESC, "PNET Seq Check State")
   field(PINI, "YES")
-  field(DOL,  "1")
+  field(DOL,  "$(CHECK)")
   field(ZNAM, "Off")
   field(ONAM, "On")
   field(OUT,  "IOC:$(LOCA):$(UNIT):PNET.H")
@@ -45,7 +45,6 @@ record(sub, "IOC:$(LOCA):$(UNIT):PATTERN") {
   field(INPF, "IOC:$(LOCA):$(UNIT):PNET.F")
   field(INPG, "IOC:$(LOCA):$(UNIT):PNET.G")
   field(INPJ, "IOC:$(LOCA):$(UNIT):PNET.J")
-  field(INPK, "IOC:$(LOCA):$(UNIT):PNET.K")
   field(INPL, "IOC:$(LOCA):$(UNIT):PNET.L")
   field(BRSV, "INVALID")
   field(FLNK, "IOC:$(LOCA):$(UNIT):MODIFIER1N-3")
@@ -114,13 +113,31 @@ record(sSub, "IOC:$(LOCA):$(UNIT):MODIFIER5NEW") {
   field(FLNK, "IOC:$(LOCA):$(UNIT):PATTERN")
 }
 
-
 record(mbboDirect, "IOC:$(LOCA):$(UNIT):MODIFIER5INP") {
   field(DESC, "Modifier 5B wo EDEF bits")
   field(PINI, "YES")
   field(DTYP, "Raw Soft Channel")
   field(NOBT, "12")
   field(SHFT, "20")
+}
+
+record(stringout, IOC:$(LOCA):$(UNIT):EDEFNAME) {
+  field(DESC, "Fill to request an edef")
+}
+
+record(bo, IOC:$(LOCA):$(UNIT):MASKSETUP) {
+  field(DESC, "eDefMask.st initialized")
+  field(PINI, "YES")
+  field(ZNAM, "Incomplete")
+  field(ONAM, "Done")
+}
+
+record(event, IOC:$(LOCA):$(UNIT):MASKCHG) {
+  field(DESC, "INCLUSION or EXCLUSION")
+}
+
+record(event, IOC:$(LOCA):$(UNIT):BITCHG) {
+  field(DESC, "INCM or EXCM change")
 }
 
 #! Further lines contain data used by VisualDCT
