@@ -3,7 +3,6 @@
 #! DBD("../../../../dbd/saIoc.dbd")
 #! DBDEND
 
-
 record(sub, "$(DEV):PATTERNSIM") {
   field(INPD, "$(SIM):MODIFIER1")
   field(INPE, "$(SIM):MODIFIER2")
@@ -18,7 +17,6 @@ record(sub, "$(DEV):PATTERNSIM") {
   field(INPL, "$(SIM):PULSEID")
 }
 
-
 record(fanout, "$(DEV):FANOUTSIM") {
   field(DESC, "Sim Fanout")
   field(SCAN, ".1 second")
@@ -26,7 +24,6 @@ record(fanout, "$(DEV):FANOUTSIM") {
   field(LNK2, "$(SIM):MODIFIER5")
   field(LNK3, "$(DEV):FIDUCIAL")
   field(LNK4, "$(DEV):PATTERNSIM")
-  field(PHAS, "0")
 }
 
 record(sSub, "$(SIM):MODIFIER5") {
@@ -54,8 +51,60 @@ record(sSub, "$(SIM):MODIFIER5") {
   field(INPT, "$(SIM):MODMATCHF2")
 }
 
-record(fanout, "$(DEV):FANOUTDEVSIM") {
-  field(LNK1, "BPMS:$(IOC):1:FANOUT")
+record(fanout, "$(SIM):FANOUT") {
+  field(DESC, "Test Fanout")
+  field(LNK1, "$(SIM):PULSEID PP")
+  field(LNK2, "$(SIM):BEAMCODE PP")
+  field(LNK3, "$(SIM):YY PP")
+  field(LNK4, "$(SIM):MODIFIER1 PP")
+  field(LNK5, "$(SIM):MODIFIER2 PP")
+  field(LNK6, "$(SIM):MODIFIER3 PP")
+  field(FLNK, "$(SIM):FANOUT0 PP")
+}
+record(fanout, "$(SIM):FANOUT0") {
+  field(DESC, "Test Fanout")
+  field(LNK1, "$(SIM):MODIFIER4 PP")
+  field(LNK2, "$(SIM):BUNCHARGE PP")
+  field(FLNK, "$(SIM):FANOUT1 PP")
+}
+
+record(fanout, "$(SIM):FANOUT1") {
+  field(DESC, "MD Fanout 1")
+  field(LNK1, "$(SIM):CHECK1 PP")
+  field(LNK2, "$(SIM):CHECK2 PP")
+  field(LNK3, "$(SIM):CHECK3 PP")
+  field(LNK4, "$(SIM):CHECK4 PP")
+  field(LNK5, "$(SIM):CHECK5 PP")
+  field(LNK6, "$(SIM):CHECK6 PP")
+  field(FLNK, "$(SIM):FANOUT2 PP")
+}
+
+record(fanout, "$(SIM):FANOUT2") {
+  field(DESC, "MD Fanout 2")
+  field(LNK1, "$(SIM):CHECK7 PP")
+  field(LNK2, "$(SIM):CHECK8 PP")
+  field(LNK3, "$(SIM):CHECK9 PP")
+  field(LNK4, "$(SIM):CHECK10 PP")
+  field(LNK5, "$(SIM):CHECK11 PP")
+  field(LNK6, "$(SIM):CHECK12 PP")
+  field(FLNK, "$(SIM):FANOUT3 PP")
+}
+
+record(fanout, "$(SIM):FANOUT3") {
+  field(DESC, "MD Fanout 3")
+  field(LNK1, "$(SIM):CHECK13 PP")
+  field(LNK2, "$(SIM):CHECK14 PP")
+  field(LNK3, "$(SIM):CHECK15 PP")
+  field(LNK4, "$(SIM):CHECK1HZ PP")
+  field(LNK5, "$(SIM):CHECK10HZ PP")
+  field(LNK6, "$(SIM):CHECKFULL PP")
+  field(FLNK, "$(SIM):FANOUT4 PP")
+}
+
+record(fanout, "$(SIM):FANOUT4") {
+  field(DESC, "MD Fanout 4")
+  field(LNK1, "$(SIM):CHECKF1 PP")
+  field(LNK2, "$(SIM):CHECKF2 PP")
 }
 
 #! Further lines contain data used by VisualDCT
@@ -100,7 +149,6 @@ record(fanout, "$(DEV):FANOUTDEVSIM") {
 #! Field("$(SIM):MODIFIER5.INPS",16777215,1,"$(SIM):MODIFIER5.INPS")
 #! Field("$(SIM):MODIFIER5.INPU",16777215,1,"$(SIM):MODIFIER5.INPU")
 #! Field("$(SIM):MODIFIER5.VAL",16777215,0,"$(SIM):MODIFIER5.VAL")
-#! Record("$(DEV):FANOUTDEVSIM",1864,3027,0,1,"$(DEV):FANOUTDEVSIM")
-#! Field("$(DEV):FANOUTDEVSIM.LNK1",16777215,1,"$(DEV):FANOUTDEVSIM.LNK1")
 #! TextBox(TB0,2189,2309,2596,2384,0,"Dialog",12,1,16777215,"B-J are outputs to the various N-3 pattern records.\nRefer to dbPattern.db\nM - U are inputs from the simulated EVR pattern records",null)
 #! TextBox(TB1,2700,2300,3080,2460,0,"Dialog",12,1,16777215,"Creates simulated MODIFER5\n(EVGSIM:TEST:1:MODIFIER5)\nfrom MODMATCH records from\nbsacEVGProcTest.db",null)
+#! TextBox(TB2,296,202,1039,302,0,"Dialog",14,1,16777215,"1) Fanouts to ESIM simulated (waveform record) data.\n2) Cause processing of the 20 ESIM:(IOC):1:GO1-20 records for EDEF Enable/disable checking which will set MODIFIER5 bits.\n",null)
