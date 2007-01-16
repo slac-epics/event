@@ -100,6 +100,7 @@ static int bsaInit(sSubRecord *psub)
 		   W = Timestamp mismatch
 		   X = history buff enable(1)/disable (0)
 		   Y = count (total pulses counted so far)
+		   Z = outer loop count
 	   VAL = Running average 
       
   Ret:  0
@@ -141,6 +142,7 @@ static long bsaSecnAvg(sSubRecord *psub)
   /* Reinit for a new average */
   if (psub->o) {
     psub->o = 0;
+	psub->z = 0; /* outer loop count reset */
     /*  reset avgcnt, meascnt, goodmeas, stat   */
     psub->val = 0;
 	psub->y = 0; /* total count */
@@ -179,6 +181,7 @@ static long bsaSecnAvg(sSubRecord *psub)
       psub->x = 1;  /* enable history buff */
 	  psub->q = 0;  /* reset avgcnt */
 	  psub->o = 1;  /* reset counters next loop */
+	  psub->z++;    /* inc outer loop count */
     } else {
       /*  else averaging is NOT done */
  	  psub->o = 0;
@@ -297,14 +300,16 @@ static long bsaStatus(subRecord *psub)
 		INPC - EDEF:SYS0:$(MD):CNTMAX
         INPD - ESIM:SYS0:1:DONE$(MDID)
 
-        INPF - ESIM:$(IOC):1:MODIFIER4 
+        INPF - ESIM:$(IOC):1:MODIFIER4
+		INPG - INCLUSION2
+        INPH - 
 
 for testing, match on Inclusion bits only;
 override modifier 4 if one hertz bit is set
         INPP - EDEF:$(IOC):$(MD):INCLUSION4
 
-        INPU - EDEF:$(IOC):$(MD):INCM63 - ONE HERTZ BIT from Masksetup
-        INPV - EDEF:$(IOC):$(MD):INCM81 - TEN HERTZ BIT from masksetup
+        INPU - INCLUSION2   ONE HERTZ BIT from Masksetup		
+        INPV - INCLUSION3   TEN HERTZ BIT from masksetup
 		  Note: above masksetup bits override MODIFIER4 input!
         INPW - ESIM:$(IOC):1:BEAMCODE.SEVR
         INPX - EVR:$(IOC):1:CNT$(MDID).Q
