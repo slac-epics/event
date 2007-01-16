@@ -49,29 +49,14 @@
 #include "epicsTime.h"        /* for epicsTimeGetCurrent    */
 #include "dbAccess.h"         /* DBADDR typedef and protos  */
 #include "errlog.h"           /* errlogPrintf               */
-#include "evrQueue.h"         /* for EVR_QUEUE_PATTERN*     */
+#include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*   */
 #include "evrTime.h"          /* for evrTime* prototypes    */
+#include "evrPattern.h"       /* for PATTERN* defines       */
 #include "pnetSeqCheck.h"     /* for pnetSeqCheck* protos   */
 #ifdef __rtems__
 #include "drvMrfEg.h"         /* for EvgDataBufferLoad proto*/
 #endif
-void pnetSend(void *message);
 
-/* Modifier 1 Bit Masks */
-#define PNET_MPG_IPLING         (0x00004000)  /* Set when SLC MPG is IPLing  */
-#define PNET_MODULO720_RESYNC   (0x00008000)  /* Set to sync modulo 720      */
-
-/* VAL values set by subroutines */
-#define EVG_OK                0
-#define EVG_SEQ_CHECK1_ERR    1
-#define EVG_SEQ_CHECK2_ERR    2
-#define EVG_SEQ_CHECK3_ERR    3
-#define EVG_INVALID_WF        4
-#define EVG_MPG_IPLING        5
-#define EVG_PULSEID_NO_SYNC   6
-#define EVG_MODULO720_NO_SYNC 7
-#define EVG_INVALID_TIMESTAMP 8
-
 #define EVG_DELTA_TIME 0.008333333333 /* 1/120sec for setting time 3 pulses ahead */
 
 #ifdef DEBUG_PRINT
@@ -128,12 +113,12 @@ static int mpgPatternInit(subRecord *psub)
 ==============================================================================*/ 
 static int mpgPatternPnetInit(subRecord *psub)
 {
-  DBADDR      *wfAddr = dbGetPdbAddrFromLink(&psub->inpa);
+  DBADDR *wfAddr = dbGetPdbAddrFromLink(&psub->inpa);
   /*
    * inpa must be a DB link and must be the proper type.
    */
   if (wfAddr && (wfAddr->field_type == DBF_ULONG))
-    psub->dpvt = (void *)wfAddr->pfield;
+    psub->dpvt = (void *)wfAddr;
   else
     psub->dpvt = 0;
   if (psub->dpvt) return 0;
@@ -168,16 +153,16 @@ static int mpgPatternPnetInit(subRecord *psub)
        I - Modulo 720 Count
        J - Beam Code
        K - Spare
-       L - Pulse ID
+       L - Pulse ID (set invalid if error)
        VAL = Error flag:
              0 = OK
-             1 = Seq check 1 error
-             2 = Seq check 2 error
-             3 = Seq check 3 error
-             4 = Invalid Waveform
-             5 = MPG IPLing
-             6 = Pulse ID   not synchronized with the SLC MPG
-             7 = Modulo 720 not synchronized with the SLC MPG
+             Seq check 1 error
+             Seq check 2 error
+             Seq check 3 error
+             Invalid Waveform
+             MPG IPLing
+             Pulse ID   not synchronized with the SLC MPG
+             Modulo 720 not synchronized with the SLC MPG
 
   Side: None
   
@@ -186,10 +171,13 @@ static int mpgPatternPnetInit(subRecord *psub)
 ==============================================================================*/
 static long mpgPatternPnet(subRecord *psub)
 {
-  DBADDR                *wfAddr = dbGetPdbAddrFromLink(&psub->inpa);
-  epicsUInt32           *pnet_a = (epicsUInt32 *)psub->dpvt;
-  int                    pulsid, pulsid_resync, modulo720Count;
-  int                    errFlag = EVG_OK;
+  DBADDR                *wfAddr = (DBADDR *)psub->dpvt;
+  epicsUInt32           *pnet_a;
+  int                    pulsid         = psub->l + 1.1;
+  int                    modulo720Count = psub->i + 1.1;
+  int                    errFlag        = PATTERN_OK;
+  int                    pulsid_resync;
+  int                    modifier1;
   unsigned char          traveling_one;
   unsigned char          seq_chk;
   static unsigned int    pulseIDSync   = 0; /* EVG and SLC MPG pulse ID  synced */
@@ -202,135 +190,130 @@ static long mpgPatternPnet(subRecord *psub)
   } else {
     msgRolloverCount++;
     msgCount = 0;
-  }
-  
+  }  
   /* if waveform is invalid or has invalid size or type            */
   /*   set record invalid and pulse id to 0 and set flag           */
   /*   evr timestamp/status to last good time with invalid status  */
 
-  if (psub->b || (psub->c != EVR_PNET_MODIFIER_MAX) ||
-      (!psub->dpvt) || (!wfAddr)) {
+  if (psub->b || (!wfAddr) || (psub->c != EVR_PNET_MODIFIER_MAX) ||
+      (!(pnet_a = (epicsUInt32 *)wfAddr->pfield))) {
     if (psub->b) patternErrCount++;
-    psub->d = psub->e = psub->f = psub->g = psub->i = psub->j = psub->l = 0.0;
-    psub->val     = EVG_INVALID_WF;
+    psub->e = psub->f = psub->g = psub->j = 0.0;
+    modifier1     = 0;
+    errFlag       = PATTERN_INVALID_WF;
     pulseIDSync   = 0;
     modulo720Sync = 0;
     seqCheckSync  = 0;
-    return -1;
-  }		
-  /* read from the waveform now */
-  dbScanLock(wfAddr->precord);
-  /* set outputs to the modifiers */
-  psub->d = (double)(pnet_a[0]);
-  psub->e = (double)(pnet_a[1]);
-  psub->f = (double)(pnet_a[2]);
-  psub->g = (double)(pnet_a[3]);
-  /* beamcode decoded from modifier 1*/ 
-  psub->j = (double)((pnet_a[0] >> 8) & BEAMCODE_BIT_MASK);
+  } else {
+    /* read from the waveform now */
+    dbScanLock(wfAddr->precord);
+    /* set outputs to the modifiers */
+    modifier1 = pnet_a[0];
+    psub->e = (double)(pnet_a[1]);
+    psub->f = (double)(pnet_a[2]);
+    psub->g = (double)(pnet_a[3]);
+    /* beamcode decoded from modifier 1*/
+    psub->j = (double)((modifier1 >> 8) & BEAMCODE_BIT_MASK);
   
-  /* Check if SLC MPG is rebooting */
-  if (pnet_a[0] & PNET_MPG_IPLING) {
-    psub->i       = 0.0;
-    psub->l       = 0.0;
-    psub->val     = EVG_MPG_IPLING;
-    pulseIDSync   = 0;
-    modulo720Sync = 0;
-    seqCheckSync  = 0;
-    dbScanUnlock(wfAddr->precord);
-    return -1;
-  }
-  
-  /* Do sequence checking if requested */
-  if (psub->h > 0.5) { 
-    traveling_one = (unsigned char)(pnet_a[1] & TIMESLOT_MASK);
-    seq_chk       = (unsigned char)((pnet_a[3] >> 29) & PNET_SEQ_CHECK);
-    if (pnetSeqCheckData1(traveling_one, seqCheckSync)) { /* "traveling 1" check */
-      errFlag = EVG_SEQ_CHECK1_ERR;
-      seqCheck1ErrCount++;
-    } else if (pnetSeqCheckData2(seq_chk, seqCheckSync)) { /* 0-5 looping counter check */
-    /* Need to do more here to really handle this condition. TEG says
-       if MPG gets "off" chances are beam is hitting the sides. The
-       reaction of choice is for the micro to start sending zero beam
-     */
-      errFlag = EVG_SEQ_CHECK2_ERR;
-      seqCheck2ErrCount++;
-    } else if (pnetSeqCheckData3(traveling_one, seq_chk)) {/* check that two checksum values stay in sync */ 
-      errFlag = EVG_SEQ_CHECK3_ERR;
-      seqCheck3ErrCount++;
-    }
-    /* Both pulse ID and modulo 720 will need to be resync'ed too */
-    if (errFlag != EVG_OK) {
+    /* Check if SLC MPG is rebooting */
+    if (modifier1 & MPG_IPLING) {
+      errFlag       = PATTERN_MPG_IPLING;
       pulseIDSync   = 0;
       modulo720Sync = 0;
-    }
-    seqCheckSync = 1;
+      seqCheckSync  = 0;
+    /* Do sync checking if requested */
+    } else if (psub->h > 0.5) {
+      traveling_one = (unsigned char)(pnet_a[1] & TIMESLOT_MASK);
+      seq_chk       = (unsigned char)((pnet_a[3] >> 29) & PNET_SEQ_CHECK);
+      if (pnetSeqCheckData1(traveling_one, seqCheckSync)) { /* "traveling 1" check */
+        errFlag = PATTERN_SEQ_CHECK1_ERR;
+        seqCheck1ErrCount++;
+      } else if (pnetSeqCheckData2(seq_chk, seqCheckSync)) { /* 0-5 looping counter check */
+        errFlag = PATTERN_SEQ_CHECK2_ERR;
+        seqCheck2ErrCount++;
+      } else if (pnetSeqCheckData3(traveling_one, seq_chk)) {/* check that two checksum values stay in sync */
+        errFlag = PATTERN_SEQ_CHECK3_ERR;
+        seqCheck3ErrCount++;
+      }
+      /* Both pulse ID and modulo 720 will need to be resync'ed too */
+      if (errFlag) {
+        pulseIDSync   = 0;
+        modulo720Sync = 0;
+      }
+      seqCheckSync = 1;
 
-    /* Check if modulo-720 can be resynchronized on this pulse. */
-    modulo720Count = psub->i + 1.1;
-    if (pnet_a[0] & PNET_MODULO720_RESYNC) {
-      /* If we should be sync'ed but are not, update a counter */
-      if (modulo720Sync && (modulo720Count != 720)) {
+      /* Check if modulo-720 can be resynchronized on this pulse. */
+      if (modifier1 & MODULO720_MASK) {
+        /* If we should be sync'ed but are not, update a counter */
+        if (modulo720Sync && (modulo720Count != 720)) {
+          modulo720SyncErrCount++;
+          errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
+                       modulo720Count);
+          /* Assume pulse ID is also out-of-sync */
+          pulseIDSync = 0;
+        }
+        modulo720Count = 0;
+        modulo720Sync  = 1;
+      } else if (!modulo720Sync) {
+        errFlag        = PATTERN_MODULO720_NO_SYNC;
+      } else if (modulo720Count >= 720) {
+        /* If we should be sync'ed but are not, update a counter */
         modulo720SyncErrCount++;
         errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
                      modulo720Count);
+        modulo720Count = 0;
+        modulo720Sync  = 0;
+        errFlag        = PATTERN_MODULO720_NO_SYNC;
         /* Assume pulse ID is also out-of-sync */
-        pulseIDSync = 0;
+        pulseIDSync    = 0;
       }
-      modulo720Count = 0;
-      modulo720Sync  = 1;
-    } else if (!modulo720Sync) {
-      modulo720Count = 0;
-      errFlag = EVG_MODULO720_NO_SYNC;
-    } else if (modulo720Count >= 720) {
-        errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
-                     modulo720Count);
-    }
-      
-    psub->i = (double)modulo720Count;
 
-    /* Check for a non-zero value in the 4 bit pulsid_resync field of Pnet
-       data.  If found, it resets upper 4 bits of the pulse ID (lower bit
-       will be zero).  Otherwise, the pulse ID is set to 1 if the last value
-       is the rollover value.  Otherwise, the pulse ID is simply incremented.*/
-    pulsid        = psub->l + 1.1;
-    pulsid_resync = (pnet_a[0] >> 3) & PULSEID_RESYNC;
-    if (pulsid_resync) {
-      /* If we should be sync'ed but are not, update a counter */
-      if ((pulseIDSync) && (pulsid != pulsid_resync)) {
-        pulseIDSyncErrCount++;
-        errlogPrintf("mpgPatternPnet: Pulse IDs not synchronized, MPG = %d, EVG = %d\n",
-                     pulsid_resync, pulsid);
-        /* Assume modulo 720 out-of-sync too unless the RESYNC bit is set */
-        if (!(pnet_a[0] & PNET_MODULO720_RESYNC)) {
-          modulo720Sync  = 0;
-          errFlag = EVG_MODULO720_NO_SYNC;
+      /* Check for a non-zero value in the 4 bit pulsid_resync field of Pnet
+         data.  If found, it resets upper 4 bits of the pulse ID (lower bit
+         will be zero).  Otherwise, the pulse ID is set to 1 if the last value
+         is the rollover value.  Otherwise, the pulse ID is simply incremented.*/
+      pulsid_resync = (modifier1 >> 3) & PULSEID_RESYNC;
+      if (pulsid_resync) {
+        /* If we should be sync'ed but are not, update a counter */
+        if ((pulseIDSync) && (pulsid != pulsid_resync)) {
+          pulseIDSyncErrCount++;
+          errlogPrintf("mpgPatternPnet: Pulse IDs not synchronized, MPG = %d, EVG = %d\n",
+                       pulsid_resync, pulsid);
+          /* Assume modulo 720 out-of-sync too unless the RESYNC bit is set */
+          if (!(modifier1 & MODULO720_MASK)) {
+            modulo720Sync = 0;
+            errFlag       = PATTERN_MODULO720_NO_SYNC;
+          }
         }
+        pulseIDSync = 1;
+        pulsid = pulsid_resync;
+      } else if (!pulseIDSync) {
+        errFlag = PATTERN_PULSEID_NO_SYNC;
+      } else if (pulsid > PULSEID_MAX) {
+        /* Aha. Time to rollover, so THIS pulse will be set back to zero */
+        pulsid = 0;
+        resyncCount++;
+        DEBUGPRINT(DP_INFO, mpgPatternFlag, ("mpgPatternPnet: Rollover, pulsid+1 = %d", pulsid));
       }
-      pulseIDSync = 1;
-      pulsid = pulsid_resync;
-    } else if (!pulseIDSync) {
-      pulsid  = 1;
-      errFlag = EVG_PULSEID_NO_SYNC;
-    } else if (pulsid > PULSEID_MAX) {    
-      /* Aha. Time to rollover, so THIS pulse will be set back to zero */
-      pulsid = 0;
-      resyncCount++;
-      DEBUGPRINT(DP_INFO, mpgPatternFlag, ("mpgPatternPnet: Rollover, pulsid+1 = %d", pulsid));
+    } else {
+      pulseIDSync   = 0;
+      modulo720Sync = 0;
+      seqCheckSync  = 0;
     }
-    psub->l = (double)pulsid;
-  } else {
-    pulseIDSync   = 0;
-    modulo720Sync = 0;
-    seqCheckSync  = 0;
-    psub->i++;
-    if (psub->i >= 720) psub->i = 0.0;
-    psub->l++;
-    if (psub->l > PULSEID_MAX) psub->l = 0.0;
+    dbScanUnlock(wfAddr->precord);
   }
-  
-  dbScanUnlock(wfAddr->precord);
+  /* Tell EVRs if data is out-of-sync */
+  if (errFlag) modifier1 |= MPG_IPLING;
+  if (pulsid > PULSEID_MAX) pulsid = 0;
+  if (modulo720Count >= 720) {
+    modifier1 |= MODULO720_MASK;
+    modulo720Count = 0;
+  }
+  psub->d   = (double)modifier1;
+  psub->i   = (double)modulo720Count;
+  psub->l   = (double)pulsid;
   psub->val = (double)errFlag;
-  if (errFlag != EVG_OK) return -1;
+  if (errFlag) return -1;
   return 0;
 }
 
@@ -362,7 +345,7 @@ static int mpgPatternProcInit(subRecord *psub)
    */
 #ifdef __rtems__
   if (psub->a > 0.5) {
-    EvgDataBufferInit((int)psub->a, sizeof(evrQueuePattern_ts));
+    EvgDataBufferInit((int)psub->a, sizeof(evrMessagePattern_ts));
     psub->dpvt = (EgCardStruct *)EgGetCardStruct((int)psub->a);
     if (psub->dpvt) return 0;
     else            return -1;
@@ -398,21 +381,21 @@ static int mpgPatternProcInit(subRecord *psub)
                0 = don't process this pulse, 1 = process this pulse.
        I - Bunch Charge
        J - Beam Code
-       K - Spare
+       K - Modulo 720 Flag
        L - Pulse ID
      
   Outputs:
-       L - Pulse ID (set invalid if error)
+       L - Pulse ID
        VAL = Error flag:
              0 = OK
-             1 = Seq check 1 error
-             2 = Seq check 2 error
-             3 = Seq check 3 error
-             4 = Invalid Waveform
-             5 = MPG IPLing
-             6 = Pulse ID   not synchronized with the SLC MPG
-             7 = Modulo 720 not synchronized with the SLC MPG
-             8 = Invalid Timestamp
+             Seq check 1 error
+             Seq check 2 error
+             Seq check 3 error
+             Invalid Waveform
+             MPG IPLing
+             Pulse ID   not synchronized with the SLC MPG
+             Modulo 720 not synchronized with the SLC MPG
+             Invalid Timestamp
 
   Side: Pattern is sent out via the EVG.
   
@@ -421,21 +404,18 @@ static int mpgPatternProcInit(subRecord *psub)
 ==============================================================================*/
 static long mpgPatternProc(subRecord *psub)
 {
-  evrQueuePattern_ts     evrPatternWF_s;
+  evrMessagePattern_ts   evrPatternWF_s;
   epicsTimeStamp         prev_time;
   double                 delta_time;
-  int                    status = 0;
 
   psub->val = psub->b;
+  psub->k   = (double)(((epicsUInt32)psub->d) & MODULO720_MASK);
   
-  /* Do nothing until the pattern is valid and synchronized */
-  if (psub->val > EVG_OK) {
-    psub->d = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
-    status = -1;
   /* Initialize EVR timestamp to system time */
-  } else if (epicsTimeGetCurrent(&evrPatternWF_s.time)) {
-    psub->val = EVG_INVALID_TIMESTAMP;
-    status = -1;
+  if (epicsTimeGetCurrent(&evrPatternWF_s.time)) {
+    evrTimePut(0, epicsTimeERROR);
+    psub->val = PATTERN_INVALID_TIMESTAMP;
+    return -1;
   /* The time is for 3 pulses in the future - add 1/120sec */
   } else {
     epicsTimeAddSeconds(&evrPatternWF_s.time, EVG_DELTA_TIME);
@@ -445,7 +425,7 @@ static long mpgPatternProc(subRecord *psub)
     /* The timestamp must ALWAYS be increasing.  Check if this time
        is less than the previous time (due to rollover) and adjust up
        slightly using bit 17 (the lower-most bit of the top 15 bits). */
-    if (evrTimeGet(&prev_time, evrTimeNext3) == epicsTimeOK) {
+    if (!evrTimeGet(&prev_time, evrTimeNext3)) {
       delta_time = epicsTimeDiffInSeconds(&evrPatternWF_s.time, &prev_time);
       if (delta_time < 0.0) {
         epicsTimeAddSeconds(&evrPatternWF_s.time, PULSEID_BIT17/NSEC_PER_SEC);
@@ -453,33 +433,29 @@ static long mpgPatternProc(subRecord *psub)
       }
     }
     /* write to evr timestamp table and error check */
-    if (evrTimePut(&evrPatternWF_s.time, evrTimeOK)) {
-      psub->val = EVG_INVALID_TIMESTAMP;
-      status = -1;
+    if (evrTimePut(&evrPatternWF_s.time, epicsTimeOK)) {
+      psub->val = PATTERN_INVALID_TIMESTAMP;
     }
   }
   /* Timestamp done - now fill in the rest of the pattern */
-  if (status) {
-    psub->l = PULSEID_INVALID;
-    evrTimePut (0, evrTimeInvalid);
-  } else {
-    evrPatternWF_s.header_s.type    = EVR_QUEUE_PATTERN;
-    evrPatternWF_s.header_s.version = EVR_QUEUE_PATTERN_VERSION;
-    evrPatternWF_s.modifier_a[0]    = psub->d;
-    evrPatternWF_s.modifier_a[1]    = psub->e;
-    evrPatternWF_s.modifier_a[2]    = psub->f;
-    evrPatternWF_s.modifier_a[3]    = psub->g;
-    evrPatternWF_s.modifier5        = psub->h;
-    evrPatternWF_s.bunchcharge      = psub->i;
+  /* Do nothing until the pattern is valid and synchronized */
+  evrPatternWF_s.header_s.type        = EVR_MESSAGE_PATTERN;
+  evrPatternWF_s.header_s.version     = EVR_MESSAGE_PATTERN_VERSION;
+  evrPatternWF_s.pnet_s.modifier_a[0] = psub->d;
+  evrPatternWF_s.pnet_s.modifier_a[1] = psub->e;
+  evrPatternWF_s.pnet_s.modifier_a[2] = psub->f;
+  evrPatternWF_s.pnet_s.modifier_a[3] = psub->g;
+  evrPatternWF_s.modifier5            = psub->h;
+  evrPatternWF_s.bunchcharge          = psub->i;
 #ifdef __rtems__
-    if (psub->dpvt) {
-      EvgDataBufferUpdate((EgCardStruct *)psub->dpvt,
-                          (epicsUInt32 *)&evrPatternWF_s,
-                          sizeof(evrQueuePattern_ts)/sizeof(epicsUInt32));
-    }
-#endif
+  if (psub->dpvt) {
+    EvgDataBufferUpdate((EgCardStruct *)psub->dpvt,
+                        (epicsUInt32 *)&evrPatternWF_s,
+                        sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32));
   }
-  return status;
+#endif
+  if (psub->val) return -1;
+  return 0;
 }
 
 /*=============================================================================
@@ -505,16 +481,17 @@ static long mpgPatternProc(subRecord *psub)
        D - Number of waveforms processed by mpgPatternPnet
        E - Number of times D has rolled over
        F - Number of bad waveforms
-           The following G-I outputs are pop'ed by a call to proc. evrQueueCounts()
-       G - Number of times ISR tried to send a message
+           The following G-J outputs are pop'ed by a call to evrMessageCounts()
+       G - Number of times ISR wrote a message
        H - Number of times G has rolled over
-       I - Number of times ISR failed to send a message
-       J - Number of pulse Id 6min 2sec cycles that have transpired since reset
+       I - Number of times ISR overwrote a message
+       J - Number of times ISR failed to get a mutex lock
        K - Number of unexpected unsynchronized pulse IDs
        L - Number of unexpected unsynchronized modulo720s
        M - Number of seq check 1 errors
        N - Number of seq check 2 errors
        O - Number of seq check 3 errors
+       P - Number of pulse Id 6min 2sec cycles that have transpired since reset
        VAL = Last Error flag (see mpgPatternProc for values)
 
   Side: File-scope counters may be reset.
@@ -536,18 +513,18 @@ static long mpgPatternState(sSubRecord *psub)
     seqCheck3ErrCount     = 0;
     pulseIDSyncErrCount   = 0;
     modulo720SyncErrCount = 0;
-    evrQueueCountReset(EVR_QUEUE_PNET);
+    evrMessageCountReset(EVR_MESSAGE_PNET);
   }
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
   psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->f = patternErrCount;
-  evrQueueCounts (EVR_QUEUE_PNET,&psub->g,&psub->h,&psub->i); 
-  psub->j = resyncCount;       /* # of times 6min 2s rollover happened since boot/reset */
+  evrMessageCounts(EVR_MESSAGE_PNET,&psub->g,&psub->h,&psub->i,&psub->j); 
   psub->k = pulseIDSyncErrCount;
   psub->l = modulo720SyncErrCount;
   psub->m = seqCheck1ErrCount;
   psub->n = seqCheck2ErrCount;
   psub->o = seqCheck3ErrCount;
+  psub->p = resyncCount;       /* # of times 6min 2s rollover happened since boot/reset */
   return 0;
 }
 
@@ -607,7 +584,7 @@ static long mpgPatternCheck(sSubRecord *psub)
 {
   psub->val = 0;
   /* Allow for X = -1 = forever */
-  if ((psub->y >= psub->x) && (psub->x > 0.1)) {
+  if ((psub->y >= psub->x) && (psub->x > 0.5)) {
     /* we're done with measurement */
     psub->z=1;
   }
@@ -644,7 +621,8 @@ static long mpgPatternCheck(sSubRecord *psub)
 		DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
                            ("mpgPatternCheck: exclusion match\n"));
 		psub->val = 1;  /* pattern match*/
-		psub->y++;      /* inc. meas. count */
+		if (psub->x > 0.5) psub->y++;      /* inc. meas. count */
+                else               psub->y = -1;
           }
         }
   }
@@ -673,25 +651,25 @@ static long mpgPatternCheck(sSubRecord *psub)
     G - MODIFIER4
     J - BEAMCODE
     K - YY
-  Ret:  0
+    L - PULSE ID (not used)
+  Ret:  Return from evrMessageWrite.
 
 ==============================================================================*/
 static long mpgPatternSim(subRecord *psub)
 { 
-  epicsUInt32            modifier_a[EVR_PNET_MODIFIER_MAX];
+  evrMessage_tu evrMessage_u;
 
 /*------------- parse input into sub outputs ----------------------------*/
 
-    modifier_a[0]    = ((epicsUInt32)psub->d) & 0xFFFFE000;
-    modifier_a[0]   |= ((((epicsUInt32)psub->j) << 8) & 0x1F00);
-    modifier_a[0]   |= ( ((epicsUInt32)psub->k) & YY_BIT_MASK);
-    modifier_a[1]    = psub->e;
-    modifier_a[2]    = psub->f;
-    modifier_a[3]    = psub->g;
+  evrMessage_u.pnet_s.modifier_a[0]  = ((epicsUInt32)psub->d) & 0xFFFF8000;
+  evrMessage_u.pnet_s.modifier_a[0] |= ((((epicsUInt32)psub->j) << 8) & 0x1F00);
+  evrMessage_u.pnet_s.modifier_a[0] |= ( ((epicsUInt32)psub->k) & YY_BIT_MASK);
+  evrMessage_u.pnet_s.modifier_a[1]  = psub->e;
+  evrMessage_u.pnet_s.modifier_a[2]  = psub->f;
+  evrMessage_u.pnet_s.modifier_a[3]  = psub->g;
 
-    /* Send the pattern to the PNET pattern queue */
-    pnetSend(modifier_a);
-    return 0;
+  /* Send the pattern to the PNET pattern queue */
+  return(evrMessageWrite(EVR_MESSAGE_PNET, &evrMessage_u));
 }
 epicsRegisterFunction(mpgPatternInit);
 epicsRegisterFunction(mpgPatternPnetInit);
