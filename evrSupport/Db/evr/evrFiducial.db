@@ -12,6 +12,9 @@ record(sub, "$(DEV):FIDUCIAL") {
   field(INPB, "$(DEV):PULSEIDN-2")
   field(INPC, "$(DEV):PULSEIDN-1")
   field(INPD, "$(DEV):PULSEID")
+  field(INPE, "$(DEV):PULSEIDN-3.SEVR")
+  field(INPF, "$(DEV):PULSEIDN-2.SEVR")
+  field(INPG, "$(DEV):PULSEIDN-1.SEVR")
   field(BRSV, "INVALID")
 }
 
@@ -22,27 +25,26 @@ record(fanout, "$(DEV):PATTERNFO") {
   field(LNK4, "$(LNK4)")
   field(LNK5, "$(LNK5)")
   field(LNK6, "$(LNK6)")
-  field(FLNK, "$(FLNK)")
+  field(FLNK, "$(DEV):MOD720DIAG")
 }
 
-record(fanout, "$(DEV):PATTERNDFO") {
-  field(SCAN, "2 second")
+record(fanout, "$(DEV):MOD720DIAG") {
   field(LNK1, "$(DEV):MODIFIER1D")
   field(LNK2, "$(DEV):MODIFIER1D-1")
   field(LNK3, "$(DEV):MODIFIER1D-2")
   field(LNK4, "$(DEV):MODIFIER1D-3")
   field(LNK5, "$(DEV):SKIPPULSECNT")
   field(LNK6, "$(LNKD)")
+  field(SDIS, "$(DEV):PATTERN.K")
+  field(DISV, "0")
 }
 
 record(longin, "$(DEV):SKIPPULSECNT") {
-  field(PINI, "NO")
   field(INP, "$(DEV):FIDUCIAL.K")
   field(FLNK, "$(DEV):SAMEPULSECNT")
 }
 
 record(longin, "$(DEV):SAMEPULSECNT") {
-  field(PINI, "NO")
   field(INP, "$(DEV):FIDUCIAL.J")
   field(FLNK, "$(DEV):TIMSTAMPDIAG")
 }
@@ -51,7 +53,7 @@ record(sub, "$(DEV):TIMSTAMPDIAG") {
   field(INAM, "evrTimeDiagInit")
   field(SNAM, "evrTimeDiag")
   field(BRSV, "INVALID")
-  field(FLNK, "$(DEV):PATTERNDIAG")
+  field(FLNK, "$(DEV):PATTERNSTATE")
 }
 
 record(seq, "$(DEV):RESETCNT") {
@@ -60,6 +62,32 @@ record(seq, "$(DEV):RESETCNT") {
   field(LNK2, "$(DEV):FIDUCIAL.K")
   field(DOL3, "1")
   field(LNK3, "$(DEV):PATTERNDIAG.B PP")
+}
+
+record(mbbo, "$(DEV):PATTERNSTATE") {
+  field(DESC, "Pattern Processing State")
+  field(DOL, "$(DEV):PATTERNDIAG PP")
+  field(ZRST, "OK")
+  field(ONST, "INVALID_DATA")
+  field(ONSV, "INVALID")
+  field(TWST, "INVALID_HEADER")
+  field(TWSV, "INVALID")
+  field(THST, "INVALID_TIME")
+  field(THSV, "INVALID")
+  field(FRST, "MPG_IPLING")
+  field(FRSV, "MAJOR")
+  field(FVST, "TS_NO_SYNC")
+  field(FVSV, "MAJOR")
+  field(SXST, "TS_PATT_NO_SYNC")
+  field(SXSV, "MAJOR")
+  field(SVST, "TS_MISMATCH")
+  field(SVSV, "MAJOR")
+  field(EIST, "PULSEID_NO_SYNC")
+  field(EISV, "MAJOR")
+  field(NIST, "MODULO_NO_SYNC")
+  field(NISV, "MAJOR")
+  field(UNSV, "INVALID")
+  field(OMSL, "closed_loop")
 }
 
 #! Further lines contain data used by VisualDCT
