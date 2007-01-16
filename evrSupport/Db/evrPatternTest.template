@@ -13,34 +13,25 @@
 file db/bsaTestInput.db
 {
 # Instantiate simulators for the EVG data that is retrieved by the EVR from
-#  the waveform. Prefix the simulated data with "WF" and load the evrPatternSim.db
-#  file after  the evrPatternProc.db file to load the sim PATTERN record which
-#  gets its inputs from these records below.
+#  the waveform.
 #                           
 #             Device          
   pattern {    DEV     ,  SECN     ,      CALC         , A , B ,EGU,  HOPR,LOPR,PREC,ADEL,MDEL,RES }
           { $(DEVICE)  ,PULSEID  ,"C>=131039?0:C+1"  , 0 , 0 , "",    131039,0 , 0  , 36 , 0  , 0  }
           { $(DEVICE)  ,BEAMCODE ,"A"                , 1 , 0 , "",    10    ,1 , 0  ,  0 , 0  , 0  }
-          { $(DEVICE)  ,MODIFIER1,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
+          { $(DEVICE)  ,MODIFIER1,"C=20?32768:C=32768?1:C+1",0,0,"",4294967296,0,0  ,  0 , 0  , 0  }
           { $(DEVICE)  ,MODIFIER2,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
           { $(DEVICE)  ,MODIFIER3,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  } 
           { $(DEVICE)  ,MODIFIER4,"C>=10?1:C+1"      , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
           { $(DEVICE)  ,YY       ,"C>=50?1:C+1"      , 0 , 0 , "",    256   ,0 , 0  ,  0 , 0  , 0  }
           { $(DEVICE)  ,BUNCHARGE,"C>=1000?200:C+1"  , 0 , 0 , "",   1000 ,200 , 0  ,  0 , 0  , 0  } 
 }
-file db/bsaEVRTestFanouts.db
+file db/evrPatternSim.db
 {
-#                             
-#             Device          
-  pattern {     DEV            ,       SECN                 ,       PHAS               ,     
-                LNK2           ,       LNK3                 ,       LNK4               ,       
-                LNK5           ,       LNK6                 ,       LNK7               ,    
-                LNK8           ,       LNK9                 ,       LNKA               , 
-                LNKB           ,       LNKC }
-          {    $(DEVICE)       ,"PULSEID"                   ,         0                ,
-     "$(DEVICE):BEAMCODE PP"   ,"$(DEVICE):YY PP"           ,"$(DEVICE):MODIFIER1 PP"  ,
-     "$(DEVICE):MODIFIER2 PP"  ,"$(DEVICE):MODIFIER3 PP"    ,"$(DEVICE):MODIFIER4 PP"  ,
-     "$(DEVICE):BUNCHARGE PP"  ,""                          ,""                        ,
-     ""                        ,"" }
+#
+#        Location
+pattern {   SIM  , DEV       }
+        { $(DEVICE), $(EIOC) }
 }
+
 
