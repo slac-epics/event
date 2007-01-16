@@ -24,7 +24,7 @@ record(calc, "EDEF:$(SYS):$(MD):$(SECN)") {
   field(INPA, "EDEF:$(SYS):$(MD):$(SECN)A")
   field(INPB, "EDEF:$(SYS):$(MD):$(SECN)B")
   field(MDEL, "-1")
-  field(FLNK, "IOC:$(SYS):1:MASKCHG")
+  field(FLNK, "$(DEV):MASKCHG")
 }
 
 #! Further lines contain data used by VisualDCT

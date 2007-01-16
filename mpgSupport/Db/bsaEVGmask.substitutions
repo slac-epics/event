@@ -1,24 +1,24 @@
 # One set of exclusion and inclusion masks for eDef
 file bsaEVGmaskUnits.template {
-  pattern {S_MD,S_SYS,S_LOCA ,S_UNIT}
-	  { 1, $(SY) , $(LO) , $(UN)}
-	  { 2, $(SY) , $(LO) , $(UN)}
-	  { 3, $(SY) , $(LO) , $(UN)}
-	  { 4, $(SY) , $(LO) , $(UN)}
-	  { 5, $(SY) , $(LO) , $(UN)}
-	  { 6, $(SY) , $(LO) , $(UN)}
-	  { 7, $(SY) , $(LO) , $(UN)}
-	  { 8, $(SY) , $(LO) , $(UN)}
-	  { 9, $(SY) , $(LO) , $(UN)}
-	  {10, $(SY) , $(LO) , $(UN)}
-          {11, $(SY) , $(LO) , $(UN)}
-          {12, $(SY) , $(LO) , $(UN)}
-          {13, $(SY) , $(LO) , $(UN)}
-          {14, $(SY) , $(LO) , $(UN)}
-          {15, $(SY) , $(LO) , $(UN)}
-          {16, $(SY) , $(LO) , $(UN)}
-          {17, $(SY) , $(LO) , $(UN)}
-          {18, $(SY) , $(LO) , $(UN)}
-          {19, $(SY) , $(LO) , $(UN)}
-          {20, $(SY) , $(LO) , $(UN)}
+  pattern {S_MD,S_SYS  , S_DEV     }
+	  { 1, $(SYSI) , $(DEVICE) }
+	  { 2, $(SYSI) , $(DEVICE) }
+	  { 3, $(SYSI) , $(DEVICE) }
+	  { 4, $(SYSI) , $(DEVICE) }
+	  { 5, $(SYSI) , $(DEVICE) }
+	  { 6, $(SYSI) , $(DEVICE) }
+	  { 7, $(SYSI) , $(DEVICE) }
+	  { 8, $(SYSI) , $(DEVICE) }
+	  { 9, $(SYSI) , $(DEVICE) }
+	  {10, $(SYSI) , $(DEVICE) }
+          {11, $(SYSI) , $(DEVICE) }
+          {12, $(SYSI) , $(DEVICE) }
+          {13, $(SYSI) , $(DEVICE) }
+          {14, $(SYSI) , $(DEVICE) }
+          {15, $(SYSI) , $(DEVICE) }
+          {16, $(SYSI) , $(DEVICE) }
+          {17, $(SYSI) , $(DEVICE) }
+          {18, $(SYSI) , $(DEVICE) }
+          {19, $(SYSI) , $(DEVICE) }
+          {20, $(SYSI) , $(DEVICE) }
 }
