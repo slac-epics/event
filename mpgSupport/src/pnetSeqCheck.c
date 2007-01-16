@@ -26,7 +26,7 @@
 =============================================================================*/
 #include <stdio.h>            /* printf prototype     */
 #include "errlog.h"           /* errlogPrintf proto   */
-#include "evrTime.h"          /* TIMESLOT definitions */
+#include "evrPattern.h"       /* TIMESLOT definitions */
 #include "pnetSeqCheck.h"     /* pnetSeqCheck protos  */
 
 #define SEQ_CHECK1_BUF 		(100)		/* last n checksum 1 values */
