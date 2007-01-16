@@ -1,7 +1,8 @@
 /*=============================================================================
  
   Name: evrModifier5.c
-           evrModifer5  - Modifier 5 Creation using EDEF Check Bits
+           evrModifer5     - Modifier 5 Creation using EDEF Check Bits
+           evrModifer5Bits - Get EDEF Check Bits out of Modifier 5
 
   Abs: This file contains all subroutine support for evr Pattern processing
        records.
@@ -39,6 +40,9 @@
 #include "sSubRecord.h"       /* for struct ssubRecord     */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
+
+#define EDEF_MAX    20
+#define NOEDEF_MASK 0xFFF0000
 
 /*=============================================================================
 
@@ -59,46 +63,64 @@
   Sub Inputs/ Outputs:
    Inputs:
     A-T - Pattern Check Results (for 20 EDEFs)
-    U   - Modifer5 without EDEF bits
+    U   - Modifier5 without EDEF bits
     
    Outputs:   
-    X  - lower 16 bits (Modifier5A)
-    Y  - upper 16 bits (Modifier5B)
     VAL = Modifier5
   Ret:  0
 
 ==============================================================================*/
 static long evrModifier5(sSubRecord *psub)
 { 
-  unsigned long mod5;
+  unsigned long  mod5;
+  double        *check_p = &psub->a;
+  int            edefIdx;
 
-  mod5 =     (unsigned long)psub->u;
-  mod5 |=    (unsigned long)psub->a;
-  mod5 |= ( ((unsigned long)psub->b) << 1 );
-  mod5 |= ( ((unsigned long)psub->c) << 2 );
-  mod5 |= ( ((unsigned long)psub->d) << 3 );
-  mod5 |= ( ((unsigned long)psub->e) << 4 );
-  mod5 |= ( ((unsigned long)psub->f) << 5 );
-  mod5 |= ( ((unsigned long)psub->g) << 6 );
-  mod5 |= ( ((unsigned long)psub->h) << 7 );
-  mod5 |= ( ((unsigned long)psub->i) << 8 );
-  mod5 |= ( ((unsigned long)psub->j) << 9 );
-  mod5 |= ( ((unsigned long)psub->k) << 10 );
-  mod5 |= ( ((unsigned long)psub->l) << 11 );
-  mod5 |= ( ((unsigned long)psub->m) << 12 );
-  mod5 |= ( ((unsigned long)psub->n) << 13 );
-  mod5 |= ( ((unsigned long)psub->o) << 14 );
-  mod5 |= ( ((unsigned long)psub->p) << 15 );
-  mod5 |= ( ((unsigned long)psub->q) << 16 );
-  mod5 |= ( ((unsigned long)psub->r) << 17 );
-  mod5 |= ( ((unsigned long)psub->s) << 18 );
-  mod5 |= ( ((unsigned long)psub->t) << 19 );
-
+  mod5 = (unsigned long)psub->u & NOEDEF_MASK;
+  for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++, check_p++) {
+    mod5 |= ((unsigned long)(*check_p)) << edefIdx;
+  }
   psub->val = (double)mod5;
-  /* split into 2 16 bit words */
-  psub->x = (double) (mod5 & 0xFFFF);
-  psub->y = (double) (mod5 >>16 );
   return 0;
- 
+}
+
+/*=============================================================================
+
+  Name: evrModifier5Bits
+
+  Abs:  Get EDEF Check Bits out of Modifier 5
+		
+  Args: Type	            Name        Access	   Description
+        ------------------- -----------	---------- ----------------------------
+        sSubRecord *         psub        read       point to subroutine record
+
+  Rem:  Subroutine for IOC:LOCA:UNIT:MODIFIER5NEW
+
+  Side:
+
+  Sub Inputs/ Outputs:
+   Inputs:
+    V = Modifier5
+    
+   Outputs:   
+    A-T - Pattern Check Results (for 20 EDEFs)
+    U   - Modifier5 without EDEF bits
+    VAL = Modifier5
+  Ret:  0
+
+==============================================================================*/
+static long evrModifier5Bits(sSubRecord *psub)
+{ 
+  unsigned long  mod5 = (unsigned long)psub->v;
+  double        *check_p = &psub->a;
+  int            edefIdx;
+
+  psub->u = mod5 & NOEDEF_MASK;
+  for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++, check_p++) {
+    *check_p = mod5 & (1 << edefIdx);
+  }
+  psub->val = psub->v;
+  return 0;
 }
 epicsRegisterFunction(evrModifier5);
+epicsRegisterFunction(evrModifier5Bits);
