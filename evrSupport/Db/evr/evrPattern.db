@@ -3,36 +3,32 @@
 #! DBDEND
 
 
-record(longin, "$(DEV):MODIFIER1$(N)") {
+record(ai, "$(DEV):MODIFIER1$(N)") {
   field(DESC, "MODIFIER1$(N)")
   field(DTYP, "Soft Channel")
   field(INP, "$(DEV):$(INP1) MS")
   field(FLNK, "$(DEV):MODIFIER2$(N)")
-  field(HOPR, "0xFFFFFFFF")
 }
 
-record(longin, "$(DEV):MODIFIER2$(N)") {
+record(ai, "$(DEV):MODIFIER2$(N)") {
   field(DESC, "MODIFIER2$(N)")
   field(DTYP, "Soft Channel")
   field(INP, "$(DEV):$(INP2) MS")
   field(FLNK, "$(DEV):MODIFIER3$(N)")
-  field(HOPR, "0xFFFFFFFF")
 }
 
-record(longin, "$(DEV):MODIFIER3$(N)") {
+record(ai, "$(DEV):MODIFIER3$(N)") {
   field(DESC, "MODIFIER3$(N)")
   field(DTYP, "Soft Channel")
   field(INP, "$(DEV):$(INP3) MS")
   field(FLNK, "$(DEV):MODIFIER4$(N)")
-  field(HOPR, "0xFFFFFFFF")
 }
 
-record(longin, "$(DEV):MODIFIER4$(N)") {
+record(ai, "$(DEV):MODIFIER4$(N)") {
   field(DESC, "MODIFIER4$(N)")
   field(DTYP, "Soft Channel")
   field(INP, "$(DEV):$(INP4) MS")
   field(FLNK, "$(DEV):MODIFIER5$(N)")
-  field(HOPR, "0xFFFFFFFF")
 }
 
 record(longin, "$(DEV):BUNCHARGE$(N)") {
@@ -57,15 +53,15 @@ record(longin, "$(DEV):PULSEID$(N)") {
   field(DESC, "PULSEID$(N)")
   field(DTYP, "Soft Channel")
   field(INP, "$(DEV):$(INP8) MS")
-  field(HOPR, "131039")
+  field(HOPR, "0x0001FFDF")
+  field(VAL,  "0x0001FFFF")
 }
 
-record(longin, "$(DEV):MODIFIER5$(N)") {
+record(ai, "$(DEV):MODIFIER5$(N)") {
   field(DESC, "MODIFIER5$(N)")
   field(DTYP, "Soft Channel")
   field(INP, "$(DEV):$(INP5) MS")
   field(FLNK, "$(DEV):BUNCHARGE$(N)")
-  field(HOPR, "0xFFFFFFFF")
 }
 
 #! Further lines contain data used by VisualDCT
