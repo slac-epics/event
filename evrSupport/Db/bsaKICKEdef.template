@@ -21,26 +21,26 @@ file db/bsaEdefAvg.db
 #                                       Event Defn
 #	      Device                     Name Unit
   pattern {DEV    ,   SECN  , MDID , MD, IOC   ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, EIOC   , BIT}
-	  { $(DEVICE) ,PULSEAMPL,  1   , 1 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B0}
-	  { $(DEVICE) ,PULSEAMPL,  2   , 2 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B1}
-	  { $(DEVICE) ,PULSEAMPL,  3   , 3 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B2}
-	  { $(DEVICE) ,PULSEAMPL,  4   , 4 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B3}
-	  { $(DEVICE) ,PULSEAMPL,  5   , 5 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B4}
-	  { $(DEVICE) ,PULSEAMPL,  6   , 6 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B5}
-	  { $(DEVICE) ,PULSEAMPL,  7   , 7 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B6}
-	  { $(DEVICE) ,PULSEAMPL,  8   , 8 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B7}
-	  { $(DEVICE) ,PULSEAMPL,  9   , 9 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B8}
-	  { $(DEVICE) ,PULSEAMPL,  10   ,10,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B9}
-	  { $(DEVICE) ,PULSEAMPL,  11   ,11,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BA}
-	  { $(DEVICE) ,PULSEAMPL,  12   ,12,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BB}
-	  { $(DEVICE) ,PULSEAMPL,  13   ,13,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BC}
-	  { $(DEVICE) ,PULSEAMPL,  14   ,14,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BD}
-	  { $(DEVICE) ,PULSEAMPL,  15   ,15,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BD}
-	  { $(DEVICE) ,PULSEAMPL, 1HZ   ,16,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BF}
-	  { $(DEVICE) ,PULSEAMPL,10HZ   ,17,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B0}
-	  { $(DEVICE) ,PULSEAMPL,FULL   ,18,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B1}
-	  { $(DEVICE) ,PULSEAMPL,  F1   ,19,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B2}
-	  { $(DEVICE) ,PULSEAMPL,  F2   ,20,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B3}
+	  { $(DEVICE) ,PULSEAMPL,  1   , 1 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), A}
+	  { $(DEVICE) ,PULSEAMPL,  2   , 2 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), B}
+	  { $(DEVICE) ,PULSEAMPL,  3   , 3 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), C}
+	  { $(DEVICE) ,PULSEAMPL,  4   , 4 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), D}
+	  { $(DEVICE) ,PULSEAMPL,  5   , 5 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), E}
+	  { $(DEVICE) ,PULSEAMPL,  6   , 6 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), F}
+	  { $(DEVICE) ,PULSEAMPL,  7   , 7 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), G}
+	  { $(DEVICE) ,PULSEAMPL,  8   , 8 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), H}
+	  { $(DEVICE) ,PULSEAMPL,  9   , 9 ,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), I}
+	  { $(DEVICE) ,PULSEAMPL,  10   ,10,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), J}
+	  { $(DEVICE) ,PULSEAMPL,  11   ,11,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), K}
+	  { $(DEVICE) ,PULSEAMPL,  12   ,12,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), L}
+	  { $(DEVICE) ,PULSEAMPL,  13   ,13,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), M}
+	  { $(DEVICE) ,PULSEAMPL,  14   ,14,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), N}
+	  { $(DEVICE) ,PULSEAMPL,  15   ,15,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), O}
+	  { $(DEVICE) ,PULSEAMPL, 1HZ   ,16,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), P}
+	  { $(DEVICE) ,PULSEAMPL,10HZ   ,17,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), Q}
+	  { $(DEVICE) ,PULSEAMPL,FULL   ,18,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), R}
+	  { $(DEVICE) ,PULSEAMPL,  F1   ,19,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), S}
+	  { $(DEVICE) ,PULSEAMPL,  F2   ,20,$(IOCI), kV, 10 ,  0 ,  3 , .01,.001, $(EVRI), T}
 }
 
 file db/bsaEdefFanouts.db

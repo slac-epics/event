@@ -21,150 +21,150 @@ file db/bsaEdefPattern.db
 {
 #     Location  , Unit       
 pattern { DEV      , PTRN      ,MDID , INP       , EGU          , HOPR     ,LOPR,PREC,BIT }
-	    { ${DEVICE}, PULSEIDHST,   1 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B0}
-	    { ${DEVICE}, PULSEIDHST,   2 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B1}
-	    { ${DEVICE}, PULSEIDHST,   3 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B2}
-	    { ${DEVICE}, PULSEIDHST,   4 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B3}
-	    { ${DEVICE}, PULSEIDHST,   5 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B4}
-	    { ${DEVICE}, PULSEIDHST,   6 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B5}
-	    { ${DEVICE}, PULSEIDHST,   7 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B6}
-	    { ${DEVICE}, PULSEIDHST,   8 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B7}
-	    { ${DEVICE}, PULSEIDHST,   9 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B8}
-	    { ${DEVICE}, PULSEIDHST,  10 , PULSEID   , ""           ,    131039, 0  , 3  ,A.B9}
-	    { ${DEVICE}, PULSEIDHST,  11 , PULSEID   , ""           ,    131039, 0  , 3  ,A.BA}
-	    { ${DEVICE}, PULSEIDHST,  12 , PULSEID   , ""           ,    131039, 0  , 3  ,A.BB}
-	    { ${DEVICE}, PULSEIDHST,  13 , PULSEID   , ""           ,    131039, 0  , 3  ,A.BC}
-	    { ${DEVICE}, PULSEIDHST,  14 , PULSEID   , ""           ,    131039, 0  , 3  ,A.BD}
-	    { ${DEVICE}, PULSEIDHST,  15 , PULSEID   , ""           ,    131039, 0  , 3  ,A.BE}
-	    { ${DEVICE}, PULSEIDHST, 1HZ , PULSEID   , ""           ,    131039, 0  , 3  ,A.BF}
-	    { ${DEVICE}, PULSEIDHST,10HZ , PULSEID   , ""           ,    131039, 0  , 3  ,B.B0}
-	    { ${DEVICE}, PULSEIDHST,FULL , PULSEID   , ""           ,    131039, 0  , 3  ,B.B1}
-	    { ${DEVICE}, PULSEIDHST,  F1 , PULSEID   , ""           ,    131039, 0  , 3  ,B.B2}
-	    { ${DEVICE}, PULSEIDHST,  F2 , PULSEID   , ""           ,    131039, 0  , 3  ,B.B3}
+	    { ${DEVICE}, PULSEIDHST,   1 , PULSEID   , ""           ,    131039, 0  , 3  ,A}
+	    { ${DEVICE}, PULSEIDHST,   2 , PULSEID   , ""           ,    131039, 0  , 3  ,B}
+	    { ${DEVICE}, PULSEIDHST,   3 , PULSEID   , ""           ,    131039, 0  , 3  ,C}
+	    { ${DEVICE}, PULSEIDHST,   4 , PULSEID   , ""           ,    131039, 0  , 3  ,D}
+	    { ${DEVICE}, PULSEIDHST,   5 , PULSEID   , ""           ,    131039, 0  , 3  ,E}
+	    { ${DEVICE}, PULSEIDHST,   6 , PULSEID   , ""           ,    131039, 0  , 3  ,F}
+	    { ${DEVICE}, PULSEIDHST,   7 , PULSEID   , ""           ,    131039, 0  , 3  ,G}
+	    { ${DEVICE}, PULSEIDHST,   8 , PULSEID   , ""           ,    131039, 0  , 3  ,H}
+	    { ${DEVICE}, PULSEIDHST,   9 , PULSEID   , ""           ,    131039, 0  , 3  ,I}
+	    { ${DEVICE}, PULSEIDHST,  10 , PULSEID   , ""           ,    131039, 0  , 3  ,J}
+	    { ${DEVICE}, PULSEIDHST,  11 , PULSEID   , ""           ,    131039, 0  , 3  ,K}
+	    { ${DEVICE}, PULSEIDHST,  12 , PULSEID   , ""           ,    131039, 0  , 3  ,L}
+	    { ${DEVICE}, PULSEIDHST,  13 , PULSEID   , ""           ,    131039, 0  , 3  ,M}
+	    { ${DEVICE}, PULSEIDHST,  14 , PULSEID   , ""           ,    131039, 0  , 3  ,N}
+	    { ${DEVICE}, PULSEIDHST,  15 , PULSEID   , ""           ,    131039, 0  , 3  ,O}
+	    { ${DEVICE}, PULSEIDHST, 1HZ , PULSEID   , ""           ,    131039, 0  , 3  ,P}
+	    { ${DEVICE}, PULSEIDHST,10HZ , PULSEID   , ""           ,    131039, 0  , 3  ,Q}
+	    { ${DEVICE}, PULSEIDHST,FULL , PULSEID   , ""           ,    131039, 0  , 3  ,R}
+	    { ${DEVICE}, PULSEIDHST,  F1 , PULSEID   , ""           ,    131039, 0  , 3  ,S}
+	    { ${DEVICE}, PULSEIDHST,  F2 , PULSEID   , ""           ,    131039, 0  , 3  ,T}
 
-	    { ${DEVICE}, BUNCHHST  ,   1 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B0}
-	    { ${DEVICE}, BUNCHHST  ,   2 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B1}
-	    { ${DEVICE}, BUNCHHST  ,   3 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B2}
-	    { ${DEVICE}, BUNCHHST  ,   4 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B3}
-	    { ${DEVICE}, BUNCHHST  ,   5 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B4}
-	    { ${DEVICE}, BUNCHHST  ,   6 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B5}
-	    { ${DEVICE}, BUNCHHST  ,   7 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B6}
-	    { ${DEVICE}, BUNCHHST  ,   8 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B7}
-	    { ${DEVICE}, BUNCHHST  ,   9 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B8}
-	    { ${DEVICE}, BUNCHHST  ,  10 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.B9}
-	    { ${DEVICE}, BUNCHHST  ,  11 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.BA}
-	    { ${DEVICE}, BUNCHHST  ,  12 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.BB}
-	    { ${DEVICE}, BUNCHHST  ,  13 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.BC}
-	    { ${DEVICE}, BUNCHHST  ,  14 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.BD}
-	    { ${DEVICE}, BUNCHHST  ,  15 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.BE}
-	    { ${DEVICE}, BUNCHHST  , 1HZ , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A.BF}
-	    { ${DEVICE}, BUNCHHST  ,10HZ , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,B.B0}
-	    { ${DEVICE}, BUNCHHST  ,FULL , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,B.B1}
-	    { ${DEVICE}, BUNCHHST  ,  F1 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,B.B2}
-	    { ${DEVICE}, BUNCHHST  ,  F2 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,B.B3}
+	    { ${DEVICE}, BUNCHHST  ,   1 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,A}
+	    { ${DEVICE}, BUNCHHST  ,   2 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,B}
+	    { ${DEVICE}, BUNCHHST  ,   3 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,C}
+	    { ${DEVICE}, BUNCHHST  ,   4 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,D}
+	    { ${DEVICE}, BUNCHHST  ,   5 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,E}
+	    { ${DEVICE}, BUNCHHST  ,   6 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,F}
+	    { ${DEVICE}, BUNCHHST  ,   7 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,G}
+	    { ${DEVICE}, BUNCHHST  ,   8 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,H}
+	    { ${DEVICE}, BUNCHHST  ,   9 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I}
+	    { ${DEVICE}, BUNCHHST  ,  10 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,J}
+	    { ${DEVICE}, BUNCHHST  ,  11 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,K}
+	    { ${DEVICE}, BUNCHHST  ,  12 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,L}
+	    { ${DEVICE}, BUNCHHST  ,  13 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,M}
+	    { ${DEVICE}, BUNCHHST  ,  14 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,N}
+	    { ${DEVICE}, BUNCHHST  ,  15 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,O}
+	    { ${DEVICE}, BUNCHHST  , 1HZ , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,P}
+	    { ${DEVICE}, BUNCHHST  ,10HZ , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,Q}
+	    { ${DEVICE}, BUNCHHST  ,FULL , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,R}
+	    { ${DEVICE}, BUNCHHST  ,  F1 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,S}
+	    { ${DEVICE}, BUNCHHST  ,  F2 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,T}
 
-	    { ${DEVICE}, MOD1HST  ,   1  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B0}
-	    { ${DEVICE}, MOD1HST  ,   2  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B1}
-	    { ${DEVICE}, MOD1HST  ,   3  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B2}
-	    { ${DEVICE}, MOD1HST  ,   4  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B3}
-	    { ${DEVICE}, MOD1HST  ,   5  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B4}
-	    { ${DEVICE}, MOD1HST  ,   6  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B5}
-	    { ${DEVICE}, MOD1HST  ,   7  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B6}
-	    { ${DEVICE}, MOD1HST  ,   8  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B7}
-	    { ${DEVICE}, MOD1HST  ,   9  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B8}
-	    { ${DEVICE}, MOD1HST  ,  10  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.B9}
-	    { ${DEVICE}, MOD1HST  ,  11  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.BA}
-	    { ${DEVICE}, MOD1HST  ,  12  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.BB}
-	    { ${DEVICE}, MOD1HST  ,  13  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.BC}
-	    { ${DEVICE}, MOD1HST  ,  14  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.BD}
-	    { ${DEVICE}, MOD1HST  ,  15  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.BE}
-	    { ${DEVICE}, MOD1HST  , 1HZ  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A.BF}
-	    { ${DEVICE}, MOD1HST  ,10HZ  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,B.B0}
-	    { ${DEVICE}, MOD1HST  ,FULL  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,B.B1}
-	    { ${DEVICE}, MOD1HST  ,  F1  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,B.B2}
-	    { ${DEVICE}, MOD1HST  ,  F2  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,B.B3}
+	    { ${DEVICE}, MOD1HST  ,   1  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,A}
+	    { ${DEVICE}, MOD1HST  ,   2  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,B}
+	    { ${DEVICE}, MOD1HST  ,   3  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,C}
+	    { ${DEVICE}, MOD1HST  ,   4  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D}
+	    { ${DEVICE}, MOD1HST  ,   5  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,E}
+	    { ${DEVICE}, MOD1HST  ,   6  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,F}
+	    { ${DEVICE}, MOD1HST  ,   7  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,G}
+	    { ${DEVICE}, MOD1HST  ,   8  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,H}
+	    { ${DEVICE}, MOD1HST  ,   9  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,I}
+	    { ${DEVICE}, MOD1HST  ,  10  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,J}
+	    { ${DEVICE}, MOD1HST  ,  11  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,K}
+	    { ${DEVICE}, MOD1HST  ,  12  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,L}
+	    { ${DEVICE}, MOD1HST  ,  13  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,M}
+	    { ${DEVICE}, MOD1HST  ,  14  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,N}
+	    { ${DEVICE}, MOD1HST  ,  15  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,O}
+	    { ${DEVICE}, MOD1HST  , 1HZ  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,P}
+	    { ${DEVICE}, MOD1HST  ,10HZ  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,Q}
+	    { ${DEVICE}, MOD1HST  ,FULL  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,R}
+	    { ${DEVICE}, MOD1HST  ,  F1  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,S}
+	    { ${DEVICE}, MOD1HST  ,  F2  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,T}
 
-	    { ${DEVICE}, MOD2HST  ,   1  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B0}
-	    { ${DEVICE}, MOD2HST  ,   2  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B1}
-	    { ${DEVICE}, MOD2HST  ,   3  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B2}
-	    { ${DEVICE}, MOD2HST  ,   4  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B3}
-	    { ${DEVICE}, MOD2HST  ,   5  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B4}
-	    { ${DEVICE}, MOD2HST  ,   6  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B5}
-	    { ${DEVICE}, MOD2HST  ,   7  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B6}
-	    { ${DEVICE}, MOD2HST  ,   8  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B7}
-	    { ${DEVICE}, MOD2HST  ,   9  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B8}
-	    { ${DEVICE}, MOD2HST  ,  10  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.B9}
-	    { ${DEVICE}, MOD2HST  ,  11  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.BA}
-	    { ${DEVICE}, MOD2HST  ,  12  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.BB}
-	    { ${DEVICE}, MOD2HST  ,  13  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.BC}
-	    { ${DEVICE}, MOD2HST  ,  14  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.BD}
-	    { ${DEVICE}, MOD2HST  ,  15  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.BE}
-	    { ${DEVICE}, MOD2HST  , 1HZ  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A.BF}
-	    { ${DEVICE}, MOD2HST  ,10HZ  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,B.B0}
-	    { ${DEVICE}, MOD2HST  ,FULL  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,B.B1}
-	    { ${DEVICE}, MOD2HST  ,  F1  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,B.B2}
-	    { ${DEVICE}, MOD2HST  ,  F2  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,B.B3}
+	    { ${DEVICE}, MOD2HST  ,   1  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,A}
+	    { ${DEVICE}, MOD2HST  ,   2  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,B}
+	    { ${DEVICE}, MOD2HST  ,   3  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,C}
+	    { ${DEVICE}, MOD2HST  ,   4  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,D}
+	    { ${DEVICE}, MOD2HST  ,   5  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E}
+	    { ${DEVICE}, MOD2HST  ,   6  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,F}
+	    { ${DEVICE}, MOD2HST  ,   7  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,G}
+	    { ${DEVICE}, MOD2HST  ,   8  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,H}
+	    { ${DEVICE}, MOD2HST  ,   9  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,I}
+	    { ${DEVICE}, MOD2HST  ,  10  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,J}
+	    { ${DEVICE}, MOD2HST  ,  11  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,K}
+	    { ${DEVICE}, MOD2HST  ,  12  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,L}
+	    { ${DEVICE}, MOD2HST  ,  13  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,M}
+	    { ${DEVICE}, MOD2HST  ,  14  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,N}
+	    { ${DEVICE}, MOD2HST  ,  15  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,O}
+	    { ${DEVICE}, MOD2HST  , 1HZ  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,P}
+	    { ${DEVICE}, MOD2HST  ,10HZ  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,Q}
+	    { ${DEVICE}, MOD2HST  ,FULL  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,R}
+	    { ${DEVICE}, MOD2HST  ,  F1  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,S}
+	    { ${DEVICE}, MOD2HST  ,  F2  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,T}
 
-	    { ${DEVICE}, MOD3HST  ,   1  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B0}
-	    { ${DEVICE}, MOD3HST  ,   2  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B1}
-	    { ${DEVICE}, MOD3HST  ,   3  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B2}
-	    { ${DEVICE}, MOD3HST  ,   4  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B3}
-	    { ${DEVICE}, MOD3HST  ,   5  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B4}
-	    { ${DEVICE}, MOD3HST  ,   6  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B5}
-	    { ${DEVICE}, MOD3HST  ,   7  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B6}
-	    { ${DEVICE}, MOD3HST  ,   8  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B7}
-	    { ${DEVICE}, MOD3HST  ,   9  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B8}
-	    { ${DEVICE}, MOD3HST  ,  10  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.B9}
-	    { ${DEVICE}, MOD3HST  ,  11  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.BA}
-	    { ${DEVICE}, MOD3HST  ,  12  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.BB}
-	    { ${DEVICE}, MOD3HST  ,  13  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.BC}
-	    { ${DEVICE}, MOD3HST  ,  14  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.BD}
-	    { ${DEVICE}, MOD3HST  ,  15  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.BE}
-	    { ${DEVICE}, MOD3HST  , 1HZ  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A.BF}
-	    { ${DEVICE}, MOD3HST  ,10HZ  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,B.B0}
-	    { ${DEVICE}, MOD3HST  ,FULL  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,B.B1}
-	    { ${DEVICE}, MOD3HST  ,  F1  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,B.B2}
-	    { ${DEVICE}, MOD3HST  ,  F2  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,B.B3}
+	    { ${DEVICE}, MOD3HST  ,   1  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,A}
+	    { ${DEVICE}, MOD3HST  ,   2  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,B}
+	    { ${DEVICE}, MOD3HST  ,   3  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,C}
+	    { ${DEVICE}, MOD3HST  ,   4  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,D}
+	    { ${DEVICE}, MOD3HST  ,   5  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,E}
+	    { ${DEVICE}, MOD3HST  ,   6  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F}
+	    { ${DEVICE}, MOD3HST  ,   7  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,G}
+	    { ${DEVICE}, MOD3HST  ,   8  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,H}
+	    { ${DEVICE}, MOD3HST  ,   9  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,I}
+	    { ${DEVICE}, MOD3HST  ,  10  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,J}
+	    { ${DEVICE}, MOD3HST  ,  11  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,K}
+	    { ${DEVICE}, MOD3HST  ,  12  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,L}
+	    { ${DEVICE}, MOD3HST  ,  13  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,M}
+	    { ${DEVICE}, MOD3HST  ,  14  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,N}
+	    { ${DEVICE}, MOD3HST  ,  15  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,O}
+	    { ${DEVICE}, MOD3HST  , 1HZ  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,P}
+	    { ${DEVICE}, MOD3HST  ,10HZ  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,Q}
+	    { ${DEVICE}, MOD3HST  ,FULL  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,R}
+	    { ${DEVICE}, MOD3HST  ,  F1  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,S}
+	    { ${DEVICE}, MOD3HST  ,  F2  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,T}
 
-	    { ${DEVICE}, MOD4HST  ,   1  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B0}
-	    { ${DEVICE}, MOD4HST  ,   2  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B1}
-	    { ${DEVICE}, MOD4HST  ,   3  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B2}
-	    { ${DEVICE}, MOD4HST  ,   4  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B3}
-	    { ${DEVICE}, MOD4HST  ,   5  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B4}
-	    { ${DEVICE}, MOD4HST  ,   6  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B5}
-	    { ${DEVICE}, MOD4HST  ,   7  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B6}
-	    { ${DEVICE}, MOD4HST  ,   8  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B7}
-	    { ${DEVICE}, MOD4HST  ,   9  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B8}
-	    { ${DEVICE}, MOD4HST  ,  10  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.B9}
-	    { ${DEVICE}, MOD4HST  ,  11  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.BA}
-	    { ${DEVICE}, MOD4HST  ,  12  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.BB}
-	    { ${DEVICE}, MOD4HST  ,  13  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.BC}
-	    { ${DEVICE}, MOD4HST  ,  14  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.BD}
-	    { ${DEVICE}, MOD4HST  ,  15  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.BE}
-	    { ${DEVICE}, MOD4HST  , 1HZ  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A.BF}
-	    { ${DEVICE}, MOD4HST  ,10HZ  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,B.B0}
-	    { ${DEVICE}, MOD4HST  ,FULL  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,B.B1}
-	    { ${DEVICE}, MOD4HST  ,  F1  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,B.B2}
-	    { ${DEVICE}, MOD4HST  ,  F2  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,B.B3}
+	    { ${DEVICE}, MOD4HST  ,   1  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,A}
+	    { ${DEVICE}, MOD4HST  ,   2  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,B}
+	    { ${DEVICE}, MOD4HST  ,   3  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,C}
+	    { ${DEVICE}, MOD4HST  ,   4  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,D}
+	    { ${DEVICE}, MOD4HST  ,   5  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,E}
+	    { ${DEVICE}, MOD4HST  ,   6  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,F}
+	    { ${DEVICE}, MOD4HST  ,   7  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G}
+	    { ${DEVICE}, MOD4HST  ,   8  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,H}
+	    { ${DEVICE}, MOD4HST  ,   9  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,I}
+	    { ${DEVICE}, MOD4HST  ,  10  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,J}
+	    { ${DEVICE}, MOD4HST  ,  11  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,K}
+	    { ${DEVICE}, MOD4HST  ,  12  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,L}
+	    { ${DEVICE}, MOD4HST  ,  13  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,M}
+	    { ${DEVICE}, MOD4HST  ,  14  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,N}
+	    { ${DEVICE}, MOD4HST  ,  15  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,O}
+	    { ${DEVICE}, MOD4HST  , 1HZ  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,P}
+	    { ${DEVICE}, MOD4HST  ,10HZ  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,Q}
+	    { ${DEVICE}, MOD4HST  ,FULL  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,R}
+	    { ${DEVICE}, MOD4HST  ,  F1  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,S}
+	    { ${DEVICE}, MOD4HST  ,  F2  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,T}
 
-	    { ${DEVICE}, MOD5HST  ,   1  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B0}
-	    { ${DEVICE}, MOD5HST  ,   2  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B1}
-	    { ${DEVICE}, MOD5HST  ,   3  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B2}
-	    { ${DEVICE}, MOD5HST  ,   4  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B3}
-	    { ${DEVICE}, MOD5HST  ,   5  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B4}
-	    { ${DEVICE}, MOD5HST  ,   6  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B5}
-	    { ${DEVICE}, MOD5HST  ,   7  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B6}
-	    { ${DEVICE}, MOD5HST  ,   8  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B7}
-	    { ${DEVICE}, MOD5HST  ,   9  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B8}
-	    { ${DEVICE}, MOD5HST  ,  10  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.B9}
-	    { ${DEVICE}, MOD5HST  ,  11  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.BA}
-	    { ${DEVICE}, MOD5HST  ,  12  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.BB}
-	    { ${DEVICE}, MOD5HST  ,  13  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.BC}
-	    { ${DEVICE}, MOD5HST  ,  14  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.BD}
-	    { ${DEVICE}, MOD5HST  ,  15  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.BE}
-	    { ${DEVICE}, MOD5HST  , 1HZ  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A.BF}
-	    { ${DEVICE}, MOD5HST  ,10HZ  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,B.B0}
-	    { ${DEVICE}, MOD5HST  ,FULL  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,B.B1}
-	    { ${DEVICE}, MOD5HST  ,  F1  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,B.B2}
-	    { ${DEVICE}, MOD5HST  ,  F2  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,B.B3}
+	    { ${DEVICE}, MOD5HST  ,   1  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,A}
+	    { ${DEVICE}, MOD5HST  ,   2  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,B}
+	    { ${DEVICE}, MOD5HST  ,   3  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,C}
+	    { ${DEVICE}, MOD5HST  ,   4  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,D}
+	    { ${DEVICE}, MOD5HST  ,   5  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,E}
+	    { ${DEVICE}, MOD5HST  ,   6  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,F}
+	    { ${DEVICE}, MOD5HST  ,   7  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,G}
+	    { ${DEVICE}, MOD5HST  ,   8  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H}
+	    { ${DEVICE}, MOD5HST  ,   9  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,I}
+	    { ${DEVICE}, MOD5HST  ,  10  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,J}
+	    { ${DEVICE}, MOD5HST  ,  11  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,K}
+	    { ${DEVICE}, MOD5HST  ,  12  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,L}
+	    { ${DEVICE}, MOD5HST  ,  13  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,M}
+	    { ${DEVICE}, MOD5HST  ,  14  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,N}
+	    { ${DEVICE}, MOD5HST  ,  15  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,O}
+	    { ${DEVICE}, MOD5HST  , 1HZ  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,P}
+	    { ${DEVICE}, MOD5HST  ,10HZ  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,Q}
+	    { ${DEVICE}, MOD5HST  ,FULL  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,R}
+	    { ${DEVICE}, MOD5HST  ,  F1  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,S}
+	    { ${DEVICE}, MOD5HST  ,  F2  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,T}
 }

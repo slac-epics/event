@@ -21,26 +21,26 @@ file db/bsaEdefAvg.db
 #                                  Event Defn
 #	      Device                Name Unit
   pattern {DEV    ,SECN, MDID  ,MD,  IOC  ,EGU,HOPR,LOPR,PREC,ADEL,MDEL , EIOC   , BIT}
-	  { $(DEVICE) ,LOSS,  1    , 1,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B0}
-	  { $(DEVICE) ,LOSS,  2    , 2,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B1}
-	  { $(DEVICE) ,LOSS,  3    , 3,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B2}
-	  { $(DEVICE) ,LOSS,  4    , 4,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B3}
-	  { $(DEVICE) ,LOSS,  5    , 5,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B4}
-	  { $(DEVICE) ,LOSS,  6    , 6,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B5}
-	  { $(DEVICE) ,LOSS,  7    , 7,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B6}
-	  { $(DEVICE) ,LOSS,  8    , 8,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B7}
-	  { $(DEVICE) ,LOSS,  9    , 9,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B8}
-	  { $(DEVICE) ,LOSS, 10    ,10,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.B9}
-	  { $(DEVICE) ,LOSS, 11    ,11,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.BA}
-	  { $(DEVICE) ,LOSS, 12    ,12,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.BB}
-	  { $(DEVICE) ,LOSS, 13    ,13,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.BC}
-	  { $(DEVICE) ,LOSS, 14    ,14,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.BD}
-	  { $(DEVICE) ,LOSS, 15    ,15,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.BE}
-	  { $(DEVICE) ,LOSS, 1HZ   ,16,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A.BF}
-	  { $(DEVICE) ,LOSS,10HZ   ,17,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), B.B0}
-	  { $(DEVICE) ,LOSS,FULL   ,18,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), B.B1}
-	  { $(DEVICE) ,LOSS, F1    ,19,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), B.B2}
-	  { $(DEVICE) ,LOSS, F2    ,20,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), B.B3}
+	  { $(DEVICE) ,LOSS,  1    , 1,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), A}
+	  { $(DEVICE) ,LOSS,  2    , 2,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), B}
+	  { $(DEVICE) ,LOSS,  3    , 3,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), C}
+	  { $(DEVICE) ,LOSS,  4    , 4,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), D}
+	  { $(DEVICE) ,LOSS,  5    , 5,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), E}
+	  { $(DEVICE) ,LOSS,  6    , 6,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), F}
+	  { $(DEVICE) ,LOSS,  7    , 7,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), G}
+	  { $(DEVICE) ,LOSS,  8    , 8,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), H}
+	  { $(DEVICE) ,LOSS,  9    , 9,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), I}
+	  { $(DEVICE) ,LOSS, 10    ,10,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), J}
+	  { $(DEVICE) ,LOSS, 11    ,11,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), K}
+	  { $(DEVICE) ,LOSS, 12    ,12,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), L}
+	  { $(DEVICE) ,LOSS, 13    ,13,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), M}
+	  { $(DEVICE) ,LOSS, 14    ,14,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), N}
+	  { $(DEVICE) ,LOSS, 15    ,15,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), O}
+	  { $(DEVICE) ,LOSS, 1HZ   ,16,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), P}
+	  { $(DEVICE) ,LOSS,10HZ   ,17,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), Q}
+	  { $(DEVICE) ,LOSS,FULL   ,18,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), R}
+	  { $(DEVICE) ,LOSS, F1    ,19,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), S}
+	  { $(DEVICE) ,LOSS, F2    ,20,$(IOCI),mRad/hr,100,0,  3 , .01,.001 , $(EVRI), T}
 }
 file db/bsaEdefFanouts.db
 {

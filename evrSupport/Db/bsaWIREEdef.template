@@ -21,26 +21,26 @@ file db/bsaEdefAvg.db
 #                                   Event Defn
 #	      Device                Name Unit
   pattern {DEV    ,SECN, MDID ,MD,   IOC  ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, EIOC , BIT}
-	  { $(DEVICE) ,POSN,  1   ,1  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B0}
-	  { $(DEVICE) ,POSN,  2   ,2  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B1}
-	  { $(DEVICE) ,POSN,  3   ,3  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B2}
-	  { $(DEVICE) ,POSN,  4   ,4  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B3}
-	  { $(DEVICE) ,POSN,  5   ,5  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B4}
-	  { $(DEVICE) ,POSN,  6   ,6  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B5}
-	  { $(DEVICE) ,POSN,  7   ,7  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B6}
-	  { $(DEVICE) ,POSN,  8   ,8  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B7}
-	  { $(DEVICE) ,POSN,  9   ,9  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B8}
-	  { $(DEVICE) ,POSN,  10  ,10 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.B9}
-	  { $(DEVICE) ,POSN,  11  ,11 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BA}
-	  { $(DEVICE) ,POSN,  12  ,12 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BB}
-	  { $(DEVICE) ,POSN,  13  ,13 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BC}
-	  { $(DEVICE) ,POSN,  14  ,14 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BD}
-	  { $(DEVICE) ,POSN,  15  ,15 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BE}
-	  { $(DEVICE) ,POSN, 1HZ  ,16 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A.BF}
-	  { $(DEVICE) ,POSN, 10HZ ,17 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B0}
-	  { $(DEVICE) ,POSN, FULL ,18 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B1}
-	  { $(DEVICE) ,POSN,  F1  ,19 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B2}
-	  { $(DEVICE) ,POSN,  F2  ,20 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), B.B3}
+	  { $(DEVICE) ,POSN,  1   ,1  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), A}
+	  { $(DEVICE) ,POSN,  2   ,2  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), B}
+	  { $(DEVICE) ,POSN,  3   ,3  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), C}
+	  { $(DEVICE) ,POSN,  4   ,4  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), D}
+	  { $(DEVICE) ,POSN,  5   ,5  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), E}
+	  { $(DEVICE) ,POSN,  6   ,6  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), F}
+	  { $(DEVICE) ,POSN,  7   ,7  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), G}
+	  { $(DEVICE) ,POSN,  8   ,8  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), H}
+	  { $(DEVICE) ,POSN,  9   ,9  ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), I}
+	  { $(DEVICE) ,POSN,  10  ,10 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), J}
+	  { $(DEVICE) ,POSN,  11  ,11 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), K}
+	  { $(DEVICE) ,POSN,  12  ,12 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), L}
+	  { $(DEVICE) ,POSN,  13  ,13 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), M}
+	  { $(DEVICE) ,POSN,  14  ,14 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), N}
+	  { $(DEVICE) ,POSN,  15  ,15 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), O}
+	  { $(DEVICE) ,POSN, 1HZ  ,16 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), P}
+	  { $(DEVICE) ,POSN, 10HZ ,17 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), Q}
+	  { $(DEVICE) ,POSN, FULL ,18 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), R}
+	  { $(DEVICE) ,POSN,  F1  ,19 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), S}
+	  { $(DEVICE) ,POSN,  F2  ,20 ,$(IOCI), um, 10 ,  0 ,  3 , .01,.001, $(EVRI), T}
 }
 
 file db/bsaEdefFanouts.db

@@ -7,7 +7,7 @@
 
 record(compress, "$(DEV):$(PTRN)$(MDID)") {
   field(DISV, "0")
-  field(SDIS, "$(DEV):MODIFIER5$(BIT)")
+  field(SDIS, "$(DEV):MODIFIER5NEW.$(BIT)")
   field(INP, "$(DEV):$(INP)")
   field(ALG, "Circular Buffer")
   field(NSAM, "500")

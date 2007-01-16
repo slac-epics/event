@@ -20,26 +20,26 @@ file db/bsaEdefAvg.db
 #                                   Meas Defn
 #	      Device                Name Unit
   pattern {DEV    ,SECN, MDID  ,MD,  IOC , EGU, HOPR , LOPR ,PREC, ADEL, MDEL , EIOC   , BIT}
-	  { $(DEVICE) ,TMIT,  1   , 1,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B0}
-	  { $(DEVICE) ,TMIT,  2   , 2,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B1}
-	  { $(DEVICE) ,TMIT,  3   , 3,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B2}
-	  { $(DEVICE) ,TMIT,  4   , 4,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B3}
-	  { $(DEVICE) ,TMIT,  5   , 5,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B4}
-	  { $(DEVICE) ,TMIT,  6   , 6,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B5}
-	  { $(DEVICE) ,TMIT,  7   , 7,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B6}
-	  { $(DEVICE) ,TMIT,  8   , 8,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B7}
-	  { $(DEVICE) ,TMIT,  9   , 9,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B8}
-	  { $(DEVICE) ,TMIT,  10  ,10,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.B9}
-	  { $(DEVICE) ,TMIT,  11  ,11,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BA}
-	  { $(DEVICE) ,TMIT,  12  ,12,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BB}
-	  { $(DEVICE) ,TMIT,  13  ,13,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BC}
-	  { $(DEVICE) ,TMIT,  14  ,14,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BD}
-	  { $(DEVICE) ,TMIT,  15  ,15,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BE}
-	  { $(DEVICE) ,TMIT,  1HZ ,16,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A.BF}
-	  { $(DEVICE) ,TMIT,  10HZ,17,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B0}
-	  { $(DEVICE) ,TMIT,  FULL,18,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B1}
-	  { $(DEVICE) ,TMIT,  F1  ,19,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B2}
-	  { $(DEVICE) ,TMIT,  F2  ,20,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B.B3}
+	  { $(DEVICE) ,TMIT,  1   , 1,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A}
+	  { $(DEVICE) ,TMIT,  2   , 2,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B}
+	  { $(DEVICE) ,TMIT,  3   , 3,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), C}
+	  { $(DEVICE) ,TMIT,  4   , 4,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), D}
+	  { $(DEVICE) ,TMIT,  5   , 5,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), E}
+	  { $(DEVICE) ,TMIT,  6   , 6,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), F}
+	  { $(DEVICE) ,TMIT,  7   , 7,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), G}
+	  { $(DEVICE) ,TMIT,  8   , 8,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), H}
+	  { $(DEVICE) ,TMIT,  9   , 9,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), I}
+	  { $(DEVICE) ,TMIT,  10  ,10,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), J}
+	  { $(DEVICE) ,TMIT,  11  ,11,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), K}
+	  { $(DEVICE) ,TMIT,  12  ,12,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), L}
+	  { $(DEVICE) ,TMIT,  13  ,13,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), M}
+	  { $(DEVICE) ,TMIT,  14  ,14,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), N}
+	  { $(DEVICE) ,TMIT,  15  ,15,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), O}
+	  { $(DEVICE) ,TMIT,  1HZ ,16,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), P}
+	  { $(DEVICE) ,TMIT,  10HZ,17,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), Q}
+	  { $(DEVICE) ,TMIT,  FULL,18,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), R}
+	  { $(DEVICE) ,TMIT,  F1  ,19,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), S}
+	  { $(DEVICE) ,TMIT,  F2  ,20,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), T}
 }
 
 file db/bsaEdefFanouts.db
