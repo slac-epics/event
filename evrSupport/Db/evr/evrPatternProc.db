@@ -31,31 +31,13 @@ record(sub, "$(DEV):PATTERNDIAG") {
   field(SNAM, "evrPatternState")
   field(INPA, "$(DEV):PATTERN")
   field(BRSV, "INVALID")
-  field(FLNK, "$(DEV):PATTERNSTATE")
 }
 
-record(mbbo, "$(DEV):PATTERNSTATE") {
-  field(DESC, "Pattern Processing State")
-  field(DOL, "$(DEV):PATTERNDIAG")
-  field(ZRST, "OK")
-  field(ONST, "INVALID")
-  field(ONSV, "MAJOR")
-  field(UNSV, "INVALID")
-  field(OMSL, "closed_loop")
-}
-
-record(mbbiDirect, "$(DEV):MODIFIER5A") {
-  field(DTYP, "Raw Soft Channel")
-  field(INP, "$(DEV):MODIFIER5 MS")
-  field(NOBT, "16")
-  field(FLNK, "$(DEV):MODIFIER5B")
-}
-
-record(mbbiDirect, "$(DEV):MODIFIER5B") {
-  field(DTYP, "Raw Soft Channel")
-  field(INP, "$(DEV):MODIFIER5 MS")
-  field(NOBT, "16")
-  field(SHFT, "16")
+record(sSub, "$(DEV):MODIFIER5NEW") {
+  field(INAM, "evrPatternInit")
+  field(SNAM, "evrModifier5Bits")
+  field(INPV, "$(DEV):MODIFIER5 MS")
+  field(BRSV, "INVALID")
 }
 
 #! Further lines contain data used by VisualDCT
@@ -72,11 +54,4 @@ record(mbbiDirect, "$(DEV):MODIFIER5B") {
 #! Field("$(DEV):PATTERNDATA.VAL",16777215,1,"$(DEV):PATTERNDATA.VAL")
 #! Field("$(DEV):PATTERNDATA.SEVR",16777215,1,"$(DEV):PATTERNDATA.SEVR")
 #! Field("$(DEV):PATTERNDATA.NORD",16777215,1,"$(DEV):PATTERNDATA.NORD")
-#! Record("$(DEV):MODIFIER5A",940,606,0,0,"$(DEV):MODIFIER5A")
-#! Field("$(DEV):MODIFIER5A.INP",16777215,0,"$(DEV):MODIFIER5A.INP")
-#! Field("$(DEV):MODIFIER5A.FLNK",16777215,1,"$(DEV):MODIFIER5A.FLNK")
-#! Link("$(DEV):MODIFIER5A.FLNK","$(DEV):MODIFIER5B")
-#! Record("$(DEV):MODIFIER5B",1200,686,0,0,"$(DEV):MODIFIER5B")
-#! Field("$(DEV):MODIFIER5B.INP",16777215,1,"$(DEV):MODIFIER5B.INP")
 #! TextBox(TB0,940,1040,1320,1260,0,"Dialog",12,1,16777215,"PATTERN\nInputs Waveform and parses into 5 MODIFIERS\nOutputs:\nE MODIFIER1, N-3\nF MODIFIER2, N-3\nG MODIFIER3, N-3\nH MODIFIER4, N-3\nI  MODIFIER5, N-3\nJ  BEAMCODE, N-3\nL  PULSEID, N-3",null)
-#! TextBox(TB2,1140,860,1560,1000,0,"Dialog",12,1,16777215,"Note:\nLoad evrPatternSim.db after this db for Simulation purposes.\nevrPatternSim.db has its own PATTERN which inputs the\nMODIFIERs from the EVG simulator instead of PATTERNDATA.\nin st.cmd.soft file:\ndbLoadRecords (\"db/evrPatternSim.db\", \"LOCA=xx ,UNIT=yy\")\n",null)
