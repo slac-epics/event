@@ -46,8 +46,8 @@ pattern { DEV      , N      , INP1          , INP2         , INP3         , INP4
 file db/evrFiducial.db
 {
 #     Location  ,               PATTERNFO links       
-pattern { DEV        ,    LNK4    ,    LNK5    ,    LNK6    ,    FLNK    ,    LNKD    }
-	{ ${DEVICE}  , "${LINK4}" , "${LINK5}" , "${LINK6}" , "${LINK7}" , "${LINKD}" }
+pattern { DEV        ,    LNK4    ,    LNK5    ,    LNK6    ,    LNKD    }
+	{ ${DEVICE}  , "${LINK4}" , "${LINK5}" , "${LINK6}" , "${LINKD}" }
 }
 
 file db/generalTimeNonVx.template
