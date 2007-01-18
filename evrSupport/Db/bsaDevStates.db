@@ -46,7 +46,6 @@ record(sub, "$(DEV):STATUS") {
   field(INPF, "$(DEV):$(SECN3).SEVR")
   field(INPG, "$(DEV):CTRL")
   field(INPH, "$(DEV):CALBSTATUS.SEVR")
-  field(INAM, "bsaInit")
   field(SNAM, "bsaStatus")
   field(BRSV, "INVALID")
 }
