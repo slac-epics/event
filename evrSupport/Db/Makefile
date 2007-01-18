@@ -47,9 +47,6 @@ DB += evrPatternTest.template
 # bsa using EDEFs
 DB += bsaEdefAvg.db
 DB += bsaEdefFanouts.db
-DB += bsaEdefPattern.db
-DB += bsaEdefPatternProc.db
-DB += bsaEdefPattern.template
 
 #----------------------------------------------------
 # If <anyname>.db template is not named <anyname>*.template add
