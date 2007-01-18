@@ -21,6 +21,7 @@ record(sub, "$(DEV):PATTERNN-3") {
   field(INPA, "$(DEV):PATTERNDATA.VAL")
   field(INPB, "$(DEV):PATTERNDATA.SEVR")
   field(INPC, "$(DEV):PATTERNDATA.NORD")
+  field(L,    "131071")
   field(BRSV, "INVALID")
   field(FLNK, "$(DEV):MOD720DIAG")
 }

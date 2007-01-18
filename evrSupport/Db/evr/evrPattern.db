@@ -11,6 +11,7 @@ record(sub, "$(DEV):PATTERN$(N)") {
   field(INPI, "$(DEV):PATTERN$(NINP).I")
   field(INPJ, "$(DEV):PATTERN$(NINP).J")
   field(INPL, "$(DEV):PATTERN$(NINP).L")
+  field(L,    "131071")
   field(FLNK, "$(FLNK)")
 }
 
