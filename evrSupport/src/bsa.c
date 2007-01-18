@@ -51,17 +51,6 @@
 #include <dbAccess.h>         /* dbGetTimeStamp */
 #include <alarm.h>            /* NO_ALARM, INVALID_ALARM */
  
-static int bsaInit(sSubRecord *psub)
-{
-  /*
-   * General purpose initialization required since all subroutine records
-   * require a non-NULL init routine even if no initialization is required.
-    * Note that most subroutines in this file use this routine as an init
-   * routine.  If init logic is needed for a specific subroutine, create a
-   * new routine for it - don't modify this one.
-   */
-  return 0;
-}
 /*=============================================================================
 
   Name: bsaSecnAvg
@@ -365,7 +354,6 @@ static long bsaSimCheckTest(sSubRecord *psub)
 return 0;
 }
 
-epicsRegisterFunction(bsaInit);
 epicsRegisterFunction(bsaSecnAvg);
 epicsRegisterFunction(bsaStatus);
 epicsRegisterFunction(bsaSimCheckTest);

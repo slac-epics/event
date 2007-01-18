@@ -1,4 +1,3 @@
-function(evrPatternInit)
 function(evrPatternProcInit)
 function(evrPatternProc)
 function(evrPatternState)

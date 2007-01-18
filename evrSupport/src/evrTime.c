@@ -193,22 +193,6 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
 
 /*=============================================================================
 
-  Name: evrTimeDiagInit
-
-  Abs:  General purpose initialization required since all subroutine records
-   require a non-NULL init routine even if no initialization is required.
-   Note that most subroutines in this file use this routine as an init
-   routine.  If init logic is needed for a specific subroutine, create a
-   new routine for it - don't modify this one.
-  
-==============================================================================*/ 
-static int evrTimeDiagInit(subRecord *psub)
-{
-  return epicsTimeOK;
-}
-
-/*=============================================================================
-
   Name: evrTimeDiag
 
   Abs:  Expose time from the table to pvs
@@ -444,5 +428,4 @@ static int evrTimeProc (subRecord *psub)
 }
 epicsRegisterFunction(evrTimeInit);
 epicsRegisterFunction(evrTimeProc);
-epicsRegisterFunction(evrTimeDiagInit);
 epicsRegisterFunction(evrTimeDiag);

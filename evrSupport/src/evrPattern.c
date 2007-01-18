@@ -1,7 +1,6 @@
 /*=============================================================================
  
   Name: evrPattern.c
-           evrPatternInit      - General Initialization
            evrPatternProcInit  - Pattern Setup Initialization
            evrPatternProc      - 360Hz Pattern Setup
            evrPatternState     - Pattern Processing State and Diagnostics
@@ -57,22 +56,6 @@ static unsigned int msgCount         = 0; /* # waveforms processed since boot/re
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
 static unsigned int patternErrCount  = 0; /* # bad PATTERN waveforms */
 static unsigned int syncErrCount     = 0; /* # out-of-sync patterns  */
-
-/*=============================================================================
-
-  Name: evrPatternInit
-
-  Abs:  General purpose initialization required since all subroutine records
-   require a non-NULL init routine even if no initialization is required.
-   Note that most subroutines in this file use this routine as an init
-   routine.  If init logic is needed for a specific subroutine, create a
-   new routine for it - don't modify this one.
-  
-==============================================================================*/ 
-static int evrPatternInit(subRecord *psub)
-{
-  return 0;
-}
 
 /*=============================================================================
 
@@ -360,7 +343,6 @@ static long evrPatternSim(subRecord *psub)
   /* Send the pattern to the EVR pattern queue */
   return(evrMessageWrite(EVR_MESSAGE_PATTERN, &evrMessage_u));
 }
-epicsRegisterFunction(evrPatternInit);
 epicsRegisterFunction(evrPatternProcInit);
 epicsRegisterFunction(evrPatternProc);
 epicsRegisterFunction(evrPatternState);
