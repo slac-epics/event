@@ -8,34 +8,40 @@ record(sub, "$(DEV):FIDUCIAL") {
   field(INAM, "evrTimeInit")
   field(SNAM, "evrTimeProc")
   field(FLNK, "$(DEV):PATTERNFO")
-  field(INPA, "$(DEV):PULSEIDN-3")
-  field(INPB, "$(DEV):PULSEIDN-2")
-  field(INPC, "$(DEV):PULSEIDN-1")
-  field(INPD, "$(DEV):PULSEID")
-  field(INPE, "$(DEV):PULSEIDN-3.SEVR")
-  field(INPF, "$(DEV):PULSEIDN-2.SEVR")
-  field(INPG, "$(DEV):PULSEIDN-1.SEVR")
+  field(INPA, "$(DEV):PATTERNN-3.L")
+  field(INPB, "$(DEV):PATTERNN-2.L")
+  field(INPC, "$(DEV):PATTERNN-1.L")
+  field(INPD, "$(DEV):PATTERN.L")
+  field(INPE, "$(DEV):PATTERNN-3.SEVR")
+  field(INPF, "$(DEV):PATTERNN-2.SEVR")
+  field(INPG, "$(DEV):PATTERNN-1.SEVR")
   field(BRSV, "INVALID")
 }
 
 record(fanout, "$(DEV):PATTERNFO") {
-  field(LNK1, "$(DEV):MODIFIER1")
-  field(LNK2, "$(DEV):MODIFIER1N-1")
-  field(LNK3, "$(DEV):MODIFIER1N-2")
-  field(LNK4, "$(LNK4)")
-  field(LNK5, "$(LNK5)")
-  field(LNK6, "$(LNK6)")
-  field(FLNK, "$(DEV):MOD720DIAG")
+  field(LNK1, "$(DEV):PATTERN")
+  field(LNK2, "$(DEV):PATTERNN-1")
+  field(LNK3, "$(DEV):PATTERNN-2")
+  field(LNK4, "$(DEV):MODIFIER5")
+  field(LNK5, "$(LNK4)")
+  field(LNK6, "$(LNK5)")
+  field(FLNK, "$(LNK6)")
+}
+
+record(sSub, "$(DEV):MODIFIER5") {
+  field(SNAM, "evrModifier5Bits")
+  field(INPV, "$(DEV):PATTERN.H MS")
+  field(BRSV, "INVALID")
 }
 
 record(fanout, "$(DEV):MOD720DIAG") {
-  field(LNK1, "$(DEV):MODIFIER1D")
-  field(LNK2, "$(DEV):MODIFIER1D-1")
-  field(LNK3, "$(DEV):MODIFIER1D-2")
-  field(LNK4, "$(DEV):MODIFIER1D-3")
+  field(LNK1, "$(DEV):PATTERND")
+  field(LNK2, "$(DEV):PATTERND-1")
+  field(LNK3, "$(DEV):PATTERND-2")
+  field(LNK4, "$(DEV):PATTERND-3")
   field(LNK5, "$(DEV):SKIPPULSECNT")
   field(LNK6, "$(LNKD)")
-  field(SDIS, "$(DEV):PATTERN.K")
+  field(SDIS, "$(DEV):PATTERNN-3.K")
   field(DISV, "0")
 }
 
@@ -50,7 +56,6 @@ record(longin, "$(DEV):SAMEPULSECNT") {
 }
 
 record(sub, "$(DEV):TIMSTAMPDIAG") {
-  field(INAM, "evrTimeDiagInit")
   field(SNAM, "evrTimeDiag")
   field(BRSV, "INVALID")
   field(FLNK, "$(DEV):PATTERNSTATE")
