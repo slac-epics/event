@@ -21,9 +21,6 @@
 =============================================================================*/
 
 #include <drvSup.h> 		/* for DRVSUPFN */
-#ifdef __rtems__
-#include <drvMrfEr.h>		/* for Er* prototypes */
-#endif
 #include <errlog.h>		/* for errlogPrintf */
 #include <epicsExport.h> 	/* for epicsExportAddress */
 #include <evrMessage.h>		/* for evrQueueCreate */
@@ -36,6 +33,10 @@ struct drvet drvEvr = {
   (DRVSUPFUN) evrInitialise 	/* subroutine defined in this file */
 };
 epicsExportAddress(drvet, drvEvr);
+#ifdef __rtems__
+#include <drvMrfEr.h>		/* for Er* prototypes */
+static ErCardStruct  *pCard = 0;
+#endif
 
 /*=============================================================================
 
@@ -47,8 +48,13 @@ epicsExportAddress(drvet, drvEvr);
 static int evrReport( int interest )
 {
   if (interest > 0) {
+#ifdef __rtems__
+    if (pCard) 
+      printf("Pattern data from %s card %d\n",
+             pCard->FormFactor?"PMC":"VME", pCard->Card);
+#endif    
     evrMessageReport(EVR_MESSAGE_PATTERN, EVR_MESSAGE_PATTERN_NAME);
-    evrMessageReport(EVR_MESSAGE_DATA,    EVR_MESSAGE_DATA_NAME);
+/*  evrMessageReport(EVR_MESSAGE_DATA,    EVR_MESSAGE_DATA_NAME); */
   }
   return interest;
 }
@@ -92,9 +98,6 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 
 static int evrInitialise()
 {
-#ifdef __rtems__
-  ErCardStruct  *pCard;
-#endif
 
   /* Initialize space to hold EVR data buffer - for now,
      only pattern is supported */
