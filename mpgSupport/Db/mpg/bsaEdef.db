@@ -84,7 +84,6 @@ record(longout, "EDEF:$(SYS):$(MD):BEAMCODE") {
 record(sSub, "EDEF:$(SYS):$(MD):PATTERNCHECK") {
   field(DESC, "Check if Pulse Used")
   field(SNAM, "mpgPatternCheck")
-  field(INAM, "mpgPatternInit")
   field(INPB, "$(DEV):PNET.J MS")
   field(INPD, "$(DEV):PNET.D MS")
   field(INPE, "$(DEV):PNET.E MS")
@@ -132,14 +131,16 @@ record(seq, "EDEF:$(SYS):$(MD):CTRLON") {
 
 record(seq, "EDEF:$(SYS):$(MD):RESET") {
   field(DOL1, "0")
-  field(LNK1, "EDEF:$(SYS):$(MD):PATTERNCHECK.Y")
+  field(LNK1, "EDEF:$(SYS):$(MD):PATTERNCHECK.A")
   field(DOL2, "0")
-  field(LNK2, "EDEF:$(SYS):$(MD):PATTERNCHECK.Z")
-  field(DOL3, "1")
-  field(LNK3, "EDEF:$(SYS):$(MD):INIT PP")
-  field(DLY4, "3")
-  field(DOL4, "0")
+  field(LNK2, "EDEF:$(SYS):$(MD):PATTERNCHECK.Y")
+  field(DOL3, "0")
+  field(LNK3, "EDEF:$(SYS):$(MD):PATTERNCHECK.Z")
+  field(DOL4, "1")
   field(LNK4, "EDEF:$(SYS):$(MD):INIT PP")
+  field(DLY5, "3")
+  field(DOL5, "0")
+  field(LNK5, "EDEF:$(SYS):$(MD):INIT PP")
 }
 
 
@@ -203,28 +204,40 @@ record(stringout, "EDEF:$(SYS):$(MD):NAMEFREE") {
   field(OUT, "EDEF:$(SYS):$(MD):NAME PP")
 }
 
-record(stringout, EDEF:$(SYS):$(MD):INCMS1) {
+record(stringout, "EDEF:$(SYS):$(MD):INCMS1") {
 }
 
-record(stringout, EDEF:$(SYS):$(MD):INCMS2) {
+record(stringout, "EDEF:$(SYS):$(MD):INCMS2") {
 }
 
-record(stringout, EDEF:$(SYS):$(MD):INCMS3) {
+record(stringout, "EDEF:$(SYS):$(MD):INCMS3") {
 }
 
-record(stringout, EDEF:$(SYS):$(MD):INCMS4) {
+record(stringout, "EDEF:$(SYS):$(MD):INCMS4") {
 }
 
-record(stringout, EDEF:$(SYS):$(MD):EXCMS1) {
+record(stringout, "EDEF:$(SYS):$(MD):EXCMS1") {
 }
 
-record(stringout, EDEF:$(SYS):$(MD):EXCMS2) {
+record(stringout, "EDEF:$(SYS):$(MD):EXCMS2") {
 }
 
-record(stringout, EDEF:$(SYS):$(MD):EXCMS3) {
+record(stringout, "EDEF:$(SYS):$(MD):EXCMS3") {
 }
 
-record(stringout, EDEF:$(SYS):$(MD):EXCMS4) {
+record(stringout, "EDEF:$(SYS):$(MD):EXCMS4") {
+}
+
+record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
+  field(FLNK, "EDEF:$(SYS):$(MD):PULSEID")
+  field(LNK1, "EDEF:$(SYS):$(MD):MODIFIER1")
+  field(LNK2, "EDEF:$(SYS):$(MD):MODIFIER2")
+  field(LNK3, "EDEF:$(SYS):$(MD):MODIFIER3")
+  field(LNK4, "EDEF:$(SYS):$(MD):MODIFIER4")
+  field(LNK5, "EDEF:$(SYS):$(MD):MODIFIER5")
+  field(LNK6, "EDEF:$(SYS):$(MD):BUNCHARGE")
+  field(DISV, "0")
+  field(SDIS, "$(DEV):MODIFIER5.$(BIT)")
 }
 
 #! Further lines contain data used by VisualDCT
