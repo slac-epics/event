@@ -47,6 +47,7 @@ record(sub, "IOC:$(LOCA):$(UNIT):PATTERNN-3") {
   field(INPH, "IOC:$(LOCA):$(UNIT):MODIFIER5N-3")
   field(INPJ, "IOC:$(LOCA):$(UNIT):PNET.J")
   field(INPL, "IOC:$(LOCA):$(UNIT):PNET.L")
+  field(L,    "131071")
   field(BRSV, "INVALID")
   field(FLNK, "IOC:$(LOCA):$(UNIT):MOD720DIAG")
 }
