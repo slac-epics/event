@@ -1,4 +1,3 @@
-function(mpgPatternInit)
 function(mpgPatternPnetInit)
 function(mpgPatternPnet)
 function(mpgPatternProcInit)

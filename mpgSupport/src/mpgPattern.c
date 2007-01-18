@@ -1,7 +1,6 @@
 /*=============================================================================
 
   Name: mpgPattern.c
-           mpgPatternInit      - General Initialization
            mpgPatternPnetInit  - Pnet Pattern Processing Initialization
            mpgPatternPnet      - 360Hz Pnet Pattern Processing
            mpgPatternProcInit  - MPG Pattern Setup Initialization
@@ -75,22 +74,6 @@ static unsigned int modulo720SyncErrCount = 0; /* # of modulo720 sync errors */
 static unsigned int seqCheck1ErrCount     = 0;
 static unsigned int seqCheck2ErrCount     = 0;
 static unsigned int seqCheck3ErrCount     = 0;
-
-/*=============================================================================
-
-  Name: mpgPatternInit
-
-  Abs:  General purpose initialization required since all subroutine records
-   require a non-NULL init routine even if no initialization is required.
-   Note that most subroutines in this file use this routine as an init
-   routine.  If init logic is needed for a specific subroutine, create a
-   new routine for it - don't modify this one.
-  
-==============================================================================*/ 
-static int mpgPatternInit(subRecord *psub)
-{
-  return 0;
-}
 
 /*=============================================================================
 
@@ -291,9 +274,10 @@ static long mpgPatternPnet(subRecord *psub)
         errFlag = PATTERN_PULSEID_NO_SYNC;
       } else if (pulsid > PULSEID_MAX) {
         /* Aha. Time to rollover, so THIS pulse will be set back to zero */
+        DEBUGPRINT(DP_DEBUG, mpgPatternFlag, ("mpgPatternPnet: Rollover, pulsid+1 = %d\n",
+                                              pulsid));
         pulsid = 0;
         resyncCount++;
-        DEBUGPRINT(DP_INFO, mpgPatternFlag, ("mpgPatternPnet: Rollover, pulsid+1 = %d", pulsid));
       }
     } else {
       pulseIDSync   = 0;
@@ -547,7 +531,6 @@ static long mpgPatternState(sSubRecord *psub)
   Rem:   Subroutine for PATTERNCHECK
 
   Inputs
-        INPA - Spare
         INPB - Beam Code
         INPC - Spare 
         INPD - Pnet Modifier 1
@@ -575,6 +558,7 @@ static long mpgPatternState(sSubRecord *psub)
   Outputs
 	   VAL = Pattern match = 1
      	 no match = 0; enable/disable for bsacMeasCount
+           A   = Counter before CTRL is turned off
            Y   = Measurement Count
 	   Z   = Done =1; not done measuring = 0
   Ret:  none
@@ -586,12 +570,15 @@ static long mpgPatternCheck(sSubRecord *psub)
   /* Allow for X = -1 = forever */
   if ((psub->y >= psub->x) && (psub->x > 0.5)) {
     /* we're done with measurement */
-    psub->z=1;
+    psub->a++;
+    /* Check is done for the N-3 pulse - don't turn CTRL OFF
+       until 3 pulse from now */
+    if (psub->a > 3) psub->z = 1;
   }
   
   /* are we done? - if so exit now */
   /* Note: the sequence disables this record upon DONE, so this shouldn't happen */
-  if (psub->z) return 0;
+  if (psub->a) return 0;
 
   /* check for bad data - do nothing with this pulse and return bad status */
   if (psub->w) return(-1);
@@ -671,7 +658,6 @@ static long mpgPatternSim(subRecord *psub)
   /* Send the pattern to the PNET pattern queue */
   return(evrMessageWrite(EVR_MESSAGE_PNET, &evrMessage_u));
 }
-epicsRegisterFunction(mpgPatternInit);
 epicsRegisterFunction(mpgPatternPnetInit);
 epicsRegisterFunction(mpgPatternPnet);
 epicsRegisterFunction(mpgPatternProcInit);
