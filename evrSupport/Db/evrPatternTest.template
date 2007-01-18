@@ -19,8 +19,8 @@ file db/bsaTestInput.db
   pattern {    DEV     ,  SECN     ,      CALC         , A , B ,EGU,  HOPR,LOPR,PREC,ADEL,MDEL,RES }
           { $(DEVICE)  ,PULSEID  ,"C>=131039?0:C+1"  , 0 , 0 , "",    131039,0 , 0  , 36 , 0  , 0  }
           { $(DEVICE)  ,BEAMCODE ,"A"                , 1 , 0 , "",    10    ,1 , 0  ,  0 , 0  , 0  }
-          { $(DEVICE)  ,MODIFIER1,"C=20?32768:C=32768?1:C+1",0,0,"",4294967296,0,0  ,  0 , 0  , 0  }
-          { $(DEVICE)  ,MODIFIER2,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
+          { $(DEVICE)  ,MODIFIER1,"C=20?A:C=A?1:C+1" ,16809984,0,"",4294967296,0,0  ,  0 , 0  , 0  }
+          { $(DEVICE)  ,MODIFIER2,"A"                ,1024,0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
           { $(DEVICE)  ,MODIFIER3,"A"                , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  } 
           { $(DEVICE)  ,MODIFIER4,"C>=10?1:C+1"      , 0 , 0 , "",4294967296,0 , 0  ,  0 , 0  , 0  }
           { $(DEVICE)  ,YY       ,"C>=50?1:C+1"      , 0 , 0 , "",    256   ,0 , 0  ,  0 , 0  , 0  }
