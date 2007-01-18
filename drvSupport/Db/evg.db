@@ -13,7 +13,7 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
 # Max # ticks for any RAM entry (1/360 sec - ~500usec) at 119MHz
   field(RMAX, "271000")
 # Start with Sequence RAMs off so they can be set up during initialization
-  field(MOD1, "Off")
+  field(MOD1, "Normal")
   field(MOD2, "Off")
 # Only one EVG exists
   field(FIFO, "NO")
