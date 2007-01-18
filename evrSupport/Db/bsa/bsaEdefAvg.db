@@ -8,22 +8,19 @@ record(sSub, "$(DEV):$(SECN)$(MDID)") {
   field(DESC, "$(SECN) Avg for EDEF $(MDID)")
   field(INPA, "$(DEV):$(SECN)")
   field(INPB, "EDEF:$(IOC):$(MD):AVGCNTMAX CA")
-  field(INPC, "$(EIOC):MODIFIER5NEW.$(BIT)")
   field(EGU, "$(EGU)")
   field(HOPR, "$(HOPR)")
   field(LOPR, "$(LOPR)")
   field(PREC, "$(PREC)")
   field(ADEL, "$(ADEL)")
   field(MDEL, "$(MDEL)")
-  field(INAM, "bsaInit")
   field(SNAM, "bsaSecnAvg")
   field(BRSV, "INVALID")
   field(DISV, "0")
-  field(SDIS, "$(EIOC):MODIFIER5NEW.$(BIT)")
+  field(SDIS, "$(EIOC):MODIFIER5.$(BIT)")
   field(FLNK, "$(DEV):$(SECN)HST$(MDID)")
   field(INPD, "$(DEV):STATUS")
   field(INPE, "$(DEV):STATUS.L")
-  field(INPF, "$(EIOC):PULSEID")
 }
 
 record(compress, "$(DEV):$(SECN)HST$(MDID)") {
