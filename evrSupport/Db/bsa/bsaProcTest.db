@@ -7,7 +7,6 @@
 record(sSub, "$(DEV):CHECK$(MDID)") {
   field(DESC, "Check if Pulse Used")
   field(SNAM, "bsaSimCheckTest")
-  field(INAM, "bsaInit")
   field(INPF, "$(DEV):MODIFIER4")
   field(INPP, "EDEF:$(LOCA):$(MD):INCLUSION4 CA")
   field(INPW, "$(DEV):BEAMCODE.SEVR")
