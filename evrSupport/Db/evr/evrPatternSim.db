@@ -9,7 +9,6 @@ record(sub, "$(DEV):PATTERNSIM") {
   field(INPF, "$(SIM):MODIFIER3")
   field(INPG, "$(SIM):MODIFIER4")
   field(INPH, "$(SIM):MODIFIER5")
-  field(INAM, "evrPatternInit")
   field(SNAM, "evrPatternSim")
   field(INPI, "$(SIM):BUNCHARGE")
   field(INPJ, "$(SIM):BEAMCODE")
@@ -27,7 +26,6 @@ record(fanout, "$(DEV):FANOUTSIM") {
 }
 
 record(sSub, "$(SIM):MODIFIER5") {
-  field(INAM, "evrPatternInit")
   field(SNAM, "evrModifier5")
   field(INPA, "$(SIM):MODMATCH1")
   field(INPB, "$(SIM):MODMATCH2")
