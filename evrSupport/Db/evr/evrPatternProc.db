@@ -12,31 +12,23 @@ record(waveform, "$(DEV):PATTERNDATA") {
   field(PRIO, "HIGH")
   field(NELM, "9")
   field(FTVL, "ULONG")
-  field(FLNK, "$(DEV):PATTERN")
+  field(FLNK, "$(DEV):PATTERNN-3")
 }
 
-record(sub, "$(DEV):PATTERN") {
+record(sub, "$(DEV):PATTERNN-3") {
   field(INAM, "evrPatternProcInit")
   field(SNAM, "evrPatternProc")
   field(INPA, "$(DEV):PATTERNDATA.VAL")
   field(INPB, "$(DEV):PATTERNDATA.SEVR")
   field(INPC, "$(DEV):PATTERNDATA.NORD")
   field(BRSV, "INVALID")
-  field(FLNK, "$(DEV):MODIFIER1N-3")
+  field(FLNK, "$(DEV):MOD720DIAG")
 }
 
 record(sub, "$(DEV):PATTERNDIAG") {
   field(DESC, "Pattern Processing State")
-  field(INAM, "evrPatternInit")
   field(SNAM, "evrPatternState")
-  field(INPA, "$(DEV):PATTERN")
-  field(BRSV, "INVALID")
-}
-
-record(sSub, "$(DEV):MODIFIER5NEW") {
-  field(INAM, "evrPatternInit")
-  field(SNAM, "evrModifier5Bits")
-  field(INPV, "$(DEV):MODIFIER5 MS")
+  field(INPA, "$(DEV):PATTERNN-3")
   field(BRSV, "INVALID")
 }
 
