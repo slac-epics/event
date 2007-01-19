@@ -13,7 +13,9 @@ include $(TOP)/configure/CONFIG
 #
 # For all types of BSA devices
 DB += bsaDevStates.db
-
+# bsa using EDEFs
+DB += bsaEdefAvg.db
+DB += bsaEdefFanouts.db
 # Simulation:
 DB += bsaTestFanouts.db
 DB += bsaTestInput.db
@@ -44,12 +46,19 @@ DB += evrPatternProc.template
 # evrPattern sim support
 DB += evrPatternSim.db
 DB += evrPatternTest.template
-# bsa using EDEFs
-DB += bsaEdefAvg.db
-DB += bsaEdefFanouts.db
 # Test stands
 DB += evrPatternXL09.template
 DB += evrPatternXL16.template
+DB += bsaXL01.template
+DB += bsaSimXL01.template
+DB += bsaXL02.template
+DB += bsaSimXL02.template
+DB += bsaXL03.template
+DB += bsaSimXL03.template
+DB += bsaXL04.template
+DB += bsaSimXL04.template
+DB += bsaXL05.template
+DB += bsaSimXL05.template
 # Laser Room
 DB += IOC-LR20-LS01pattern.template
 # Injector

@@ -1,0 +1,59 @@
+#####################
+# BSA functionality for devices
+# load these for sim or real data
+####################
+file bsaBPMSEdef.template {
+  pattern {DEVICE  , IOCI , EVRI}
+	  { BPMS:XX03:1, SYS0 , IOC:XX03:1}
+	  { BPMS:XX03:2, SYS0 , IOC:XX03:1}
+	  { BPMS:XX03:3, SYS0 , IOC:XX03:1}
+	  { BPMS:XX03:4, SYS0 , IOC:XX03:1}
+	  { BPMS:XX03:5, SYS0 , IOC:XX03:1}
+	  { BPMS:XX03:6, SYS0 , IOC:XX03:1}
+}
+
+file bsaTOROEdef.template {
+  pattern {DEVICE   , IOCI , EVRI}
+	  { TORO:XX03:1 , SYS0 , IOC:XX03:1}
+	  { TORO:XX03:2 , SYS0 , IOC:XX03:1}
+}
+file bsaPMTEdef.template {
+  pattern { DEVICE , IOCI , EVRI }
+	  { PMT:XX03:1 , SYS0 , IOC:XX03:1}
+	  { PMT:XX03:2 , SYS0 , IOC:XX03:1}
+	  { PMT:XX03:3 , SYS0 , IOC:XX03:1}
+	  { PMT:XX03:4 , SYS0 , IOC:XX03:1}
+	  { PMT:XX03:5 , SYS0 , IOC:XX03:1}
+	  { PMT:XX03:6 , SYS0 , IOC:XX03:1}
+}
+file bsaBLENEdef.template {
+  pattern { DEVICE ,  IOCI, EVRI }
+	  { BLEN:XX03:1 , SYS0, IOC:XX03:1 }
+	  { BLEN:XX03:2 , SYS0, IOC:XX03:1 }
+	  { BLEN:XX03:3 , SYS0, IOC:XX03:1 }
+}
+file bsaKICKEdef.template {
+  pattern { DEVICE  , IOCI , EVRI}
+	  { KICK:XX03:1 , SYS0 , IOC:XX03:1}
+	  { KICK:XX03:2 , SYS0 , IOC:XX03:1}
+	  { KICK:XX03:3 , SYS0 , IOC:XX03:1}
+}
+file bsaWIREEdef.template {
+  pattern { DEVICE  , IOCI , EVRI}
+	  { WIRE:XX03:1 , SYS0 , IOC:XX03:1}
+	  { WIRE:XX03:2 , SYS0 , IOC:XX03:1}
+	  { WIRE:XX03:3 , SYS0 , IOC:XX03:1}
+	  { WIRE:XX03:4 , SYS0 , IOC:XX03:1}
+}
+#
+# Pattern records
+file evrPattern.template {
+#	    Device    ,  SLC Pattern Check LNK     ,  EVR/Trigger          Diagnostic
+#	                                                 Links                Link
+  pattern { DEVICE     ,        LINK4              , LINK5 ,   LINK6    ,          LINKD      }
+	  { IOC:XX03:1 , "IOC:XX03:1:FANOUTSLC PP" ,  ""   ,    ""      , "IOC:XX03:1:YYD PP" }
+}
+file evrPatternProc.template {
+  pattern { DEVICE }
+	  { IOC:XX03:1}
+}

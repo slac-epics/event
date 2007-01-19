@@ -1,0 +1,54 @@
+# Simulation files :
+file bsaBPMSTest.template {
+  pattern { EIOC  , DEVICE  }
+	  { IOC:XX01:1  ,BPMS:XX01:1  }
+	  { IOC:XX01:1  ,BPMS:XX01:2  }
+	  { IOC:XX01:1  ,BPMS:XX01:3  }
+	  { IOC:XX01:1  ,BPMS:XX01:4  }
+	  { IOC:XX01:1  ,BPMS:XX01:5  }
+	  { IOC:XX01:1  ,BPMS:XX01:6  }
+}
+file bsaTOROTest.template {
+  pattern { EIOC  ,  DEVICE }
+	  { IOC:XX01:1  ,TORO:XX01:1  }
+	  { IOC:XX01:1  ,TORO:XX01:2  }
+}
+file bsaPMTTest.template {
+  pattern { EIOC  ,  DEVICE }
+	  { IOC:XX01:1  ,PMT:XX01:1   }
+	  { IOC:XX01:1  ,PMT:XX01:2   }
+	  { IOC:XX01:1  ,PMT:XX01:3   }
+	  { IOC:XX01:1  ,PMT:XX01:4   }
+	  { IOC:XX01:1  ,PMT:XX01:5   }
+	  { IOC:XX01:1  ,PMT:XX01:6   }
+}
+file bsaBLENTest.template {
+  pattern { EIOC  ,  DEVICE }
+	  { IOC:XX01:1  ,BLEN:XX01:1  }
+	  { IOC:XX01:1  ,BLEN:XX01:2  }
+	  { IOC:XX01:1  ,BLEN:XX01:3  }
+}
+file bsaKICKTest.template {
+  pattern { EIOC  ,  DEVICE }
+	  { IOC:XX01:1  ,KICK:XX01:1  }
+	  { IOC:XX01:1  ,KICK:XX01:2  }
+	  { IOC:XX01:1  ,KICK:XX01:3  }
+}
+file bsaWIRETest.template {
+  pattern { EIOC  ,  DEVICE }
+	  { IOC:XX01:1  ,WIRE:XX01:1  }
+	  { IOC:XX01:1  ,WIRE:XX01:2  }
+	  { IOC:XX01:1  ,WIRE:XX01:3  }
+	  { IOC:XX01:1  ,WIRE:XX01:4  }
+}
+# ESIM Pattern records (from EVG) to EVR:
+file evrPatternTest.template {
+  pattern { EIOC  ,  DEVICE }
+	  { IOC:XX01:1  ,ESIM:XX01:1  }
+}
+
+# EVG EDEF checking simulation for Modifier5/ bsa enable/disable:
+file bsaProcTest.template {
+  pattern {  DEVICE    , LOC    }
+	      { ESIM:XX01:1, SYS0   }
+}
