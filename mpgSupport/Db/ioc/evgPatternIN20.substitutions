@@ -1,0 +1,13 @@
+file bsaEdef.template {
+  pattern { SYSI  , FBCK1 , FBCK2 , F1ID , F2ID , DEVICE       }
+ 	  { SYS0  , FBCK1 , FBCK2 , F1   , F2 ,  IOC:IN20:EV01 }
+}
+file evrPattern.template {
+#	    Device        ,   Send SEQ RAM 1          PNET Processing LNK             
+  pattern { DEVICE        ,        LINK4             ,        LINK5         ,        LINK6           , LINKD }
+	  { IOC:IN20:EV01 ,         ""               , "IOC:IN20:EV01:PNET" , "IOC:IN20:EV01:EDEFFO" ,  ""   }
+}
+file bsaEVGmask.template {
+  pattern { SYSI  ,  DEVICE       }
+          { SYS0  , IOC:IN20:EV01 }
+}
