@@ -1,0 +1,55 @@
+#==============================================================================
+#
+# Abs:  LCLS EVG IOC records for the IN20 IOC
+#
+# Name: evgIN20.template
+#
+# Note: Signal names must be all uppercase and 12 chars or less to follow
+#       LCLS naming conventions.
+#
+# Macros:
+# Set LOCA to IN20.
+#
+# Set UNIT = EV01.
+#
+# CARD must be set to the physical slot in the crate
+# where the EVG resides, starting from 1.  
+#
+#==============================================================================
+#
+file db/evg.db
+{
+#
+#	 Location      
+pattern { LOCA  , UNIT , CARD }
+	{ IN20  , EV01 ,  5   }
+}
+file db/evgEvent.db
+{
+#                                       Event  Delay in 
+#	 Location                       Code   Clock Ticks
+pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
+	{ IN20  , EV01 ,   5  , EVENT1  , 1  ,  0   }
+	{ IN20  , EV01 ,   5  , EVENT2  , 2  ,  50  }
+	{ IN20  , EV01 ,   5  , EVENT3  , 3  , 100  }
+	{ IN20  , EV01 ,   5  , EVENT4  , 4  , 150  }
+	{ IN20  , EV01 ,   5  , EVENT5  , 5  , 200  }
+	{ IN20  , EV01 ,   5  , EVENT6  , 6  , 250  }
+	{ IN20  , EV01 ,   5  , EVENT7  , 7  , 300  }
+	{ IN20  , EV01 ,   5  , EVENT8  , 8  , 350  }
+	{ IN20  , EV01 ,   5  , EVENT9  , 9  , 400  }
+	{ IN20  , EV01 ,   5  , EVENT10 , 10 , 450  }
+	{ IN20  , EV01 ,   5  , EVENT11 , 11 , 500  }
+	{ IN20  , EV01 ,   5  , EVENT12 , 12 , 550  }
+	{ IN20  , EV01 ,   5  , EVENT13 , 13 , 600  }
+	{ IN20  , EV01 ,   5  , EVENT14 , 14 , 650  }
+	{ IN20  , EV01 ,   5  , EVENT15 , 15 , 700  }
+	{ IN20  , EV01 ,   5  , EVENT16 , 16 , 750  }
+}
+file db/mpgPatternProc.db
+{
+#
+#	 Location      
+pattern { LOCA  , UNIT , CARD , ELOCA , CHECK }
+	{ IN20  , EV01 ,  5   ,  SYS1 ,   1   }
+}
