@@ -1,0 +1,55 @@
+#==============================================================================
+#
+# Abs:  LCLS EVG IOC records for the XL15 IOC
+#
+# Name: evgXL15.template
+#
+# Note: Signal names must be all uppercase and 12 chars or less to follow
+#       LCLS naming conventions.
+#
+# Macros:
+# Set LOCA to XL15..
+#
+# Set UNIT = EV01.
+#
+# CARD must be set to the physical slot in the crate
+# where the EVG resides, starting from 1.  
+#
+#==============================================================================
+#
+file db/evg.db
+{
+#
+#	 Location      
+pattern { LOCA  , UNIT , CARD }
+	{ XL15  , EV01 ,  5   }
+}
+file db/evgEvent.db
+{
+#                                       Event  Delay in 
+#	 Location                       Code   Clock Ticks
+pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
+	{ XL15  , EV01 ,   5  , EVENT1  , 8  ,  4   }
+	{ XL15  , EV01 ,   5  , EVENT2  , 9  ,  8   }
+	{ XL15  , EV01 ,   5  , EVENT3  , 1  ,  0   }
+	{ XL15  , EV01 ,   5  , EVENT4  ,0x7f, 150  }
+	{ XL15  , EV01 ,   5  , EVENT5  ,0x7f, 200  }
+	{ XL15  , EV01 ,   5  , EVENT6  ,0x7f, 250  }
+	{ XL15  , EV01 ,   5  , EVENT7  ,0x7f, 300  }
+	{ XL15  , EV01 ,   5  , EVENT8  ,0x7f, 350  }
+	{ XL15  , EV01 ,   5  , EVENT9  ,0x7f, 400  }
+	{ XL15  , EV01 ,   5  , EVENT10 ,0x7f, 450  }
+	{ XL15  , EV01 ,   5  , EVENT11 ,0x7f, 500  }
+	{ XL15  , EV01 ,   5  , EVENT12 ,0x7f, 550  }
+	{ XL15  , EV01 ,   5  , EVENT13 ,0x7f, 600  }
+	{ XL15  , EV01 ,   5  , EVENT14 ,0x7f, 650  }
+	{ XL15  , EV01 ,   5  , EVENT15 ,0x7f, 700  }
+	{ XL15  , EV01 ,   5  , EVENT16 ,0x7f, 750  }
+}
+file db/mpgPatternProc.db
+{
+#
+#	 Location      
+pattern { LOCA  , UNIT , CARD , ELOCA , CHECK }
+	{ XL15  , EV01 ,  5   ,  SYS2 ,   1   }
+}

@@ -47,11 +47,45 @@ DB += evrPatternTest.template
 # bsa using EDEFs
 DB += bsaEdefAvg.db
 DB += bsaEdefFanouts.db
-
-#----------------------------------------------------
-# If <anyname>.db template is not named <anyname>*.template add
-# <anyname>_TEMPLATE = <templatename>
+# Test stands
+DB += evrPatternXL09.template
+DB += evrPatternXL16.template
+# Laser Room
+DB += IOC-LR20-LS01pattern.template
+# Injector
+DB += IOC-IN20-AM01pattern.template  
+DB += IOC-IN20-BP01pattern.template  
+DB += IOC-IN20-BP02pattern.template  
+DB += IOC-IN20-IM01pattern.template  
+DB += IOC-IN20-LS11pattern.template  
+DB += IOC-IN20-LS12pattern.template  
+DB += IOC-IN20-LS13pattern.template  
+DB += IOC-IN20-LS14pattern.template  
+DB += IOC-IN20-LS15pattern.template  
+DB += IOC-IN20-LS16pattern.template  
+DB += IOC-IN20-LS17pattern.template  
+DB += IOC-IN20-LS18pattern.template  
+DB += IOC-IN20-LS19pattern.template  
+DB += IOC-IN20-MG01pattern.template  
+DB += IOC-IN20-MP01pattern.template
+DB += IOC-IN20-PM01pattern.template
+DB += IOC-IN20-PM02pattern.template
+DB += IOC-IN20-PM03pattern.template
+DB += IOC-IN20-PM04pattern.template
+DB += IOC-IN20-PM05pattern.template
+DB += IOC-IN20-PM06pattern.template
+DB += IOC-IN20-PM07pattern.template
+DB += IOC-IN20-RF01pattern.template
+DB += IOC-IN20-WS01pattern.template
+# Sector 21
+DB += IOC-LI21-BL01pattern.template
+DB += IOC-LI21-BP01pattern.template
+DB += IOC-LI21-MG01pattern.template
+DB += IOC-LI21-PM01pattern.template
 
 include $(TOP)/configure/RULES
+#----------------------------------------
+#  ADD RULES AFTER THIS LINE
+include $(TOP)/configure/RULES.Db
 
 
