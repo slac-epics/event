@@ -966,12 +966,11 @@ LOCAL long EgInitEgEventRec(struct egeventRecord *pRec)
 LOCAL long EgProcEgEventRec(struct egeventRecord *pRec)
 {
   EgCardStruct *pCard = EgGetCardStruct(pRec->out.value.vmeio.card);
-  volatile MrfEVGRegs   *pLink = pCard->pEg;
   double	RamSpeed;
   
   if (pRec->tpro > 10)
     printf("devMrfEg::EgProcEgEventRec(%s) link%d at %p\n", pRec->name,
-        pRec->out.value.vmeio.card, (void *)pLink);
+        pRec->out.value.vmeio.card, pCard?pCard->pEg:NULL);
 
   /* Check if the card is present */
     if (pCard == NULL) {
