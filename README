@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 01/18/2007
+Instructions for RTEMS EVR users                    Last Updated 01/24/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -97,35 +97,10 @@ II - Adding event database and EVR configuration to your IOC startup file:
 III - Hardware Setup:
 ---------------------
 
-(1) If your IOC has a PMC EVR, change jumpers on the MVME6100 CPU to enable 
-    PMC slot 0:
+(1) Installation instructions for the PMC EVR are here:
+    http://www.slac.stanford.edu/grp/lcls/controls/global/subsystems/timing/PMC-EVR_install_inst_v1d0.pdf
 
-  Default (IPMC):
-      -------------------
-      | | | | | | | | | |
-      -------------------
-  10  |X|X|X|X|X|X|X|X|X| 18
-      -------------------
-  19  |X|X|X|X|X|X|X|X|X| 27
-      -------------------
- 
-  Changed for PMC:
-      -------------------
-      |X| | | | |X|X|X|X|
-      -------------------
-  10  |X|X|X|X|X|X|X|X|X| 18
-      -------------------
-  19  | |X|X|X|X| | | | | 27
-      -------------------
-
-  Here is the ref in MVME6100 manual:
-  /afs/slac/www/grp/lcls/controls/global/standards/hardware/jumperSettings.ps
-
-(2) If your IOC has a PMC EVR and a transition module driven by that EVR, 
-    either put the PMC into PMC slot 0 or on a PMC span card.  I think 
-    John Dusatko has other instructions that need to go here....
-
-(3) Connect fiber from a nearby timing fiber fanout module to each EVR.  These 
+(2) Connect fiber from a nearby timing fiber fanout module to each EVR.  These 
     fanout modules are identified in the timing system block diagram by 
     Mike Browne:
     https://sharepoint.slac.stanford.edu/sites/LCLS%20Document%20Storage/
