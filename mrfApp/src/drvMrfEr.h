@@ -253,7 +253,7 @@ void           ErSetDirq (ErCardStruct*, epicsBoolean, epicsUInt16, epicsUInt16)
 epicsStatus    ErSetFPMap (ErCardStruct*, int, epicsUInt16);
 void           ErSetOtb (ErCardStruct*, int, epicsBoolean);
 void           ErSetOtl (ErCardStruct*, int, epicsBoolean);
-void           ErSetOtp (ErCardStruct*, int, epicsBoolean, epicsUInt32, epicsUInt16, epicsBoolean);
+void           ErSetOtp (ErCardStruct*, int, epicsBoolean, epicsUInt32, epicsUInt32, epicsBoolean);
 void           ErSetTrg (ErCardStruct*, int, epicsBoolean);
 void           ErSetTickPre (ErCardStruct*, epicsUInt16);
 void           ErTaxiIrq (ErCardStruct*, epicsBoolean);

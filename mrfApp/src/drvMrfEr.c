@@ -457,13 +457,6 @@ Descriptor */
 #define EVR_IRQ_DISABLE  epicsFalse;    /* Disable Specified Interrupts                           */
 
 /**************************************************************************************************/
-/*  Programmable Delay/Width Pulse Enable Register (0x018) Bit Assignments                        */
-/**************************************************************************************************/
-
-#define EVR_DPE_ENA0         0x0001     /* Enable bit for first programmable delay (DG) pulse     */
-#define EVR_DPE_POL0         0x0010     /* Polarity bit for first programmable delay (DG) pulse   */
-
-/**************************************************************************************************/
 /*  Programmable Delay/Width Pulse Selection Register (0x01A) Bit Assignments                     */
 /**************************************************************************************************/
 
@@ -476,6 +469,7 @@ Descriptor */
 /*  Extended Programmable Width Pulse Polarity Register (0x068) Bit Assignments                   */
 /**************************************************************************************************/
 
+#define EVR_XPOL_DG0      0x0000001     /* Polarity for extended delay pulse 0                    */
 #define EVR_XPOL_OTP0     0x0000800     /* Polarity for OTP pulse 0                               */
 #define EVR_XPOL_OTP1     0x0001000     /* Polarity for OTP pulse 1                               */
 #define EVR_XPOL_OTP2     0x0002000     /* Polarity for OTP pulse 2                               */
@@ -1056,7 +1050,6 @@ int ErConfigure (
             errPrintf (status, NULL, 0,
                "ErConfigure: Unable to Connect Event Receiver Card %d to interrupt vector 0x%04X\n",
                Card, IrqVector);
-            devUnregisterAddress (atVMEA24, CardAddress, CardName);
             epicsMutexDestroy (pCard->CardLock);
             free (pCard);
             return ERROR;
@@ -2919,25 +2912,13 @@ void  ErSetDg (
    /*  Local Variable Declarations                                                                */
    /***********************************************************************************************/
 
-    register epicsUInt16          EnableWord = 0; /* New enable/polarity values to set            */
-    register epicsUInt16          Mask;           /* Enable/Polarity selection mask               */
+    epicsUInt16                   EnaMask;        /* Mask for enabling or disabling the channel   */
+    epicsUInt32                   PolMask;        /* Mask for setting the channel's polarity      */
     volatile MrfErRegs           *pEr;            /* Pointer to Event Receiver's register map     */
 
    /***********************************************************************************************/
    /*  Code                                                                                       */
    /***********************************************************************************************/
-
-   /*---------------------
-    * Compute the mask for setting the pulse enable and polarity word
-    */
-    Mask  = (EVR_DPE_ENA0 << Channel);
-    Mask |= (EVR_DPE_POL0 << Channel);
-
-    /*---------------------
-     * Compute the Enable/Polarity Word for this channel
-     */
-    if (Enable) EnableWord  = (EVR_DPE_ENA0 << Channel);
-    if (Pol)    EnableWord |= (EVR_DPE_POL0 << Channel);
 
    /*---------------------
     * Get the address of the hardware registers,
@@ -2947,6 +2928,12 @@ void  ErSetDg (
     MRF_VME_REG16_WRITE(&pEr->DelayPulseSelect, Channel);
 
    /*---------------------
+    * Compute the masks for setting the pulse enable and polarity
+    */
+    EnaMask = 1 << Channel;
+    PolMask = EVR_XPOL_DG0 << Channel;
+
+   /*---------------------
     * Set the pulse delay, width, and prescaler
     */
     MRF_VME_REG16_WRITE(&pEr->DelayPrescaler, Prescaler);
@@ -2954,11 +2941,22 @@ void  ErSetDg (
     MRF_VME_REG32_WRITE(&pEr->ExtWidth, Width);
 
    /*---------------------
-    * Set the pulse polarity and enable flags
+    * Set the polarity
     */
-    MRF_VME_REG16_WRITE(&pEr->DelayPulseEnables,
-                        (MRF_VME_REG16_READ(&pEr->DelayPulseEnables) & ~Mask) | EnableWord);
+    if (Pol)
+        MRF_VME_REG32_WRITE(&pEr->OutputPol, MRF_VME_REG32_READ(&pEr->OutputPol) | PolMask);
+    else
+        MRF_VME_REG32_WRITE(&pEr->OutputPol, MRF_VME_REG32_READ(&pEr->OutputPol) & ~PolMask);
 
+   /*---------------------
+    * Enable or disable the pulse
+    */
+    if (Enable)
+        MRF_VME_REG16_WRITE(&pEr->DelayPulseEnables,
+                            MRF_VME_REG16_READ(&pEr->DelayPulseEnables) | EnaMask);
+    else
+        MRF_VME_REG16_WRITE(&pEr->DelayPulseEnables,
+                            MRF_VME_REG16_READ(&pEr->DelayPulseEnables) & ~EnaMask);
 }/*end ErSetDg()*/
 
 /**************************************************************************************************
@@ -3074,8 +3072,7 @@ epicsStatus ErSetFPMap (ErCardStruct *pCard, int Port, epicsUInt16 Map)
    /*---------------------
     * Write the map value into the appropriate front panel map register
     */
-    if (pCard->FormFactor == VME_EVR) {
-      switch (Port) {
+    switch (Port) {
       case 0:
         MRF_VME_REG16_WRITE(&pEr->FP0Map, Map);
         break;
@@ -3097,32 +3094,7 @@ epicsStatus ErSetFPMap (ErCardStruct *pCard, int Port, epicsUInt16 Map)
       case 6:
         MRF_VME_REG16_WRITE(&pEr->FP6Map, Map);
         break;
-      }/*end switch*/
-    } else if (pCard->FormFactor == PMC_EVR) {
-      switch (Port) {
-      case 0:
-        MRF_VME_REG16_WRITE(&pEr->FP1Map, Map);
-        break;
-      case 1:
-        MRF_VME_REG16_WRITE(&pEr->FP0Map, Map);
-        break;
-      case 2:
-        MRF_VME_REG16_WRITE(&pEr->FP3Map, Map);
-        break;
-      case 3:
-        MRF_VME_REG16_WRITE(&pEr->FP2Map, Map);
-        break;
-      case 4:
-        MRF_VME_REG16_WRITE(&pEr->FP5Map, Map);
-        break;
-      case 5:
-        MRF_VME_REG16_WRITE(&pEr->FP4Map, Map);
-        break;
-      case 6:
-        MRF_VME_REG16_WRITE(&pEr->FP6Map, Map);
-        break;
-      }/*end switch*/
-    }
+    }/*end switch*/
 
    /*---------------------
     * Return success code
@@ -3278,7 +3250,7 @@ void ErSetOtp (
     int                            Channel,     /* Channel number of the OTP channel to set       */
     epicsBoolean                   Enable,      /* Enable/Disable flag                            */
     epicsUInt32                    Delay,       /* Desired delay                                  */
-    epicsUInt16                    Width,       /* Desired width                                  */
+    epicsUInt32                    Width,       /* Desired width                                  */
     epicsBoolean                   Pol)         /* Desired polarity                               */
 {
    /***********************************************************************************************/
@@ -3287,7 +3259,6 @@ void ErSetOtp (
 
     epicsUInt16                   EnaMask;      /* Mask for enabling or disabling the channel     */
     epicsUInt32                   PolMask;      /* Mask for setting the channel's polarity        */
-    epicsUInt32                   ExtWidth;     /* 32bit desired width                            */
     volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver's register map       */
 
    /***********************************************************************************************/
@@ -3307,12 +3278,11 @@ void ErSetOtp (
     */
     EnaMask = 1 << Channel;
     PolMask = EVR_XPOL_OTP0 << Channel;
-    ExtWidth = Width;
 
    /*---------------------
     * Set the pulse width and delay
     */
-    MRF_VME_REG16_WRITE(&pEr->ExtWidth, ExtWidth);
+    MRF_VME_REG32_WRITE(&pEr->ExtWidth, Width);
     MRF_VME_REG32_WRITE(&pEr->ExtDelay, Delay);
 
    /*---------------------
