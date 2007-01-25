@@ -303,7 +303,8 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
 
   /* Try to register this card at the requested A24 address space */
   if (vmeCSRWriteADER(Card, 0, (CardAddress) | (VME_AM_STD_SUP_DATA << 2)) != OK) {
-      DEBUGPRINT (DP_ERROR, drvMrfEgFlag, ("Could not configure board Function 0 address.\n"));
+      errlogPrintf ("EgConfigure: Could not configure Card %d Function 0 at VME/A24 address 0x%08X\n",
+                      Card, CardAddress);
     rc = 1;
   } else {
     rc = devRegisterAddress( CardName,  /* Event Generator Card name        */
