@@ -801,13 +801,15 @@ epicsStatus ErEpicsEventInitRec (eventRecord *pRec)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      Always returns 0 (success)
+|*      0              = Record initialization was successfull.
+|*      S_dev_badCard  = Specified card or signal (event) value was invalid.
 |*
 \**************************************************************************************************/
 
 LOCAL_RTN
 epicsStatus ErEpicsEventGetIoScan (int cmd, eventRecord *pRec, IOSCANPVT *pPvt)
 {
+  if (!pRec->dpvt) return (S_dev_badCard);
   *pPvt = *((IOSCANPVT*)(pRec->dpvt));
   return (0);
 
