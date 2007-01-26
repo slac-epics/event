@@ -87,8 +87,7 @@ II - Adding event database and EVR configuration to your IOC startup file:
 (3) Add ErConfigure for each PMC EVR (before iocInit):
 
     ErConfigure(<z>,0,0,0,1)
-    where z = unique number between 1 and 21 not already used by another EVR 
-              (VME or PMC) in the same crate.
+    where z = 0 for PMC Slot 1 (lower slot), 1 for PMC slot 2 (upper slot)
     and   0 = card address     (not used)
     and   0 = interrupt vector (not used)
     and   0 = interrupt level  (not used)
