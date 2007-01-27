@@ -7,7 +7,7 @@ option +d;  /* Turn on runtime debug messages */
 %%#include <stdio.h>
 
 string  edefRequestName;
-assign  edefRequestName to "IOC:{SYS}:1:EDEFNAME";
+assign  edefRequestName to "{IOC}:EDEFNAME";
 monitor edefRequestName;
 
 int edefMaxNumber;
@@ -51,7 +51,7 @@ assign EXCLUSIONvalSHORT to "";
 string EXCLUSIONpvSHORT;
 
 int MaskSetupDone;
-assign MaskSetupDone to "IOC:{SYS}:1:MASKSETUP";
+assign MaskSetupDone to "{IOC}:MASKSETUP";
 monitor MaskSetupDone;
 
 char * SYS;

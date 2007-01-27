@@ -7,13 +7,13 @@ option +d;  /* Turn on runtime debug messages */
 %%#include <string.h> 	   /* sprintf prototype */
 
 int maskChanged;
-assign maskChanged to "IOC:{SYS}:1:MASKCHG";
+assign maskChanged to "{IOC}:MASKCHG";
 monitor maskChanged;
 evflag maskChanged_ef;
 sync maskChanged maskChanged_ef;
 
 int bitChanged;
-assign bitChanged to "IOC:{SYS}:1:BITCHG";
+assign bitChanged to "{IOC}:BITCHG";
 monitor bitChanged;
 evflag bitChanged_ef;
 sync bitChanged bitChanged_ef;
@@ -27,7 +27,7 @@ assign dgrpEXCM to "VX00:DGRP:1150:EXCM";
 monitor dgrpEXCM;
 
 int initDone;
-assign initDone to "IOC:{SYS}:1:MASKSETUP";
+assign initDone to "{IOC}:MASKSETUP";
 
 unsigned short dgrpSHORT;
 short i;
