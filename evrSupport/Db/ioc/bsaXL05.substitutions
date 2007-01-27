@@ -2,58 +2,29 @@
 # BSA functionality for devices
 # load these for sim or real data
 ####################
+# BSA records
+#
+# One per IOC:
+#
+file bsaShadow.template {
+#     timing system  
+  pattern { SYS  , LOC,  UN}
+	      { SYS0 , XX05, 1 }
+}
+# One per device:
+#
 file bsaBPMSEdef.template {
-  pattern {DEVICE  , IOCI , EVRI}
-	  { BPMS:XX05:1, SYS0 , IOC:XX05:1}
-	  { BPMS:XX05:2, SYS0 , IOC:XX05:1}
-	  { BPMS:XX05:3, SYS0 , IOC:XX05:1}
-	  { BPMS:XX05:4, SYS0 , IOC:XX05:1}
-	  { BPMS:XX05:5, SYS0 , IOC:XX05:1}
-	  { BPMS:XX05:6, SYS0 , IOC:XX05:1}
+  pattern {DEVICE   , LOC  , UN  , SYS }  
+	  { BPMS:XX05:1 , XX05 , EV01, SYS0}
+	  { BPMS:XX05:2 , XX05 , EV01, SYS0}
+	  { BPMS:XX05:3 , XX05 , EV01, SYS0}
+	  { BPMS:XX05:4 , XX05 , EV01, SYS0}
+	  { BPMS:XX05:5 , XX05 , EV01, SYS0}
+	  { BPMS:XX05:6 , XX05 , EV01, SYS0}
 }
 
 file bsaTOROEdef.template {
-  pattern {DEVICE   , IOCI , EVRI}
-	  { TORO:XX05:1 , SYS0 , IOC:XX05:1}
-	  { TORO:XX05:2 , SYS0 , IOC:XX05:1}
-}
-file bsaPMTEdef.template {
-  pattern { DEVICE , IOCI , EVRI }
-	  { PMT:XX05:1 , SYS0 , IOC:XX05:1}
-	  { PMT:XX05:2 , SYS0 , IOC:XX05:1}
-	  { PMT:XX05:3 , SYS0 , IOC:XX05:1}
-	  { PMT:XX05:4 , SYS0 , IOC:XX05:1}
-	  { PMT:XX05:5 , SYS0 , IOC:XX05:1}
-	  { PMT:XX05:6 , SYS0 , IOC:XX05:1}
-}
-file bsaBLENEdef.template {
-  pattern { DEVICE ,  IOCI, EVRI }
-	  { BLEN:XX05:1 , SYS0, IOC:XX05:1 }
-	  { BLEN:XX05:2 , SYS0, IOC:XX05:1 }
-	  { BLEN:XX05:3 , SYS0, IOC:XX05:1 }
-}
-file bsaKICKEdef.template {
-  pattern { DEVICE  , IOCI , EVRI}
-	  { KICK:XX05:1 , SYS0 , IOC:XX05:1}
-	  { KICK:XX05:2 , SYS0 , IOC:XX05:1}
-	  { KICK:XX05:3 , SYS0 , IOC:XX05:1}
-}
-file bsaWIREEdef.template {
-  pattern { DEVICE  , IOCI , EVRI}
-	  { WIRE:XX05:1 , SYS0 , IOC:XX05:1}
-	  { WIRE:XX05:2 , SYS0 , IOC:XX05:1}
-	  { WIRE:XX05:3 , SYS0 , IOC:XX05:1}
-	  { WIRE:XX05:4 , SYS0 , IOC:XX05:1}
-}
-#
-# Pattern records
-file evrPattern.template {
-#	    Device    ,  SLC Pattern Check LNK     ,  EVR/Trigger          Diagnostic
-#	                                                 Links                Link
-  pattern { DEVICE     ,        LINK4              , LINK5 ,   LINK6    ,          LINKD      }
-	  { IOC:XX05:1 , "IOC:XX05:1:FANOUTSLC PP" ,  ""   ,    ""      , "IOC:XX05:1:YYD PP" }
-}
-file evrPatternProc.template {
-  pattern { DEVICE }
-	  { IOC:XX05:1}
+  pattern {DEVICE   , LOC  , UN  , SYS } 
+	  { TORO:XX05:1 , XX05 , EV01, SYS0}
+	  { TORO:XX05:2 , XX05 , EV01, SYS0}
 }

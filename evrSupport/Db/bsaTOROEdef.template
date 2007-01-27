@@ -7,46 +7,41 @@
 # Note: Must follow the LCLS naming conventions.  
 #
 #==============================================================================
+# BSA Integration Note:
+# Each device attribute (such as width ) provides input to bsaEdefAvg.db.
+# The bsaEdefAvg.db provides the RMS and Avg -$(DEV):$(SECN)<edef id>, and history - 
+#   $(DEV):$(SECN)HST<edef id> for each device attribute for each of 20 edefs.
 #
-file db/bsaDevStates.db
-{
-#	    Device
-  pattern {  DEV    ,SECN1,SECN2,SECN3}
-	  {$(DEVICE), TMIT, TMIT, TMIT}
-}
-
 file db/bsaEdefAvg.db
 {
-#                                   Meas Defn
-#	      Device                Name Unit
-  pattern {DEV    ,SECN, MDID  ,MD,  IOC , EGU, HOPR , LOPR ,PREC, ADEL, MDEL , EIOC   , BIT}
-	  { $(DEVICE) ,TMIT,  1   , 1,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), A}
-	  { $(DEVICE) ,TMIT,  2   , 2,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), B}
-	  { $(DEVICE) ,TMIT,  3   , 3,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), C}
-	  { $(DEVICE) ,TMIT,  4   , 4,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), D}
-	  { $(DEVICE) ,TMIT,  5   , 5,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), E}
-	  { $(DEVICE) ,TMIT,  6   , 6,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), F}
-	  { $(DEVICE) ,TMIT,  7   , 7,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), G}
-	  { $(DEVICE) ,TMIT,  8   , 8,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), H}
-	  { $(DEVICE) ,TMIT,  9   , 9,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), I}
-	  { $(DEVICE) ,TMIT,  10  ,10,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), J}
-	  { $(DEVICE) ,TMIT,  11  ,11,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), K}
-	  { $(DEVICE) ,TMIT,  12  ,12,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), L}
-	  { $(DEVICE) ,TMIT,  13  ,13,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), M}
-	  { $(DEVICE) ,TMIT,  14  ,14,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), N}
-	  { $(DEVICE) ,TMIT,  15  ,15,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), O}
-	  { $(DEVICE) ,TMIT,  1HZ ,16,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), P}
-	  { $(DEVICE) ,TMIT,  10HZ,17,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), Q}
-	  { $(DEVICE) ,TMIT,  FULL,18,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), R}
-	  { $(DEVICE) ,TMIT,  F1  ,19,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), S}
-	  { $(DEVICE) ,TMIT,  F2  ,20,$(IOCI), "","3E10","1E10",  3 ,"1E8","1E7"  , $(EVRI), T}
+#	      Device           Name                                      IOC    IOC   mod5  Init 
+#                                                                    loc'n  unit  bit   Event Code
+  pattern {DEV    ,SECN, MDID  , MD,EGU ,HOPR,LOPR,PREC,ADEL,MDEL, LOCA  , UNIT ,BIT, EC}
+	  { $(DEVICE) ,TMIT,  1   , 1,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), A, 100}
+	  { $(DEVICE) ,TMIT,  2   , 2,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), B, 100}
+	  { $(DEVICE) ,TMIT,  3   , 3,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), C, 100}
+	  { $(DEVICE) ,TMIT,  4   , 4,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), D, 100}
+	  { $(DEVICE) ,TMIT,  5   , 5,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), E, 100}
+	  { $(DEVICE) ,TMIT,  6   , 6,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), F, 100}
+	  { $(DEVICE) ,TMIT,  7   , 7,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), G, 100}
+	  { $(DEVICE) ,TMIT,  8   , 8,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), H, 100}
+	  { $(DEVICE) ,TMIT,  9   , 9,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), I, 100}
+	  { $(DEVICE) ,TMIT,  10  ,10,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), J, 100}
+	  { $(DEVICE) ,TMIT,  11  ,11,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), K, 100}
+	  { $(DEVICE) ,TMIT,  12  ,12,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), L, 100}
+	  { $(DEVICE) ,TMIT,  13  ,13,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), M, 100}
+	  { $(DEVICE) ,TMIT,  14  ,14,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), N, 100}
+	  { $(DEVICE) ,TMIT,  15  ,15,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), O, 100}
+	  { $(DEVICE) ,TMIT,  1HZ ,16,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), P, 100}
+	  { $(DEVICE) ,TMIT,  10HZ,17,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), Q, 100}
+	  { $(DEVICE) ,TMIT,  FULL,18,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), R, 100}
+	  { $(DEVICE) ,TMIT,  F1  ,19,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), S, 100}
+	  { $(DEVICE) ,TMIT,  F2  ,20,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), T, 100}
 }
 
 file db/bsaEdefFanouts.db
 {
 #	      Device           Name
-  pattern {DEV    ,SECN  }
-	  { $(DEVICE) ,TMIT  }
+  pattern {DEV    ,SECN , FLNK }
+	  { $(DEVICE) ,TMIT ,  "$(DEVICE):FANOUTSLC PP"  }
 }
-# For SIM - Hook up (DEV)FANOUT in bsaTestFanouts.db to (DEV):EDEFFAN(SECN) in above file
-# For real hw, link to (DEV):EDEFFAN(SECN) after processing the secondary

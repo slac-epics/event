@@ -9,43 +9,42 @@
 #
 #==============================================================================
 #
-file db/bsaDevStates.db
-{
-#	    Device
-  pattern {  DEV    ,SECN1,SECN2,SECN3}
-	  {$(DEVICE)    ,WIDTH,WIDTH,WIDTH}
-}
-
+# BSA Integration Note:
+# Each device attribute (such as width ) provides input to bsaEdefAvg.db.
+# The bsaEdefAvg.db provides the RMS and Avg -$(DEV):$(SECN)<edef id>, and history - 
+#   $(DEV):$(SECN)HST<edef id> for each device attribute for each of 20 edefs.
+#
 file db/bsaEdefAvg.db
 {
-  pattern {DEV    , SECN, MDID , MD,   IOC  ,EGU ,HOPR,LOPR,PREC,ADEL, MDEL, EIOC, BIT}
-	  { $(DEVICE) ,WIDTH,  1   , 1 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), A}
-	  { $(DEVICE) ,WIDTH,  2   , 2 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), B}
-	  { $(DEVICE) ,WIDTH,  3   , 3 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), C}
-	  { $(DEVICE) ,WIDTH,  4   , 4 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), D}
-	  { $(DEVICE) ,WIDTH,  5   , 5 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), E}
-	  { $(DEVICE) ,WIDTH,  6   , 6 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), F}
-	  { $(DEVICE) ,WIDTH,  7   , 7 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), G}
-	  { $(DEVICE) ,WIDTH,  8   , 8 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), H}
-	  { $(DEVICE) ,WIDTH,  9   , 9 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), I}
-	  { $(DEVICE) ,WIDTH,  10  ,10 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), J}
-	  { $(DEVICE) ,WIDTH,  11  ,11 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), K}
-	  { $(DEVICE) ,WIDTH,  12  ,12 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), L}
-	  { $(DEVICE) ,WIDTH,  13  ,13 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), M}
-	  { $(DEVICE) ,WIDTH,  14  ,14 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), N}
-	  { $(DEVICE) ,WIDTH,  15  ,15 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), O}
-	  { $(DEVICE) ,WIDTH, 1HZ  ,16 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), P}
-	  { $(DEVICE) ,WIDTH,10HZ  ,17 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), Q}
-	  { $(DEVICE) ,WIDTH,FULL  ,18 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), R}
-	  { $(DEVICE) ,WIDTH,  F1  ,19 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), S}
-	  { $(DEVICE) ,WIDTH,  F2  ,20 , $(IOCI),fsec,300 , 100,  3 , .01, .001, $(EVRI), T}
+#	      Device           Name                                      IOC    IOC   mod5  Init 
+#                                                                    loc'n  unit  bit   Event Code
+  pattern {DEV    , SECN, MDID , MD, EGU ,HOPR,LOPR,PREC,ADEL, MDEL, LOCA  , UNIT , BIT,  EC}
+	  { $(DEVICE) ,WIDTH,  1   , 1 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), A  ,   100}
+	  { $(DEVICE) ,WIDTH,  2   , 2 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), B  ,   100}
+	  { $(DEVICE) ,WIDTH,  3   , 3 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), C  ,   100}
+	  { $(DEVICE) ,WIDTH,  4   , 4 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), D  ,   100}
+	  { $(DEVICE) ,WIDTH,  5   , 5 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), E  ,   100}
+	  { $(DEVICE) ,WIDTH,  6   , 6 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), F  ,   100}
+	  { $(DEVICE) ,WIDTH,  7   , 7 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), G  ,   100}
+	  { $(DEVICE) ,WIDTH,  8   , 8 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), H  ,   100}
+	  { $(DEVICE) ,WIDTH,  9   , 9 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), I  ,   100}
+	  { $(DEVICE) ,WIDTH,  10  ,10 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), J  ,   100}
+	  { $(DEVICE) ,WIDTH,  11  ,11 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), K  ,   100}
+	  { $(DEVICE) ,WIDTH,  12  ,12 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), L  ,   100}
+	  { $(DEVICE) ,WIDTH,  13  ,13 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), M  ,   100}
+	  { $(DEVICE) ,WIDTH,  14  ,14 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), N  ,   100}
+	  { $(DEVICE) ,WIDTH,  15  ,15 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), O  ,   100}
+	  { $(DEVICE) ,WIDTH, 1HZ  ,16 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), P  ,   100}
+	  { $(DEVICE) ,WIDTH,10HZ  ,17 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), Q  ,   100}
+	  { $(DEVICE) ,WIDTH,FULL  ,18 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), R  ,   100}
+	  { $(DEVICE) ,WIDTH,  F1  ,19 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), S  ,   100}
+	  { $(DEVICE) ,WIDTH,  F2  ,20 ,fsec, 300 , 100,  3 , .01, .001, $(LOC), $(UN), T  ,   100}
 }
 
 file db/bsaEdefFanouts.db
 {
-#	      Device           Name
-  pattern {DEV    ,SECN  }
-	  { $(DEVICE) ,WIDTH }
+#	      Device            Name
+  pattern {DEV    ,SECN  ,  FLNK}
+	  { $(DEVICE) ,WIDTH ,  ""  }
 }
-# For SIM - Hook up (DEV)FANOUT in bsaTestFanouts.db to (DEV):EDEFFAN(SECN) in above file
-# For real hw, link to (DEV):EDEFFAN(SECN) after processing the secondary
+# NOTE: TMIT's FLNK= "$(DEVICE):FANOUTSLC PP" for slc-aware

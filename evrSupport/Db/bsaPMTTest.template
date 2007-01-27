@@ -24,7 +24,7 @@ file db/bsaTestFanouts.db
                LNK5                     ,LNK6                       ,     FLNK             ,
 	           LNK7                     ,LNK8                       ,     LNK9             }
           { $(DEVICE) , LOSS ,  0,
-	          "$(DEVICE):STATUS PP"     ,"$(DEVICE):EFLOSS PP" , "$(DEVICE):FANOUTSLC PP",                
+	          "$(DEVICE):EFLOSS PP"     ,""                         , ""                   ,                
 	          ""                        , ""                        , ""                   ,
               ""                        , ""                        , ""                   }
 }

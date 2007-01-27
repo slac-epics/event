@@ -49,6 +49,6 @@ file evrPatternTest.template {
 
 # EVG EDEF checking simulation for Modifier5/ bsa enable/disable:
 file bsaProcTest.template {
-  pattern {  DEVICE    , LOC }
+  pattern {  DEVICE    , LOC     }
 	      { ESIM:XX02:1, SYS0    }
 }

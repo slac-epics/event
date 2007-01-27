@@ -2,48 +2,59 @@
 # BSA functionality for devices
 # load these for sim or real data
 ####################
+# BSA records
+#
+# One per IOC:
+#
+file bsaShadow.template {
+#     timing system  
+  pattern { SYS  , LOC,  UN}
+	      { SYS0 , XX04, 1 }
+}
+# One per device:
+#
 file bsaBPMSEdef.template {
-  pattern {DEVICE  , IOCI , EVRI}
-	  { BPMS:XX04:1, SYS0 , IOC:XX04:1}
-	  { BPMS:XX04:2, SYS0 , IOC:XX04:1}
-	  { BPMS:XX04:3, SYS0 , IOC:XX04:1}
-	  { BPMS:XX04:4, SYS0 , IOC:XX04:1}
-	  { BPMS:XX04:5, SYS0 , IOC:XX04:1}
-	  { BPMS:XX04:6, SYS0 , IOC:XX04:1}
+  pattern {DEVICE  , LOC  , UN, SYS}
+	  { BPMS:XX04:1, XX04 , 1 , SYS0}
+	  { BPMS:XX04:2, XX04 , 1 , SYS0}
+	  { BPMS:XX04:3, XX04 , 1 , SYS0}
+	  { BPMS:XX04:4, XX04 , 1 , SYS0}
+	  { BPMS:XX04:5, XX04 , 1 , SYS0}
+	  { BPMS:XX04:6, XX04 , 1 , SYS0}
 }
 
 file bsaTOROEdef.template {
-  pattern {DEVICE   , IOCI , EVRI}
-	  { TORO:XX04:1 , SYS0 , IOC:XX04:1}
-	  { TORO:XX04:2 , SYS0 , IOC:XX04:1}
+  pattern {DEVICE  , LOC  , UN, SYS}
+	  { TORO:XX04:1 ,XX04 , 1, SYS0}
+	  { TORO:XX04:2 ,XX04 , 1, SYS0}
 }
 file bsaPMTEdef.template {
-  pattern { DEVICE , IOCI , EVRI }
-	  { PMT:XX04:1 , SYS0 , IOC:XX04:1}
-	  { PMT:XX04:2 , SYS0 , IOC:XX04:1}
-	  { PMT:XX04:3 , SYS0 , IOC:XX04:1}
-	  { PMT:XX04:4 , SYS0 , IOC:XX04:1}
-	  { PMT:XX04:5 , SYS0 , IOC:XX04:1}
-	  { PMT:XX04:6 , SYS0 , IOC:XX04:1}
+  pattern {DEVICE  , LOC  , UN, SYS}
+	  { PMT:XX04:1 , XX04 ,  1, SYS0}
+	  { PMT:XX04:2 , XX04 ,  1, SYS0}
+	  { PMT:XX04:3 , XX04 ,  1, SYS0}
+	  { PMT:XX04:4 , XX04 ,  1, SYS0}
+	  { PMT:XX04:5 , XX04 ,  1, SYS0}
+	  { PMT:XX04:6 , XX04 ,  1, SYS0}
 }
 file bsaBLENEdef.template {
-  pattern { DEVICE ,  IOCI, EVRI }
-	  { BLEN:XX04:1 , SYS0, IOC:XX04:1 }
-	  { BLEN:XX04:2 , SYS0, IOC:XX04:1 }
-	  { BLEN:XX04:3 , SYS0, IOC:XX04:1 }
+  pattern {DEVICE   , LOC  , UN, SYS}
+	  { BLEN:XX04:1 , XX04,  1, SYS0 }
+	  { BLEN:XX04:2 , XX04,  1, SYS0 }
+	  { BLEN:XX04:3 , XX04,  1, SYS0 }
 }
 file bsaKICKEdef.template {
-  pattern { DEVICE  , IOCI , EVRI}
-	  { KICK:XX04:1 , SYS0 , IOC:XX04:1}
-	  { KICK:XX04:2 , SYS0 , IOC:XX04:1}
-	  { KICK:XX04:3 , SYS0 , IOC:XX04:1}
+  pattern {DEVICE   , LOC  , UN, SYS}
+	  { KICK:XX04:1 , XX04 ,  1, SYS0}
+	  { KICK:XX04:2 , XX04 ,  1, SYS0}
+	  { KICK:XX04:3 , XX04 ,  1, SYS0}
 }
 file bsaWIREEdef.template {
-  pattern { DEVICE  , IOCI , EVRI}
-	  { WIRE:XX04:1 , SYS0 , IOC:XX04:1}
-	  { WIRE:XX04:2 , SYS0 , IOC:XX04:1}
-	  { WIRE:XX04:3 , SYS0 , IOC:XX04:1}
-	  { WIRE:XX04:4 , SYS0 , IOC:XX04:1}
+  pattern {DEVICE   , LOC  , UN, SYS}
+	  { WIRE:XX04:1 , XX04 ,  1, SYS0}
+	  { WIRE:XX04:2 , XX04 ,  1, SYS0}
+	  { WIRE:XX04:3 , XX04 ,  1, SYS0}
+	  { WIRE:XX04:4 , XX04 ,  1, SYS0}
 }
 #
 # Pattern records

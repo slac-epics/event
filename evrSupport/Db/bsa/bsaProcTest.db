@@ -45,8 +45,6 @@ record(seq, "$(DEV):RESETSEQ$(MD)") {
   field(DOL1, "1")
   field(DOL8, "0")
   field(LNK8, "$(DEV):INIT$(MDID) PP")
-  field(SDIS, "EDEF:$(LOCA):$(MD):INIT CPP")
-  field(DISV, "0")
 }
 
 record(bo, "$(DEV):INIT$(MDID)") {
@@ -88,8 +86,8 @@ record(bo, "$(DEV):RESETBTN$(MD)") {
 }
 
 #! Further lines contain data used by VisualDCT
-#! View(1060,3010,1.1)
-#! Record("$(DEV):CHECK$(MDID)",1538,2197,0,0,"$(DEV):CHECK$(MDID)")
+#! View(797,2674,1.0)
+#! Record("$(DEV):CHECK$(MDID)",1538,2198,0,0,"$(DEV):CHECK$(MDID)")
 #! Field("$(DEV):CHECK$(MDID).FLNK",16777215,1,"$(DEV):CHECK$(MDID).FLNK")
 #! Link("$(DEV):CHECK$(MDID).FLNK","$(DEV):MODMATCH$(MDID)")
 #! Field("$(DEV):CHECK$(MDID).INPF",16777215,1,"$(DEV):CHECK$(MDID).INPF")
@@ -114,7 +112,7 @@ record(bo, "$(DEV):RESETBTN$(MD)") {
 #! Field("$(DEV):STATE$(MD).INPB",16777215,1,"$(DEV):STATE$(MD).INPB")
 #! Link("$(DEV):STATE$(MD).INPB","$(DEV):DONE$(MDID).VAL")
 #! Field("$(DEV):STATE$(MD).VAL",16777215,1,"$(DEV):STATE$(MD).VAL")
-#! Record("$(DEV):RESETSEQ$(MD)",1122,2810,0,0,"$(DEV):RESETSEQ$(MD)")
+#! Record("$(DEV):RESETSEQ$(MD)",1144,2895,0,0,"$(DEV):RESETSEQ$(MD)")
 #! Field("$(DEV):RESETSEQ$(MD).LNK1",16777215,1,"$(DEV):RESETSEQ$(MD).LNK1")
 #! Link("$(DEV):RESETSEQ$(MD).LNK1","$(DEV):INIT$(MDID).VAL")
 #! Field("$(DEV):RESETSEQ$(MD).LNK2",16777215,1,"$(DEV):RESETSEQ$(MD).LNK2")
@@ -127,11 +125,9 @@ record(bo, "$(DEV):RESETBTN$(MD)") {
 #! Link("$(DEV):RESETSEQ$(MD).LNK5","$(DEV):MEASCNT$(MDID).VAL")
 #! Field("$(DEV):RESETSEQ$(MD).LNK6",16777215,1,"$(DEV):RESETSEQ$(MD).LNK6")
 #! Link("$(DEV):RESETSEQ$(MD).LNK6","$(DEV):DONE$(MDID).VAL")
-#! Field("$(DEV):RESETSEQ$(MD).LNK7",16777215,1,"$(DEV):RESETSEQ$(MD).LNK7")
 #! Field("$(DEV):RESETSEQ$(MD).LNK8",16777215,1,"$(DEV):RESETSEQ$(MD).LNK8")
 #! Link("$(DEV):RESETSEQ$(MD).LNK8","$(DEV):INIT$(MDID).VAL")
-#! Field("$(DEV):RESETSEQ$(MD).SDIS",16777215,1,"$(DEV):RESETSEQ$(MD).SDIS")
-#! Record("$(DEV):INIT$(MDID)",2010,2953,0,1,"$(DEV):INIT$(MDID)")
+#! Record("$(DEV):INIT$(MDID)",2010,2954,0,1,"$(DEV):INIT$(MDID)")
 #! Field("$(DEV):INIT$(MDID).VAL",16777215,0,"$(DEV):INIT$(MDID).VAL")
 #! Field("$(DEV):INIT$(MDID).DOL",16777215,0,"$(DEV):INIT$(MDID).DOL")
 #! Link("$(DEV):INIT$(MDID).DOL","$(DEV):CHECK$(MDID).VAL")
@@ -141,13 +137,13 @@ record(bo, "$(DEV):RESETBTN$(MD)") {
 #! Field("$(DEV):MODMATCH$(MDID).FLNK",16777215,1,"$(DEV):MODMATCH$(MDID).FLNK")
 #! Link("$(DEV):MODMATCH$(MDID).FLNK","$(DEV):MEASCNT$(MDID)")
 #! Field("$(DEV):MODMATCH$(MDID).VAL",16777215,1,"$(DEV):MODMATCH$(MDID).VAL")
-#! Record("$(DEV):DONE$(MDID)",2530,2305,0,0,"$(DEV):DONE$(MDID)")
+#! Record("$(DEV):DONE$(MDID)",2530,2306,0,0,"$(DEV):DONE$(MDID)")
 #! Field("$(DEV):DONE$(MDID).FLNK",16777215,0,"$(DEV):DONE$(MDID).FLNK")
 #! Link("$(DEV):DONE$(MDID).FLNK","$(DEV):STATE$(MD)")
 #! Field("$(DEV):DONE$(MDID).INPC",16777215,0,"$(DEV):DONE$(MDID).INPC")
 #! Link("$(DEV):DONE$(MDID).INPC","$(DEV):CHECK$(MDID).Q")
 #! Field("$(DEV):DONE$(MDID).VAL",16777215,0,"$(DEV):DONE$(MDID).VAL")
-#! Record("$(DEV):MEASCNT$(MDID)",2266,2525,0,0,"$(DEV):MEASCNT$(MDID)")
+#! Record("$(DEV):MEASCNT$(MDID)",2266,2526,0,0,"$(DEV):MEASCNT$(MDID)")
 #! Field("$(DEV):MEASCNT$(MDID).FLNK",16777215,1,"$(DEV):MEASCNT$(MDID).FLNK")
 #! Link("$(DEV):MEASCNT$(MDID).FLNK","$(DEV):DONE$(MDID)")
 #! Field("$(DEV):MEASCNT$(MDID).VAL",16777215,0,"$(DEV):MEASCNT$(MDID).VAL")

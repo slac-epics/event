@@ -11,11 +11,11 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 #
-# For all types of BSA devices
-DB += bsaDevStates.db
 # bsa using EDEFs
 DB += bsaEdefAvg.db
 DB += bsaEdefFanouts.db
+DB += bsaEdefShadow.db
+DB += bsaShadow.template
 # Simulation:
 DB += bsaTestFanouts.db
 DB += bsaTestInput.db
@@ -47,6 +47,7 @@ DB += evrPatternProc.template
 DB += evrPatternSim.db
 DB += evrPatternTest.template
 # Test stands
+DB += evrPatternXL05.template
 DB += evrPatternXL09.template
 DB += evrPatternXL16.template
 DB += bsaXL01.template

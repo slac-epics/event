@@ -24,7 +24,7 @@ file db/bsaTestFanouts.db
                LNK5                     ,LNK6                       ,     FLNK             ,
 	           LNK7                     ,LNK8                       ,     LNK9             }
           { $(DEVICE) , PULSEAMPL ,  0,
-	          "$(DEVICE):STATUS PP"     ,"$(DEVICE):EFPULSEAMPL PP" , "$(DEVICE):FANOUTSLC PP",                
+	          "$(DEVICE):EFPULSEAMPL PP", ""                        , ""                   ,                
 	          ""                        , ""                        , ""                   ,
               ""                        , ""                        , ""                   }
 }

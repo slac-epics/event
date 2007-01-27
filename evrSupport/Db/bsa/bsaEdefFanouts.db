@@ -4,6 +4,7 @@
 #! DBDEND
 
 
+
 record(fanout, "$(DEV):EF1$(SECN)") {
   field(DESC, "Fanout 1")
   field(LNK1, "$(DEV):$(SECN)7 PP")
@@ -37,14 +38,16 @@ record(fanout, "$(DEV):EF2$(SECN)") {
   field(FLNK, "$(DEV):EF3$(SECN) PP")
 }
 
+
 record(fanout, "$(DEV):EF3$(SECN)") {
   field(DESC, "Fanout 3")
   field(LNK1, "$(DEV):$(SECN)F1 PP")
   field(LNK2, "$(DEV):$(SECN)F2 PP")
+  field(FLNK, "$(FLNK)")
 }
 
 #! Further lines contain data used by VisualDCT
-#! View(270,155,1.0)
+#! View(355,189,1.0)
 #! Record("$(DEV):EF1$(SECN)",381,280,0,0,"$(DEV):EF1$(SECN)")
 #! Field("$(DEV):EF1$(SECN).LNK1",16777215,1,"$(DEV):EF1$(SECN).LNK1")
 #! Field("$(DEV):EF1$(SECN).LNK2",16777215,1,"$(DEV):EF1$(SECN).LNK2")
@@ -72,6 +75,8 @@ record(fanout, "$(DEV):EF3$(SECN)") {
 #! Field("$(DEV):EF2$(SECN).LNK6",16777215,1,"$(DEV):EF2$(SECN).LNK6")
 #! Field("$(DEV):EF2$(SECN).FLNK",16777215,1,"$(DEV):EF2$(SECN).FLNK")
 #! Link("$(DEV):EF2$(SECN).FLNK","$(DEV):EF3$(SECN)")
-#! Record("$(DEV):EF3$(SECN)",899,281,0,1,"$(DEV):EF3$(SECN)")
+#! Record("$(DEV):EF3$(SECN)",899,267,0,1,"$(DEV):EF3$(SECN)")
 #! Field("$(DEV):EF3$(SECN).LNK1",16777215,1,"$(DEV):EF3$(SECN).LNK1")
 #! Field("$(DEV):EF3$(SECN).LNK2",16777215,1,"$(DEV):EF3$(SECN).LNK2")
+#! Field("$(DEV):EF3$(SECN).FLNK",16777215,1,"$(DEV):EF3$(SECN).FLNK")
+#! TextBox(TB0,714,613,1094,793,0,"Dialog",12,1,16777215,"For BPMS with > 1 secondary, the FLNK macro \nwill link to the next secondary's $(DEV):$(SECN)EF fanout records\n",null)

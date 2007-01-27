@@ -23,7 +23,7 @@ file db/bsaTestFanouts.db
                LNK5                     ,LNK6                       ,     FLNK             ,
 	           LNK7                     ,LNK8                       ,     LNK9             }
           { $(DEVICE) , TMIT ,  0,
-	          "$(DEVICE):STATUS PP"     ,"$(DEVICE):EFTMIT PP" , "$(DEVICE):FANOUTSLC PP",                
+	          "$(DEVICE):EFTMIT PP"     ,""                         , ""                   ,                
 	          ""                        , ""                        , ""                   ,
               ""                        , ""                        , ""                   }
 }
