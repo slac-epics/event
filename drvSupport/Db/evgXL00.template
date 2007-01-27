@@ -51,5 +51,5 @@ file db/mpgPatternProc.db
 #
 #	 Location      
 pattern { LOCA  , UNIT , CARD , ELOCA , CHECK }
-	{ XL00  , EV01 ,  5   ,  SYS1 ,   1   }
+	{ XL00  , EV01 ,  5   ,  SYS0 ,   1   }
 }
