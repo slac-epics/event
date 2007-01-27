@@ -67,12 +67,14 @@
   Rem:  Subroutine for PRIM:LOCA:UNIT:MEASCNT$MDID
 
   Side: INPA - PRIM:LOCA:UNIT:SECN.VAL
-        INPB - EDEF:S:$(MD):AVGCNTMAX CA
+        INPB - EDEF:LOCA:UNIT:AVGCNTMAX$(MD) shadow record
+		INPC - EDEF:LOCA:UNIT:MEASSEVR$(MD) shadow record
         SDIS - EVR:IOC:1:MODIFIER5 BIT for this MDID 1=  match
-		INPD - PRIM:LOCA:UNIT:STATUS   (EPICS STAT for device)
-        INPE - PRIM:LOCA:UNIT:STATUS.L (EPICS SEVR for device)
+		INPD - PRIM:LOCA:UNIT:SECN.STAT (was cum EPICS STAT for device, STATUS)
+        INPE - PRIM:LOCA:UNIT:SECN.SEVR (was cum EPICS SEVR for device, STATUS.L)
         INPF - EVR:LOCA:UNIT:PULSEID
-        INPG - 
+        INPG - PRIM:LOCA:UNIT:INIT$(MD) places a "1" upon EDEF INIT (beg of new cycle)
+		       first time flag
 		OUT 
            H = Variance value used in RMS calc
            I = B - 1
@@ -80,12 +82,12 @@
            K = A - previous VAL
            L = RMS value when average is done
 
-		   M = goodmeas count
+		   M = goodmeas cnt - # of pulses considered good when each pulse's severity
+               is compared with the EDEF MEASSEVR value for this edef. This count
+			   will be stored in the $(SECN)CNTHST history buffer.
            O - reset counters, values (avcnt, goodmeas, stat, timestamp check)
                Reset occurs from reset sequence
-		   P - EPICS stat for average
-           S - EPICS sevr for average
-	       Q = avgcnt
+	       Q = local, inner, avgcnt
 		   W = Timestamp mismatch
 		   X = history buff enable(1)/disable (0)
 		   Y = count (total pulses counted so far)
@@ -127,26 +129,21 @@ static long bsaSecnAvg(sSubRecord *psub)
   }
 #endif
   /*  if (psub->n < 2) psub->n++; *//* increment first-time flag */
-
+  if (psub->g) {
+	psub->y = 0; /* total count */
+	psub->z = 0; /* outer loop count reset */
+	psub->g = 0; /* reset first time flag */
+  }
   /* Reinit for a new average */
   if (psub->o) {
     psub->o = 0;
-	psub->z = 0; /* outer loop count reset */
+
     /*  reset avgcnt, meascnt, goodmeas, stat   */
     psub->val = 0;
-	psub->y = 0; /* total count */
 	psub->q = 0; /* avgcount    */
     psub->m = 0; /* goodmeas    */
     psub->w = 0; /* ts mismatch */
-    psub->p = psub->d;
-    psub->s = psub->e;
-    /* cum avg stuff :*/
-	psub->val = psub->a;
-	psub->h = 0;
-	psub->i = 0;
-	psub->j = 0;
-	psub->k = 0;
-	psub->l = 0;
+
 	DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg: First time thru for %s; psub->b=%ld\n", psub->name,(unsigned long) psub->b) );
      /*DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("basAvgCount for %s: Reset counters; psub->i = %ld\n",psub->name, (unsigned long)psub->i));*/
   }
@@ -154,13 +151,9 @@ static long bsaSecnAvg(sSubRecord *psub)
   if (psub->b <= 0) {
     psub->o = 1;
   } else {
-    if (psub->e < INVALID_ALARM) {
+	if (psub->e < (psub->c+1) ) {
+	  /*if (psub->e < INVALID_ALARM) {*/
       psub->m++; /* inc goodmeas */
-      /* EPICS - check for worst severity */
-      if (psub->s < psub->e) {
-        psub->s = psub->e;
-        psub->p = psub->d;
-      }
     }
     /* always incr avgcnt*/
     psub->q++;
@@ -175,7 +168,7 @@ static long bsaSecnAvg(sSubRecord *psub)
       /*  else averaging is NOT done */
  	  psub->o = 0;
     }
-  }  
+  } 
   /* now start the averaging */
   /* first time thru for new cycle; reset previous avg, variance */
   
@@ -189,82 +182,31 @@ static long bsaSecnAvg(sSubRecord *psub)
   /*                                                       */
   /*        Note that CUM's method of computing VAR avoids */
   /*        possible loss of significance.                 */
-  psub->i = psub->m-1.0;
-  psub->j = psub->m-2.0;
-  psub->k = psub->a-psub->val;
-  psub->val += psub->k/psub->m;
-  psub->k /= psub->i;
-  psub->h = (psub->j*(psub->h/psub->i)) + (psub->m*psub->k*psub->k);
-  DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg for %s: Avg: %f; Var: %f \n", psub->name, psub->val, psub->h) );
-  if (psub->o) {
-	psub->l = psub->h/psub->m;
-	psub->l = sqrt(psub->l);
+  if (psub->m <= 1) {
+	psub->val = psub->a;
+	psub->h = 0;
+	psub->i = 0;
+	psub->j = 0;
+	psub->k = 0;
+	psub->l = 0;
+  } 
+  else {
+	psub->i = psub->m-1.0;
+	psub->j = psub->m-2.0;
+	psub->k = psub->a-psub->val;
+	psub->val += psub->k/psub->m;
+	psub->k /= psub->i;
+	psub->h = (psub->j*(psub->h/psub->i)) + (psub->m*psub->k*psub->k);
+	DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg for %s: Avg: %f; Var: %f \n", psub->name, psub->val, psub->h) );
+	if (psub->o) { /* rms val when avg is done */
+	  psub->l = psub->h/psub->m;
+	  psub->l = sqrt(psub->l);
+	}
   }
-  psub->y++;  /* increment count */
+  psub->y++;  /* increment total count */
+  
   return 0;
 }
-
-/*=============================================================================
-
-  Name: bsaStatus
-
-  Abs:  Device EPICS Severity and Status, SLC Status - 120Hz Processing
-
-		
-  Args: Type	            Name        Access	   Description
-        ------------------- -----------	---------- ----------------------------
-        subRecord *        psub        read       point to subroutine record
-
-  Rem:  Subroutine for PRIM:LOCA:UNIT:STATUS
-
-  Side: INPA - PRIM:LOCA:UNIT:SECN1.STAT
-        INPB - PRIM:LOCA:UNIT:SECN2.STAT 
-        INPC - PRIM:LOCA:UNIT:SECN3.STAT 
-        INPD - PRIM:LOCA:UNIT:SECN1.SEVR
-        INPE - PRIM:LOCA:UNIT:SECN2.SEVR 
-        INPF - PRIM:LOCA:UNIT:SECN3.SEVR 
-        INPG - PRIM:LOCA:UNIT:CTRL
-        INPH - PRIM:LOCA:UNIT:CALBSTATUS.SEVR
-		OUT
-	   K - SLC STAT
-	   L - EPICS severity
-	   VAL = EPICS STAT
-      
-  Ret:  0
-
-==============================================================================*/
-static long bsaStatus(subRecord *psub)
-{
-  psub->val = psub->a;
-  psub->l   = psub->d;
-  if (psub->e > psub->l) {
-    psub->val = psub->b;
-    psub->l   = psub->e;
-  }
-  if (psub->f > psub->l) {
-    psub->val = psub->c;
-    psub->l   = psub->f;
-  }
-  /* assume lcls will have the equiv - keep below to remind */
-#ifdef SLCAWARE  
-  if      (psub->g == 0) /* offline? */
-    psub->k = STAT_DEAD;
-  else if (psub->g == 1) /* maintenance? */
-    psub->k = STAT_MAINTENANCE;
-  else if (psub->g == 2) /* checkout? */
-    psub->k = STAT_CHECKOUT;
-  else if (psub->h>NO_ALARM) /* calibration bad or in-progress */
-    psub->k = STAT_BADCAL;
-  else if (psub->l == NO_ALARM)
-    psub->k = STAT_GOOD;
-  else if (psub->l <= MAJOR_ALARM)
-    psub->k = STAT_OK;
-  else
-    psub->k = STAT_SICK;
-#endif
-  return 0;
-}
-
 /*=============================================================================
   
   Name: bsaSimCheckTest
@@ -355,5 +297,4 @@ return 0;
 }
 
 epicsRegisterFunction(bsaSecnAvg);
-epicsRegisterFunction(bsaStatus);
 epicsRegisterFunction(bsaSimCheckTest);
