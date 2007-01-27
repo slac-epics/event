@@ -52,4 +52,4 @@ file db/mpgPatternProc.db
 #	 Location      
 pattern { LOCA  , UNIT , CARD , ELOCA , CHECK }
 	{ IN20  , EV01 ,   7  ,  SYS0 ,   1   }
-
+}
