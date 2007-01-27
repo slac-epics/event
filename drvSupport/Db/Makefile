@@ -14,7 +14,6 @@ include $(TOP)/configure/CONFIG
 # EVG setup
 DB += evg.db
 DB += evgEvent.db
-DB += evgXL00.template
 DB += evgXL15.template
 DB += evgIN20.template
 # EVR setup
