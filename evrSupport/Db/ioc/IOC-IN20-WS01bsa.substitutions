@@ -1,0 +1,18 @@
+# BSA records
+#
+# One per IOC:
+file bsaShadow.template {
+#     event system  
+  pattern { SYS  , LOC,  UN}
+	      { SYS0 , IN20, WS01 }
+}
+# One per device:
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaWIREEdef.template!
+file bsaWIREEdef.template {
+#      Device        ,loc'n , IOC unit, timing system
+  pattern {DEVICE    , LOC  ,  UN  , SYS  }
+	  { WIRE:LI21:BL531, IN20 , WS01 , SYS0 }
+	  { WIRE:LI21:BL561, IN20 , WS01 , SYS0 }
+	  { WIRE:LI21:BL611, IN20 , WS01 , SYS0 }
+	  { WIRE:LI21:BL741, IN20 , WS01 , SYS0 }
+

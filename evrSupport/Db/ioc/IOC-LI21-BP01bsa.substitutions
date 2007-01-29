@@ -1,0 +1,29 @@
+# BSA records
+#
+# One per IOC:
+file bsaShadow.template {
+#     timing system  
+  pattern { SYS  , LOC,  UN}
+	      { SYS0 , LI21, BP01 }
+}
+# One per device:
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaBPMSEdef.template!
+file bsaBPMSEdef.template {
+#      Device        ,loc'n , IOC unit, timing system
+  pattern {DEVICE    , LOC  ,  UN  , SYS  }
+	  { BPMS:LI21:131, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:161, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:201, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:233, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:278, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:301, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:315, LI21 , BP01 , SYS0 }
+# Include these? (not included on timing hardware trigger list) :
+	  { BPMS:LI21:401, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:501, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:601, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:701, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:801, LI21 , BP01 , SYS0 }
+	  { BPMS:LI21:901, LI21 , BP01 , SYS0 }
+
+}

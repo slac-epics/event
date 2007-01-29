@@ -1,0 +1,41 @@
+# BSA records
+#
+# One per IOC:
+file bsaShadow.template {
+#     timing system  
+  pattern { SYS  , LOC,  UN}
+	      { SYS0 , IN20, RF01 }
+}
+# One per device:
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.template!
+file bsaPHASEdef.template {
+#      Device               ,loc'n , IOC unit, timing system
+  pattern {DEVICE           , LOC  ,  UN  , SYS  }
+	  { LLRF:IN20:1:REFPHAS , IN20 , RF01 , SYS0 }
+	  { LASR:IN20:1:RFPHAS  , IN20 , RF01 , SYS0 }
+	  { GUN:IN20:1:PHAS     , IN20 , RF01 , SYS0 }
+	  { GUN:IN20:1:RFPHAS   , IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:300:PHAS  , IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:300:RFPHAS, IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:400:PHAS  , IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:400:RFPHAS, IN20 , RF01 , SYS0 }
+	  { TCAV:IN20:490:PHAS  , IN20 , RF01 , SYS0 }
+	  { TCAV:IN20:490:RFPHAS, IN20 , RF01 , SYS0 }
+	  { PHAS:IN20:365:PHAS  , IN20 , RF01 , SYS0 }
+}
+# One per device:
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.template!
+file bsaAMPLEdef.template {
+#      Device               ,loc'n , IOC unit, timing system
+  pattern {DEVICE           , LOC  ,  UN  , SYS  }
+	  { LLRF:IN20:1:REFAMPL , IN20 , RF01 , SYS0 }
+	  { LASR:IN20:1:RFAMPL  , IN20 , RF01 , SYS0 }
+	  { GUN:IN20:1:AMPL     , IN20 , RF01 , SYS0 }
+	  { GUN:IN20:1:RFAMPL   , IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:300:AMPL  , IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:300:RFAMPL, IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:400:AMPL  , IN20 , RF01 , SYS0 }
+	  { ACCL:IN20:400:RFAMPL, IN20 , RF01 , SYS0 }
+	  { TCAV:IN20:490:AMPL  , IN20 , RF01 , SYS0 }
+	  { TCAV:IN20:490:RFAMPL, IN20 , RF01 , SYS0 }
+	  { PHAS:IN20:365:AMPL  , IN20 , RF01 , SYS0 }

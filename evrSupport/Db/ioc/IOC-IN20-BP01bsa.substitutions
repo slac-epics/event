@@ -1,0 +1,24 @@
+# BSA records
+#
+# One per IOC:
+file bsaShadow.template {
+#     timing system  
+  pattern { SYS  , LOC,  UN}
+	      { SYS0 , IN20, BP01 }
+}
+# One per device:
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaBPMSEdef.template!
+file bsaBPMSEdef.template {
+#      Device        ,loc'n , IOC unit, timing system
+  pattern {DEVICE    , LOC  ,  UN  , SYS  }
+	  { BPMS:IN20:525, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:581, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:631, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:651, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:731, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:771, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:781, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:925, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:945, IN20 , BP01 , SYS0 }
+	  { BPMS:IN20:981, IN20 , BP01 , SYS0 }
+}

@@ -1,0 +1,21 @@
+#
+# BSA records
+#
+# One per IOC:
+# 
+file bsaShadow.template {
+#         timing 
+#         system , area, 
+  pattern { SYS  , LOC,  UN   }
+	      { SYS0 , IN20, IM01 }
+}
+file bsaBPMSEdef.template {
+#      Device        ,loc'n , IOC unit, timing system  
+  pattern {DEVICE    , LOC  ,  UN   }
+	  { BPMS:IN20:221, IN20 , IM01 }
+	  { BPMS:IN20:235, IN20 , IM01 }
+	  { BPMS:IN20:371, IN20 , IM01 }
+	  { BPMS:IN20:425, IN20 , IM01 }
+	  { BPMS:IN20:511, IN20 , IM01 }
+	  { BPMS:IN20:821, IN20 , IM01 }
+}
