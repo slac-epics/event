@@ -21,6 +21,7 @@ DB += evr.db
 DB += evrEvent.db
 DB += evrEventRate.db
 # Test stands
+DB += evrXL05.template
 DB += evrXL09.template
 DB += evrXL16.template
 # Laser Room

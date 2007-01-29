@@ -12,8 +12,7 @@
 #
 # For VME EVR modules, CARD must be set to the physical slot in the crate
 # where the EVR resides, starting from 1.  For PMC EVR modules, CARD must
-# be a unique number between 0 and 20 which is not already used by any 
-# EVR (VME or PMC) in the same crate.
+# be 0 for slot 1 and 1 for slot 2.
 #
 #==============================================================================
 #
@@ -29,8 +28,8 @@ pattern { LOCA  , UNIT , CARD , DELAY , WIDTH }
 }
 file db/evrEvent.db
 {
-# PRIM = IOC
-# UNIT = xxyy, where xx = subsystem ID and yy=index of that subsystem in LOCA.
+# PRIM = EVR
+# UNIT = xx01 for first EVR in card, UNIT = xx02 for second EVR, etc. 
 #
 #	 Location Unit   Card  <----------------------------  Event -------------------------->       
 pattern { LOCA  , UNIT , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,VME}
