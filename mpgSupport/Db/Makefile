@@ -22,10 +22,9 @@ DB += bsaEdefMask.db
 DB += bsaEVGmask.db
 DB += bsaEdef.template
 DB += bsaEVGmask.template
-# Test stands
-DB += evgPatternIN20Test.template
+# B34 test stand
 DB += evgPatternXL15.template
-# Production
+# Production and B280 test stand
 DB += evgPatternIN20.template
 
 include $(TOP)/configure/RULES
