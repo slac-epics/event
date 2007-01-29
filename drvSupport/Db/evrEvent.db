@@ -1,5 +1,5 @@
-record(erevent, "IOC:$(LOCA):$(UNIT):$(NAME)CTRL") {
-  field(DESC, "IOC $(NAME) Control")
+record(erevent, "EVR:$(LOCA):$(UNIT):$(NAME)CTRL") {
+  field(DESC, "EVR Event Control")
   field(PINI, "YES")
   field(DTYP, "MRF Event Receiver")
   field(OUT, "#C$(CARD) S0 @")
