@@ -69,7 +69,7 @@ II - Adding event database and EVR configuration to your IOC startup file:
 
 (1) Add database templates to st.cmd (before iocInit): 
 
-    dbLoadTemplate("db/IOC-<area>-<xxyy>evr.template")
+    dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
     dbLoadTemplate("db/IOC-<area>-<xxyy>pattern.template")
 
 (2) Add ErConfigure for each VME EVR (before iocInit):
