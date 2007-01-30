@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 01/24/2007
+Instructions for RTEMS EVR users                    Last Updated 01/29/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -40,12 +40,10 @@ Note that the order of the above libraries is important.
    DB_INSTALLS += $(EVENT)/db/evrFiducial.db
    DB_INSTALLS += $(EVENT)/db/evrPattern.template
    DB_INSTALLS += $(EVENT)/db/evrPatternProc.template
-   DB_INSTALLS += $(EVENT)/db/evr.db
-   DB_INSTALLS += $(EVENT)/db/evrEvent.db
-   DB_INSTALLS += $(EVENT)/db/evrEventRate.db
    DB_INSTALLS += $(EVENT)/db/bsaEdefAvg.db
    DB_INSTALLS += $(EVENT)/db/bsaEdefFanouts.db
-   DB_INSTALLS += $(EVENT)/db/bsaDevStates.db
+   DB_INSTALLS += $(EVENT)/db/bsaEdefShadow.db
+   DB_INSTALLS += $(EVENT)/db/bsaShadow.template
  OR (if using /afs/slac/g/lcls/epics/ioc/configure):
    DB_INSTALLS += $(EVR_IOC_DBS)
    DB_INSTALLS += $(BSA_IOC_DBS)
@@ -58,7 +56,7 @@ Note that the order of the above libraries is important.
    DB_INSTALLS += $(EVENT)/db/bsaTOROEdef.template (if applicable)
    DB_INSTALLS += $(EVENT)/db/bsaBLENEdef.template (if applicable)
    DB_INSTALLS += $(EVENT)/db/bsaPMTEdef.template  (if applicable)
-   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>evr.template
+   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>evr.db
    DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>pattern.template
    DB_INSTALLS += $(GENERALTIME)/db/generalTimeNonVx.template
 
