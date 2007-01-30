@@ -2,7 +2,7 @@
 #
 # Abs:  LCLS EVG IOC records for the IN20 IOC
 #
-# Name: evgIN20.template
+# Name: evgIN20.substitutions
 #
 # Note: Signal names must be all uppercase and 12 chars or less to follow
 #       LCLS naming conventions.
@@ -17,14 +17,14 @@
 #
 #==============================================================================
 #
-file db/evg.db
+file evg.db
 {
 #
 #	 Location      
 pattern { LOCA  , UNIT , CARD }
 	{ IN20  , EV01 ,  7   }
 }
-file db/evgEvent.db
+file evgEvent.db
 {
 #                                       Event  Delay in 
 #	 Location                       Code   Clock Ticks
@@ -46,7 +46,7 @@ pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
 	{ IN20  , EV01 ,   7  , EVENT15 , 15 , 700  }
 	{ IN20  , EV01 ,   7  , EVENT16 , 16 , 750  }
 }
-file db/mpgPatternProc.db
+file ../../../mpgSupport/Db/mpgPatternProc.db
 {
 #
 #	 Location      

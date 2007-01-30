@@ -36,13 +36,6 @@ record(calc, "IOC:$(LOCA):$(UNIT):$(NAME)RATE") {
   field(EGU, "Hz")
 }
 
-record(ai, "IOC:$(LOCA):$(UNIT):TREF") {
-  field(DESC, "IOC's group device delay")
-  field(EGU, "nS")
-  field(HOPR, "2E-03")
-  field(LOPR, "0")
-}
-
 #! Further lines contain data used by VisualDCT
 #! View(0,8,1.2)
 #! Record("IOC:$(LOCA):$(UNIT):$(NAME)",20,17,0,0,"IOC:$(LOCA):$(UNIT):$(NAME)")
@@ -63,4 +56,3 @@ record(ai, "IOC:$(LOCA):$(UNIT):TREF") {
 #! Link("IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPA","IOC:$(LOCA):$(UNIT):$(NAME)RATE.B")
 #! Field("IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPB",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPB")
 #! Link("IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPB","IOC:$(LOCA):$(UNIT):$(NAME)CNT.VAL")
-#! Record("IOC:$(LOCA):$(UNIT):TREF",28,242,0,1,"IOC:$(LOCA):$(UNIT):TREF")

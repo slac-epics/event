@@ -2,7 +2,7 @@
 #
 # Abs:  LCLS EVG IOC records for the XL15 IOC
 #
-# Name: evgXL15.template
+# Name: evgXL15.substitutions
 #
 # Note: Signal names must be all uppercase and 12 chars or less to follow
 #       LCLS naming conventions.
@@ -17,14 +17,14 @@
 #
 #==============================================================================
 #
-file db/evg.db
+file evg.db
 {
 #
 #	 Location      
 pattern { LOCA  , UNIT , CARD }
 	{ XL15  , EV01 ,  5   }
 }
-file db/evgEvent.db
+file evgEvent.db
 {
 #                                       Event  Delay in 
 #	 Location                       Code   Clock Ticks
@@ -46,7 +46,7 @@ pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
 	{ XL15  , EV01 ,   5  , EVENT15 ,0x7f, 700  }
 	{ XL15  , EV01 ,   5  , EVENT16 ,0x7f, 750  }
 }
-file db/mpgPatternProc.db
+file ../../../mpgSupport/Db/mpgPatternProc.db
 {
 #
 #	 Location      

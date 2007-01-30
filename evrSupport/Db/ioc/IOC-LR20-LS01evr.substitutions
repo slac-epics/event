@@ -2,7 +2,7 @@
 #
 # Abs:  LCLS EVR IOC records for LR20 LS01
 #
-# Name: EVR-LR20-LS01.template
+# Name: EVR-LR20-LS01.substitutions
 #
 # Note: Signal names must be all uppercase and 12 chars or less to follow
 #       LCLS naming conventions.
@@ -16,7 +16,7 @@
 #
 #==============================================================================
 #
-file db/evr.db
+file evr.db
 {
 # PRIM = EVR
 # UNIT = xx01 for first EVR in crate, UNIT = xx02 for second EVR, etc.
@@ -27,7 +27,7 @@ pattern { LOCA  , UNIT , CARD , DELAY , WIDTH }
 	{ LR20  , LS01 ,  0   ,   8   ,  13   }
 	{ LR20  , LS02 ,  3   ,   8   ,  13   }
 }
-file db/evrEvent.db
+file evrEvent.db
 {
 # PRIM = EVR
 # UNIT = xx01 for first EVR in card, UNIT = xx02 for second EVR, etc. 
@@ -66,7 +66,7 @@ pattern { LOCA  , UNIT , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,
 	{ LR20  , LS02 ,   3  , EVENT14 , 14 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 1 , 0 , 0 }
 	{ LR20  , LS02 ,   3  , EVENT15 , 15 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 1 , 0 }
 }
-file db/evrEventRate.db
+file evrEventRate.db
 {
 # PRIM = IOC
 # UNIT = xxyy, where xx = subsystem ID and yy=index of that subsystem in LOCA.
