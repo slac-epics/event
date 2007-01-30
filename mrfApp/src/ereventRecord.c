@@ -117,8 +117,10 @@ STATIC long ErEventProc(struct ereventRecord *pRec)
   if (pRec->tpro > 10)
     printf("recErEvent::ErEventProc(%s) entered\n",  pRec->name);
 
-  if (pDset->proc)
-    (*pDset->proc)(pRec);
+  if (pDset->proc != NULL) {
+    long status = (*pDset->proc)(pRec);
+    if (status) return (status);
+  }
 
   /* Take care of time stamps and such */
   pRec->udf=FALSE;

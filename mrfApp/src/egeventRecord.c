@@ -152,8 +152,10 @@ STATIC long EgEventProc(struct egeventRecord *pRec)
   if (pRec->tpro > 10)
     printf("recEgEvent::EgEventProc(%s) entered\n",  pRec->name);
 
-  if (pDset->proc)
-    (*pDset->proc)((void *)pRec);
+  if (pDset->proc != NULL) {
+    long status = (*pDset->proc)(pRec);
+    if (status) return (status);
+  }
 
   /* Take care of time stamps and such */
   pRec->udf=FALSE;

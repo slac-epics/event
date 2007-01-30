@@ -155,8 +155,10 @@ STATIC long EgProc(struct egRecord *pRec)
   if (pRec->tpro > 10)
     printf("recEg::EgProc(%s) entered\n",  pRec->name);
 
-  if (pDset->proc != NULL)
-    (*pDset->proc)(pRec);
+  if (pDset->proc != NULL) {
+    long status = (*pDset->proc)(pRec);
+    if (status) return (status);
+  }
 
   /* Take care of time stamps and such */
   pRec->udf=FALSE;
