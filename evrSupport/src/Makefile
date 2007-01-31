@@ -30,6 +30,28 @@ evrSupport_LIBS += sSubRecord
 evrSupport_LIBS += generalTime
 evrSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
+# Build test applications
+DBD += evrTest.dbd
+DBD += evrTestSoft.dbd
+evrTestSoft_DBD += base.dbd
+evrTestSoft_DBD += evrSupport.dbd
+evrTest_DBD += base.dbd
+evrTest_DBD += evrSupport.dbd
+evrTest_DBD += devMrfEr.dbd
+
+PROD_IOC = evrTestSoft
+PROD_IOC_RTEMS = evrTest
+# <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
+evrTestSoft_SRCS += evrTestSoft_registerRecordDeviceDriver.cpp
+evrTestSoft_SRCS += evrTestMain.cpp
+evrTest_SRCS += evrTest_registerRecordDeviceDriver.cpp
+
+evrTestSoft_LIBS += $(EVR_IOC_LIBS)
+evrTestSoft_LIBS += $(EPICS_BASE_IOC_LIBS)
+evrTest_LIBS += $(EVR_IOC_LIBS) 
+evrTest_LIBS += devMrfEr mrfVme64x
+evrTest_LIBS += $(EPICS_BASE_IOC_LIBS)
+
 #===========================
 
 include $(TOP)/configure/RULES
