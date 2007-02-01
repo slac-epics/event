@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 01/29/2007
+Instructions for RTEMS EVR users                    Last Updated 01/31/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -43,7 +43,7 @@ Note that the order of the above libraries is important.
    DB_INSTALLS += $(EVENT)/db/bsaEdefAvg.db
    DB_INSTALLS += $(EVENT)/db/bsaEdefFanouts.db
    DB_INSTALLS += $(EVENT)/db/bsaEdefShadow.db
-   DB_INSTALLS += $(EVENT)/db/bsaShadow.template
+   DB_INSTALLS += $(EVENT)/db/bsaEdefShadow.template  (Note name change 1/31)
  OR (if using /afs/slac/g/lcls/epics/ioc/configure):
    DB_INSTALLS += $(EVR_IOC_DBS)
    DB_INSTALLS += $(BSA_IOC_DBS)
@@ -56,8 +56,11 @@ Note that the order of the above libraries is important.
    DB_INSTALLS += $(EVENT)/db/bsaTOROEdef.template (if applicable)
    DB_INSTALLS += $(EVENT)/db/bsaBLENEdef.template (if applicable)
    DB_INSTALLS += $(EVENT)/db/bsaPMTEdef.template  (if applicable)
+   DB_INSTALLS += $(EVENT)/db/bsaAMPLEdef.template (if applicable)(New 1/31)
+   DB_INSTALLS += $(EVENT)/db/bsaPHASEdef.template (if applicable)(New 1/31)
    DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>evr.db
    DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>pattern.template
+   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>bsa.template  (BSA: New 1/31)
    DB_INSTALLS += $(GENERALTIME)/db/generalTimeNonVx.template
 
    where area = LR20, IN20, LI21, etc
@@ -72,20 +75,22 @@ II - Adding event database and EVR configuration to your IOC startup file:
     dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
     dbLoadTemplate("db/IOC-<area>-<xxyy>pattern.template")
 
-(2) Add ErConfigure for each VME EVR (before iocInit):
+(2) Add ErConfigure for each VME EVR (before iocInit).  For the first VME card:
 
     ErConfigure(<z>,0x300000,0x60,4,0)
 
-    where z        = physical slot number in the VME crate, starting from 1
-    and   0x300000 = card address for card 1
-    and   0x60     = interrupt vector
-    and   4        = interrupt level
+    where z        = physical slot number in the VME crate, counting from 1
+    and   0x300000 = card address for card 1, 
+                     increment by 0x100000 for each subsequent card
+    and   0x60     = interrupt vector for card 1, 
+                     increment by  0x02 for each subsequent card
+    and   4        = interrupt level (can be the same for all VME EVRs)
     and   0        = VME
 
 (3) Add ErConfigure for each PMC EVR (before iocInit):
 
     ErConfigure(<z>,0,0,0,1)
-    where z = 0 for PMC Slot 1 (lower slot), 1 for PMC slot 2 (upper slot)
+    where z = 0 for first PMC instance, 1 for second PMC instance
     and   0 = card address     (not used)
     and   0 = interrupt vector (not used)
     and   0 = interrupt level  (not used)
