@@ -72,7 +72,6 @@
         SDIS - EVR:IOC:1:MODIFIER5 BIT for this MDID 1=  match
 		INPD - PRIM:LOCA:UNIT:SECN.STAT (was cum EPICS STAT for device, STATUS)
         INPE - PRIM:LOCA:UNIT:SECN.SEVR (was cum EPICS SEVR for device, STATUS.L)
-        INPF - EVR:LOCA:UNIT:PULSEID
         INPG - PRIM:LOCA:UNIT:INIT$(MD) places a "1" upon EDEF INIT (beg of new cycle)
 		       first time flag
 		OUT 
@@ -110,7 +109,7 @@ static long bsaSecnAvg(sSubRecord *psub)
 #ifndef linux
 
   /*EVR timestamp:*/
-  if (dbGetTimeStamp(&psub->inpf, &timeEVR)){
+  if (dbGetTimeStamp(&psub->sdis, &timeEVR)){
         DEBUGPRINT(DP_ERROR, bsaSubFlag, ("bsaSecnAvg for %s: Unable to determine EVR timestamp.\n",psub->name));
         psub->w++;
         return -1;
@@ -295,6 +294,28 @@ static long bsaSimCheckTest(sSubRecord *psub)
   }
 return 0;
 }
+/*=============================================================================
 
+  Name: bsaEdefShadow
+
+  Abs:  Dummy routine for sSub 
+
+		
+  Args: Type	            Name        Access	   Description
+        ------------------- -----------	---------- ----------------------------
+        subRecord *        psub        read       point to subroutine record
+
+  Rem:  Subroutine for $(DEV):EDEF*
+
+  Side: INPA-T contains 20 EDEF:SYSx:1-20: parameters
+      
+  Ret:  0
+
+==============================================================================*/
+static long bsaEdefShadow (sSubRecord *psub)
+{
+  return 0;
+}
 epicsRegisterFunction(bsaSecnAvg);
 epicsRegisterFunction(bsaSimCheckTest);
+epicsRegisterFunction(bsaEdefShadow);
