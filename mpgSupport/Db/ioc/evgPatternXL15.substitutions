@@ -1,6 +1,6 @@
 file bsaEdef.template {
-  pattern { SYSI  , FBCK1 , FBCK2 , F1ID , F2ID , DEVICE       }
- 	  { SYS2  , FBCK1 , FBCK2 , F1   , F2 ,  IOC:XL15:EV01 }
+  pattern { SYSI  , DEVICE         , CARDI , CHECKI }
+ 	  { SYS2  ,  IOC:XL15:EV01 ,   5   ,    1   }
 }
 file evrPattern.template {
 #	    Device        ,   Send SEQ RAM 1          PNET Processing LNK             
