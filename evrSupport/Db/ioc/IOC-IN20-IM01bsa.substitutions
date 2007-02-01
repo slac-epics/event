@@ -2,13 +2,12 @@
 # BSA records
 #
 # One per IOC:
-# 
-file bsaShadow.template {
-#         timing 
-#         system , area, 
-  pattern { SYS  , LOC,  UN   }
-	      { SYS0 , IN20, IM01 }
-}
+#
+file bsaEdefShadow.template {
+  pattern { DEVICE       , SYSI }
+          { IOC:IN20:IM01, SYS0 } 
+} 
+
 file bsaBPMSEdef.template {
 #      Device        ,loc'n , IOC unit, timing system  
   pattern {DEVICE    , LOC  ,  UN   }

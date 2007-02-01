@@ -6,11 +6,11 @@
 #
 # One per IOC:
 #
-file bsaShadow.template {
-#     timing system  
-  pattern { SYS  , LOC,  UN}
-	      { SYS0 , XX05, 1 }
+file bsaEdefShadow.template {
+  pattern { DEVICE       , SYSI }
+          { IOC:XX05:EV01, SYS0 } 
 }
+
 # One per device:
 #
 file bsaBPMSEdef.template {

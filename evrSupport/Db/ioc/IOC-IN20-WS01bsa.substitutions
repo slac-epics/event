@@ -1,18 +1,21 @@
 # BSA records
 #
 # One per IOC:
-file bsaShadow.template {
-#     event system  
-  pattern { SYS  , LOC,  UN}
-	      { SYS0 , IN20, WS01 }
+file bsaEdefShadow.template {
+  pattern { DEVICE       , SYSI }
+          { IOC:IN20:WS01, SYS0 } 
 }
+
 # One per device:
-# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaWIREEdef.template!
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaWIREEdef.template
+#
+# Change to PMTs:
+
 file bsaWIREEdef.template {
 #      Device        ,loc'n , IOC unit, timing system
   pattern {DEVICE    , LOC  ,  UN  , SYS  }
-	  { WIRE:LI21:BL531, IN20 , WS01 , SYS0 }
-	  { WIRE:LI21:BL561, IN20 , WS01 , SYS0 }
-	  { WIRE:LI21:BL611, IN20 , WS01 , SYS0 }
-	  { WIRE:LI21:BL741, IN20 , WS01 , SYS0 }
+	  { WIRE:IN20:BL531, IN20 , WS01 , SYS0 }
+	  { WIRE:IN20:BL561, IN20 , WS01 , SYS0 }
+	  { WIRE:IN20:BL611, IN20 , WS01 , SYS0 }
+	  { WIRE:IN20:BL741, IN20 , WS01 , SYS0 }
 

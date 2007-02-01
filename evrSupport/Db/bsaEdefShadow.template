@@ -1,0 +1,6 @@
+file db/bsaEdefShadow.db
+{
+pattern { DEV , SYS  }
+     {$(DEVICE) , $(SYSI)   }
+}
+
