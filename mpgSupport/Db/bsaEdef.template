@@ -2,12 +2,19 @@
 #
 # Abs:  Beam Synchronous Acquisition and Control records for a single IOC.
 #
-# Name: bsacEVGEdef.template
+# Name: bsaEdef.template
 #
 # Note: Must follow the LCLS naming conventions.  
 #
 #==============================================================================
 #
+file db/mpgPatternProc.db
+{
+#
+#        Location
+pattern { DEV      , CARD     , ELOCA , CHECK     }
+        {$(DEVICE) , $(CARDI) ,$(SYSI), $(CHECKI) }
+}
 file db/bsaEdef.db
 {
 #                   Meas Defn                    0=Off
@@ -34,8 +41,8 @@ pattern   {SYS , MD, MDID  ,  NAME    ,USER,NAVG,CTRL,NMEAS, MODE , DEV       , 
 	  {$(SYSI), 17, 10HZ  ,"10HZ"    ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , Q  }
 	  {$(SYSI), 18, FULL  , "FULL"   ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , R  }
 # Last 2 measurement definitions for fast feedback
-	  {$(SYSI), 19,$(F1ID), $(FBCK1) ,SYS ,  1,   0 , -1,  1  , $(DEVICE) , S  }
-	  {$(SYSI), 20,$(F2ID), $(FBCK2) ,SYS ,  1,   0 , -1,  1  , $(DEVICE) , T  }
+	  {$(SYSI), 19,  F1   , FBCK1    ,SYS ,  1,   0 , -1,  1  , $(DEVICE) , S  }
+	  {$(SYSI), 20,  F2   , FBCK2    ,SYS ,  1,   0 , -1,  1  , $(DEVICE) , T  }
 # Please allow sequence to set DGRP INCM & EXCM and start edefs 16..20
 }
 file db/bsaEdefPattern.db
