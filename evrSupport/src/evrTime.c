@@ -42,6 +42,7 @@
 /* c includes */
 
 #include <subRecord.h>        /* for struct subRecord      */
+#include <sSubRecord.h>       /* for struct sSubRecord     */
 #include <registryFunction.h> /* for epicsExport           */
 #include <epicsExport.h>      /* for epicsRegisterFunction */
 #include <epicsTime.h>        /* epicsTimeStamp and protos */
@@ -49,6 +50,7 @@
 #include <epicsMutex.h>       /* epicsMutexId and protos   */
 #include <alarm.h>            /* INVALID_ALARM             */
 
+#include "evrMessage.h"       /* EVR_MAX_INT */    
 #include "evrTime.h"       
 
 #define  EVR_TIME_OK 0
@@ -67,6 +69,11 @@ evrTime_ts evrTime_as[MAX_EVR_TIME];
 
 /* EVR Time Timestamp RWMutex */
 epicsMutexId evrTimeRWMutex_ps;
+
+static unsigned int msgCount         = 0; /* # fiducials processed since boot/reset */ 
+static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
+static unsigned int samePulseCount   = 0; /* # same pulses                          */
+static unsigned int skipPulseCount   = 0; /* # skipped pulses                       */
 
 /*=============================================================================
 
@@ -195,8 +202,14 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
 
   Name: evrTimeDiag
 
-  Abs:  Expose time from the table to pvs
+  Abs:  Expose time from the table to pvs, expose counters
+        This subroutine is for status only and should update at a low
+        rate like 1Hz.
   
+  Inputs:
+  Q - Error Flag from evrTimeProc
+  R - Counter Reset Flag
+
   Outputs:
   A  secPastEpoch for timestamp 0, n (evrTime_as[0])
   B  nsec for timestamp 0, n
@@ -210,12 +223,30 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   J  secPastEpoch for timestamp 3, n-3 (evrTime_as[3])
   K  nsec for timestamp 3, n-3 (evrTime_as[3])
   L  status "
+  M  fiducial counter
+  N  Number of times M has rolled over
+  O  Number of same pulses
+  P  Number of skipped pulses
+  VAL = Last Error flag from evrTimeProc
 ==============================================================================*/ 
 
-static long evrTimeDiag (subRecord *psub)
+static long evrTimeDiag (sSubRecord *psub)
 {
   unsigned short n;
   double  *output_p = &psub->a;
+  
+  psub->val = psub->q;
+  if (psub->r > 0.5) {
+    psub->r           = 0.0;
+    msgCount          = 0;
+    msgRolloverCount  = 0;
+    samePulseCount    = 0;
+    skipPulseCount    = 0;
+  }
+  psub->m = msgCount;          /* # fiducials processed since boot/reset */
+  psub->n = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
+  psub->o = samePulseCount;
+  psub->p = skipPulseCount;
 
   /* read evr timestamps in the pipeline*/
   if ((!evrTimeRWMutex_ps) || (epicsMutexLock(evrTimeRWMutex_ps)))
@@ -362,8 +393,8 @@ pulse pipeline n  , status - 0=OK; 1=last good; 2=invalid
    Input/Outputs:
    H   Spare
    I   Counter of same pulses in a row
-   J   SAMEPULSECNT
-   K   SKIPPULSECNT
+   J   Spare
+   K   Spare
    L   Spare
    VAL = Error Flag
    Ret:  0
@@ -375,6 +406,13 @@ static int evrTimeProc (subRecord *psub)
   int n;
   int diff;
 
+  /* Keep a count of messages and reset before overflow */
+  if (msgCount < EVR_MAX_INT) {
+    msgCount++;
+  } else {
+    msgRolloverCount++;
+    msgCount = 0;
+  }
   /* The 3 next pulses must be valid before all is considered OK to go */
   if ((psub->e == INVALID_ALARM) || (psub->f == INVALID_ALARM) ||
       (psub->g == INVALID_ALARM)) {
@@ -386,8 +424,8 @@ static int evrTimeProc (subRecord *psub)
     diff = psub->a - psub->b;
     if ((diff != 1) && (diff != -PULSEID_MAX)) {
       errFlag = EVR_TIME_INVALID;
-      if (diff==0) ++psub->j; /* same pulse coming into the pipeline */
-      else         ++psub->k; /* skipped pulse (non-consecutive) in the pipeline */
+      if (diff==0) ++samePulseCount; /* same pulse coming into the pipeline */
+      else         ++skipPulseCount; /* skipped pulse (non-consecutive) in the pipeline */
     } else {
       diff = psub->b - psub->c;
       if ((diff != 1) && (diff != -PULSEID_MAX)) {
