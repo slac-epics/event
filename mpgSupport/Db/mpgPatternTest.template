@@ -24,13 +24,6 @@ file db/bsaTestInput.db
           { ESIM:$(SYSI):$(UNITI) ,YY       ,"C>=50?1:C+1"      , 0 , 0 , "",    256   ,0 , 0  ,  0 , 0  , 0  }
           { ESIM:$(SYSI):$(UNITI) ,BUNCHARGE,"C>=1000?200:C+1"  , 0 , 0 , "",   1000 ,200 , 0  ,  0 , 0  , 0  }
 }
-file db/mpgPatternProc.db
-{
-#
-#        Location
-pattern { LOCA  ,  UNIT  , CARD , ELOCA , CHECK }
-        {$(SYSI),$(UNITI),  0   ,$(SYSI),   0   }
-}
 file db/mpgPatternSim.db
 {
 #
