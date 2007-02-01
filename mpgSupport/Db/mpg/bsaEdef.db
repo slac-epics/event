@@ -136,13 +136,7 @@ record(seq, "EDEF:$(SYS):$(MD):RESET") {
   field(LNK2, "EDEF:$(SYS):$(MD):PATTERNCHECK.Y")
   field(DOL3, "0")
   field(LNK3, "EDEF:$(SYS):$(MD):PATTERNCHECK.Z")
-  field(DOL4, "1")
-  field(LNK4, "EDEF:$(SYS):$(MD):INIT PP")
-  field(DLY5, "3")
-  field(DOL5, "0")
-  field(LNK5, "EDEF:$(SYS):$(MD):INIT PP")
 }
-
 
 record(bo, "EDEF:$(SYS):$(MD):DISABLE") {
   field(OUT, "EDEF:$(SYS):$(MD):PATTERNCHECK.DISA")
@@ -174,14 +168,6 @@ record(bo, "EDEF:$(SYS):$(MD):CTRLOFF") {
   field(OUT, "EDEF:$(SYS):$(MD):CTRL.VAL PP")
 }
 
-record(bo, "EDEF:$(SYS):$(MD):INIT") {
-  field(PINI, "YES")
-  field(DOL, "0")
-  field(ZNAM, "NOINIT")
-  field(ONAM, "INIT")
-}
-
-
 record(stringout, "EDEF:$(SYS):$(MD):USERNAMEFREE") {
   field(DESC, "Clear Owner Name")
   field(VAL, "$(USER)")
@@ -195,7 +181,6 @@ record(seq, "EDEF:$(SYS):$(MD):FREE") {
   field(LNK2, "EDEF:$(SYS):$(MD):NAMEFREE.PROC")
   field(LNK3, "EDEF:$(SYS):$(MD):USERNAMEFREE.PROC")
 }
-
 
 record(stringout, "EDEF:$(SYS):$(MD):NAMEFREE") {
   field(DESC, "Clear Name")
@@ -216,6 +201,9 @@ record(stringout, "EDEF:$(SYS):$(MD):INCMS3") {
 record(stringout, "EDEF:$(SYS):$(MD):INCMS4") {
 }
 
+record(stringout, "EDEF:$(SYS):$(MD):INCMS5") {
+}
+
 record(stringout, "EDEF:$(SYS):$(MD):EXCMS1") {
 }
 
@@ -226,6 +214,9 @@ record(stringout, "EDEF:$(SYS):$(MD):EXCMS3") {
 }
 
 record(stringout, "EDEF:$(SYS):$(MD):EXCMS4") {
+}
+
+record(stringout, "EDEF:$(SYS):$(MD):EXCMS5") {
 }
 
 record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
@@ -240,11 +231,22 @@ record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
   field(SDIS, "$(DEV):MODIFIER5.$(BIT)")
 }
 
+
+record(mbbo, "EDEF:$(SYS):$(MD):MEASSEVR") {
+  field(DESC, "meas bad SEVR level ")
+  field(ZRST, "MINOR")
+  field(ONST, "MAJOR")
+  field(TWST, "INVALID")
+  field(PINI, "YES")
+  field(DOL, "2")
+}
+
 #! Further lines contain data used by VisualDCT
-#! View(476,1819,0.8)
+#! View(355,2048,0.8)
 #! Record("EDEF:$(SYS):$(MD):CTRL",1340,2450,0,1,"EDEF:$(SYS):$(MD):CTRL")
-#! Field("EDEF:$(SYS):$(MD):CTRL.FLNK",16777215,1,"EDEF:$(SYS):$(MD):CTRL.FLNK")
 #! Field("EDEF:$(SYS):$(MD):CTRL.VAL",16777215,1,"EDEF:$(SYS):$(MD):CTRL.VAL")
+#! Field("EDEF:$(SYS):$(MD):CTRL.OUT",16777215,1,"EDEF:$(SYS):$(MD):CTRL.OUT")
+#! Link("EDEF:$(SYS):$(MD):CTRL.OUT","EDEF:$(SYS):$(MD):CTRLSEL.A")
 #! Record("EDEF:$(SYS):$(MD):MODE",1940,1613,0,0,"EDEF:$(SYS):$(MD):MODE")
 #! Field("EDEF:$(SYS):$(MD):MODE.DOL",16777215,1,"EDEF:$(SYS):$(MD):MODE.DOL")
 #! Record("EDEF:$(SYS):$(MD):AVGCNTMAX",1338,1490,0,1,"EDEF:$(SYS):$(MD):AVGCNTMAX")
@@ -259,7 +261,7 @@ record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
 #! Link("EDEF:$(SYS):$(MD):NAME.FLNK","EDEF:$(SYS):$(MD):NAMETOD")
 #! Field("EDEF:$(SYS):$(MD):NAME.VAL",16777215,1,"EDEF:$(SYS):$(MD):NAME.VAL")
 #! Record("EDEF:$(SYS):$(MD):USERNAME",1100,2902,0,1,"EDEF:$(SYS):$(MD):USERNAME")
-#! Field("EDEF:$(SYS):$(MD):USERNAME.VAL",16777215,1,"EDEF:$(SYS):$(MD):USERNAME.VAL")
+#! Field("EDEF:$(SYS):$(MD):USERNAME.VAL",16777215,0,"EDEF:$(SYS):$(MD):USERNAME.VAL")
 #! Record("EDEF:$(SYS):$(MD):CNTMAX",1675,1573,0,1,"EDEF:$(SYS):$(MD):CNTMAX")
 #! Field("EDEF:$(SYS):$(MD):CNTMAX.A",16777215,0,"EDEF:$(SYS):$(MD):CNTMAX.A")
 #! Field("EDEF:$(SYS):$(MD):CNTMAX.B",16777215,0,"EDEF:$(SYS):$(MD):CNTMAX.B")
@@ -294,14 +296,14 @@ record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
 #! Field("EDEF:$(SYS):$(MD):PATTERNCHECK.DISA",16777215,0,"EDEF:$(SYS):$(MD):PATTERNCHECK.DISA")
 #! Field("EDEF:$(SYS):$(MD):PATTERNCHECK.INPX",16777215,0,"EDEF:$(SYS):$(MD):PATTERNCHECK.INPX")
 #! Link("EDEF:$(SYS):$(MD):PATTERNCHECK.INPX","EDEF:$(SYS):$(MD):CNTMAX.VAL")
+#! Field("EDEF:$(SYS):$(MD):PATTERNCHECK.A",16777215,0,"EDEF:$(SYS):$(MD):PATTERNCHECK.A")
 #! Record("EDEF:$(SYS):$(MD):CTRLSEL",1640,2527,0,0,"EDEF:$(SYS):$(MD):CTRLSEL")
 #! Field("EDEF:$(SYS):$(MD):CTRLSEL.FLNK",16777215,1,"EDEF:$(SYS):$(MD):CTRLSEL.FLNK")
 #! Link("EDEF:$(SYS):$(MD):CTRLSEL.FLNK","EDEF:$(SYS):$(MD):CTRLFO")
 #! Field("EDEF:$(SYS):$(MD):CTRLSEL.VAL",16777215,1,"EDEF:$(SYS):$(MD):CTRLSEL.VAL")
-#! Field("EDEF:$(SYS):$(MD):CTRLSEL.INPA",16777215,0,"EDEF:$(SYS):$(MD):CTRLSEL.INPA")
-#! Link("EDEF:$(SYS):$(MD):CTRLSEL.INPA","EDEF:$(SYS):$(MD):CTRL.VAL")
 #! Field("EDEF:$(SYS):$(MD):CTRLSEL.INPB",16777215,1,"EDEF:$(SYS):$(MD):CTRLSEL.INPB")
 #! Link("EDEF:$(SYS):$(MD):CTRLSEL.INPB","EDEF:$(SYS):$(MD):CTRLONTOD.PROC")
+#! Field("EDEF:$(SYS):$(MD):CTRLSEL.A",16777215,0,"EDEF:$(SYS):$(MD):CTRLSEL.A")
 #! Record("EDEF:$(SYS):$(MD):CTRLFO",1960,2467,0,0,"EDEF:$(SYS):$(MD):CTRLFO")
 #! Field("EDEF:$(SYS):$(MD):CTRLFO.SELL",16777215,0,"EDEF:$(SYS):$(MD):CTRLFO.SELL")
 #! Link("EDEF:$(SYS):$(MD):CTRLFO.SELL","EDEF:$(SYS):$(MD):CTRLSEL.VAL")
@@ -314,17 +316,14 @@ record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
 #! Link("EDEF:$(SYS):$(MD):CTRLON.LNK1","EDEF:$(SYS):$(MD):RESET.PROC")
 #! Field("EDEF:$(SYS):$(MD):CTRLON.LNK2",16777215,1,"EDEF:$(SYS):$(MD):CTRLON.LNK2")
 #! Link("EDEF:$(SYS):$(MD):CTRLON.LNK2","EDEF:$(SYS):$(MD):PATTERNCHECK.DISA")
-#! Record("EDEF:$(SYS):$(MD):RESET",2720,1997,0,0,"EDEF:$(SYS):$(MD):RESET")
+#! Record("EDEF:$(SYS):$(MD):RESET",2718,2039,0,0,"EDEF:$(SYS):$(MD):RESET")
 #! Field("EDEF:$(SYS):$(MD):RESET.PROC",16777215,0,"EDEF:$(SYS):$(MD):RESET.PROC")
 #! Field("EDEF:$(SYS):$(MD):RESET.LNK2",16777215,0,"EDEF:$(SYS):$(MD):RESET.LNK2")
-#! Link("EDEF:$(SYS):$(MD):RESET.LNK2","EDEF:$(SYS):$(MD):PATTERNCHECK.Z")
+#! Link("EDEF:$(SYS):$(MD):RESET.LNK2","EDEF:$(SYS):$(MD):PATTERNCHECK.Y")
 #! Field("EDEF:$(SYS):$(MD):RESET.LNK1",16777215,0,"EDEF:$(SYS):$(MD):RESET.LNK1")
-#! Link("EDEF:$(SYS):$(MD):RESET.LNK1","EDEF:$(SYS):$(MD):PATTERNCHECK.Y")
-#! Field("EDEF:$(SYS):$(MD):RESET.LNK3",16777215,1,"EDEF:$(SYS):$(MD):RESET.LNK3")
-#! Link("EDEF:$(SYS):$(MD):RESET.LNK3","EDEF:$(SYS):$(MD):INIT.VAL")
-#! Field("EDEF:$(SYS):$(MD):RESET.DOL4",16777215,1,"EDEF:$(SYS):$(MD):RESET.DOL4")
-#! Field("EDEF:$(SYS):$(MD):RESET.LNK4",16777215,1,"EDEF:$(SYS):$(MD):RESET.LNK4")
-#! Link("EDEF:$(SYS):$(MD):RESET.LNK4","EDEF:$(SYS):$(MD):INIT.VAL")
+#! Link("EDEF:$(SYS):$(MD):RESET.LNK1","EDEF:$(SYS):$(MD):PATTERNCHECK.A")
+#! Field("EDEF:$(SYS):$(MD):RESET.LNK3",16777215,0,"EDEF:$(SYS):$(MD):RESET.LNK3")
+#! Link("EDEF:$(SYS):$(MD):RESET.LNK3","EDEF:$(SYS):$(MD):PATTERNCHECK.Z")
 #! Record("EDEF:$(SYS):$(MD):DISABLE",2220,2582,0,0,"EDEF:$(SYS):$(MD):DISABLE")
 #! Field("EDEF:$(SYS):$(MD):DISABLE.OUT",16777215,1,"EDEF:$(SYS):$(MD):DISABLE.OUT")
 #! Link("EDEF:$(SYS):$(MD):DISABLE.OUT","EDEF:$(SYS):$(MD):PATTERNCHECK.DISA")
@@ -340,17 +339,6 @@ record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
 #! Link("EDEF:$(SYS):$(MD):CTRLOFF.SDIS","EDEF:$(SYS):$(MD):PATTERNCHECK.Z")
 #! Field("EDEF:$(SYS):$(MD):CTRLOFF.OUT",16777215,0,"EDEF:$(SYS):$(MD):CTRLOFF.OUT")
 #! Link("EDEF:$(SYS):$(MD):CTRLOFF.OUT","EDEF:$(SYS):$(MD):CTRL.VAL")
-#! Record("EDEF:$(SYS):$(MD):INIT",3020,2127,0,1,"EDEF:$(SYS):$(MD):INIT")
-#! Field("EDEF:$(SYS):$(MD):INIT.VAL",16777215,0,"EDEF:$(SYS):$(MD):INIT.VAL")
-#! TextBox(TB4,2060,2000,2300,2060,0,"Dialog",22,1,16777215,"Client Processing",null)
-#! TextBox(TB3,2020,1460,1340,1380,0,"Dialog",22,1,16777215,"Event Definitions (EDEFs) and 360 Hz Processing\nfor Beam Synchronous Acquisition (BSA)",null)
-#! TextBox(TB2,1320,2000,1860,2360,0,"Dialog",12,1,16777215,"CA user:\nRequests EDEF, supplies NAME\n\nReservation Sequence:\nReserves an EDEF for HLA by finding a vacant NAME and populating\nSets INIT record so that bsadevices can clear their history waveforms,\n  thereby invalidating prior EDEF\n\nCA user:\nUpon finding NAME, configures assigned EDEF with masks, etc\nSets CTRL to ON\n\nDatabase:\nUpon CTRL ON (set by CA user):\nSets RESET input to PATTERNCHECK so that it will reset next time around\nWait 3 seconds to ensure all bsads to clear waveforms\nEnable PATTERNCHECK\nOFF (set by PATTERNCHECK when done):\nDisable PATTERNCHECK\n",null)
-#! TextBox(TB1,1320,2360,1620,2420,0,"Dialog",13,0,16777215,"CTRL  set ON by HLA or CA user.\nCTRL set OFF by PATTERNCHECK being done\n ",null)
-#! TextBox(TB0,2980,2320,3260,2380,0,"Dialog",22,1,16777215,"360 Hz Processing",null)
-#! TextBox(TB10,660,2300,1180,2500,0,"Dialog",12,1,16777215,"A client will request an EDEF by filling out the EDEFUSERNAME.\nNote: client must ensure that USERNAME is unique and doesn't\nalready have an EDEF assignment.\nEDEFRESERVE inputs this name, and if there is a slot avail, places in \nappropriate EDEF:$(SYS):$(MDID):USERNAME.\n\nThe client, after a delay, checks all the EDEF:$(SYS):$(MDID):USERNAMEs for \nrequested EDEFUSERNAME. If it exists in a slot, the client has successfully \nreserved that slot.\n\nTo release the EDEF, the user sets FREE",null)
-#! TextBox(TB8,2900,2060,3220,2120,0,"Dialog",12,1,16777215,"EVR IOCs monitor INIT records to know when to reset, in order to reset their counters, etc, ahead of the first beam pulse.",null)
-#! TextBox(TB7,3060,2580,3520,2960,0,"Dialog",13,0,16777215,"EDEF:$(SYS):$(MD):PATTERNCHECK\nOutputs:\nDONE\nMEASCNT\nVAL  = pattern match =1/ no match=0 flag for \n            or EDEF:$(SYS):$(MD):CNT\n       (SDIS sets DISA which is compared to DISV=0)\n       (   when DISA=DISV, record is disabled)\n\n//Process next (VAL=1) & BEAMCODE, INCL, EXCL match:\nVAL=0;\n   if  (pattern BEAMCODE == EDEF BEAMCODE) \n    {\n       if (EDEF INCLUSION1-4 & pattern MODIFIER1-4 == EDEF INCLUSION1-5) {\n          if (EDEF EXCLUSION1-4 & pattern MODIFIER1-4 ==0) {\n              VAL= 1;\n              Z++;\n          }\n       }\n    } \nreturn(0)\n",null)
-#! TextBox(TB5,1960,1400,2420,1600,0,"Dialog",13,0,16777215,"MACROS:\nSYS = System ID (SYS0 for production, SYS1 or SYS2 for development)\nMD = event definition number\nInitial Value Macros:\n  NAVG = Number to Average\n  NMEAS = Number to measure\n  CTRL  = Initially OFF (0) or ON (1)\n  USER = Initial User ID\n  NAME = Event def name\n  MODE = User (0) or System (1) \n",null)
 #! Record("EDEF:$(SYS):$(MD):USERNAMEFREE",840,2887,0,1,"EDEF:$(SYS):$(MD):USERNAMEFREE")
 #! Field("EDEF:$(SYS):$(MD):USERNAMEFREE.OUT",16777215,1,"EDEF:$(SYS):$(MD):USERNAMEFREE.OUT")
 #! Link("EDEF:$(SYS):$(MD):USERNAMEFREE.OUT","EDEF:$(SYS):$(MD):USERNAME.VAL")
@@ -366,3 +354,31 @@ record(fanout, "EDEF:$(SYS):$(MD):PATTERNFO") {
 #! Field("EDEF:$(SYS):$(MD):NAMEFREE.OUT",16777215,1,"EDEF:$(SYS):$(MD):NAMEFREE.OUT")
 #! Link("EDEF:$(SYS):$(MD):NAMEFREE.OUT","EDEF:$(SYS):$(MD):NAME.VAL")
 #! Field("EDEF:$(SYS):$(MD):NAMEFREE.PROC",16777215,0,"EDEF:$(SYS):$(MD):NAMEFREE.PROC")
+#! Record("EDEF:$(SYS):$(MD):INCMS1",20,20,0,0,"EDEF:$(SYS):$(MD):INCMS1")
+#! Record("EDEF:$(SYS):$(MD):INCMS2",260,20,0,0,"EDEF:$(SYS):$(MD):INCMS2")
+#! Record("EDEF:$(SYS):$(MD):INCMS3",500,20,0,0,"EDEF:$(SYS):$(MD):INCMS3")
+#! Record("EDEF:$(SYS):$(MD):INCMS4",740,20,0,0,"EDEF:$(SYS):$(MD):INCMS4")
+#! Record("EDEF:$(SYS):$(MD):INCMS5",980,20,0,0,"EDEF:$(SYS):$(MD):INCMS5")
+#! Record("EDEF:$(SYS):$(MD):EXCMS1",1220,20,0,0,"EDEF:$(SYS):$(MD):EXCMS1")
+#! Record("EDEF:$(SYS):$(MD):EXCMS2",1460,20,0,0,"EDEF:$(SYS):$(MD):EXCMS2")
+#! Record("EDEF:$(SYS):$(MD):EXCMS3",1700,20,0,0,"EDEF:$(SYS):$(MD):EXCMS3")
+#! Record("EDEF:$(SYS):$(MD):EXCMS4",1940,20,0,0,"EDEF:$(SYS):$(MD):EXCMS4")
+#! Record("EDEF:$(SYS):$(MD):EXCMS5",2180,20,0,0,"EDEF:$(SYS):$(MD):EXCMS5")
+#! Record("EDEF:$(SYS):$(MD):PATTERNFO",2420,20,0,0,"EDEF:$(SYS):$(MD):PATTERNFO")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.FLNK",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.FLNK")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.LNK1",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.LNK1")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.LNK2",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.LNK2")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.LNK3",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.LNK3")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.LNK4",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.LNK4")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.LNK5",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.LNK5")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.LNK6",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.LNK6")
+#! Field("EDEF:$(SYS):$(MD):PATTERNFO.SDIS",16777215,1,"EDEF:$(SYS):$(MD):PATTERNFO.SDIS")
+#! Record("EDEF:$(SYS):$(MD):MEASSEVR",849,3069,0,1,"EDEF:$(SYS):$(MD):MEASSEVR")
+#! TextBox(TB0,2980,2320,3260,2380,0,"Dialog",22,1,16777215,"360 Hz Processing",null)
+#! TextBox(TB7,3060,2580,3520,2960,0,"Dialog",13,0,16777215,"EDEF:$(SYS):$(MD):PATTERNCHECK\nOutputs:\nDONE\nMEASCNT\nVAL  = pattern match =1/ no match=0 flag for \n            or EDEF:$(SYS):$(MD):CNT\n       (SDIS sets DISA which is compared to DISV=0)\n       (   when DISA=DISV, record is disabled)\n\n//Process next (VAL=1) & BEAMCODE, INCL, EXCL match:\nVAL=0;\n   if  (pattern BEAMCODE == EDEF BEAMCODE) \n    {\n       if (EDEF INCLUSION1-4 & pattern MODIFIER1-4 == EDEF INCLUSION1-5) {\n          if (EDEF EXCLUSION1-4 & pattern MODIFIER1-4 ==0) {\n              VAL= 1;\n              Z++;\n          }\n       }\n    } \nreturn(0)\n",null)
+#! TextBox(TB10,660,2300,1180,2500,0,"Dialog",12,1,16777215,"A client will request an EDEF by filling out the EDEFUSERNAME.\nNote: client must ensure that USERNAME is unique and doesn't\nalready have an EDEF assignment.\nEDEFRESERVE inputs this name, and if there is a slot avail, places in \nappropriate EDEF:$(SYS):$(MDID):USERNAME.\n\nThe client, after a delay, checks all the EDEF:$(SYS):$(MDID):USERNAMEs for \nrequested EDEFUSERNAME. If it exists in a slot, the client has successfully \nreserved that slot.\n\nTo release the EDEF, the user sets FREE",null)
+#! TextBox(TB5,1960,1400,2420,1600,0,"Dialog",13,0,16777215,"MACROS:\nSYS = System ID (SYS0 for production, SYS0, SYS1, SYS2, SYS3 for development)\nMD = event definition number\nInitial Value Macros:\n  NAVG = Number to Average\n  NMEAS = Number to measure\n  CTRL  = Initially OFF (0) or ON (1)\n  USER = Initial User ID\n  NAME = Event def name\n  MODE = User (0) or System (1) \n",null)
+#! TextBox(TB4,2060,2000,2300,2060,0,"Dialog",22,1,16777215,"Client Processing",null)
+#! TextBox(TB3,2020,1460,1340,1380,0,"Dialog",22,1,16777215,"Event Definitions (EDEFs) and 360 Hz Processing\nfor Beam Synchronous Acquisition (BSA)",null)
+#! TextBox(TB2,1320,2000,1860,2360,0,"Dialog",12,1,16777215,"CA user:\nRequests EDEF, supplies NAME\n\nReservation Sequence:\nReserves an EDEF for HLA by finding a vacant NAME and populating\nSets INIT record so that bsadevices can clear their history waveforms,\n  thereby invalidating prior EDEF\n\nCA user:\nUpon finding NAME, configures assigned EDEF with masks, etc\nSets CTRL to ON\n\nDatabase:\nUpon CTRL ON (set by CA user):\nSets RESET input to PATTERNCHECK so that it will reset next time around\nWait 3 seconds to ensure all bsads to clear waveforms\nEnable PATTERNCHECK\nOFF (set by PATTERNCHECK when done):\nDisable PATTERNCHECK\n",null)
+#! TextBox(TB1,1320,2360,1620,2420,0,"Dialog",13,0,16777215,"CTRL  set ON by HLA or CA user.\nCTRL set OFF by PATTERNCHECK being done\n ",null)
