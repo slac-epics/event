@@ -1502,16 +1502,6 @@ void ErIrqHandler (ErCardStruct *pCard)
 
     DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl);
 
-   /*---------------------
-    * Debug message on entry to interrupt handler
-    */
-    if (ErDebug > 9) {
-        epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                       "ErIrqHandler(): Card %d Interrupt. CSR = %4.4X. DBuf CSR = %4.4X\n",
-                       pCard->Card, csr, DBuffCsr);
-        epicsInterruptContextMessage (pCard->intMsg);
-    }/*end if debug level is 10 or greater*/
-  
    /*===============================================================================================
     * Check for receiver link errors
     */
@@ -1557,13 +1547,6 @@ void ErIrqHandler (ErCardStruct *pCard)
     if (csr & EVR_CSR_IRQFL) {
         MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSIRQFL);
 
-        if (ErDebug > 10) {
-            epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                           "ErIrqHandler(): Card %d Event FIFO Interrupt.\n",
-                           pCard->Card);
-            epicsInterruptContextMessage (pCard->intMsg);
-        }/*end if debug level is 11 or above*/
-
        /*---------------------
         * Loop to extract events from the Event FIFO.
         * We limit the number of events that can be extracted per interrupt
@@ -1587,14 +1570,6 @@ void ErIrqHandler (ErCardStruct *pCard)
             if (pCard->DevEventFunc != NULL)
                 (*pCard->DevEventFunc)(pCard, EventNum, Time);
 
-           /* If the debug flag is set, display the event and timestamp. */
-            if (ErDebug > 10) {
-                epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                               "ErIrqHandler(): Card %d Event %2.2X.  Time %6.6X.\n",
-                               pCard->Card, EventNum, Time);
-                epicsInterruptContextMessage (pCard->intMsg);
-            }/*end if debug flag is set*/
-
         }/*end for each event in the FIFO (up to the max events per interrupt)*/
     }/*end if there are events in the event FIFO*/
 
@@ -1615,14 +1590,6 @@ void ErIrqHandler (ErCardStruct *pCard)
     if (csr & EVR_CSR_DIRQ) {
         MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK)| EVR_CSR_RSDIRQ);
 
-       /* Output a message if the debug level is 11 or higher */
-        if (ErDebug > 10) {
-            epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                           "ErIrqHandler(): Card %d Delayed IRQ Interrupt.\n",
-                           pCard->Card);
-            epicsInterruptContextMessage (pCard->intMsg);
-        }/*end if debug level is 11 or above*/
-
        /* Invoke the device-support layer event handler (if one is defined) */
         if (pCard->DevEventFunc != NULL)
             (*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
@@ -1633,10 +1600,9 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for Data Buffer Ready interrupts
     */
     if (DBuffCsr & EVR_DBUF_READY) {
-
-        if (ErDebug) {
-            epicsInterruptContextMessage ("Data Buffer Interrupt\n");
-        }/*end if debug */
+        MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
+                            (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
+                            EVR_DBUF_DBDIS);
 
        /*---------------------
         * Report data stream checksum errors to the device support error listener
@@ -1672,9 +1638,6 @@ void ErIrqHandler (ErCardStruct *pCard)
         * Turn off data buffer receives and disable the data buffer interrupt.
         */
         else {
-            MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
-                                (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_DBMODE_EN) |
-                                EVR_DBUF_DBDIS);
             MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) &
                                 ~(EVR_IRQ_DATABUF));
         }/*end if don't want data buffer ready interrupts*/
@@ -2138,7 +2101,7 @@ void ErEnableDBuff (ErCardStruct *pCard, epicsBoolean Enable)
     */
     else {
         MRF_VME_REG16_WRITE(&pEr->IrqEnables,
-                            MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_DATABUF));  /* TODO: incompatible with PMC EVR */
+                            MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_DATABUF));
         MRF_VME_REG16_WRITE(&pEr->DataBuffControl, EVR_DBUF_DBDIS);
     }/*end if we should disable the interrupt*/
 
@@ -3597,13 +3560,8 @@ epicsStatus ER (void)
             case '2': DiagDumpRam (pCard, 2);     break;
  	    case 'y': DiagDumpDataBuffer (pCard); break;
             case 'z': DiagDumpRegs (pCard);       break;
-            case 'v': ErCheckTaxi (pCard);        break;
-
-            case 's':
-                printf ("RXVIO_COUNT=%d\n", pCard->RxvioCount);
-                pCard->RxvioCount=0;
-                break;
-
+            case 's': printf ("RXVIO_COUNT=%d\n", pCard->RxvioCount); break;
+            case 'v': pCard->RxvioCount=0;        break;
             case 'q': return (0);
             default : break;
 
@@ -3641,7 +3599,7 @@ void DiagMainMenu (void)
     printf ("b - Enable RAM 2\n");
     printf ("d - Disable RAMs\n");
     printf ("s - Show RXVIO counter\n");
-    printf ("v - Clear RXVIO\n");
+    printf ("v - Clear RXVIO counter\n");
     printf ("q - quit\n");
 
 }/*end DiagMainMenu()*/
