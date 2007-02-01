@@ -17,6 +17,7 @@ DB += mpgPatternSim.db
 DB += mpgPatternTest.template
 # Beam-synchronous acquisition event definitions
 DB += bsaEdef.db
+DB += bsaEdefSim.db
 DB += bsaEdefPattern.db
 DB += bsaEdefMask.db
 DB += bsaEVGmask.db
