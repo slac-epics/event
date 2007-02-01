@@ -46,10 +46,3 @@ pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
 	{ IN20  , EV01 ,   7  , EVENT15 , 15 , 700  }
 	{ IN20  , EV01 ,   7  , EVENT16 , 16 , 750  }
 }
-file ../../../mpgSupport/Db/mpgPatternProc.db
-{
-#
-#	 Location      
-pattern { LOCA  , UNIT , CARD , ELOCA , CHECK }
-	{ IN20  , EV01 ,   7  ,  SYS0 ,   1   }
-}
