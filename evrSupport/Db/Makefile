@@ -15,7 +15,7 @@ include $(TOP)/configure/CONFIG
 DB += bsaEdefAvg.db
 DB += bsaEdefFanouts.db
 DB += bsaEdefShadow.db
-DB += bsaShadow.template
+DB += bsaEdefShadow.template
 # Simulation:
 DB += bsaTestFanouts.db
 DB += bsaTestInput.db
@@ -36,6 +36,8 @@ DB += bsaBLENEdef.template
 DB += bsaKICKEdef.template
 DB += bsaPMTEdef.template
 DB += bsaWIREEdef.template
+DB += bsaAMPLEdef.template
+DB += bsaPHASEdef.template
 
 # evrPattern support
 DB += evrPattern.db
@@ -62,7 +64,7 @@ DB += bsaXL05.template
 DB += bsaSimXL05.template
 # Laser Room
 DB += IOC-LR20-LS01pattern.template
-# Injector
+# Pattern Injector
 DB += IOC-IN20-AM01pattern.template  
 DB += IOC-IN20-BP01pattern.template  
 DB += IOC-IN20-BP02pattern.template  
@@ -87,11 +89,23 @@ DB += IOC-IN20-PM06pattern.template
 DB += IOC-IN20-PM07pattern.template
 DB += IOC-IN20-RF01pattern.template
 DB += IOC-IN20-WS01pattern.template
-# Sector 21
+# Pattern Sector 21
 DB += IOC-LI21-BL01pattern.template
 DB += IOC-LI21-BP01pattern.template
 DB += IOC-LI21-MG01pattern.template
 DB += IOC-LI21-PM01pattern.template
+
+# BSA Injector
+DB += IOC-IN20-BP01bsa.template
+DB += IOC-IN20-BP02bsa.template
+DB += IOC-IN20-IM01bsa.template
+DB += IOC-IN20-RF01bsa.template
+DB += IOC-IN20-WS01bsa.template
+
+# BSA Sector 21
+DB += IOC-LI21-BL01bsa.template
+DB += IOC-LI21-BP01bsa.template
+DB += IOC-LI21-WS01bsa.template
 
 include $(TOP)/configure/RULES
 #----------------------------------------
