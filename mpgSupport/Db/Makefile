@@ -22,8 +22,10 @@ DB += bsaEdefMask.db
 DB += bsaEVGmask.db
 DB += bsaEdef.template
 DB += bsaEVGmask.template
-# B34 test stand
+# B34 test stand and edef simulators
 DB += evgPatternXL15.template
+DB += edefSim.template
+DB += edefSimSys3.template
 # Production and B280 test stand
 DB += evgPatternIN20.template
 
