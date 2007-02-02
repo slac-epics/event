@@ -1,5 +1,0 @@
-include "evrPattern.dbd"
-include "evrTime.dbd"
-include "bsa.dbd"
-include "generalTimeNonVx.dbd"
-include "sSubRecord.dbd"

@@ -1,5 +1,0 @@
-function(evrTimeInit)
-function(evrTimeProc)
-function(evrTimeDiagInit)
-function(evrTimeDiag)
-
