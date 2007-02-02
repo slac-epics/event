@@ -1,0 +1,29 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition test records for a single Toroid
+#
+# Name: bsaTOROTest.substitutions
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+file bsaTestInput.db
+{
+#                             
+#             Device          
+  pattern {    DEV    ,SECN, CALC                   , A    , B   ,EGU,  HOPR,  LOPR,PREC, ADEL, MDEL, RES  }
+          { $(DEVICE) ,TMIT, "C>=A?1E10:C+(RNDM*B)" ,"3E10","5E9", "","3E10","1E10",  3 ,"1E8","1E7","6E7" }
+}
+
+file bsaTestFanouts.db
+{
+  pattern {    DEV    ,SECN,PHAS,        
+	           LNK2                     ,LNK3                       ,     LNK4             ,
+               LNK5                     ,LNK6                       ,     FLNK             ,
+	           LNK7                     ,LNK8                       ,     LNK9             }
+          { $(DEVICE) , TMIT ,  0,
+	          "$(DEVICE):EFTMIT PP"     ,""                         , ""                   ,                
+	          ""                        , ""                        , ""                   ,
+              ""                        , ""                        , ""                   }
+}

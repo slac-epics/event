@@ -1,0 +1,49 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition records for a single 
+#	photo multiplier tube (PMT).
+#
+# Name: bsaPMTEdef.substitutions
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+# BSA Integration Note:
+# Each device attribute (such as width ) provides input to bsaEdefAvg.db.
+# The bsaEdefAvg.db provides the RMS and Avg -$(DEV):$(SECN)<edef id>, and history - 
+#   $(DEV):$(SECN)HST<edef id> for each device attribute for each of 20 edefs.
+#
+file bsaEdefAvg.db
+{
+#	      Device           Name                                      IOC    IOC   mod5  Init 
+#                                                                    loc'n  unit  bit   Event Code
+  pattern {DEV    ,SECN, MDID  , MD,EGU ,HOPR,LOPR,PREC,ADEL,MDEL, LOCA  , UNIT ,BIT, EC}
+	  { $(DEVICE) ,LOSS,  1    , 1, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), A, 100}
+	  { $(DEVICE) ,LOSS,  2    , 2, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), B, 100}
+	  { $(DEVICE) ,LOSS,  3    , 3, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), C, 100}
+	  { $(DEVICE) ,LOSS,  4    , 4, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), D, 100}
+	  { $(DEVICE) ,LOSS,  5    , 5, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), E, 100}
+	  { $(DEVICE) ,LOSS,  6    , 6, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), F, 100}
+	  { $(DEVICE) ,LOSS,  7    , 7, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), G, 100}
+	  { $(DEVICE) ,LOSS,  8    , 8, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), H, 100}
+	  { $(DEVICE) ,LOSS,  9    , 9, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), I, 100}
+	  { $(DEVICE) ,LOSS, 10    ,10, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), J, 100}
+	  { $(DEVICE) ,LOSS, 11    ,11, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), K, 100}
+	  { $(DEVICE) ,LOSS, 12    ,12, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), L, 100}
+	  { $(DEVICE) ,LOSS, 13    ,13, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), M, 100}
+	  { $(DEVICE) ,LOSS, 14    ,14, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), N, 100}
+	  { $(DEVICE) ,LOSS, 15    ,15, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), O, 100}
+	  { $(DEVICE) ,LOSS, 1HZ   ,16, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), P, 100}
+	  { $(DEVICE) ,LOSS,10HZ   ,17, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), Q, 100}
+	  { $(DEVICE) ,LOSS,FULL   ,18, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), R, 100}
+	  { $(DEVICE) ,LOSS, F1    ,19, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), S, 100}
+	  { $(DEVICE) ,LOSS, F2    ,20, mRad/hr,100,0,  3 , .01,.001 , $(LOC), $(UN), T, 100}
+}
+file bsaEdefFanouts.db
+{
+#	      Device           Name
+  pattern {DEV    ,SECN , FLNK }
+	  { $(DEVICE) ,LOSS , ""   }
+}
+# NOTE: FLNK= "$(DEVICE):FANOUTSLC PP" for slc-aware
+
