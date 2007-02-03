@@ -1,14 +1,14 @@
 # BSA records
 #
 # One per IOC:
-file bsaEdefShadow.template {
+file bsaEdefShadow.db {
   pattern { DEVICE       , SYSI }
           { IOC:IN20:BP02, SYS0 } 
 }
 
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaBPMSEdef.template!
-file bsaBPMSEdef.template {
+file bsaBPMSEdef.db{
 #      Device        ,loc'n , IOC unit, timing system
   pattern {DEVICE    , LOC  ,  UN  , SYS  }
 	  { BPMS:IN20:525, IN20 , BP02 , SYS0 }

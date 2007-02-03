@@ -6,14 +6,14 @@
 #
 # One per IOC:
 #
-file bsaEdefShadow.template {
+file bsaEdefShadow.db {
   pattern { DEVICE       , SYSI }
           { IOC:XX05:EV01, SYS0 } 
 }
 
 # One per device:
 #
-file bsaBPMSEdef.template {
+file bsaBPMSEdef.db {
   pattern {DEVICE   , LOC  , UN  , SYS }  
 	  { BPMS:XX05:1 , XX05 , EV01, SYS0}
 	  { BPMS:XX05:2 , XX05 , EV01, SYS0}
@@ -23,7 +23,7 @@ file bsaBPMSEdef.template {
 	  { BPMS:XX05:6 , XX05 , EV01, SYS0}
 }
 
-file bsaTOROEdef.template {
+file bsaTOROEdef.db {
   pattern {DEVICE   , LOC  , UN  , SYS } 
 	  { TORO:XX05:1 , XX05 , EV01, SYS0}
 	  { TORO:XX05:2 , XX05 , EV01, SYS0}

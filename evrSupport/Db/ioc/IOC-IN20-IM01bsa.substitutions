@@ -3,12 +3,12 @@
 #
 # One per IOC:
 #
-file bsaEdefShadow.template {
+file bsaEdefShadow.db {
   pattern { DEVICE       , SYSI }
           { IOC:IN20:IM01, SYS0 } 
 } 
 
-file bsaBPMSEdef.template {
+file bsaBPMSEdef.db {
 #      Device        ,loc'n , IOC unit, timing system  
   pattern {DEVICE    , LOC  ,  UN   }
 	  { BPMS:IN20:221, IN20 , IM01 }

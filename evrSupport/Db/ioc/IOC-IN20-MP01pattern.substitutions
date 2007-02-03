@@ -1,12 +1,12 @@
 #
 # Pattern records
-file evrPattern.template {
+file evrPatternAll.db {
 #	    Device        ,  SLC Pattern Check LNK    , EVR/Trigger             
 #	                                                  Links       
   pattern { DEVICE        ,        LINK4              , LINK5 , LINK6 , LINKD }
 	  { IOC:IN20:MP01 ,         ""                ,  ""   ,  ""   ,  ""   }
 }
-file evrPatternProc.template {
+file evrPatternProc.db {
   pattern { DEVICE }
 	  { IOC:IN20:MP01}
 }

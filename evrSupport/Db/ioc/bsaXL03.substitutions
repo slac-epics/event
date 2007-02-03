@@ -6,14 +6,14 @@
 #
 # One per IOC:
 #
-file bsaEdefShadow.template {
+file bsaEdefShadow.db {
   pattern { DEVICE       , SYSI }
           { IOC:XX03:1   , SYS0 } 
 }
 
 # One per device:
 #
-file bsaBPMSEdef.template {
+file bsaBPMSEdef.db {
   pattern {DEVICE  , LOC  , UN, SYS}
 	  { BPMS:XX03:1, XX03 , 1 , SYS0}
 	  { BPMS:XX03:2, XX03 , 1 , SYS0}
@@ -23,12 +23,12 @@ file bsaBPMSEdef.template {
 	  { BPMS:XX03:6, XX03 , 1 , SYS0}
 }
 
-file bsaTOROEdef.template {
+file bsaTOROEdef.db {
   pattern {DEVICE  , LOC  , UN, SYS}
 	  { TORO:XX03:1 ,XX03 , 1, SYS0}
 	  { TORO:XX03:2 ,XX03 , 1, SYS0}
 }
-file bsaPMTEdef.template {
+file bsaPMTEdef.db {
   pattern {DEVICE  , LOC  , UN, SYS}
 	  { PMT:XX03:1 , XX03 ,  1, SYS0}
 	  { PMT:XX03:2 , XX03 ,  1, SYS0}
@@ -37,19 +37,13 @@ file bsaPMTEdef.template {
 	  { PMT:XX03:5 , XX03 ,  1, SYS0}
 	  { PMT:XX03:6 , XX03 ,  1, SYS0}
 }
-file bsaBLENEdef.template {
+file bsaBLENEdef.db {
   pattern {DEVICE   , LOC  , UN, SYS}
 	  { BLEN:XX03:1 , XX03,  1, SYS0 }
 	  { BLEN:XX03:2 , XX03,  1, SYS0 }
 	  { BLEN:XX03:3 , XX03,  1, SYS0 }
 }
-file bsaKICKEdef.template {
-  pattern {DEVICE   , LOC  , UN, SYS}
-	  { KICK:XX03:1 , XX03 ,  1, SYS0}
-	  { KICK:XX03:2 , XX03 ,  1, SYS0}
-	  { KICK:XX03:3 , XX03 ,  1, SYS0}
-}
-file bsaWIREEdef.template {
+file bsaWIREEdef.db {
   pattern {DEVICE   , LOC  , UN, SYS}
 	  { WIRE:XX03:1 , XX03 ,  1, SYS0}
 	  { WIRE:XX03:2 , XX03 ,  1, SYS0}
@@ -58,13 +52,13 @@ file bsaWIREEdef.template {
 }
 #
 # Pattern records
-file evrPattern.template {
+file evrPatternAll.db {
 #	    Device    ,  SLC Pattern Check LNK     ,  EVR/Trigger          Diagnostic
 #	                                                 Links                Link
   pattern { DEVICE     ,        LINK4              , LINK5 ,   LINK6    ,          LINKD      }
 	  { IOC:XX03:1 , "IOC:XX03:1:FANOUTSLC PP" ,  ""   ,    ""      , "IOC:XX03:1:YYD PP" }
 }
-file evrPatternProc.template {
+file evrPatternProc.db {
   pattern { DEVICE }
 	  { IOC:XX03:1}
 }

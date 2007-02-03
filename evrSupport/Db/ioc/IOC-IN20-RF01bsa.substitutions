@@ -2,14 +2,14 @@
 #
 # One per IOC:
 
-file bsaEdefShadow.template {
+file bsaEdefShadow.db {
   pattern { DEVICE       , SYSI }
           { IOC:IN20:RF01, SYS0 } 
 }
 
 # One per device:
-# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.template!
-file bsaPHASEdef.template {
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.db!
+file bsaPHASEdef.db {
 #      Device               ,loc'n , IOC unit, timing system
   pattern {DEVICE           , LOC  ,  UN  , SYS  }
 	  { LLRF:IN20:1:REFPHAS , IN20 , RF01 , SYS0 }
@@ -25,8 +25,8 @@ file bsaPHASEdef.template {
 	  { PHAS:IN20:365:PHAS  , IN20 , RF01 , SYS0 }
 }
 # One per device:
-# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.template!
-file bsaAMPLEdef.template {
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
+file bsaAMPLEdef.db {
 #      Device               ,loc'n , IOC unit, timing system
   pattern {DEVICE           , LOC  ,  UN  , SYS  }
 	  { LLRF:IN20:1:REFAMPL , IN20 , RF01 , SYS0 }

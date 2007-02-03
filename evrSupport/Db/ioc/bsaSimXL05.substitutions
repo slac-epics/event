@@ -1,5 +1,5 @@
 # Simulation files :
-file bsaBPMSTest.template {
+file bsaBPMSTest.db {
   pattern { DEVICE       }
 	  { BPMS:XX05:1  }
 	  { BPMS:XX05:2  }
@@ -8,7 +8,7 @@ file bsaBPMSTest.template {
 	  { BPMS:XX05:5  }
 	  { BPMS:XX05:6  }
 }
-file bsaTOROTest.template {
+file bsaTOROTest.db {
   pattern { DEVICE       }
 	  { TORO:XX05:1  }
 	  { TORO:XX05:2  }
