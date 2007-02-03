@@ -1,0 +1,50 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition records for a single 
+#	    RF Amplitude measurement.
+#
+# Name: bsaAMPLEdef.substitutions 
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+# BSA Integration Note:
+# Each device attribute (such as phas) provides input to bsaEdefAvg.db.
+# The bsaEdefAvg.db provides the RMS and Avg -$(DEV):$(SECN)<edef id>, and history - 
+#   $(DEV):$(SECN)HST<edef id> for each device attribute for each of 20 edefs.
+#
+file bsaEdefAvg.db
+{
+#	      Device           Name                                      IOC    IOC   mod5  Init 
+#                                                                    loc'n  unit  bit   Event Code
+  pattern {DEV    , SECN, MDID , MD, EGU ,HOPR,LOPR,PREC,ADEL, MDEL, LOCA  , UNIT , BIT,  EC }
+	  { $(DEVICE) ,AMPL ,  1   , 1 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), A  ,  100}
+	  { $(DEVICE) ,AMPL ,  2   , 2 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), B  ,  100}
+	  { $(DEVICE) ,AMPL ,  3   , 3 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), C  ,  100}
+	  { $(DEVICE) ,AMPL ,  4   , 4 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), D  ,  100}
+	  { $(DEVICE) ,AMPL ,  5   , 5 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), E  ,  100}
+	  { $(DEVICE) ,AMPL ,  6   , 6 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), F  ,  100}
+	  { $(DEVICE) ,AMPL ,  7   , 7 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), G  ,  100}
+	  { $(DEVICE) ,AMPL ,  8   , 8 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), H  ,  100}
+	  { $(DEVICE) ,AMPL ,  9   , 9 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), I  ,  100}
+	  { $(DEVICE) ,AMPL ,  10  ,10 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), J  ,  100}
+	  { $(DEVICE) ,AMPL ,  11  ,11 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), K  ,  100}
+	  { $(DEVICE) ,AMPL ,  12  ,12 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), L  ,  100}
+	  { $(DEVICE) ,AMPL ,  13  ,13 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), M  ,  100}
+	  { $(DEVICE) ,AMPL ,  14  ,14 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), N  ,  100}
+	  { $(DEVICE) ,AMPL ,  15  ,15 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), O  ,  100}
+	  { $(DEVICE) ,AMPL , 1HZ  ,16 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), P  ,  100}
+	  { $(DEVICE) ,AMPL ,10HZ  ,17 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), Q  ,  100}
+	  { $(DEVICE) ,AMPL ,FULL  ,18 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), R  ,  100}
+	  { $(DEVICE) ,AMPL ,  F1  ,19 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), S  ,  100}
+	  { $(DEVICE) ,AMPL ,  F2  ,20 , meV ,   0 , 0  ,  3 , .01, .001, $(LOC), $(UN), T  ,  100}
+}
+
+file bsaEdefFanouts.db
+{
+#	      Device            Name
+  pattern {DEV    ,SECN  ,  FLNK}
+	  { $(DEVICE) ,AMPL ,  ""  }
+}
+# NOTE: FLNK= "$(DEVICE):FANOUTSLC PP" for slc-aware

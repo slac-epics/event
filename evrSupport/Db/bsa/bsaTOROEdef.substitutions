@@ -1,0 +1,48 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition records for a single Toroid.
+#
+# Name: bsaTOROEdef.substitutions
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+# BSA Integration Note:
+# Each device attribute (such as width ) provides input to bsaEdefAvg.db.
+# The bsaEdefAvg.db provides the RMS and Avg -$(DEV):$(SECN)<edef id>, and history - 
+#   $(DEV):$(SECN)HST<edef id> for each device attribute for each of 20 edefs.
+#
+file bsaEdefAvg.db
+{
+#	      Device           Name                                      IOC    IOC   mod5  Init 
+#                                                                    loc'n  unit  bit   Event Code
+  pattern {DEV    ,SECN, MDID  , MD,EGU ,HOPR,LOPR,PREC,ADEL,MDEL, LOCA  , UNIT ,BIT, EC}
+	  { $(DEVICE) ,TMIT,  1   , 1,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), A, 100}
+	  { $(DEVICE) ,TMIT,  2   , 2,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), B, 100}
+	  { $(DEVICE) ,TMIT,  3   , 3,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), C, 100}
+	  { $(DEVICE) ,TMIT,  4   , 4,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), D, 100}
+	  { $(DEVICE) ,TMIT,  5   , 5,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), E, 100}
+	  { $(DEVICE) ,TMIT,  6   , 6,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), F, 100}
+	  { $(DEVICE) ,TMIT,  7   , 7,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), G, 100}
+	  { $(DEVICE) ,TMIT,  8   , 8,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), H, 100}
+	  { $(DEVICE) ,TMIT,  9   , 9,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), I, 100}
+	  { $(DEVICE) ,TMIT,  10  ,10,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), J, 100}
+	  { $(DEVICE) ,TMIT,  11  ,11,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), K, 100}
+	  { $(DEVICE) ,TMIT,  12  ,12,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), L, 100}
+	  { $(DEVICE) ,TMIT,  13  ,13,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), M, 100}
+	  { $(DEVICE) ,TMIT,  14  ,14,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), N, 100}
+	  { $(DEVICE) ,TMIT,  15  ,15,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), O, 100}
+	  { $(DEVICE) ,TMIT,  1HZ ,16,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), P, 100}
+	  { $(DEVICE) ,TMIT,  10HZ,17,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), Q, 100}
+	  { $(DEVICE) ,TMIT,  FULL,18,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), R, 100}
+	  { $(DEVICE) ,TMIT,  F1  ,19,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), S, 100}
+	  { $(DEVICE) ,TMIT,  F2  ,20,  "","3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), T, 100}
+}
+
+file bsaEdefFanouts.db
+{
+#	      Device           Name
+  pattern {DEV    ,SECN , FLNK }
+	  { $(DEVICE) ,TMIT ,  ""  }
+}
+# NOTE: FLNK= "$(DEVICE):FANOUTSLC PP" for slc-aware
