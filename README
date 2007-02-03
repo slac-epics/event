@@ -8,7 +8,7 @@ I - Adding the event package to your IOC application:
 
 EVENT=/afs/slac/g/lcls/epics/site/src/event
 GENERALTIME=/afs/slac/g/lcls/epics/site/src/event
- OR (if using /afs/slac/g/lcls/epics/ioc/configure):
+ OR 
 include $(TOP)/../site/configure/RELEASE-event
 include $(TOP)/../site/configure/RELEASE-generalTime
 
