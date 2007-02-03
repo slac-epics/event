@@ -1,20 +1,16 @@
 # one per system - declare EVG stuff in this IOC for testing
 
-file bsaEdef.template {
+file bsaEdefAll.db {
   pattern { SYSI  , DEVICE     , CARDI , CHECKI }
  	  { SYS1  , IOC:SYS1:1 ,   0   ,    0   }
 }
-file evrPattern.template {
+file evrPatternAll.db {
 #	    Device     ,          PNET Processing             
   pattern { DEVICE     , LINK4 ,      LINK5        ,      LINK6          , LINKD }
 	  { IOC:SYS1:1 ,  ""   , "IOC:SYS1:1:PNET" , "IOC:SYS1:1:EDEFFO" ,  ""   }
 }
-file mpgPatternTest.template {
+file mpgPatternTest.db {
   pattern { SYSI  , UNITI }
  	  { SYS1  ,  1    }
-}
-file bsaEVGmask.template {
-  pattern { SYSI  ,  DEVICE    }
- 	  { SYS1  , IOC:SYS1:1 }
 }
 
