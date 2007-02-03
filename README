@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 01/31/2007
+Instructions for RTEMS EVR users                    Last Updated 02/03/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -20,7 +20,8 @@ include $(TOP)/../site/configure/RELEASE-generalTime
    xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
    xxx_LIBS += mrfVme64x
- OR (if using /afs/slac/g/lcls/epics/ioc/configure):
+ OR (if including /afs/slac/g/lcls/epics/site/configure/RELEASE-event in
+     your xxxApp/configure/RELEASE):
    xxx_LIBS += $(EVR_IOC_LIBS)
    xxx_LIBS += $(EVR_RTEMS_IOC_LIBS)
 
@@ -32,36 +33,14 @@ Note that the order of the above libraries is important.
    xxx_DBD += evrSupport.dbd
    xxx_DBD += devMrfEr.dbd
 
-(4) Install the following general database files from the event package to 
-    your application by adding to xxxApp/Db/Makefile:
-
-   DB_INSTALLS += $(EVENT)/db/evrPattern.db
-   DB_INSTALLS += $(EVENT)/db/evrPatternProc.db
-   DB_INSTALLS += $(EVENT)/db/evrFiducial.db
-   DB_INSTALLS += $(EVENT)/db/evrPattern.template
-   DB_INSTALLS += $(EVENT)/db/evrPatternProc.template
-   DB_INSTALLS += $(EVENT)/db/bsaEdefAvg.db
-   DB_INSTALLS += $(EVENT)/db/bsaEdefFanouts.db
-   DB_INSTALLS += $(EVENT)/db/bsaEdefShadow.db
-   DB_INSTALLS += $(EVENT)/db/bsaEdefShadow.template  (Note name change 1/31)
- OR (if using /afs/slac/g/lcls/epics/ioc/configure):
-   DB_INSTALLS += $(EVR_IOC_DBS)
-   DB_INSTALLS += $(BSA_IOC_DBS)
-   
-(5) Install the following application-specific and ioc-specific database 
+(4) Install the following applicable ioc-specific database 
     files from the event package to your application by adding to 
     xxxApp/Db/Makefile:
 
-   DB_INSTALLS += $(EVENT)/db/bsaBPMSEdef.template (if applicable)
-   DB_INSTALLS += $(EVENT)/db/bsaTOROEdef.template (if applicable)
-   DB_INSTALLS += $(EVENT)/db/bsaBLENEdef.template (if applicable)
-   DB_INSTALLS += $(EVENT)/db/bsaPMTEdef.template  (if applicable)
-   DB_INSTALLS += $(EVENT)/db/bsaAMPLEdef.template (if applicable)(New 1/31)
-   DB_INSTALLS += $(EVENT)/db/bsaPHASEdef.template (if applicable)(New 1/31)
    DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>evr.db
-   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>pattern.template
-   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>bsa.template  (BSA: New 1/31)
-   DB_INSTALLS += $(GENERALTIME)/db/generalTimeNonVx.template
+   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>pattern.db
+   And for IOCs that support beam-synchronous acquisition:
+   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>bsa.db
 
    where area = LR20, IN20, LI21, etc
    and   xx = subsystem ID (AM, BL, BP, IM, LS, MG, MP, PM, RF, WS)
@@ -72,9 +51,10 @@ II - Adding event database and EVR configuration to your IOC startup file:
 
 (1) Add database templates to st.cmd (before iocInit): 
 
-    dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
-    dbLoadTemplate("db/IOC-<area>-<xxyy>pattern.template")
-    dbLoadTemplate("db/IOC-<area>-<xxyy>bsa.template") (BSA only: New 1/31)
+   dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
+   dbLoadRecords("db/IOC-<area>-<xxyy>pattern.db")
+   And for IOCs that support beam-synchronous acquisition:
+   dbLoadRecords("db/IOC-<area>-<xxyy>bsa.db")
 
 (2) Add ErConfigure for each VME EVR (before iocInit).  For the first VME card:
 
