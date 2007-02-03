@@ -1,0 +1,44 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition and Control records for feedback records
+#
+# Name: bsacEnergyEdef.substitutions
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+
+file bsaEdefAvg.db
+{
+#	      Device           Name                                          IOC    IOC   mod5  Init 
+#                                                                        loc'n  unit  bit   Event Code
+  pattern {DEV    ,SECN,   MDID   ,MD , EGU,HOPR,LOPR,PREC,ADEL,MDEL   , LOCA  , UNIT ,BIT , EC }
+	  { $(DEVICE) ,$(SECI),  1 ,  1,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), A ,  1}
+	  { $(DEVICE) ,$(SECI),  2  , 2,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), B ,  1}
+	  { $(DEVICE) ,$(SECI),  3  , 3,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), C ,  1}
+	  { $(DEVICE) ,$(SECI),  4  , 4,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), D ,  1}
+	  { $(DEVICE) ,$(SECI),  5  , 5,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), E ,  1}
+	  { $(DEVICE) ,$(SECI),  6  , 6,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), F ,  1}
+	  { $(DEVICE) ,$(SECI),  7  , 7,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), G ,  1}
+	  { $(DEVICE) ,$(SECI),  8  , 8,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), H ,  1}
+	  { $(DEVICE) ,$(SECI),  9  , 9,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), I ,  1}
+	  { $(DEVICE) ,$(SECI), 10  ,10,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), J ,  1}
+	  { $(DEVICE) ,$(SECI), 11  ,11,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), K ,  1}
+	  { $(DEVICE) ,$(SECI), 12  ,12,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), L ,  1}
+	  { $(DEVICE) ,$(SECI), 13  ,13,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), M ,  1}
+	  { $(DEVICE) ,$(SECI), 14  ,14,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), N ,  1}
+	  { $(DEVICE) ,$(SECI), 15  ,15,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), O ,  1}
+	  { $(DEVICE) ,$(SECI),1HZ  ,16,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), P ,  1}
+	  { $(DEVICE) ,$(SECI),10HZ ,17,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), Q ,  1}
+	  { $(DEVICE) ,$(SECI),FULL ,18,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), R ,  1}
+	  { $(DEVICE) ,$(SECI), F1  ,19,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), S ,  1}
+	  { $(DEVICE) ,$(SECI), F2  ,20,     "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), T ,  1}
+}
+file bsaEdefFanouts.db
+{
+#	      Device           Name
+  pattern {DEV    ,SECN   , FLNK}
+	  { $(DEVICE) ,$(SECI), ""  }
+}
+
