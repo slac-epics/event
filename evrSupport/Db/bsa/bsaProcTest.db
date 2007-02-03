@@ -80,11 +80,6 @@ record(calcout, "$(DEV):MEASCNT$(MDID)") {
   field(INPB, "$(DEV):MEASCNT$(MDID)")
 }
 
-record(bo, "$(DEV):RESETBTN$(MD)") {
-  field(ZNAM, "RESET")
-  field(ONAM, "RESET")
-}
-
 #! Further lines contain data used by VisualDCT
 #! View(797,2674,1.0)
 #! Record("$(DEV):CHECK$(MDID)",1538,2198,0,0,"$(DEV):CHECK$(MDID)")
@@ -151,7 +146,6 @@ record(bo, "$(DEV):RESETBTN$(MD)") {
 #! Link("$(DEV):MEASCNT$(MDID).INPA","$(DEV):MODMATCH$(MDID).VAL")
 #! Field("$(DEV):MEASCNT$(MDID).INPB",16777215,0,"$(DEV):MEASCNT$(MDID).INPB")
 #! Link("$(DEV):MEASCNT$(MDID).INPB","$(DEV):MEASCNT$(MDID).VAL")
-#! Record("$(DEV):RESETBTN$(MD)",833,2944,0,1,"$(DEV):RESETBTN$(MD)")
 #! TextBox(TB7,1809,2873,2129,3013,0,"Dialog",12,1,16777215,"EVR IOCs monitor $(DEV):INIT records to know when to reset, in order to reset their counters, etc, ahead of the first beam pulse.",null)
 #! TextBox(TB6,816,2728,1336,2848,0,"Dialog",12,0,16777215,"EVG RESET$MD records\n* Processed when EDEF CTRL is processed.  .\n* Processed before any  device or EVG GO record is turned on so EVG always reset first\n* Resets EVG CHECK$MDID VAL to \"no match\", Y to \"not seen\" and Z to \"first time\"\n   (all these conditions are 0)\n* EVG CHECK processing then properly initialized and device AVGCNT records\n   will do nothing until EVG CHECK processing begins ",null)
 #! TextBox(TB5,845,2477,1325,2677,0,"Dialog",12,0,16777215,"EVG STATE$MD and GO$MD\n* GO$MD records are Initialized to SCAN=PASSIVE\n* STATE$MD will set SCAN=IO_Intr when EDEF CTRL is ON\n* Device support will then interrupt at up to 360hz and cause GO$MD to process\n* GO$MD then processes it's FLNK (EVG CHECK$MDID \n* STATE$MD will set SCAN=PASSIVE when EDEF CTRL is OFF\n  and device support will no longer cause processing of GO$MD\n* STATE$MD is processed whenever EDEF CTRL is changed",null)
