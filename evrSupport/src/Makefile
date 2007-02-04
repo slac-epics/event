@@ -31,26 +31,26 @@ evrSupport_LIBS += generalTime
 evrSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 # Build test applications
+DBD += evr.dbd
 DBD += evrTest.dbd
-DBD += evrTestSoft.dbd
-evrTestSoft_DBD += base.dbd
-evrTestSoft_DBD += evrSupport.dbd
 evrTest_DBD += base.dbd
 evrTest_DBD += evrSupport.dbd
-evrTest_DBD += devMrfEr.dbd
+evr_DBD += base.dbd
+evr_DBD += evrSupport.dbd
+evr_DBD += devMrfEr.dbd
 
-PROD_IOC = evrTestSoft
-PROD_IOC_RTEMS = evrTest
+PROD_IOC = evrTest
+PROD_IOC_RTEMS = evr
 # <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
-evrTestSoft_SRCS += evrTestSoft_registerRecordDeviceDriver.cpp
-evrTestSoft_SRCS += evrTestMain.cpp
 evrTest_SRCS += evrTest_registerRecordDeviceDriver.cpp
+evrTest_SRCS += evrTestMain.cpp
+evr_SRCS += evr_registerRecordDeviceDriver.cpp
 
-evrTestSoft_LIBS += $(EVR_IOC_LIBS)
-evrTestSoft_LIBS += $(EPICS_BASE_IOC_LIBS)
-evrTest_LIBS += $(EVR_IOC_LIBS) 
-evrTest_LIBS += devMrfEr mrfVme64x
+evrTest_LIBS += $(EVR_IOC_LIBS)
 evrTest_LIBS += $(EPICS_BASE_IOC_LIBS)
+evr_LIBS += $(EVR_IOC_LIBS) 
+evr_LIBS += devMrfEr mrfVme64x
+evr_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
 
