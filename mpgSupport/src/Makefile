@@ -35,23 +35,23 @@ mpgSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 # Build test applications
 DBD += mpg.dbd
-DBD += mpgSoft.dbd
-mpgSoft_DBD += base.dbd
-mpgSoft_DBD += mpgSupport.dbd
+DBD += mpgTest.dbd
+mpgTest_DBD += base.dbd
+mpgTest_DBD += mpgSupport.dbd
 mpg_DBD += base.dbd
 mpg_DBD += mpgSupport.dbd
 mpg_DBD += devMrfEg.dbd
 
-PROD_IOC = mpgSoft
+PROD_IOC = mpgTest
 PROD_IOC_RTEMS = mpg
 
 # <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
-mpgSoft_SRCS += mpgSoft_registerRecordDeviceDriver.cpp
-mpgSoft_SRCS += mpgMain.cpp
+mpgTest_SRCS += mpgTest_registerRecordDeviceDriver.cpp
+mpgTest_SRCS += mpgMain.cpp
 mpg_SRCS += mpg_registerRecordDeviceDriver.cpp
 
-mpgSoft_LIBS += $(MPG_IOC_LIBS)
-mpgSoft_LIBS += $(EPICS_BASE_IOC_LIBS)
+mpgTest_LIBS += $(MPG_IOC_LIBS)
+mpgTest_LIBS += $(EPICS_BASE_IOC_LIBS)
 mpg_LIBS += $(MPG_IOC_LIBS)
 mpg_LIBS += devMrfEg mrfVme64x
 mpg_LIBS += $(EPICS_BASE_IOC_LIBS)
