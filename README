@@ -4,13 +4,16 @@ Instructions for RTEMS EVR users                    Last Updated 02/03/2007
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
 
-(1) Add EVENT and GENERALTIME to configure/RELEASE and clean/rebuild configure:
+(1) Add EVENT, GENERALTIME, and SSUBRECORD to configure/RELEASE and 
+clean/rebuild configure:
 
 EVENT=/afs/slac/g/lcls/epics/site/src/event
-GENERALTIME=/afs/slac/g/lcls/epics/site/src/event
+GENERALTIME=/afs/slac/g/lcls/epics/site/src/generalTime
+SSUBRECORD=/afs/slac/g/lcls/epics/site
  OR 
 include $(TOP)/../site/configure/RELEASE-event
 include $(TOP)/../site/configure/RELEASE-generalTime
+SSUBRECORD=$(TOP)/../site
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
 
@@ -46,7 +49,7 @@ Note that the order of the above libraries is important.
    and   xx = subsystem ID (AM, BL, BP, IM, LS, MG, MP, PM, RF, WS)
          yy = unique number per area and subSystem ID (01, 02, 03, etc)
 
-II - Adding event database and EVR configuration to your IOC startup file:
+II - Adding event databases and EVR configuration to your IOC startup file:
 --------------------------------------------------------------------------
 
 (1) Add database templates to st.cmd (before iocInit): 
