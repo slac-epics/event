@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 02/03/2007
+Instructions for RTEMS EVR users                    Last Updated 02/06/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -52,14 +52,24 @@ Note that the order of the above libraries is important.
 II - Adding event databases and EVR configuration to your IOC startup file:
 --------------------------------------------------------------------------
 
-(1) Add database templates to st.cmd (before iocInit): 
+(1) If you have one or more VME EVRs and your IOC is using an early version 
+    of RTEMS (ie, version "4.7" instead of "4.7.0"), then add these 
+    instructions early in the startup file, before any EPICS commands:
+
+    # Carve a slice out of A32 space for the CR/CSR
+    # First, make the A32 space smaller...
+    BSP_VMEOutboundPortCfg(0,0xd,0x20000000,0x9<<28,0x0e000000)
+    # Then, make the CSR space in the freed up space (from 0x9e000000 to 0x9f000000)
+    BSP_VMEOutboundPortCfg(3,0x2f,0,0x9e000000,0x01000000)
+
+(2) Add database templates to st.cmd (before iocInit): 
 
    dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
    dbLoadRecords("db/IOC-<area>-<xxyy>pattern.db")
    And for IOCs that support beam-synchronous acquisition:
    dbLoadRecords("db/IOC-<area>-<xxyy>bsa.db")
 
-(2) Add ErConfigure for each VME EVR (before iocInit).  For the first VME card:
+(3) Add ErConfigure for each VME EVR (before iocInit).  For the first VME card:
 
     ErConfigure(<z>,0x300000,0x60,4,0)
 
@@ -71,7 +81,7 @@ II - Adding event databases and EVR configuration to your IOC startup file:
     and   4        = interrupt level (can be the same for all VME EVRs)
     and   0        = VME
 
-(3) Add ErConfigure for each PMC EVR (before iocInit):
+(4) Add ErConfigure for each PMC EVR (before iocInit):
 
     ErConfigure(<z>,0,0,0,1)
     where z = 0 for first PMC instance, 1 for second PMC instance
