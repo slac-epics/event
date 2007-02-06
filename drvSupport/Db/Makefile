@@ -19,6 +19,7 @@ DB += evrXL05.db
 DB += evrXL09.db
 DB += evrXL16.db
 DB += IOC-IN20-RF01Testevr.db
+DB += IOC-IN20-BP01Testevr.db
 # Laser Room
 DB += IOC-LR20-LS01evr.db
 # Injector
