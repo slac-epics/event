@@ -10,33 +10,27 @@ file bsaEdefShadow.db {
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.db!
 file bsaPHASEdef.db {
-#      Device               ,loc'n , IOC unit, timing system
-  pattern {DEVICE           , LOC  ,  UN  , SYS  }
-	  { LLRF:IN20:1:REFPHAS , IN20 , RF01 , SYS0 }
-	  { LASR:IN20:1:RFPHAS  , IN20 , RF01 , SYS0 }
-	  { GUN:IN20:1:PHAS     , IN20 , RF01 , SYS0 }
-	  { GUN:IN20:1:RFPHAS   , IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:300:PHAS  , IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:300:RFPHAS, IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:400:PHAS  , IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:400:RFPHAS, IN20 , RF01 , SYS0 }
-	  { TCAV:IN20:490:PHAS  , IN20 , RF01 , SYS0 }
-	  { TCAV:IN20:490:RFPHAS, IN20 , RF01 , SYS0 }
-	  { PHAS:IN20:365:PHAS  , IN20 , RF01 , SYS0 }
+#      Device               ,loc'n , IOC  , system, Attribute
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
+	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , REF_P }
+	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , P     }
+	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , RF_P  }
+	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , RF_P  }
+	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_P }
+	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , LOB_P }
+	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , P     }
+	  { PHAS:IN20:365       , IN20 , RF01 , SYS0  , P     }
 }
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
 file bsaAMPLEdef.db {
-#      Device               ,loc'n , IOC unit, timing system
-  pattern {DEVICE           , LOC  ,  UN  , SYS  }
-	  { LLRF:IN20:1:REFAMPL , IN20 , RF01 , SYS0 }
-	  { LASR:IN20:1:RFAMPL  , IN20 , RF01 , SYS0 }
-	  { GUN:IN20:1:AMPL     , IN20 , RF01 , SYS0 }
-	  { GUN:IN20:1:RFAMPL   , IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:300:AMPL  , IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:300:RFAMPL, IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:400:AMPL  , IN20 , RF01 , SYS0 }
-	  { ACCL:IN20:400:RFAMPL, IN20 , RF01 , SYS0 }
-	  { TCAV:IN20:490:AMPL  , IN20 , RF01 , SYS0 }
-	  { TCAV:IN20:490:RFAMPL, IN20 , RF01 , SYS0 }
-	  { PHAS:IN20:365:AMPL  , IN20 , RF01 , SYS0 }
+#      Device               ,loc'n , IOC  ,system , Attribute
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
+	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , REF_A }
+	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , A     }
+	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , RF_A  }
+	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , RF_A  }
+	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_A }
+	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , LOB_A }
+	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , A     }
+	  { PHAS:IN20:365       , IN20 , RF01 , SYS0  , A     }
