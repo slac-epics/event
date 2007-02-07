@@ -1,0 +1,26 @@
+# BSA records
+#
+# One per IOC:
+
+file bsaEdefShadow.db {
+  pattern { DEVICE       , SYSI }
+          { IOC:LI21:RF01, SYS0 } 
+}
+
+# One per device:
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.db!
+file bsaPHASEdef.db {
+#      Device               ,loc'n , IOC  , system, Attribute
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
+	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_P }
+	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_P }
+	  { PHAS:LI21:300       , LI21 , RF01 , SYS0  , P     }
+}
+# One per device:
+# Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
+file bsaAMPLEdef.db {
+#      Device               ,loc'n , IOC  ,system , Attribute
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
+	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_A }
+	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_A }
+	  { PHAS:LI21:300       , LI21 , RF01 , SYS0  , A     }
