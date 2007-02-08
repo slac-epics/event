@@ -51,7 +51,7 @@ static int evrReport( int interest )
 #ifdef __rtems__
     if (pCard) 
       printf("Pattern data from %s card %d\n",
-             pCard->FormFactor?"PMC":"VME", pCard->Card);
+             pCard->FormFactor?"PMC":"VME", pCard->Cardno);
 #endif    
     evrMessageReport(EVR_MESSAGE_PATTERN, EVR_MESSAGE_PATTERN_NAME);
 /*  evrMessageReport(EVR_MESSAGE_DATA,    EVR_MESSAGE_DATA_NAME); */
