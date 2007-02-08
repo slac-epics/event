@@ -232,7 +232,7 @@ EgCardStruct *EgGetCardStruct (int Card)
   for (pCard = (EgCardStruct *)ellFirst(&EgCardList);
     pCard != NULL;
     pCard = (EgCardStruct *)ellNext(&pCard->Link)) {
-    if (Card == pCard->Card) {
+    if (Card == pCard->Cardno) {
       return pCard;
     }
   }
@@ -252,6 +252,7 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
   epicsUInt16          Junk;          /* Dummy variable for card read probe function            */
   volatile MrfEVGRegs *pEvg = NULL;
   EgCardStruct *pCard;
+  int                  Slot,i;
 
   if (ConfigureLock != 0) {
     epicsPrintf("EgConfigure: Cannot change configuration after init.  Request ignored\n");
@@ -278,7 +279,7 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
     pCard = (EgCardStruct *)ellNext(&pCard->Link)) {
 
     /* See if the card number has already been configured */
-    if (Card == pCard->Card) {
+    if (Card == pCard->Cardno) {
       errlogPrintf ("EgConfigure: Card number %d has already been configured\n", Card);
       return ERROR;
     }
@@ -299,12 +300,24 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
         return ERROR;
     }
 
+	Slot = 0;
+	i    = -1;
+	do {
+		i++;
+		if ( 0 == (Slot = mrfFindNextEVG(Slot)) ) {
+			errlogPrintf("ErConfigure: VME64x scan found no EVG instance %u\n",i);
+			epicsMutexDestroy (pCard->EgLock);
+			free (pCard);
+			return ERROR;
+		}
+	} while ( i < Card );
+
   /* END NEW */
 
   /* Try to register this card at the requested A24 address space */
-  if (vmeCSRWriteADER(Card, 0, (CardAddress) | (VME_AM_STD_SUP_DATA << 2)) != OK) {
-      errlogPrintf ("EgConfigure: Could not configure Card %d Function 0 at VME/A24 address 0x%08X\n",
-                      Card, CardAddress);
+  if (vmeCSRWriteADER(Slot, 0, (CardAddress) | (VME_AM_STD_SUP_DATA << 2)) != OK) {
+      errlogPrintf ("EgConfigure: Could not configure Card %d (Slot %d) Function 0 at VME/A24 address 0x%08X\n",
+                      Card, Slot, CardAddress);
     rc = 1;
   } else {
     rc = devRegisterAddress( CardName,  /* Event Generator Card name        */
@@ -342,7 +355,7 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
     return ERROR;
   }
   printf("EVG ");
-  vmeCRShowSerialNo(Card);
+  vmeCRShowSerialNo(Slot);
   DEBUGPRINT (DP_INFO, drvMrfEgFlag, ("EVG Rx Delay %d/%d (current/init)\n", 
                                       pEvg->DelayRx, pEvg->DelayRxInit));
 
@@ -351,8 +364,9 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
     MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT_SY87729L);
   else
     MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT);
-  pCard->pEg = pEvg;
-  pCard->Card = Card;
+  pCard->pEg    = pEvg;
+  pCard->Cardno = Card;
+  pCard->Slot   = Slot;
   ellAdd (&EgCardList, &pCard->Link); /* NEW 3/30/06 */
   return OK;
 }

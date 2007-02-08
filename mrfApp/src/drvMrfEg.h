@@ -200,7 +200,11 @@ typedef struct MrfEVGRegs
 struct EgCardStruct {
     ELLNODE               Link;         /* Linked list node structure                            */
     volatile MrfEVGRegs  *pEg;          /* pointer to card described.                            */
-    int                   Card;         /* Card slot in crate where EVR is starting from 1       */
+	/* Changed name from Card -> Cardno to make sure nobody uses
+     * this field with the old semantics.
+	 */
+    int                   Cardno;       /* Logical card number                                   */
+    int                   Slot;         /* Card slot in crate where EVR is starting from 1       */
     epicsMutexId          EgLock;       /* Mutex to lock access to the card                      */
     struct egRecord      *pEgRec;       /* Record that represents the card                       */
     double                Ram1Speed;    /* in Hz                                                 */

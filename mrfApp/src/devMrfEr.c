@@ -73,6 +73,7 @@
 #include <epicsTypes.h>         /* EPICS Architecture-independent type definitions                */
 #include <epicsInterrupt.h>     /* EPICS Interrupt context support routines                       */
 #include <epicsMutex.h>         /* EPICS Mutex support library                                    */
+#include <string.h>
 
 #include <alarm.h>              /* EPICS Alarm status and severity definitions                    */
 #include <dbAccess.h>           /* EPICS Database access definitions                              */
@@ -189,6 +190,19 @@ epicsStatus ErInitRecord (erRecord *pRec)
                           "devMrfEr::ErInitErRec() onlyone record allowed per card");
         return (S_dev_badCard);
     }/*end if card already initialized*/
+
+	memset(pRec->busd, 0, sizeof(pRec->busd));
+	if ( VME_EVR == pCard->FormFactor ) {
+		epicsSnprintf(pRec->busd,sizeof(pRec->busd)-1,"VME Card %i, Slot %i, IRQ %i (Vect 0x%02x)",
+			pCard->Cardno, pCard->Slot, pCard->IrqLevel, pCard->IrqVector);
+	} else {
+		epicsSnprintf(pRec->busd,sizeof(pRec->busd)-1,"PMC Card %i @%u/%u/%u, IRQ 0x%x",
+			pCard->Cardno,
+			pCard->Slot >>8,
+			(pCard->Slot >>3)&0x1f,
+			pCard->Slot & 7,
+			pCard->IrqVector);
+	}
 
    /*---------------------
     * Finish initializing the event receiver card structure
@@ -849,7 +863,7 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     * Invoke the user-defined event handler (if one is defined)
     */
     if (pCard->EventFunc != NULL)
-        (*(USER_EVENT_FUNC)pCard->EventFunc)(pCard->Card, EventNum, Time);
+        (*(USER_EVENT_FUNC)pCard->EventFunc)(pCard->Cardno, EventNum, Time);
 
    /*---------------------
     * Schedule processing for any event-driven records
@@ -919,7 +933,7 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
    /*---------------------
     * Local Variables
     */
-    int        Card = pCard->Card;              /* Card number of the offending board             */
+    int        Card = pCard->Cardno;            /* Card number of the offending board             */
     erRecord  *pRec = (erRecord *)pCard->pRec;  /* Address of this board's ER record              */
 
    /*---------------------

@@ -149,7 +149,7 @@ LOCAL long EgInitDev(int pass)
         pCard != NULL;
         pCard = (EgCardStruct *)ellNext(&pCard->Link)) {
 
-        EgScheduleRamProgram(pCard->Card); /* OK to do more than once */
+        EgScheduleRamProgram(pCard->Cardno); /* OK to do more than once */
       }
     }
   }

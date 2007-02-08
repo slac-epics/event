@@ -153,6 +153,13 @@ recordtype(er) {
                 base(HEX)
                 interest(1)
         }
+        field(BUSD,DBF_STRING) {
+                prompt("Bus Info Description")
+				special("SPC_NOMOD")
+                promptgroup(GUI_DISPLAY)
+                interest(1)
+				size(40)
+        }
 	field(OTP0,DBF_MENU) {
 		prompt("OTP 0 Enable")
 		promptgroup(GUI_DISPLAY)

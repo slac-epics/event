@@ -85,9 +85,6 @@
 
 #define  EVR_DRIVER_SUPPORT_MODULE   /* Indicates we are in the driver support module environment */
 
-#define VME_EVR (0)
-#define PMC_EVR (1)
-
 #include <epicsStdlib.h>        /* EPICS Standard C library support routines                      */
 #include <epicsStdio.h>         /* EPICS Standard C I/O support routines                          */
 #include <epicsTypes.h>         /* EPICS Architecture-independent type definitions                */
@@ -328,9 +325,15 @@ Descriptor */
 #define EVR_CSR_EVREN     0x8000        /* Event Receiver Master Enable                           */
 
 
-#define MRF_VENDOR_ID (PCI_VENDOR_ID_PLX)
-#define FUTURE_MRF_VENDOR_ID (0x1a3e)
-#define MRF_DEVICE_ID (0x9030)
+#ifndef PCI_VENDOR_ID_MRF (0x1a3e)
+#define PCI_VENDOR_ID_MRF (0x1a3e)
+#endif
+#ifndef PCI_DEVICE_ID_PLX_9030
+#define PCI_DEVICE_ID_PLX_9030 (0x9030)
+#endif
+#ifndef PCI_DEVICE_ID_MRF_EVR200
+#define PCI_DEVICE_ID_MRF_EVR200 (0x10c8) /* as per email Jukka Pietarinen to TSS, 2/7/7 */
+#endif
 
 /*---------------------
  * Status Fields
@@ -741,6 +744,8 @@ int ErConfigure (
     ErCardStruct          *pCard;           /* Pointer to card structure                          */
     volatile MrfErRegs    *pEr = NULL;      /* Local address for accessing card's register space  */
     epicsStatus            status;          /* Status return variable                             */
+	int                    Slot;            /* VME slot number                                    */
+	int                    i;               /* Scratch variable                                   */
 
     #ifdef PCI
     /* PMC-EVR only */
@@ -753,8 +758,8 @@ int ErConfigure (
     /*short *pINTCSR; 
     char* pLC;*/
     unsigned char pciilr; 
-    epicsUInt32 VendorId = MRF_VENDOR_ID;
-    epicsUInt32 DeviceId = MRF_DEVICE_ID;
+    epicsUInt32 VendorId = PCI_VENDOR_ID_MRF;
+    epicsUInt32 DeviceId = PCI_DEVICE_ID_MRF_EVR200;
     #endif
 
    /***********************************************************************************************/
@@ -794,7 +799,7 @@ int ErConfigure (
          pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
 
        /* See if the card number has already been configured */
-        if (Card == pCard->Card) {
+        if (Card == pCard->Cardno) {
             errlogPrintf ("ErConfigure: Card number %d has already been configured\n", Card);
             return ERROR;
         }/*end if card number has already been configured*/
@@ -824,6 +829,18 @@ int ErConfigure (
     switch (FormFactor) {
       case VME_EVR:
 
+		Slot = 0;
+		i    = -1;
+		do {
+			i++;
+			if ( 0 == (Slot = mrfFindNextEVR(Slot)) ) {
+				errlogPrintf("ErConfigure: VME64x scan found no EVR instance %u\n",i);
+            	epicsMutexDestroy (pCard->CardLock);
+	            free (pCard);
+				return ERROR;
+			}
+		} while ( i < Card );
+
        /*---------------------
         * Try to register this card at the requested A24 address space
         */
@@ -845,8 +862,8 @@ int ErConfigure (
        /*---------------------
         * Set the card's A24 address to the requested base
         */
-        vmeCSRWriteADER (Card, 0, (CardAddress&0xffff00)|0xf4);
-        vmeCSRSetIrqLevel (Card, IrqLevel);
+        vmeCSRWriteADER (Slot, 0, (CardAddress&0xffff00)|0xf4);
+        vmeCSRSetIrqLevel (Slot, IrqLevel);
 
         DEBUGPRINT (DP_INFO, drvMrfErFlag, 
                    ("ErConfigure: Board is now accessible at local address 0x%08x.\n",
@@ -870,7 +887,8 @@ int ErConfigure (
         * Initialze the card structure
         */
         pCard->pEr          = (void *)pEr;      /* Store the address of the hardware registers    */
-        pCard->Card         = Card;             /* Store the card number                          */
+        pCard->Cardno       = Card;             /* Store the card number                          */
+        pCard->Slot         = Slot;             /* Store the VME slot number                      */
         pCard->IrqLevel     = IrqLevel;         /* Store the interrupt request level              */
         pCard->IrqVector    = IrqVector;        /* Store the interrupt request vector             */
         pCard->pRec         = NULL;             /* No ER record structure yet.                    */
@@ -913,19 +931,26 @@ int ErConfigure (
         /*---------------------
          * Handle the PMC-EVR 
          */
-
-        if (epicsPciFindDevice(VendorId, DeviceId, Card, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
-          DEBUGPRINT (DP_ERROR, drvMrfErFlag,
-            ("ErConfigure: epicsPciFindDevice unable to find match for vendorid %d, device %d and PMC slot %d. Trying alternate.\n",
-            VendorId, DeviceId, Card));
-          VendorId = FUTURE_MRF_VENDOR_ID;
-          if (epicsPciFindDevice(VendorId, DeviceId, Card, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
-            errlogPrintf ("ErConfigure: Unable to find match for device %d and PMC slot %d\n",
-                          DeviceId, Card);
-            epicsMutexDestroy (pCard->CardLock);
-            free (pCard);
-            return ERROR;
-          }
+		{ int plx, unit;
+		  unsigned	subId;
+		
+		  plx  = 0;
+		  unit = 0;
+		  do {
+			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, plx, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
+			/* no more plx chips */
+			  DEBUGPRINT (DP_ERROR, drvMrfErFlag,
+				("ErConfigure: epicsPciFindDevice unable to find match for subsystem vendorid %d, device %d and instance #%d.\n",
+				VendorId, DeviceId, Card));
+			  epicsMutexDestroy (pCard->CardLock);
+			  free (pCard);
+			  return ERROR;
+			}
+			epicsPciConfigInLong(
+			  (unsigned char) pciBusNo, (unsigned char) pciDevNo, (unsigned char) pciFuncNo,
+			  PCI_SUBSYSTEM_VENDOR_ID, &subId); 
+			plx++;
+		  } while ( (subId != ((DeviceId << 16) | VendorId)) || unit++ < Card );
         }
 
         unsigned int configRegAddr;
@@ -1010,11 +1035,14 @@ int ErConfigure (
         */
 
 
+		Slot = (pciBusNo<<8) | PCI_DEVFN(pciDevNo, pciFuncNo);
+
        /*---------------------
         * Initialze the card structure
         */
         pCard->pEr          = (void *)pEr;      /* Store the address of the hardware registers    */
-        pCard->Card         = Card;             /* Store the card number                          */
+        pCard->Cardno       = Card;             /* Store the card number                          */
+        pCard->Slot         = Slot;             /* Store PCI-triple in Slot                       */
         pCard->IrqLevel     = IrqLevel;         /* Store the interrupt request level. Meaningless for PCI !?              */
         pCard->IrqVector    = IrqVector;        /* Store the interrupt request vector             */
         pCard->pRec         = NULL;             /* No ER record structure yet.                    */
@@ -1375,14 +1403,17 @@ epicsStatus ErDrvReport (int level)
 
         NumCards++;
 
-        printf ("  Card %d in slot %d.  Firmware Version = %4.4X.\n",
-                pCard->Card, pCard->Card, ErGetFpgaVersion(pCard));
-
-        if (pCard->FormFactor == VME_EVR)
-            printf ("       Form factor = VME\n");
-
-        else if (pCard->FormFactor == PMC_EVR)
+        if (pCard->FormFactor == VME_EVR) {
+ 			printf ("  Card %d in slot %d.  Firmware Version = %4.4X.\n",
+        			pCard->Cardno, pCard->Slot, ErGetFpgaVersion(pCard));
+			printf ("       Form factor = VME\n");
+        } else { if (pCard->FormFactor == PMC_EVR)
+ 			printf ("  Card %d in slot %d/%d/%d.  Firmware Version = %4.4X.\n",
+        			pCard->Cardno,
+					pCard->Slot>>8, PCI_SLOT(pCard->Slot), PCI_FUNC(pCard->Slot),
+					ErGetFpgaVersion(pCard));
             printf ("       Form factor = PMC\n");
+		}
 
         printf ("       Address = %8.8x,  Vector = %3.3X,  Level = %d\n",
                 (int)pCard->pEr, pCard->IrqVector, pCard->IrqLevel);
@@ -2177,7 +2208,7 @@ void ErEnableRam (ErCardStruct *pCard, int RamNumber)
     else {
         epicsInterruptUnlock (Key);
         errlogPrintf ("ErEnableRam: Card %d.  Invalid RAM number (%d) requested\n",
-                      pCard->Card, RamNumber);
+                      pCard->Cardno, RamNumber);
         return;
     }/*end if RamNumber is illegal*/
 
@@ -2311,7 +2342,7 @@ ErCardStruct *ErGetCardStruct (int Card)
          pCard != NULL;
          pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
 
-        if (Card == pCard->Card) return pCard;
+        if (Card == pCard->Cardno) return pCard;
 
     }/*end for each card structure on the list*/
 
@@ -2546,7 +2577,7 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
         if ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM1_ACTIVE) {
             epicsInterruptUnlock (Key);
             errlogPrintf ("ErProgramRam: Card %d.  Attempt to program RAM 1 while it is active\n",
-                          pCard->Card);
+                          pCard->Cardno);
             return;
         }/*end if RAM 1 is active*/
 
@@ -2565,7 +2596,7 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
         if ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_RAM_SELECT_MASK) == EVR_CSR_RAM2_ACTIVE) {
             epicsInterruptUnlock (Key);
             errlogPrintf ("ErProgramRam: Card %d.  Attempt to program RAM 2 while it is active\n",
-                          pCard->Card);
+                          pCard->Cardno);
             return;
         }/*end if RAM 2 is active*/
 
@@ -2581,7 +2612,7 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
     else {
         epicsInterruptUnlock (Key);
         errlogPrintf ("ErProgramRam: Card %d.  Invalid RAM number (%d) requested\n",
-                      pCard->Card, RamNumber);
+                      pCard->Cardno, RamNumber);
         return;
     }/*end if RamNumber is illegal*/
 
@@ -3272,7 +3303,7 @@ void ErSetOtp (
     if(ErDebug > 9) {
         printf (
             "ErSetOtp(): Card %d, OTP Chan %d, Select Addr %x, Width = %d, Delay = %d\n", 
-             pCard->Card, Channel, MRF_VME_REG16_READ(&pEr->DelayPulseSelect),
+             pCard->Cardno, Channel, MRF_VME_REG16_READ(&pEr->DelayPulseSelect),
             MRF_VME_REG32_READ(&pEr->ExtWidth), MRF_VME_REG32_READ(&pEr->ExtDelay));
     }/*end if debug level is 10 or higher*/
 

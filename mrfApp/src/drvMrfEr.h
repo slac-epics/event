@@ -271,13 +271,20 @@ typedef void (*EVENT_FUNC) (void);
 typedef void (*ERROR_FUNC) (void);
 typedef void (*DBUFF_FUNC) (void);
 
+#define VME_EVR (0)
+#define PMC_EVR (1)
+
 /*---------------------
  * Event Receiver Card Structure
  */
 struct ErCardStruct {
     ELLNODE         Link;                   /* Linked list node structure                         */
     void           *pRec;                   /* Pointer to the ER record                           */
-    epicsInt16      Card;                   /* Card number                                        */
+	/* Changed name from Card -> Cardno to make sure nobody uses
+     * this field with the old semantics.
+	 */
+    epicsInt16      Cardno;                 /* Logical card number                                */
+    epicsInt16      Slot;                   /* Slot number where card was found                   */
     epicsInt32      IrqVector;              /* IRQ Vector 21nov2006 dayle chg'd from 16 to accom PMC*/
     epicsInt32      IrqLevel;               /* Interrupt level                                    */
     void           *pEr;                    /* Pointer to the event receiver register map         */
