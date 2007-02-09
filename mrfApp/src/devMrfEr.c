@@ -176,6 +176,7 @@ epicsStatus ErInitRecord (erRecord *pRec)
     * Make sure the card number is valid by fetching its card structure
     */
     Card = pRec->out.value.vmeio.card;
+    epicsSnprintf(pRec->busd,sizeof(pRec->busd)-1,"Unavailable");
     if (NULL == (pCard = ErGetCardStruct(Card))) {
         recGblRecordError(S_dev_badCard, (void *)pRec, 
                           "devMrfEr::ErInitErRec() Invalid card number");
