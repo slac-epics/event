@@ -22,27 +22,27 @@ file evg.db
 #
 #	 Location      
 pattern { LOCA  , UNIT , CARD }
-	{ IN20  , EV01 ,  7   }
+	{ IN20  , EV01 ,  0   }
 }
 file evgEvent.db
 {
 #                                       Event  Delay in 
 #	 Location                       Code   Clock Ticks
 pattern { LOCA  , UNIT , CARD , NAME    , ID , DELY }
-	{ IN20  , EV01 ,   7  , EVENT1  , 1  ,  0   }
-	{ IN20  , EV01 ,   7  , EVENT2  , 2  ,  50  }
-	{ IN20  , EV01 ,   7  , EVENT3  , 3  , 100  }
-	{ IN20  , EV01 ,   7  , EVENT4  , 4  , 150  }
-	{ IN20  , EV01 ,   7  , EVENT5  , 5  , 200  }
-	{ IN20  , EV01 ,   7  , EVENT6  , 6  , 250  }
-	{ IN20  , EV01 ,   7  , EVENT7  , 7  , 300  }
-	{ IN20  , EV01 ,   7  , EVENT8  , 8  , 350  }
-	{ IN20  , EV01 ,   7  , EVENT9  , 9  , 400  }
-	{ IN20  , EV01 ,   7  , EVENT10 , 10 , 450  }
-	{ IN20  , EV01 ,   7  , EVENT11 , 11 , 500  }
-	{ IN20  , EV01 ,   7  , EVENT12 , 12 , 550  }
-	{ IN20  , EV01 ,   7  , EVENT13 , 13 , 600  }
-	{ IN20  , EV01 ,   7  , EVENT14 , 14 , 650  }
-	{ IN20  , EV01 ,   7  , EVENT15 , 15 , 700  }
-	{ IN20  , EV01 ,   7  , EVENT16 , 16 , 750  }
+	{ IN20  , EV01 ,   0  , EVENT1  , 1  ,  0   }
+	{ IN20  , EV01 ,   0  , EVENT2  , 2  ,  50  }
+	{ IN20  , EV01 ,   0  , EVENT3  , 3  , 100  }
+	{ IN20  , EV01 ,   0  , EVENT4  , 4  , 150  }
+	{ IN20  , EV01 ,   0  , EVENT5  , 5  , 200  }
+	{ IN20  , EV01 ,   0  , EVENT6  , 6  , 250  }
+	{ IN20  , EV01 ,   0  , EVENT7  , 7  , 300  }
+	{ IN20  , EV01 ,   0  , EVENT8  , 8  , 350  }
+	{ IN20  , EV01 ,   0  , EVENT9  , 9  , 400  }
+	{ IN20  , EV01 ,   0  , EVENT10 , 10 , 450  }
+	{ IN20  , EV01 ,   0  , EVENT11 , 11 , 500  }
+	{ IN20  , EV01 ,   0  , EVENT12 , 12 , 550  }
+	{ IN20  , EV01 ,   0  , EVENT13 , 13 , 600  }
+	{ IN20  , EV01 ,   0  , EVENT14 , 14 , 650  }
+	{ IN20  , EV01 ,   0  , EVENT15 , 15 , 700  }
+	{ IN20  , EV01 ,   0  , EVENT16 , 16 , 750  }
 }
