@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 02/08/2007
+Instructions for RTEMS EVR users                    Last Updated 02/09/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -84,6 +84,7 @@ II - Adding event databases and EVR configuration to your IOC startup file:
                      (0 for PMC)
     and   level    = VME interrupt level (set to 4 - can be the same 
                      for all EVRs)
+                     (0 for PMC)
     and   0        = VME
        or 1        = PMC
 
@@ -118,10 +119,11 @@ PROCEDURE WILL WRITE TO THE WRONG PMC AND RUIN IT!!  REMOVE
 NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
 
 (1) Boot the CPU with an IOC application that includes the event package.
-The "ErConfigure" command for each PMC EVR will fail if it hasn't yet been 
-corrected.
+    The "ErConfigure" command for each PMC EVR will fail if it hasn't yet 
+    been corrected.
 
-(2) Type the following command to read the PMC in slot 0 or 1:
+(2) Type the following command to read the vendor and device ID for 
+    PMC instance 0 or 1:
 
     Cexp>evrEEPROMFixup(<0 or 1>,0)
 
