@@ -325,7 +325,7 @@ Descriptor */
 #define EVR_CSR_EVREN     0x8000        /* Event Receiver Master Enable                           */
 
 
-#ifndef PCI_VENDOR_ID_MRF (0x1a3e)
+#ifndef PCI_VENDOR_ID_MRF
 #define PCI_VENDOR_ID_MRF (0x1a3e)
 #endif
 #ifndef PCI_DEVICE_ID_PLX_9030
