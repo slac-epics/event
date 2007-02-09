@@ -11,11 +11,9 @@
 #include <bsp/pci.h>
 #include <libcpu/io.h>
 
-#define BSP_pciFindDevice pci_find_device
+#include <plx9080_eeprom.h>
 
-#ifndef PCI_DEVICE_ID_PLX_9030
-#define PCI_DEVICE_ID_PLX_9030 0x9030
-#endif
+#define BSP_pciFindDevice pci_find_device
 
 #ifdef __PPC__
 #include <bsp.h>
@@ -78,6 +76,8 @@ static Eeprom93CxxDesc eeDesc[] = {
 #define CMD_READ(addr)	EE_CMD(2,addr)
 /* write enable */
 #define CMD_WEN()		EE_CMD(0, (3<<(ABITS-2)))
+/* erase location */
+#define CMD_ERASE(addr)	EE_CMD(3,addr)
 /* write */
 #define CMD_WRITE(addr)	EE_CMD(1,addr)
 /* write all */
@@ -98,6 +98,7 @@ static Eeprom93CxxDesc eeDesc[] = {
 #define EE_WD	(1<<26)		/* write data  */
 #define EE_RD	(1<<27)		/* read data   */
 #define EE_PRES (1<<28)		/* rom present */
+#define EE_RELD (1<<29)		/* reload      */
 
 
 #ifdef __PPC__
@@ -127,8 +128,6 @@ register unsigned long now,then;
 volatile unsigned *plx9080_ee_reg = 0;
 int	plx9080_ee_type               = -1;
 
-long plx9080_ee_read(long address, FILE *f);
-long plx9080_ee_write(int address, int value);
 
 /* send/receive a bit */
 static inline int
@@ -199,7 +198,18 @@ volatile unsigned	*rp = plx9080_ee_reg;
 	cs(1, rp);
 
 	while (n--) {
+		/* erase location */
+		ww(CMD_ERASE(address), CMD_LEN, rp);
+		/* lower CS; this starts the erase cycle */
+		cs(0,rp);
 
+		cs(1,rp);
+		do {
+			rtems_task_wake_after(1);
+		} while ( ! (in_le32(rp) & EE_RD) );
+		cs(0,rp);
+
+		cs(1,rp);
 		/* write address */
 		ww(CMD_WRITE(address), CMD_LEN, rp);
 		/* write data */
@@ -212,6 +222,9 @@ volatile unsigned	*rp = plx9080_ee_reg;
 		do {
 			rtems_task_wake_after(1);
 		} while ( ! (in_le32(rp) & EE_RD) );
+		cs(0, rp);
+
+		cs(1, rp);
 
 		pval++;
 		address++;
@@ -286,7 +299,16 @@ int  i,ch;
 		} while ( EOF !=ch && '\n' != ch );
 	}
 	assert( i <= EE_WORDS );
+
+#if 1
 	rval = do_write(0, vals, i);
+#else
+	{ int j;
+		for ( j=0; j<i; j++)
+			printf("Writing 0x%03x: 0x%04x\n", j, vals[j]);
+		rval = 0;
+	}
+#endif
 
 cleanup:
 	if (fp)
@@ -295,6 +317,19 @@ cleanup:
 	return rval;
 }
 
+long plx9080_ee_reload()
+{
+volatile unsigned	*rp = plx9080_ee_reg;
+	out_le32(rp, in_le32(rp) | EE_RELD);
+	/* I didn't test if this is really
+	 * a self-clearing bit (not documented either)
+	 * just wild-guessing for now.
+	 */
+	do {
+		rtems_task_wake_after(1);
+	} while ( (in_le32(rp) & EE_RELD) );
+	return 0;
+}
 
 long plx9080_ee_read(long address, FILE *f)
 {
@@ -308,12 +343,12 @@ int					n = address < 0 ? EE_WORDS : 1;
 		return -1;
 	}
 
-	if ( !f )
-		f = stdout;
 
 	cs(1, rp);
 
 	if (address < 0) {
+		if ( !f )
+			f = stdout;
 		address = 0;
 	}
 
@@ -324,7 +359,8 @@ int					n = address < 0 ? EE_WORDS : 1;
 			rval<<=1;
 			rval |= wb(0, rp) ? 1 : 0;
 		}
-		fprintf(f,"0x%04x\n",rval);
+		if ( f )
+			fprintf(f,"0x%04x\n",rval);
 	}
 
 	cs(0, rp);
@@ -334,17 +370,31 @@ int					n = address < 0 ? EE_WORDS : 1;
 
 static void usage()
 {
-	fprintf(stderr,"Usage: plx9080_ee_init(int instance, int eeType)\n");
-	fprintf(stderr,"       known eeTypes are 46 56 66 (atmel 93Cxx)\n");
+	fprintf(stderr,"Usage: plx9080_ee_init(int instance, int plxType, int eeType)\n");
+	fprintf(stderr,"       known plxTypes are 9080, 9030\n");
+	fprintf(stderr,"       known eeTypes  are 46 56 66 (atmel 93Cxx)\n");
 }
 
-long plx9080_ee_init(int instance, int eeType)
+long plx9080_ee_init(int instance, int plxType, int eeType)
 {
-int b,d,f;
-unsigned int base;
+int b,d,f,hasee;
+unsigned base;
+unsigned devid;
+unsigned off;
+unsigned tmp;
+
+	switch( plxType ) {
+		default:
+			fprintf(stderr,"Unknown PLX type %u\n",plxType);
+			usage();
+			return -1;
+		case 9030:	devid = PCI_DEVICE_ID_PLX_9030; off = EE_REG_OFF_9030; break;
+		case 9080:	devid = PCI_DEVICE_ID_PLX_9080; off = EE_REG_OFF_9080; break;
+	}
 
 	switch (eeType) {
 		default:
+			fprintf(stderr,"Unknown EEPROM type %u\n",eeType);
 			usage();
 			return -1;
 		case 46:	plx9080_ee_type = C46; break;
@@ -353,29 +403,21 @@ unsigned int base;
 	}
 
 	if (0==BSP_pciFindDevice(PCI_VENDOR_ID_PLX,
-							 PCI_DEVICE_ID_PLX_9080,
+							 devid,
 							 instance,
 							 &b,&d,&f)) {
 		pci_read_config_dword(b,d,f,PCI_BASE_ADDRESS_0,&base);
-		printf("PLX 9080 found at 0x%08x",base);
-		plx9080_ee_reg = (volatile unsigned *)(base + EE_REG_OFF_9080);
-	} else if (0==BSP_pciFindDevice(PCI_VENDOR_ID_PLX,
-							 PCI_DEVICE_ID_PLX_9030,
-							 instance,
-							 &b,&d,&f)) {
-		pci_read_config_dword(b,d,f,PCI_BASE_ADDRESS_0,&base);
-		printf("PLX 9030 found at 0x%08x",base);
-		plx9080_ee_reg = (volatile unsigned *)(base + EE_REG_OFF_9030);
+		printf("PLX %u found at 0x%08x", plxType, base);
+		pci_read_config_dword(b,d,f,PCI_SUBSYSTEM_VENDOR_ID,&tmp);
+		plx9080_ee_reg = (volatile unsigned *)(base + off);
 	} else {
-		fprintf(stderr,"NO PLX 9080 or 9030 found\n");
+		fprintf(stderr,"NO PLX %u unit #%u found\n", plxType, instance);
 		return -1;
 	}
-	if ( in_le32(plx9080_ee_reg) & EE_PRES ) {
-		printf(", EEPROM present\n");
-	} else {
-		printf(", NO EEPROM present\n");
-		return -1;
-	}
-	return 0;
+	hasee = (in_le32(plx9080_ee_reg) & EE_PRES);
+	printf(", %sEEPROM present\n", hasee ? "" : "NO ");
+	printf("Subsytem vendor ID 0x%04x, device ID 0x%04x\n",
+		tmp & 0xffff, (tmp>>16)&0xffff);				
+	return hasee ? 0 : -1;
 }
 

@@ -83,6 +83,8 @@ LIBRARY_IOC      += devMrfEr
 devMrfEr_OBJS += drvMrfEr
 devMrfEr_OBJS += devMrfEr
 devMrfEr_OBJS_RTEMS += devLibPMC
+devMrfEr_OBJS_RTEMS += evrEEPROMFixup
+devMrfEr_OBJS_RTEMS += plx9080_eeprom.c
 devMrfEr_OBJS += erRecord
 devMrfEr_OBJS += ereventRecord
 
