@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 02/06/2007
+Instructions for RTEMS EVR users                    Last Updated 02/08/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -69,26 +69,23 @@ II - Adding event databases and EVR configuration to your IOC startup file:
    And for IOCs that support beam-synchronous acquisition:
    dbLoadRecords("db/IOC-<area>-<xxyy>bsa.db")
 
-(3) Add ErConfigure for each VME EVR (before iocInit).  For the first VME card:
+(3) Add ErConfigure for each EVR (before iocInit).
 
-    ErConfigure(<z>,0x300000,0x60,4,0)
+    VME: ErConfigure(<instance>,<address>,<vector>,<level>,0)
+    PMC: ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
 
-    where z        = physical slot number in the VME crate, counting from 1
-    and   0x300000 = card address for card 1, 
-                     increment by 0x100000 for each subsequent card
-    and   0x60     = interrupt vector for card 1, 
-                     increment by  0x02 for each subsequent card
-    and   4        = interrupt level (can be the same for all VME EVRs)
+    where instance = EVR instance, starting from 0, incrementing by 1
+                     for each subsequent card
+    and   address  = VME card address, starting from 0x300000, 
+                     incrementing by 0x100000 for each subsequent card
+                     (0 for PMC)
+    and   vector   = VME interrupt vector, starting from 0x60, 
+                     incrementing by 0x02 for each subsequent card
+                     (0 for PMC)
+    and   level    = VME interrupt level (set to 4 - can be the same 
+                     for all EVRs)
     and   0        = VME
-
-(4) Add ErConfigure for each PMC EVR (before iocInit):
-
-    ErConfigure(<z>,0,0,0,1)
-    where z = 0 for first PMC instance, 1 for second PMC instance
-    and   0 = card address     (not used)
-    and   0 = interrupt vector (not used)
-    and   0 = interrupt level  (not used)
-    and   1 = PMC
+       or 1        = PMC
 
 III - Hardware Setup:
 ---------------------
@@ -102,4 +99,59 @@ III - Hardware Setup:
     https://sharepoint.slac.stanford.edu/sites/LCLS%20Document%20Storage/
     01%20-%20LCLS%20Systems/electronbeamsys/controls/Shared%20Documents/
     Timing/TIMING%20System%20BD.pdf
+
+    If the fiber has just the receive cable, connect the single cable to the
+    bottom spigot of the transceiver (bottom when the black lock is on the
+    right).
+
+IV - Special One-Time PMC Setup:
+--------------------------------
+
+The PMC EVRs, as delivered, have incorrect device and vendor IDs in their 
+EEPROMs.  These IDs must be corrected before the module can be configured 
+by the software.  Use the following one-time procedure to burn in the
+correct values for each PMC EVR.  
+
+WARNING - WARNING - WARNING:
+IF THERE ARE OTHER PMCS CONNECTED TO YOUR CPU, IT'S POSSIBLE THIS
+PROCEDURE WILL WRITE TO THE WRONG PMC AND RUIN IT!!  REMOVE 
+NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
+
+(1) Boot the CPU with an IOC application that includes the event package.
+The "ErConfigure" command for each PMC EVR will fail if it hasn't yet been 
+corrected.
+
+(2) Type the following command to read the PMC in slot 0 or 1:
+
+    Cexp>evrEEPROMFixup(<0 or 1>,0)
+
+    Look for these results:
+
+    PLX 9030 found at 0xe110x000, EEPROM present
+    Subsytem vendor ID 0x10b5, device ID 0x9030
+
+    > Sanity check passed...
+    > Informational mode only; EEPROM contents unmodified.
+    ==> Call again with nonzero 'doit' argument to apply change.
+    0x00000000 
+
+(3) If the results are as expected, type the following command to correct
+    the vendor and device ID:
+
+    Cexp> evrEEPROMFixup(<0 or 1>,1)
+
+    Look for these results:
+
+    PLX 9030 found at 0xe110x000, EEPROM present
+    Subsytem vendor ID 0x10b5, device ID 0x9030
+
+    > Sanity check passed...
+    > Writing MRF id (0x1a3e) to EEPROM SSVID
+    > Writing EVR id (0x10c8) to EEPROM SSDID
+    ==> EEPROM successfully fixed
+    0x00000000 (0)
+
+(4) Reboot the CPU and check that the ErConfigure commands are successful.
+
+
 
