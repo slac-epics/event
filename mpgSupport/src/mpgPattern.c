@@ -314,7 +314,7 @@ static long mpgPatternPnet(subRecord *psub)
   Rem:  Initialization subroutine for IOC:LOCA:UNIT:PATTERN
 
   Inputs:
-       A - EVG Card Number
+        None.
      
   Outputs:
     DPVT - Pointer to EVG Card Structure
@@ -324,16 +324,12 @@ static int mpgPatternProcInit(subRecord *psub)
 {
 
   /*
-   * If a card number is provided, initialize the EVG data buffer size
+   * For RTEMS, initialize the EVG data buffer size
    * and get the pointer to the card structure.
    */
 #ifdef __rtems__
-  if (psub->a > 0.5) {
-    EvgDataBufferInit((int)psub->a, sizeof(evrMessagePattern_ts));
-    psub->dpvt = (EgCardStruct *)EgGetCardStruct((int)psub->a);
-    if (psub->dpvt) return 0;
-    else            return -1;
-  }
+  EvgDataBufferInit(0, sizeof(evrMessagePattern_ts));
+  psub->dpvt = (EgCardStruct *)EgGetCardStruct(0);
 #endif
   return 0;
 }
@@ -352,7 +348,7 @@ static int mpgPatternProcInit(subRecord *psub)
 
   Inputs:
     DPVT - Pointer to EVG Card Structure
-       A - EVG Card Number
+       A - Spare
        B - Pnet processing error flag
        C - Spare
        D - Pnet Modifier 1
