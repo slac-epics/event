@@ -1,8 +1,8 @@
 # one per system - declare EVG stuff in this IOC for testing
 
 file bsaEdefAll.db {
-  pattern { SYSI  , DEVICE     , CARDI , CHECKI }
- 	  { SYS1  , IOC:SYS1:1 ,   0   ,    0   }
+  pattern { SYSI  , DEVICE     , CHECKI }
+ 	  { SYS1  , IOC:SYS1:1 ,    0   }
 }
 file evrPatternAll.db {
 #	    Device     ,          PNET Processing             

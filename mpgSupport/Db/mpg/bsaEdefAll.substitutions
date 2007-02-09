@@ -12,8 +12,8 @@ file mpgPatternProc.db
 {
 #
 #        Location
-pattern { DEV      , CARD     , ELOCA , CHECK     }
-        {$(DEVICE) , $(CARDI) ,$(SYSI), $(CHECKI) }
+pattern { DEV      , ELOCA , CHECK     }
+        {$(DEVICE) ,$(SYSI), $(CHECKI) }
 }
 file bsaEdef.db
 {

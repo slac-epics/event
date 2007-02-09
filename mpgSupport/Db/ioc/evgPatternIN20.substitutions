@@ -1,6 +1,6 @@
 file bsaEdefAll.db {
-  pattern { SYSI  , DEVICE        , CARDI , CHECKI }
- 	  { SYS0  , IOC:IN20:EV01 ,   7   ,    1   }
+  pattern { SYSI  , DEVICE        , CHECKI }
+ 	  { SYS0  , IOC:IN20:EV01 ,    1   }
 }
 file evrPatternAll.db {
 #	    Device        ,   Send SEQ RAM 1          PNET Processing LNK             
