@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 02/09/2007
+Instructions for RTEMS EVR users                    Last Updated 02/14/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -102,7 +102,7 @@ III - Hardware Setup:
     Timing/TIMING%20System%20BD.pdf
 
     If the fiber has just the receive cable, connect the single cable to the
-    bottom spigot of the transceiver (bottom when the black lock is on the
+    top spigot of the transceiver (bottom when the black lock is on the
     right).
 
 IV - Special One-Time PMC Setup:
@@ -129,7 +129,7 @@ NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
 
     Look for these results:
 
-    PLX 9030 found at 0xe110x000, EEPROM present
+    PLX 9030 found at 0xe110<0or1>000, EEPROM present
     Subsytem vendor ID 0x10b5, device ID 0x9030
 
     > Sanity check passed...
@@ -144,7 +144,7 @@ NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
 
     Look for these results:
 
-    PLX 9030 found at 0xe110x000, EEPROM present
+    PLX 9030 found at 0xe110<0or1>000, EEPROM present
     Subsytem vendor ID 0x10b5, device ID 0x9030
 
     > Sanity check passed...
