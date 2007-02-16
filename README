@@ -51,6 +51,8 @@ Note that the order of the above libraries is important.
 
 II - Adding event databases and EVR configuration to your IOC startup file:
 --------------------------------------------------------------------------
+These instructions assume that your IOC has already been set up using 
+instructions in /afs/slac/g/lcls/epics/ioc/iocBoot/README.
 
 (1) If you have one or more VME EVRs and your IOC is using an early version 
     of RTEMS (ie, version "4.7" instead of "4.7.0"), then add these 
@@ -166,5 +168,28 @@ NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
 
 (4) Reboot the CPU and check that the ErConfigure commands are successful.
 
+V - Checkout Instructions
+-------------------------
 
-
+(1) Errors when loading event databases, contact drogind.
+(2) Errors from ErConfigure, contact saa.
+(3) ErConfigure is successful but EVR has red LEDs, contact jedu to make 
+sure your fiber is connected properly from EVG through fanout modules to
+your EVR.
+(4) Unexpected or ominous messages at your console, contact saa. 
+(5) Once the IOC is up and configured successfully, type "dbcar()" at the 
+Cexp prompt and make sure there are no disconnected channels.  Contact drogind
+if there are.
+(6) From the home LCLS EDM display (lclshome) on a production machine, select 
+"Event".  Then select your IOC name.  In the "Event IOC Diagnostics" section, 
+select each box and examine the display (all channels must be connected):
+  * EVR display - look for non-zero FPGA, and "YES" for Phase Lock and 0 for 
+    "Rx Fail".  From the EVR display, select "Events".  Check that the rate 
+    for event code 1 is around 353Hz.
+  * Pattern display - check that data is changing every 2 seconds.  From the 
+    main Event display, select "IOC:IN20:EV01...", then select "Pattern".  
+    The data on your EVR pattern display and the EVG pattern display must 
+    match.  If the pattern data is all magenta, the fiber to your EVR is 
+    probably not connectedproperly.
+  * Gen Time display - check that the "Best Time Event Provider" is evrTimeGet.
+(7) Check that the timestamp of a few of your updating records are reasonable.
