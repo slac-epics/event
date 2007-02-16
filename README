@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 02/14/2007
+Instructions for RTEMS EVR users                    Last Updated 02/16/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -62,14 +62,25 @@ II - Adding event databases and EVR configuration to your IOC startup file:
     # Then, make the CSR space in the freed up space (from 0x9e000000 to 0x9f000000)
     BSP_VMEOutboundPortCfg(3,0x2f,0,0x9e000000,0x01000000)
 
-(2) Add database templates to st.cmd (before iocInit): 
+(2) If your IOC supports beam-synchronous acquisition, it will need to support
+    large waveforms for channel access.  After running the
+    appropriate epicsEnvSet<Dev,Dmz,Prod> file to set up the epics environment
+    (see /afs/slac/g/lcls/epics/ioc/iocBoot/README), add the following command 
+    (before iocInit):
 
-   dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
-   dbLoadRecords("db/IOC-<area>-<xxyy>pattern.db")
-   And for IOCs that support beam-synchronous acquisition:
-   dbLoadRecords("db/IOC-<area>-<xxyy>bsa.db")
+    epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "30000")
 
-(3) Add ErConfigure for each EVR (before iocInit).
+    If your IOC already supports waveforms larger than 30000 bytes for other
+    reasons, then this command is not needed. 
+
+(3) Add database templates to st.cmd (before iocInit): 
+
+    dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
+    dbLoadRecords("db/IOC-<area>-<xxyy>pattern.db")
+    And for IOCs that support beam-synchronous acquisition:
+    dbLoadRecords("db/IOC-<area>-<xxyy>bsa.db")
+
+(4) Add ErConfigure for each EVR (before iocInit).
 
     VME: ErConfigure(<instance>,<address>,<vector>,<level>,0)
     PMC: ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
