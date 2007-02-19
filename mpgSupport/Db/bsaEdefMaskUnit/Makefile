@@ -12,7 +12,6 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 
 DB += bsaEdefMaskUnitAll.db
-DB += mpgPatternTest.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
