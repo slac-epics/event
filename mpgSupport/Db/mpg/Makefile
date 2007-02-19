@@ -14,6 +14,7 @@ include $(TOP)/configure/CONFIG
 # Beam-synchronous acquisition event definitions
 DB += bsaEdefAll.db
 DB += bsaEdefSim.db
+DB += mpgPatternTest.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
