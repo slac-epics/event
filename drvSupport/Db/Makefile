@@ -52,7 +52,8 @@ DB += IOC-LI21-BL01evr.db
 DB += IOC-LI21-BP01evr.db
 DB += IOC-LI21-MG01evr.db
 DB += IOC-LI21-PM01evr.db
-
+# Sector 25
+DB += IOC-LI25-PM01evr.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
