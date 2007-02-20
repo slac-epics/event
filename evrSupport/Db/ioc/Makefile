@@ -62,6 +62,9 @@ DB += IOC-LI21-BP01pattern.db
 DB += IOC-LI21-MG01pattern.db
 DB += IOC-LI21-PM01pattern.db
 
+# Pattern Sector 21
+DB += IOC-LI25-PM01pattern.db
+
 # BSA Injector
 DB += IOC-IN20-BP01bsa.db
 DB += IOC-IN20-BP02bsa.db
