@@ -46,7 +46,7 @@ DB += IOC-IN20-PM05evr.db
 DB += IOC-IN20-PM06evr.db
 DB += IOC-IN20-PM07evr.db
 DB += IOC-IN20-RF01evr.db
-DB += IOC-IN20-WS01evr.db
+DB += IOC-IN20-MC01evr.db
 # Sector 21
 DB += IOC-LI21-BL01evr.db
 DB += IOC-LI21-BP01evr.db
