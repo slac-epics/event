@@ -11,12 +11,12 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 #
-DB += bsaEdefShadow.db
 DB += evrPatternProc.db
 # Test stands
 DB += evrPatternXL05.db
 DB += evrPatternXL09.db
 DB += evrPatternXL16.db
+#DB += IOC-IN20-EV02pattern.db
 DB += bsaXL01.db
 DB += bsaSimXL01.db
 DB += bsaXL02.db
@@ -27,6 +27,8 @@ DB += bsaXL04.db
 DB += bsaSimXL04.db
 DB += bsaXL05.db
 DB += bsaSimXL05.db
+DB += bsaXL09.db
+DB += bsaSimXL09.db
 # Laser Room
 DB += IOC-LR20-LS01pattern.db
 # Pattern Injector
@@ -53,7 +55,7 @@ DB += IOC-IN20-PM05pattern.db
 DB += IOC-IN20-PM06pattern.db
 DB += IOC-IN20-PM07pattern.db
 DB += IOC-IN20-RF01pattern.db
-DB += IOC-IN20-WS01pattern.db
+DB += IOC-IN20-MC01pattern.db
 # Pattern Sector 21
 DB += IOC-LI21-BL01pattern.db
 DB += IOC-LI21-BP01pattern.db
@@ -65,12 +67,13 @@ DB += IOC-IN20-BP01bsa.db
 DB += IOC-IN20-BP02bsa.db
 DB += IOC-IN20-IM01bsa.db
 DB += IOC-IN20-RF01bsa.db
-DB += IOC-IN20-WS01bsa.db
+DB += IOC-IN20-MC01bsa.db
 
 # BSA Sector 21
 DB += IOC-LI21-BL01bsa.db
 DB += IOC-LI21-BP01bsa.db
-DB += IOC-LI21-WS01bsa.db
+DB += IOC-LI21-MC01bsa.db
+DB += IOC-LI21-RF01bsa.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
