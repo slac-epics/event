@@ -5,15 +5,15 @@
 file bsaPHASEdef.db {
 #      Device               ,loc'n , IOC  , system, Attribute
   pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
-	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_P }
-	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_P }
-	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , P     }
+	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , _L1S_P }
+	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , _L1X_P }
+	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , _P     }
 }
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
 file bsaAMPLEdef.db {
 #      Device               ,loc'n , IOC  ,system , Attribute
   pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
-	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_A }
-	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_A }
-	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , A     }
+	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , _L1S_A }
+	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , _L1X_A }
+	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , _A     }
