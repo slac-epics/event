@@ -4,26 +4,26 @@
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.db!
 file bsaPHASEdef.db {
 #      Device               ,loc'n , IOC  , system, Attribute
-  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
-	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , _REF_P }
-	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , _P     }
-	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , _RF_P  }
-	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , _RF_P  }
-	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , _L0A_P }
-	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , _LOB_P }
-	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , _P     }
-	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , _P     }
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,   EF  }
+	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , REF_P , _REF_P}
+	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , P     , _P    }
+	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , RF_P  , _P }
+	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , RF_P  , _P }
+	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_P , _L0A_P}
+	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , LOB_P , _L0B_P}
+	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , P     , _P    }
+	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , P     , _P    }
 }
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
 file bsaAMPLEdef.db {
 #      Device               ,loc'n , IOC  ,system , Attribute
-  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  }
-	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , _REF_A }
-	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , _A     }
-	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , _RF_A  }
-	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , _RF_A  }
-	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , _L0A_A }
-	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , _LOB_A }
-	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , _A     }
-	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , _A     }
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,   EF  }
+	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , REF_A , _REF_A}
+	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , A     , _A    }
+	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , RF_A  , _A }
+	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , RF_A  , _A }
+	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_A , _L0A_A}
+	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , LOB_A , _L0B_A}
+	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , A     , _A    }
+	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , A     , _A    }
