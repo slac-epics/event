@@ -19,32 +19,32 @@ file bsaEdefAvg.db
 #	      Device           Name                                      IOC    IOC   mod5  Init 
 #                                                                    loc'n  unit  bit   Event Code
   pattern {DEV    ,SECN    , MDID , MD, DESC , EGU ,HOPR,LOPR,PREC,ADEL, MDEL, LOCA  , UNIT , BIT,  EC }
-	  { $(DEVICE) ,$(ATRB) ,  1   , 1 ,   1  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), A  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  2   , 2 ,   2  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), B  ,  100}
-	  { $(DEVICE) ,$(ATRB  ,  3   , 3 ,   3  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), C  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  4   , 4 ,   4  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), D  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  5   , 5 ,   5  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), E  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  6   , 6 ,   6  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), F  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  7   , 7 ,   7  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), G  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  8   , 8 ,   8  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), H  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  9   , 9 ,   9  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), I  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  10  ,10 ,  10  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), J  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  11  ,11 ,  11  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), K  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  12  ,12 ,  12  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), L  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  13  ,13 ,  13  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), M  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  14  ,14 ,  14  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), N  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  15  ,15 ,  15  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), O  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  16  ,16 , 1HZ  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), P  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  17  ,17 ,10HZ  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), Q  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  ""  ,18 ,FULL  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), R  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  F1  ,19 ,FBCK1 , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), S  ,  100}
-	  { $(DEVICE) ,$(ATRB) ,  F2  ,20 ,FBCK2 , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), T  ,  100}
+	  { $(DEVICE) ,$(ATRB) ,  1   , 1 ,   1  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), A  ,  101}
+	  { $(DEVICE) ,$(ATRB) ,  2   , 2 ,   2  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) ,$(ATRB  ,  3   , 3 ,   3  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,$(ATRB) ,  4   , 4 ,   4  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) ,$(ATRB) ,  5   , 5 ,   5  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) ,$(ATRB) ,  6   , 6 ,   6  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), F  ,  106}
+	  { $(DEVICE) ,$(ATRB) ,  7   , 7 ,   7  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) ,$(ATRB) ,  8   , 8 ,   8  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) ,$(ATRB) ,  9   , 9 ,   9  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) ,$(ATRB) ,  10  ,10 ,  10  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), J  ,  110}
+	  { $(DEVICE) ,$(ATRB) ,  11  ,11 ,  11  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) ,$(ATRB) ,  12  ,12 ,  12  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), L  ,  112}
+	  { $(DEVICE) ,$(ATRB) ,  13  ,13 ,  13  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) ,$(ATRB) ,  14  ,14 ,  14  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), N  ,  114}
+	  { $(DEVICE) ,$(ATRB) ,  15  ,15 ,  15  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), O  ,  115}
+	  { $(DEVICE) ,$(ATRB) ,  1H  ,16 , 1HZ  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), P  ,  116}
+	  { $(DEVICE) ,$(ATRB) ,  TH  ,17 ,10HZ  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), Q  ,  117}
+	  { $(DEVICE) ,$(ATRB) ,  BR  ,18 ,FULL  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), R  ,  118}
+	  { $(DEVICE) ,$(ATRB) ,  F1  ,19 ,FBCK1 , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), S  ,  119}
+	  { $(DEVICE) ,$(ATRB) ,  F2  ,20 ,FBCK2 , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), T  ,  120}
 }
 
 file bsaEdefFanouts.db
 {
 #	      Device            Name
   pattern {DEV    ,SECN   ,  FLNK}
-	  { $(DEVICE) ,$(ATRB),  ""  }
+	  { $(DEVICE) ,$(EF)  ,  ""  }
 }
 
