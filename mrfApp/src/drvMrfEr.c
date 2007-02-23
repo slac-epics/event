@@ -2328,12 +2328,6 @@ ErCardStruct *ErGetCardStruct (int Card)
     */
     ErCardStruct  *pCard;
 
-  /* Use card = -1 to send back ptr to first Er in the list.
-     Device support uses this and by doing it this way, we
-     can avoid making ErCardList global 3/31/2006 dayle */
-  if (Card == -1) {
-    return (ErCardStruct *)ellFirst(&ErCardList);
-  }
    /*---------------------
     * Loop to see if the requested card is in the linked list of known
     * Event Receiver card structures.
