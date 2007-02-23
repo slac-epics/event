@@ -229,7 +229,7 @@ struct EgCardStruct {
                                                                                 
 typedef struct MrfEvgSeqStruct {
     epicsUInt32 Timestamp;
-    epicsUInt32 EventCode;
+    epicsUInt16 EventCode;
 } MrfEvgSeqStruct;
 
 
@@ -273,7 +273,10 @@ int  EgReadSeqRam(EgCardStruct *pParm, int channel, unsigned char *pBuf);
 int  EgWriteSeqRam(EgCardStruct *pParm, int channel, unsigned char *pBuf);
 long EgGetAltStatus(EgCardStruct *pParm, int Ram);
 long EgEnableAltRam(EgCardStruct *pParm, int Ram);
-long EgGetMode(EgCardStruct *pParm, int ram);
+long EgSetSingleSeqMode(EgCardStruct *pParm, int Ram);
+long EgDisableRam(EgCardStruct *pParm, int Ram);
+long EgEnableRam(EgCardStruct *pParm, int Ram);
+long EgGetMode(EgCardStruct *pParm, int ram, int *pBusy, int *pEnable);
 
 long EgGetEnableTrigger(EgCardStruct *pParm, unsigned int Channel);
 long EgGetBusyStatus(EgCardStruct *pParm, int Ram);
@@ -292,15 +295,15 @@ long EgEnableMuxSeq(EgCardStruct *pParm, unsigned int SeqNum, int state);
 unsigned long EgGetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel);
 unsigned long EgSetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel, unsigned long Divisor);
 long EgGetFpgaVersion(EgCardStruct *pParm);
-int EvgSeqRamRead(volatile MrfEVGRegs *pEvg, int ram, int address, int len);
-int EvgSeqRamWrite(volatile MrfEVGRegs *pEvg, int ram, int address, int len, MrfEvgSeqStruct *pSeq);
-int EvgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable);
-int EvgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable);
-int EvgDataBufferSetSize(volatile MrfEVGRegs *pEvg, int size);
-int EvgDataBufferLoad(int Card, epicsUInt32 *data, int nelm);
-int EvgDataBufferUpdate(EgCardStruct *pParm, epicsUInt32 *data, int nelm);
-void EvgDataBufferSend(volatile MrfEVGRegs *pEvg);
-int EvgDataBufferInit(int Card, int nelm);
+int EgSeqRamRead(EgCardStruct *pParm, int ram, unsigned short address, int len);
+int EgSeqRamWrite(EgCardStruct *pParm, int ram, unsigned short address, MrfEvgSeqStruct *pSeq);
+int EgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable);
+int EgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable);
+int EgDataBufferSetSize(volatile MrfEVGRegs *pEvg, unsigned short size);
+void EgDataBufferLoad(volatile MrfEVGRegs *pEvg, epicsUInt32 *data, int nelm);
+void EgDataBufferUpdate(volatile MrfEVGRegs *pEvg, epicsUInt32 *data, int nelm);
+void EgDataBufferSend(volatile MrfEVGRegs *pEvg);
+int EgDataBufferInit(int Card, int nelm);
 EgCardStruct *EgGetCardStruct (int Card);
 
 #endif

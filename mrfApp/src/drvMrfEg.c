@@ -222,13 +222,6 @@ EgCardStruct *EgGetCardStruct (int Card)
 {
   EgCardStruct  *pCard;
 
-  /* Use card = -1 to send back ptr to first Eg in the list.
-     Device support uses this and by doing it this way, we
-     can avoid making EgCardList global 3/31/2006 dayle */
-  if (Card == -1) {
-    return (EgCardStruct *)ellFirst(&EgCardList);
-  }
-
   for (pCard = (EgCardStruct *)ellFirst(&EgCardList);
     pCard != NULL;
     pCard = (EgCardStruct *)ellNext(&pCard->Link)) {
@@ -414,7 +407,7 @@ long EgLoadRamList(EgCardStruct *pParm, long Ram) {
 
   /* When in ALT mode, all event records have to be downloaded */
   
-  if (EgGetMode(pParm, 1) == egMOD1_Alternate)
+  if (EgGetMode(pParm, 1, &dummy, &dummy) == egMOD1_Alternate)
   {
     RamSpeed = pParm->Ram1Speed;        /* RAM1 clock used when in ALT mode */
     AltFlag = 1;
@@ -554,6 +547,7 @@ LOCAL void EgRamTask(void)
 {
   int   Spinning = 0;
   EgCardStruct *pCard;
+  int   busy, enable;
 
   for (;;)
   {
@@ -573,12 +567,12 @@ LOCAL void EgRamTask(void)
       /* Lock the EG */
       epicsMutexLock(pCard->EgLock);    /******** LOCK ***************/
 
-      if (EgGetMode(pCard, 1) != egMOD1_Alternate)
+      if (EgGetMode(pCard, 1, &busy, &enable) != egMOD1_Alternate)
       { /* Not in ALT mode, each ram is autonomous */
         if(pCard->Ram1Dirty != 0)
         {
           /* Make sure it is disabled and not running */
-          if ((EgGetMode(pCard, 1) == egMOD1_Off) && (EgGetBusyStatus(pCard, 1) == 0))
+          if ((EgGetMode(pCard, 1, &busy, &enable) == egMOD1_Off) && (busy == 0))
           { /* download the RAM */
             EgClearSeq(pCard, 1);
             EgLoadRamList(pCard, 1);
@@ -590,7 +584,7 @@ LOCAL void EgRamTask(void)
         if(pCard->Ram2Dirty != 0)
         {
           /* Make sure it is disabled and not running */
-          if ((EgGetMode(pCard, 2) == egMOD1_Off) && (EgGetBusyStatus(pCard, 2) == 0))
+          if ((EgGetMode(pCard, 2, &busy, &enable) == egMOD1_Off) && (busy == 0))
           { /* download the RAM */
             EgClearSeq(pCard, 2);
             EgLoadRamList(pCard, 2);
@@ -675,7 +669,7 @@ long EgStartRamTask(void)
  **/
 long EgScheduleRamProgram(int card)
 {
-  epicsEventSignal(EgRamTaskEventSem);
+  if (EgRamTaskEventSem) epicsEventSignal(EgRamTaskEventSem);
   return(0);
 }
 
@@ -1394,7 +1388,7 @@ long EgSetSeqMode(EgCardStruct *pParm, unsigned int Seq, int Mode)
   default:
     return(-1);
   }
-  return(-1);
+  return(0);
 }
 
 /**
@@ -1447,22 +1441,25 @@ long EgGetAltStatus(EgCardStruct *pParm, int Ram)
 /**
  *
  * Return the operating mode of the requested sequence RAM.
+ * Also return the busy and enable status of the RAM.
  *
  **/
-long EgGetMode(EgCardStruct *pParm, int Ram)
+long EgGetMode(EgCardStruct *pParm, int Ram, int *pBusy, int *pEnable)
 {
   volatile MrfEVGRegs  *pEg = pParm->pEg;
   unsigned short        Mask;
   unsigned short        Control;
 
-  Mask = MRF_VME_REG16_READ(&pEg->EventMask) & 0x3806;
-  Control = MRF_VME_REG16_READ(&pEg->Control) & 0x0060;
-
-  if (Mask & 0x0800)
-    return(egMOD1_Alternate);
+  Mask    = MRF_VME_REG16_READ(&pEg->EventMask);
+  Control = MRF_VME_REG16_READ(&pEg->Control);  
 
   if (Ram == 1)
   {
+    *pBusy   = (Control & 0x0004)?1:0;
+    *pEnable = (Mask    & 0x0004)?1:0;
+    
+    if (Mask & 0x0800) return(egMOD1_Alternate);
+    
     Mask &= 0x2004;
     Control &= 0x0040;
 
@@ -1477,6 +1474,11 @@ long EgGetMode(EgCardStruct *pParm, int Ram)
   }
   else
   {
+    *pBusy   = (Control & 0x0002)?1:0;
+    *pEnable = (Mask    & 0x0002)?1:0;
+    
+    if (Mask & 0x0800) return(egMOD1_Alternate);
+    
     Mask &= 0x1002;
     Control &= 0x0020;
 
@@ -1489,8 +1491,6 @@ long EgGetMode(EgCardStruct *pParm, int Ram)
     if (Mask & 0x1000)
       return(egMOD1_Single);
   }
-  epicsPrintf("EgGetMode() seqence RAM in invalid state %4.4X %4.4X\n",
-              MRF_VME_REG16_READ(&pEg->Control), MRF_VME_REG16_READ(&pEg->EventMask));
   return(-1);
 }
 
@@ -1503,6 +1503,63 @@ long EgEnableAltRam(EgCardStruct *pParm, int Ram)
     MRF_VME_REG16_WRITE(&pEg->EventMask, (Mask & ~0x0002)|0x0004);
   else
     MRF_VME_REG16_WRITE(&pEg->EventMask, (Mask & ~0x0004)|0x0002);
+  return(0);
+}
+
+/**
+ *
+ * Set mode of Sequence RAM operation to single-sequence and leave disabled.
+ *
+ **/
+long EgSetSingleSeqMode(EgCardStruct *pParm, int Ram)
+{
+  volatile MrfEVGRegs  *pEg = pParm->pEg;
+
+  if (Ram == 1)
+  {
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask)&(~0x2804));  /* Disable SEQ 1 */
+    MRF_VME_REG16_WRITE(&pEg->Control,
+                        (MRF_VME_REG16_READ(&pEg->Control)&CTL_OR_MASK)&(~0x0044));
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask)|0x2000); /* Put Seq RAM 1 in single mode but leave disabled */
+  }
+  else if (Ram == 2)
+  {
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask)&(~0x1802));  /* Disable SEQ 2 */
+    MRF_VME_REG16_WRITE(&pEg->Control,
+                        (MRF_VME_REG16_READ(&pEg->Control)&CTL_OR_MASK)&(~0x0022));
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask)|0x1000); /* Put Seq RAM 2 in single mode but leave disabled */
+  }
+  else
+    return(-1);
+  return(0);
+}
+
+long EgEnableRam(EgCardStruct *pParm, int Ram)
+{
+  volatile MrfEVGRegs  *pEg = pParm->pEg;
+  if (Ram == 1) {
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask) | 0x0004);
+  } else {
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask) | 0x0002);
+  }
+  return(0);
+}
+long EgDisableRam(EgCardStruct *pParm, int Ram)
+{
+  volatile MrfEVGRegs  *pEg = pParm->pEg;
+  if (Ram == 1) {
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask) & (~0x0004));
+  } else {
+    MRF_VME_REG16_WRITE(&pEg->EventMask,
+                        MRF_VME_REG16_READ(&pEg->EventMask) & (~0x0002));
+  }
   return(0);
 }
 /**
@@ -1906,12 +1963,12 @@ epicsStatus EG(void)
     case 'g': EgGenerateVmeEvent(pCard, atoi(&buf[1])); break;
     case 'a':
       printf("\n");
-      if (EvgSeqRamRead(pCard->pEg, 1, atoi(&buf[1]),1)) printf("Error\n");
+      if (EgSeqRamRead(pCard, 1, atoi(&buf[1]),1)) printf("Error\n");
       printf("\n");
       break;
     case 'b':
       printf("\n");
-      if (EvgSeqRamRead(pCard->pEg, 2, atoi(&buf[1]),1)) printf("Error\n");
+      if (EgSeqRamRead(pCard, 2, atoi(&buf[1]),1)) printf("Error\n");
       printf("\n");
       break;
     case 'z': EgDumpRegs(pCard); break;
@@ -1922,15 +1979,13 @@ epicsStatus EG(void)
 }
 #endif /* EG_MONITOR */
 
-int EvgSeqRamRead(volatile MrfEVGRegs *pEvg, int ram, int address, int len)
+int EgSeqRamRead(EgCardStruct *pParm, int ram, unsigned short address, int len)
 {
+  volatile MrfEVGRegs *pEg = pParm->pEg;
   int dummy;
   int i;
 
-  if (ram != 1 && ram != 2)
-    return ERROR;
-
-  if (address < 0 || address >= MRF_MAX_SEQ_SIZE)
+  if (address >= MRF_MAX_SEQ_SIZE)
     return ERROR;
 
   if (len < 1 || address + len - 1 >= MRF_MAX_SEQ_SIZE)
@@ -1940,23 +1995,27 @@ int EvgSeqRamRead(volatile MrfEVGRegs *pEvg, int ram, int address, int len)
     {
       for (i = 0; i < len; i++)
         {
-          MRF_VME_REG16_WRITE(&pEvg->Seq1Addr,  address + i);
+          MRF_VME_REG16_WRITE(&pEg->Seq1Addr,  address + i);
           /* Read back to flush pipelines */
-          dummy = MRF_VME_REG16_READ(&pEvg->Seq1Addr);
+          dummy = MRF_VME_REG16_READ(&pEg->Seq1Addr);
           printf("Address %d evno %d timestamp %d\n",dummy,
-                 MRF_VME_REG16_READ(&pEvg->Seq1Data), MRF_VME_REG32_READ(&pEvg->Seq1Time));
+                 MRF_VME_REG16_READ(&pEg->Seq1Data), MRF_VME_REG32_READ(&pEg->Seq1Time));
+        }
+    }
+  else if (ram == 2)
+    {
+      for (i = 0; i < len; i++)
+        {
+          MRF_VME_REG16_WRITE(&pEg->Seq2Addr,  address + i);
+          /* Read back to flush pipelines */
+          dummy = MRF_VME_REG16_READ(&pEg->Seq2Addr);
+          printf("Address %d evno %d timestamp %d\n",dummy,
+                 MRF_VME_REG16_READ(&pEg->Seq2Data), MRF_VME_REG32_READ(&pEg->Seq2Time));
         }
     }
   else
     {
-      for (i = 0; i < len; i++)
-        {
-          MRF_VME_REG16_WRITE(&pEvg->Seq2Addr,  address + i);
-          /* Read back to flush pipelines */
-          dummy = MRF_VME_REG16_READ(&pEvg->Seq2Addr);
-          printf("Address %d evno %d timestamp %d\n",dummy,
-                 MRF_VME_REG16_READ(&pEvg->Seq2Data), MRF_VME_REG32_READ(&pEvg->Seq2Time));
-        }
+      return ERROR;
     }
 
   return OK;
@@ -1964,13 +2023,12 @@ int EvgSeqRamRead(volatile MrfEVGRegs *pEvg, int ram, int address, int len)
 int EgDumpSEQRam(int card,int ram,int num)
 {
   EgCardStruct *pCard = EgGetCardStruct(card);
-  volatile MrfEVGRegs *pEg = pCard->pEg;
 
   if (pCard == NULL) {
     DEBUGPRINT(DP_ERROR, drvMrfEgFlag, ("EgDumpSEQRam: Null EgCardStruct for card=%d\n", card));
     return ERROR;
   }
-  EvgSeqRamRead((MrfEVGRegs*)pEg,ram,0,num);
+  EgSeqRamRead(pCard,ram,0,num);
   return OK;
 }
 
@@ -2000,43 +2058,27 @@ int DumpEGEV(int card, int ram)
   return OK;
 }
 
-int EvgSeqRamWrite(volatile MrfEVGRegs *pEvg, int ram, int address,
-                      int len, MrfEvgSeqStruct *pSeq)
+int EgSeqRamWrite(EgCardStruct *pParm, int ram, unsigned short address,
+                  MrfEvgSeqStruct *pSeq)
 {
-  int i;
+  volatile MrfEVGRegs *pEg = pParm->pEg;
 
-  if (ram != 1 && ram != 2)
+  if (address >= MRF_MAX_SEQ_SIZE)
     return ERROR;
 
-  if (address < 0 || address >= MRF_MAX_SEQ_SIZE)
-    return ERROR;
-
-  if (len < 1 || address + len - 1 >= MRF_MAX_SEQ_SIZE)
-    return ERROR;
-
-  if (ram == 1)
-    {
-      for (i = 0; i < len; i++)
-        {
-          MRF_VME_REG16_WRITE(&pEvg->Seq1Addr, address + i);
-          MRF_VME_REG16_WRITE(&pEvg->Seq1Data, pSeq[i].EventCode);
-          MRF_VME_REG32_WRITE(&pEvg->Seq1Time, pSeq[i].Timestamp);
-        }
-    }
-  else
-    {
-      for (i = 0; i < len; i++)
-        {
-          MRF_VME_REG16_WRITE(&pEvg->Seq2Addr, address + i);
-          MRF_VME_REG16_WRITE(&pEvg->Seq2Data, pSeq[i].EventCode);
-          MRF_VME_REG32_WRITE(&pEvg->Seq2Time, pSeq[i].Timestamp);
-        }
-    }
-
+  if (ram == 1) {
+    MRF_VME_REG16_WRITE(&pEg->Seq1Addr, address);
+    MRF_VME_REG16_WRITE(&pEg->Seq1Data, pSeq->EventCode);
+    MRF_VME_REG32_WRITE(&pEg->Seq1Time, pSeq->Timestamp);
+  } else {
+    MRF_VME_REG16_WRITE(&pEg->Seq2Addr, address);
+    MRF_VME_REG16_WRITE(&pEg->Seq2Data, pSeq->EventCode);
+    MRF_VME_REG32_WRITE(&pEg->Seq2Time, pSeq->Timestamp);
+  }
   return OK;
 }
 
-int EvgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable)
+int EgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable)
 {
   int mask;
 
@@ -2053,7 +2095,7 @@ int EvgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable)
   return ERROR;
 }
 
-int EvgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable)
+int EgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable)
 {
   int mask;
 
@@ -2070,9 +2112,9 @@ int EvgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable)
   return ERROR;
 }
 
-int EvgDataBufferSetSize(volatile MrfEVGRegs *pEvg, int size)
+int EgDataBufferSetSize(volatile MrfEVGRegs *pEvg, unsigned short size)
 {
-  if (size <= 0 || size > EVG_MAX_BUFFER || (size & 3))
+  if (size == 0 || size > EVG_MAX_BUFFER || (size & 3))
     return ERROR;
 
   MRF_VME_REG16_WRITE(&pEvg->DataBufSize, size);
@@ -2082,35 +2124,22 @@ int EvgDataBufferSetSize(volatile MrfEVGRegs *pEvg, int size)
 
   return ERROR;
 }
-int EvgDataBufferLoad(int Card, epicsUInt32 *data, int nelm) 
+void EgDataBufferLoad(volatile MrfEVGRegs *pEvg, epicsUInt32 *data, int nelm) 
 {
-  EgCardStruct  *pCard = EgGetCardStruct(Card);
-  if (pCard == NULL) {
-    DEBUGPRINT(DP_ERROR, drvMrfEgFlag, ("EvgDataBufferLoad: Null EgCardStruct for card=%d\n",Card));
-    return ERROR;
-  }
-
   /* Update registers and send */
-  EvgDataBufferUpdate(pCard, data, nelm);
-
-  return OK;
+  EgDataBufferUpdate(pEvg, data, nelm);
+  EgDataBufferSend(pEvg);
 }
-int EvgDataBufferUpdate(EgCardStruct *pParm, epicsUInt32 *data, int nelm) 
+void EgDataBufferUpdate(volatile MrfEVGRegs *pEvg, epicsUInt32 *data, int nelm)
 {
-  volatile MrfEVGRegs *pEvg;
   int ii; 
 
-  pEvg = pParm->pEg;
   for (ii = 0; ii < nelm; ii++) {
     MRF_VME_REG32_WRITE(&pEvg->DataBuffer[ii], data[ii]);
   }
-  MRF_VME_REG16_WRITE(&pEvg->DataBufControl,
-                      MRF_VME_REG16_READ(&pEvg->DataBufControl) | EVG_DBUF_TRIGGER);
-
-  return OK;
 }
 
-void EvgDataBufferSend(volatile MrfEVGRegs *pEvg)
+void EgDataBufferSend(volatile MrfEVGRegs *pEvg)
 {
   int mask;
 
@@ -2119,22 +2148,22 @@ void EvgDataBufferSend(volatile MrfEVGRegs *pEvg)
   MRF_VME_REG16_WRITE(&pEvg->DataBufControl, mask);
 }
 
-int EvgDataBufferInit(int Card, int nelm) {
+int EgDataBufferInit(int Card, int nelm) {
   volatile MrfEVGRegs *pEvg;
   int rc;
   EgCardStruct *pCard = EgGetCardStruct(Card);
   if (pCard == NULL) {
       DEBUGPRINT (DP_ERROR, drvMrfEgFlag,
-                  ("EvgDataBufferInit: Null EgCardStruct for card=%d\n", Card));
+                  ("EgDataBufferInit: Null EgCardStruct for card=%d\n", Card));
     return ERROR;
   }
 
   pEvg = pCard->pEg;
 
-  rc = EvgDataBufferMode(pEvg, 1); /* set "shared" for data with dist'd bus sig */ 
-  rc = EvgDataBufferEnable(pEvg, 1);
+  rc = EgDataBufferMode(pEvg, 1); /* set "shared" for data with dist'd bus sig */ 
+  rc = EgDataBufferEnable(pEvg, 1);
   /* Set size of data buffer in h/w */
-  rc = EvgDataBufferSetSize(pEvg, nelm);
+  rc = EgDataBufferSetSize(pEvg, nelm);
   if (rc == ERROR) {
     /* COMPLAIN */
     return rc;
