@@ -14,12 +14,13 @@ record(sSub, "$(DEV):CHECK$(MDID)") {
   field(FLNK, "$(DEV):MODMATCH$(MDID)")
   field(INPA, "EDEF:$(LOCA):$(MD):CTRL CA")
   field(INPB, "$(DEV):MEASCNT$(MDID)")
-  field(INPC, "EDEF:$(LOCA):$(MD):CNTMAX CA")
   field(INPD, "$(DEV):DONE$(MDID)")
   field(INPU, "EDEF:$(LOCA):$(MD):INCLUSION2 CA")
   field(INPV, "EDEF:$(LOCA):$(MD):INCLUSION3 CA")
   field(DISV, "0")
   field(SDIS, "$(DEV):STATE$(MD)")
+  field(INPI, "EDEF:$(LOCA):$(MD):AVGCNT CA")
+  field(INPJ, "EDEF:$(LOCA):$(MD):MEASCNT CA")
 }
 
 record(calcout, "$(DEV):STATE$(MD)") {
@@ -81,8 +82,8 @@ record(calcout, "$(DEV):MEASCNT$(MDID)") {
 }
 
 #! Further lines contain data used by VisualDCT
-#! View(797,2674,1.0)
-#! Record("$(DEV):CHECK$(MDID)",1538,2198,0,0,"$(DEV):CHECK$(MDID)")
+#! View(1829,2001,1.0)
+#! Record("$(DEV):CHECK$(MDID)",1538,2184,0,0,"$(DEV):CHECK$(MDID)")
 #! Field("$(DEV):CHECK$(MDID).FLNK",16777215,1,"$(DEV):CHECK$(MDID).FLNK")
 #! Link("$(DEV):CHECK$(MDID).FLNK","$(DEV):MODMATCH$(MDID)")
 #! Field("$(DEV):CHECK$(MDID).INPF",16777215,1,"$(DEV):CHECK$(MDID).INPF")
@@ -94,7 +95,6 @@ record(calcout, "$(DEV):MEASCNT$(MDID)") {
 #! Field("$(DEV):CHECK$(MDID).INPA",16777215,1,"$(DEV):CHECK$(MDID).INPA")
 #! Field("$(DEV):CHECK$(MDID).INPB",16777215,1,"$(DEV):CHECK$(MDID).INPB")
 #! Link("$(DEV):CHECK$(MDID).INPB","$(DEV):MEASCNT$(MDID).VAL")
-#! Field("$(DEV):CHECK$(MDID).INPC",16777215,1,"$(DEV):CHECK$(MDID).INPC")
 #! Field("$(DEV):CHECK$(MDID).Q",16777215,1,"$(DEV):CHECK$(MDID).Q")
 #! Field("$(DEV):CHECK$(MDID).INPD",16777215,1,"$(DEV):CHECK$(MDID).INPD")
 #! Link("$(DEV):CHECK$(MDID).INPD","$(DEV):DONE$(MDID).VAL")
@@ -102,6 +102,8 @@ record(calcout, "$(DEV):MEASCNT$(MDID)") {
 #! Field("$(DEV):CHECK$(MDID).INPV",16777215,1,"$(DEV):CHECK$(MDID).INPV")
 #! Field("$(DEV):CHECK$(MDID).SDIS",16777215,0,"$(DEV):CHECK$(MDID).SDIS")
 #! Link("$(DEV):CHECK$(MDID).SDIS","$(DEV):STATE$(MD).VAL")
+#! Field("$(DEV):CHECK$(MDID).INPI",16777215,1,"$(DEV):CHECK$(MDID).INPI")
+#! Field("$(DEV):CHECK$(MDID).INPJ",16777215,1,"$(DEV):CHECK$(MDID).INPJ")
 #! Record("$(DEV):STATE$(MD)",1154,2201,0,1,"$(DEV):STATE$(MD)")
 #! Field("$(DEV):STATE$(MD).INPA",16777215,1,"$(DEV):STATE$(MD).INPA")
 #! Field("$(DEV):STATE$(MD).INPB",16777215,1,"$(DEV):STATE$(MD).INPB")
