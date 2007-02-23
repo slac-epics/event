@@ -32,9 +32,9 @@ record(fanout, "$(DEV):EF2$(SECN)") {
   field(LNK1, "$(DEV):$(SECN)13 PP")
   field(LNK2, "$(DEV):$(SECN)14 PP")
   field(LNK3, "$(DEV):$(SECN)15 PP")
-  field(LNK4, "$(DEV):$(SECN)1HZ PP")
-  field(LNK5, "$(DEV):$(SECN)10HZ PP")
-  field(LNK6, "$(DEV):$(SECN)FULL PP")
+  field(LNK4, "$(DEV):$(SECN)1H PP")
+  field(LNK5, "$(DEV):$(SECN)TH PP")
+  field(LNK6, "$(DEV):$(SECN)BR PP")
   field(FLNK, "$(DEV):EF3$(SECN) PP")
 }
 
