@@ -62,6 +62,8 @@
 /**************************************************************************************************/
 
 #define MRF_NUM_EVENTS              256        /* Number of possible events                       */
+#define MRF_NUM_SEQ_RAM               2        /* Number of sequence rams                         */
+
 #define MRF_MAX_SEQ_SIZE           2048        /* Maximum size of the sequence ram table          */
 #define MRF_MAX_DATA_BUFFER        2048        /* Maximum size of the distributed data buffer     */
 
