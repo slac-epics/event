@@ -42,9 +42,9 @@ record(sSub, "$(SIM):MODIFIER5") {
   field(INPM, "$(SIM):MODMATCH13")
   field(INPN, "$(SIM):MODMATCH14")
   field(INPO, "$(SIM):MODMATCH15")
-  field(INPP, "$(SIM):MODMATCH1HZ")
-  field(INPQ, "$(SIM):MODMATCH10HZ")
-  field(INPR, "$(SIM):MODMATCHFULL")
+  field(INPP, "$(SIM):MODMATCH1H")
+  field(INPQ, "$(SIM):MODMATCHTH")
+  field(INPR, "$(SIM):MODMATCHBR")
   field(INPS, "$(SIM):MODMATCHF1")
   field(INPT, "$(SIM):MODMATCHF2")
 }
@@ -93,9 +93,9 @@ record(fanout, "$(SIM):FANOUT3") {
   field(LNK1, "$(SIM):CHECK13 PP")
   field(LNK2, "$(SIM):CHECK14 PP")
   field(LNK3, "$(SIM):CHECK15 PP")
-  field(LNK4, "$(SIM):CHECK1HZ PP")
-  field(LNK5, "$(SIM):CHECK10HZ PP")
-  field(LNK6, "$(SIM):CHECKFULL PP")
+  field(LNK4, "$(SIM):CHECK1H PP")
+  field(LNK5, "$(SIM):CHECKTH PP")
+  field(LNK6, "$(SIM):CHECKBR PP")
   field(FLNK, "$(SIM):FANOUT4 PP")
 }
 
