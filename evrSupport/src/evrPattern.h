@@ -41,10 +41,17 @@ extern "C" {
 #define TIMESLOT4_MASK          (0x00000008)  /* timeslot 4 mask       */
 #define TIMESLOT5_MASK          (0x00000010)  /* timeslot 5 mask       */
 #define TIMESLOT6_MASK          (0x00000020)  /* timeslot 6 mask       */
+/* Mask used to get timeslot valuefrom modifier4   */
+#define TIMESLOT_VAL_MASK       (0x00000007)  /* Time slot value mask  */
+                                              /* Left shift 29 first   */
   
 #define MODULO720_MASK          (0x00008000)  /* Set to sync modulo 720*/
 #define MPG_IPLING              (0x00004000)  /* Set on MPG/EVG problem*/
-
+  
+#define EDEF_MAX                 20           /* Maximum # event defns */
+#define TIMESLOT_MAX              6           /* Maximum time slot     */
+#define TIMESLOT_MIN              1           /* Minimum time slot     */
+  
 /* VAL values set by pattern subroutines */
 #define PATTERN_OK                0
 #define PATTERN_INVALID_WF        1
