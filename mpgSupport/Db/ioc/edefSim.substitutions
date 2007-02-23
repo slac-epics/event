@@ -1,13 +1,20 @@
 # one per system - declare EVG stuff in this IOC for testing
 
+file mpgPattern.db
+{
+#                               Check    Trigger
+#          Device             PNET Data  Seq Ram
+  pattern { DEVICE     , SYSI , CHECKI , SENDI }
+          { IOC:SYS1:1 , SYS1 ,   0    ,   0   }
+}
 file bsaEdefAll.db {
-  pattern { SYSI  , DEVICE     , CHECKI }
- 	  { SYS1  , IOC:SYS1:1 ,    0   }
+  pattern { DEVICE     , SYSI }
+ 	  { IOC:SYS1:1 , SYS1 }
 }
 file evrPatternAll.db {
-#	    Device     ,          PNET Processing             
-  pattern { DEVICE     , LINK4 ,      LINK5        ,      LINK6          , LINKD }
-	  { IOC:SYS1:1 ,  ""   , "IOC:SYS1:1:PNET" , "IOC:SYS1:1:EDEFFO" ,  ""   }
+#	    Device     , Time Slot Processing      PNET Processing  BSA Data Processing           
+  pattern { DEVICE     ,         LINK4          ,      LINK5      ,      LINK6        , LINKD }
+	  { IOC:SYS1:1 , IOC:SYS1:1:TIMESLOTN-1 , IOC:SYS1:1:PNET , IOC:SYS1:1:EDEFFO ,  ""   }
 }
 file mpgPatternTest.db {
   pattern { SYSI  , UNITI }
