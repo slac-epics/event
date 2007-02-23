@@ -1,6 +1,7 @@
 include "evrTime.dbd"
 include "evrModifier5.dbd"
 include "mpgPattern.dbd"
+include "mpgEvent.dbd"
 include "edef.dbd"
 include "generalTimeNonVx.dbd"
 include "sSubRecord.dbd"
