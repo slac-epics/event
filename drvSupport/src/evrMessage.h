@@ -7,6 +7,7 @@
         for EVR/PNET message access.
 
   Auth: 21-Dec-2006, S. Allison
+        06-Feb-2007, DRogind added edefAvgDoneMask to evrMessagePattern_ts
  
 -----------------------------------------------------------------------------*/
 #include "copyright_SLAC.h"    
@@ -65,6 +66,10 @@ typedef struct {
                                 /* 1st 32 bits = # of seconds since 1990   */
                                 /* 2nd 32 bits = # of nsecs since last sec */
                                 /*           except lower 17 bits = pulsid */
+  epicsUInt32         edefAvgDoneMask;
+  epicsUInt32         edefMinorMask;
+  epicsUInt32         edefMajorMask;
+  epicsUInt32         edefInitMask;
 } evrMessagePattern_ts;
   
 typedef union
