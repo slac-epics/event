@@ -1,0 +1,77 @@
+#==============================================================================
+#
+# Abs:  MPG Pattern and Event Records
+#
+# Name: mpgPattern.substitutions
+#
+# Note: Signal names must be all uppercase and 12 chars or less to follow
+#       LCLS naming conventions.
+#
+#==============================================================================
+#
+file mpgPatternProc.db
+{
+#
+#        Location
+pattern { DEV      , ELOCA , CHECK     , SEND     }
+        {$(DEVICE) ,$(SYSI), $(CHECKI) , $(SENDI) }
+}
+file mpgEvent.db
+{
+#                            Event  Delay in    Send Every
+#	 Location            Code   Clock Ticks Cycle
+pattern { DEV      , NAME    , ID , DELY      , ALWAYS   }
+	{$(DEVICE) , LCLSBEAM, 130,11900      , 0        }
+# Beam-Independent Time Slot Triggers
+#   360Hz
+	{$(DEVICE) , TSX_360_ , 9 ,12950      , 1        }
+#   120Hz
+	{$(DEVICE) , TS1_120_, 10 ,13001      , 0        }
+	{$(DEVICE) , TS2_120_, 20 ,13002      , 0        }
+	{$(DEVICE) , TS3_120_, 30 ,13003      , 0        }
+	{$(DEVICE) , TS4_120_, 40 ,13004      , 0        }
+	{$(DEVICE) , TS5_120_, 50 ,13005      , 0        }
+	{$(DEVICE) , TS6_120_, 60 ,13006      , 0        }
+#    60Hz
+	{$(DEVICE) , TS1_60_ , 11 ,13011      , 0        }
+	{$(DEVICE) , TS2_60_ , 21 ,13012      , 0        }
+	{$(DEVICE) , TS3_60_ , 31 ,13013      , 0        }
+	{$(DEVICE) , TS4_60_ , 41 ,13014      , 0        }
+	{$(DEVICE) , TS5_60_ , 51 ,13015      , 0        }
+	{$(DEVICE) , TS6_60_ , 61 ,13016      , 0        }
+#    30Hz
+	{$(DEVICE) , TS1_30_ , 12 ,13021      , 0        }
+	{$(DEVICE) , TS2_30_ , 22 ,13022      , 0        }
+	{$(DEVICE) , TS3_30_ , 32 ,13023      , 0        }
+	{$(DEVICE) , TS4_30_ , 42 ,13024      , 0        }
+	{$(DEVICE) , TS5_30_ , 52 ,13025      , 0        }
+	{$(DEVICE) , TS6_30_ , 62 ,13026      , 0        }
+#    10Hz
+	{$(DEVICE) , TS1_10_ , 13 ,13031      , 0        }
+	{$(DEVICE) , TS2_10_ , 23 ,13032      , 0        }
+	{$(DEVICE) , TS3_10_ , 33 ,13033      , 0        }
+	{$(DEVICE) , TS4_10_ , 43 ,13034      , 0        }
+	{$(DEVICE) , TS5_10_ , 53 ,13035      , 0        }
+	{$(DEVICE) , TS6_10_ , 63 ,13036      , 0        }
+#     5Hz
+	{$(DEVICE) , TS1_5_  , 14 ,13041      , 0        }
+	{$(DEVICE) , TS2_5_  , 24 ,13042      , 0        }
+	{$(DEVICE) , TS3_5_  , 34 ,13043      , 0        }
+	{$(DEVICE) , TS4_5_  , 44 ,13044      , 0        }
+	{$(DEVICE) , TS5_5_  , 54 ,13045      , 0        }
+	{$(DEVICE) , TS6_5_  , 64 ,13046      , 0        }
+#     1Hz
+	{$(DEVICE) , TS1_1_  , 15 ,13051      , 0        }
+	{$(DEVICE) , TS2_1_  , 25 ,13052      , 0        }
+	{$(DEVICE) , TS3_1_  , 35 ,13053      , 0        }
+	{$(DEVICE) , TS4_1_  , 45 ,13054      , 0        }
+	{$(DEVICE) , TS5_1_  , 55 ,13055      , 0        }
+	{$(DEVICE) , TS6_1_  , 65 ,13056      , 0        }
+#   0.5Hz
+	{$(DEVICE) , TS1_HALF, 16 ,13061      , 0        }
+	{$(DEVICE) , TS2_HALF, 26 ,13062      , 0        }
+	{$(DEVICE) , TS3_HALF, 36 ,13063      , 0        }
+	{$(DEVICE) , TS4_HALF, 46 ,13064      , 0        }
+	{$(DEVICE) , TS5_HALF, 56 ,13065      , 0        }
+	{$(DEVICE) , TS6_HALF, 66 ,13066      , 0        }
+}

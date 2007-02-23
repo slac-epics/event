@@ -10,15 +10,17 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------------------
 # Create and install (or just install)
 # databases, templates, substitutions like this
+# Beam-synchronous acquisition event definitions
 
 # Beam-synchronous acquisition event definitions
 DB += bsaEdefAll.db
 DB += bsaEdefSim.db
+# MPG pattern processing and events
+DB += mpgPattern.db
 DB += mpgPatternTest.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
 include $(TOP)/configure/RULES.Db
-
 

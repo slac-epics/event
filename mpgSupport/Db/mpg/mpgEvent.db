@@ -1,0 +1,14 @@
+record(sub, "$(DEV):$(NAME)EVNT") {
+  field(DESC, "$(NAME) Event")
+  field(SNAM, "mpgEventCode")
+  field(PINI, "YES")
+  field(INPA, "$(ID)")
+  field(INPB, "$(DELY)")
+  field(INPC, "11900")
+  field(INPD, "119000")
+  field(INPE, "1")
+  field(INPF, "$(ALWAYS)")
+  field(LOPR, "1")
+  field(HOPR, "255")
+  field(BRSV, "INVALID")
+}
