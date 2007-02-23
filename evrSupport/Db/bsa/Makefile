@@ -24,6 +24,7 @@ DB += bsaTestFanouts.db
 # Device edef records
 DB += bsaBPMSEdef.db
 DB += bsaTOROEdef.db
+DB += bsaFARCEdef.db
 DB += bsaBLENEdef.db
 DB += bsaPMTEdef.db
 DB += bsaWIREEdef.db
