@@ -2,24 +2,17 @@
 #
 # Abs:  Beam Synchronous Acquisition and Control records for a single IOC.
 #
-# Name: bsaEdef.template
+# Name: bsaEdefAll.substitutions
 #
 # Note: Must follow the LCLS naming conventions.  
 #
 #==============================================================================
 #
-file mpgPatternProc.db
-{
-#
-#        Location
-pattern { DEV      , ELOCA , CHECK     }
-        {$(DEVICE) ,$(SYSI), $(CHECKI) }
-}
 file bsaEdef.db
 {
 #                   Meas Defn                    0=Off
 #	         #    ID      Name               1=On 
-pattern   {SYS , MD, MDID  ,  NAME    ,USER,NAVG,CTRL,NMEAS, MODE , DEV       , BIT}
+pattern   {SYS , MD, MDID  ,  NAME    ,USER,NAVG,CTRL,NMEAS, MODE , DEV   , BIT}
 # First 15 measurement definitions for HLA and CA users
 	  {$(SYSI),  1,   1   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) , A  }
 	  {$(SYSI),  2,   2   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) , B  }
@@ -37,9 +30,9 @@ pattern   {SYS , MD, MDID  ,  NAME    ,USER,NAVG,CTRL,NMEAS, MODE , DEV       , 
 	  {$(SYSI), 14,  14   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) , N  }
 	  {$(SYSI), 15,  15   ,   ""     , "" ,  1 ,  0 ,  0,  0  , $(DEVICE) , O  }
 # Next 3 measurement definitions for 1Hz, 10Hz, and Full 
-	  {$(SYSI), 16,  1HZ  , "1HZ"    ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , P  }
-	  {$(SYSI), 17, 10HZ  ,"10HZ"    ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , Q  }
-	  {$(SYSI), 18, FULL  , "FULL"   ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , R  }
+	  {$(SYSI), 16,  16   , "1HZ"    ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , P  }
+	  {$(SYSI), 17,  17   ,"10HZ"    ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , Q  }
+	  {$(SYSI), 18,  ""   , "FULL"   ,SYS ,  1 ,  0 , -1,  1  , $(DEVICE) , R  }
 # Last 2 measurement definitions for fast feedback
 	  {$(SYSI), 19,  F1   , FBCK1    ,SYS ,  1,   0 , -1,  1  , $(DEVICE) , S  }
 	  {$(SYSI), 20,  F2   , FBCK2    ,SYS ,  1,   0 , -1,  1  , $(DEVICE) , T  }
@@ -48,154 +41,155 @@ pattern   {SYS , MD, MDID  ,  NAME    ,USER,NAVG,CTRL,NMEAS, MODE , DEV       , 
 file bsaEdefPattern.db
 {
 #     Location  , Unit       
-pattern     { SYS     , DEV      ,  MD , SECN      , EGU          ,    HOPR  ,LOPR,PREC,SECNBIT }
-	    { $(SYSI) , $(DEVICE),   1 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   2 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   3 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   4 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   5 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   6 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   7 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   8 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),   9 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  10 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  11 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  12 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  13 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  14 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  15 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  16 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  17 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  18 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  19 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
-	    { $(SYSI) , $(DEVICE),  20 , PULSEID   , ""           ,    131039, 0  , 3  ,L       }
+pattern     { SYS     , DEV      ,  MD , SECN  , EGU          ,    HOPR  ,LOPR,PREC,SECNBIT, BIT }
+	    { $(SYSI) , $(DEVICE),   1 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , A }
+	    { $(SYSI) , $(DEVICE),   2 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , B }
+	    { $(SYSI) , $(DEVICE),   3 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , C }
+	    { $(SYSI) , $(DEVICE),   4 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , D }
+	    { $(SYSI) , $(DEVICE),   5 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , E }
+	    { $(SYSI) , $(DEVICE),   6 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , F }
+	    { $(SYSI) , $(DEVICE),   7 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , G }
+	    { $(SYSI) , $(DEVICE),   8 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , H }
+	    { $(SYSI) , $(DEVICE),   9 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , I }
+	    { $(SYSI) , $(DEVICE),  10 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , J }
+	    { $(SYSI) , $(DEVICE),  11 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , K }
+	    { $(SYSI) , $(DEVICE),  12 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , L }
+	    { $(SYSI) , $(DEVICE),  13 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , M }
+	    { $(SYSI) , $(DEVICE),  14 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , N }
+	    { $(SYSI) , $(DEVICE),  15 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , O }
+	    { $(SYSI) , $(DEVICE),  16 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , P }
+	    { $(SYSI) , $(DEVICE),  17 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , Q }
+	    { $(SYSI) , $(DEVICE),  18 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , R }
+	    { $(SYSI) , $(DEVICE),  19 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , S }
+	    { $(SYSI) , $(DEVICE),  20 , PULSEID   , ""           ,    131039, 0  , 3  ,L      , T }
 
-	    { $(SYSI) , $(DEVICE),   1 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   2 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   3 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   4 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   5 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   6 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   7 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   8 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),   9 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  10 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  11 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  12 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  13 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  14 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  15 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  16 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  17 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  18 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  19 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
-	    { $(SYSI) , $(DEVICE),  20 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I       }
+	    { $(SYSI) , $(DEVICE),   1 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , A }
+	    { $(SYSI) , $(DEVICE),   2 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , B }
+	    { $(SYSI) , $(DEVICE),   3 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , C }
+	    { $(SYSI) , $(DEVICE),   4 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , D }
+	    { $(SYSI) , $(DEVICE),   5 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , E }
+	    { $(SYSI) , $(DEVICE),   6 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , F }
+	    { $(SYSI) , $(DEVICE),   7 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , G }
+	    { $(SYSI) , $(DEVICE),   8 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , H }
+	    { $(SYSI) , $(DEVICE),   9 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , I }
+	    { $(SYSI) , $(DEVICE),  10 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , J }
+	    { $(SYSI) , $(DEVICE),  11 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , K }
+	    { $(SYSI) , $(DEVICE),  12 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , L }
+	    { $(SYSI) , $(DEVICE),  13 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , M }
+	    { $(SYSI) , $(DEVICE),  14 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , N }
+	    { $(SYSI) , $(DEVICE),  15 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , O }
+	    { $(SYSI) , $(DEVICE),  16 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , P }
+	    { $(SYSI) , $(DEVICE),  17 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , Q }
+	    { $(SYSI) , $(DEVICE),  18 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , R }
+	    { $(SYSI) , $(DEVICE),  19 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , S }
+	    { $(SYSI) , $(DEVICE),  20 , BUNCHARGE , "picoCoulombs" ,1000    ,200 , 3  ,I      , T }
 
-	    { $(SYSI) , $(DEVICE),   1  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   2  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   3  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   4  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   5  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   6  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   7  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   8  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),   9  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  10  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  11  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  12  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  13  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  14  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  15  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  16  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  17  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  18  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  19  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
-	    { $(SYSI) , $(DEVICE),  20  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D       }
+	    { $(SYSI) , $(DEVICE),   1  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , A }
+	    { $(SYSI) , $(DEVICE),   2  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , B }
+	    { $(SYSI) , $(DEVICE),   3  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , C }
+	    { $(SYSI) , $(DEVICE),   4  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , D }
+	    { $(SYSI) , $(DEVICE),   5  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , E }
+	    { $(SYSI) , $(DEVICE),   6  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , F }
+	    { $(SYSI) , $(DEVICE),   7  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , G }
+	    { $(SYSI) , $(DEVICE),   8  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , H }
+	    { $(SYSI) , $(DEVICE),   9  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , I }
+	    { $(SYSI) , $(DEVICE),  10  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , J }
+	    { $(SYSI) , $(DEVICE),  11  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , K }
+	    { $(SYSI) , $(DEVICE),  12  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , L }
+	    { $(SYSI) , $(DEVICE),  13  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , M }
+	    { $(SYSI) , $(DEVICE),  14  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , N }
+	    { $(SYSI) , $(DEVICE),  15  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , O }
+	    { $(SYSI) , $(DEVICE),  16  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , P }
+	    { $(SYSI) , $(DEVICE),  17  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , Q }
+	    { $(SYSI) , $(DEVICE),  18  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , R }
+	    { $(SYSI) , $(DEVICE),  19  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , S }
+	    { $(SYSI) , $(DEVICE),  20  , MODIFIER1 , ""           ,4294967295, 0  , 3  ,D     , T }
 
-	    { $(SYSI) , $(DEVICE),   1  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   2  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   3  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   4  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   5  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   6  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   7  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   8  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),   9  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  10  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  11  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  12  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  13  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  14  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  15  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  16  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  17  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  18  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  19  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
-	    { $(SYSI) , $(DEVICE),  20  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E       }
+	    { $(SYSI) , $(DEVICE),   1  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , A }
+	    { $(SYSI) , $(DEVICE),   2  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , B }
+	    { $(SYSI) , $(DEVICE),   3  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , C }
+	    { $(SYSI) , $(DEVICE),   4  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , D }
+	    { $(SYSI) , $(DEVICE),   5  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , E }
+	    { $(SYSI) , $(DEVICE),   6  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , F }
+	    { $(SYSI) , $(DEVICE),   7  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , G }
+	    { $(SYSI) , $(DEVICE),   8  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , H }
+	    { $(SYSI) , $(DEVICE),   9  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , I }
+	    { $(SYSI) , $(DEVICE),  10  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , J }
+	    { $(SYSI) , $(DEVICE),  11  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , K }
+	    { $(SYSI) , $(DEVICE),  12  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , L }
+	    { $(SYSI) , $(DEVICE),  13  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , M }
+	    { $(SYSI) , $(DEVICE),  14  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , N }
+	    { $(SYSI) , $(DEVICE),  15  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , O }
+	    { $(SYSI) , $(DEVICE),  16  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , P }
+	    { $(SYSI) , $(DEVICE),  17  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , Q }
+	    { $(SYSI) , $(DEVICE),  18  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , R }
+	    { $(SYSI) , $(DEVICE),  19  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , S }
+	    { $(SYSI) , $(DEVICE),  20  , MODIFIER2 , ""           ,4294967295, 0  , 3  ,E     , T }
 
-	    { $(SYSI) , $(DEVICE),   1  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   2  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   3  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   4  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   5  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   6  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   7  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   8  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),   9  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  10  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  11  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  12  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  13  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  14  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  15  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  16  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  17  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  18  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  19  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
-	    { $(SYSI) , $(DEVICE),  20  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F       }
+	    { $(SYSI) , $(DEVICE),   1  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , A }
+	    { $(SYSI) , $(DEVICE),   2  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , B }
+	    { $(SYSI) , $(DEVICE),   3  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , C }
+	    { $(SYSI) , $(DEVICE),   4  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , D }
+	    { $(SYSI) , $(DEVICE),   5  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , E }
+	    { $(SYSI) , $(DEVICE),   6  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , F }
+	    { $(SYSI) , $(DEVICE),   7  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , G }
+	    { $(SYSI) , $(DEVICE),   8  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , H }
+	    { $(SYSI) , $(DEVICE),   9  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , I }
+	    { $(SYSI) , $(DEVICE),  10  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , J }
+	    { $(SYSI) , $(DEVICE),  11  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , K }
+	    { $(SYSI) , $(DEVICE),  12  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , L }
+	    { $(SYSI) , $(DEVICE),  13  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , M }
+	    { $(SYSI) , $(DEVICE),  14  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , N }
+	    { $(SYSI) , $(DEVICE),  15  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , O }
+	    { $(SYSI) , $(DEVICE),  16  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , P }
+	    { $(SYSI) , $(DEVICE),  17  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , Q }
+	    { $(SYSI) , $(DEVICE),  18  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , R }
+	    { $(SYSI) , $(DEVICE),  19  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , S }
+	    { $(SYSI) , $(DEVICE),  20  , MODIFIER3 , ""           ,4294967295, 0  , 3  ,F     , T }
 
-	    { $(SYSI) , $(DEVICE),   1  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   2  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   3  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   4  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   5  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   6  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   7  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   8  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),   9  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  10  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  11  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  12  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  13  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  14  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  15  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  16  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  17  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  18  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  19  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
-	    { $(SYSI) , $(DEVICE),  20  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G       }
+	    { $(SYSI) , $(DEVICE),   1  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , A }
+	    { $(SYSI) , $(DEVICE),   2  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , B }
+	    { $(SYSI) , $(DEVICE),   3  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , C }
+	    { $(SYSI) , $(DEVICE),   4  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , D }
+	    { $(SYSI) , $(DEVICE),   5  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , E }
+	    { $(SYSI) , $(DEVICE),   6  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , F }
+	    { $(SYSI) , $(DEVICE),   7  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , G }
+	    { $(SYSI) , $(DEVICE),   8  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , H }
+	    { $(SYSI) , $(DEVICE),   9  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , I }
+	    { $(SYSI) , $(DEVICE),  10  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , J }
+	    { $(SYSI) , $(DEVICE),  11  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , K }
+	    { $(SYSI) , $(DEVICE),  12  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , L }
+	    { $(SYSI) , $(DEVICE),  13  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , M }
+	    { $(SYSI) , $(DEVICE),  14  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , N }
+	    { $(SYSI) , $(DEVICE),  15  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , O }
+	    { $(SYSI) , $(DEVICE),  16  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , P }
+	    { $(SYSI) , $(DEVICE),  17  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , Q }
+	    { $(SYSI) , $(DEVICE),  18  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , R }
+	    { $(SYSI) , $(DEVICE),  19  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , S }
+	    { $(SYSI) , $(DEVICE),  20  , MODIFIER4 , ""           ,4294967295, 0  , 3  ,G     , T }
 
-	    { $(SYSI) , $(DEVICE),   1  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   2  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   3  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   4  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   5  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   6  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   7  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   8  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),   9  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  10  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  11  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  12  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  13  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  14  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  15  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  16  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  17  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  18  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  19  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
-	    { $(SYSI) , $(DEVICE),  20  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H       }
+	    { $(SYSI) , $(DEVICE),   1  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , A }
+	    { $(SYSI) , $(DEVICE),   2  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , B }
+	    { $(SYSI) , $(DEVICE),   3  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , C }
+	    { $(SYSI) , $(DEVICE),   4  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , D }
+	    { $(SYSI) , $(DEVICE),   5  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , E }
+	    { $(SYSI) , $(DEVICE),   6  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , F }
+	    { $(SYSI) , $(DEVICE),   7  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , G }
+	    { $(SYSI) , $(DEVICE),   8  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , H }
+	    { $(SYSI) , $(DEVICE),   9  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , I }
+	    { $(SYSI) , $(DEVICE),  10  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , J }
+	    { $(SYSI) , $(DEVICE),  11  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , K }
+	    { $(SYSI) , $(DEVICE),  12  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , L }
+	    { $(SYSI) , $(DEVICE),  13  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , M }
+	    { $(SYSI) , $(DEVICE),  14  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , N }
+	    { $(SYSI) , $(DEVICE),  15  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , O }
+	    { $(SYSI) , $(DEVICE),  16  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , P }
+	    { $(SYSI) , $(DEVICE),  17  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , Q }
+	    { $(SYSI) , $(DEVICE),  18  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , R }
+	    { $(SYSI) , $(DEVICE),  19  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , S }
+	    { $(SYSI) , $(DEVICE),  20  , MODIFIER5 , ""           ,4294967295, 0  , 3  ,H     , T }
 }
+
 file bsaEdefMask.db
 {
 #                  Meas 
