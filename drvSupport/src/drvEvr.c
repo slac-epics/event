@@ -105,7 +105,7 @@ static int evrInitialise()
                         sizeof(evrMessagePattern_ts))) return -1;
 #ifdef __rtems__
   /* Get first EVR in the list */
-  pCard = ErGetCardStruct(-1);
+  pCard = ErGetCardStruct(0);
   if (!pCard) {
     errlogPrintf("evrInitialise: cannot find an EVR module\n");
   /* Register the ISR function in this file with the EVR */
