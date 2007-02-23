@@ -73,7 +73,7 @@
  * Define the maximum number of events that can be processed from the FIFO on a single interrupt
  * (this helps prevent the interrupt service routine from getting into a major spin loop)
  */
-#define EVR_FIFO_EVENT_LIMIT    10
+#define EVR_FIFO_EVENT_LIMIT    MRF_NUM_EVENTS
 
 /*---------------------
  * Define the maximum length of a debug message generated from interrupt level
