@@ -67,13 +67,12 @@
   Rem:  Subroutine for PRIM:LOCA:UNIT:MEASCNT$MDID
 
   Side: INPA - PRIM:LOCA:UNIT:SECN.VAL
-        INPB - EDEF:LOCA:UNIT:AVGCNTMAX$(MD) shadow record
-		INPC - EDEF:LOCA:UNIT:MEASSEVR$(MD) shadow record
+        INPB - EDEF:LOCA:UNIT:EDEFAVGDONE.$(BIT)
+		INPC - EDEF:LOCA:UNIT:EDEFMEASSEVR.$(BIT) 
         SDIS - EVR:IOC:1:MODIFIER5 BIT for this MDID 1=  match
 		INPD - PRIM:LOCA:UNIT:SECN.STAT (was cum EPICS STAT for device, STATUS)
         INPE - PRIM:LOCA:UNIT:SECN.SEVR (was cum EPICS SEVR for device, STATUS.L)
-        INPG - PRIM:LOCA:UNIT:INIT$(MD) places a "1" upon EDEF INIT (beg of new cycle)
-		       first time flag
+
 		OUT 
            H = Variance value used in RMS calc
            I = B - 1
@@ -104,8 +103,12 @@ static long bsaSecnAvg(sSubRecord *psub)
   epicsTimeStamp  timeSecn;  /* for comparison */
 #endif
 
-  psub->x = 0;    /* default to history buff disable */
-
+  psub->x = 0;    /* default to history buff disable  */
+  if (psub->g) {  /* set from reset seq at beg of acq */
+	psub->g = 0;
+	psub->n = 0;
+  }
+  psub->n++;      /* debug count of how many times this is processed */
 #ifndef linux
 
   /*EVR timestamp:*/
@@ -127,83 +130,79 @@ static long bsaSecnAvg(sSubRecord *psub)
 	return -1;
   }
 #endif
-  /*  if (psub->n < 2) psub->n++; *//* increment first-time flag */
-  if (psub->g) {
-	psub->y = 0; /* total count */
-	psub->z = 0; /* outer loop count reset */
-	psub->g = 0; /* reset first time flag */
-  }
+
   /* Reinit for a new average */
   if (psub->o) {
-    psub->o = 0;
-
+	psub->o = 0; /* no resetting next time around */
+	psub->y = 0; /* total count */
+	psub->z = 0; /* outer loop count reset */	
     /*  reset avgcnt, meascnt, goodmeas, stat   */
     psub->val = 0;
 	psub->q = 0; /* avgcount    */
     psub->m = 0; /* goodmeas    */
     psub->w = 0; /* ts mismatch */
-
+	
 	DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg: First time thru for %s; psub->b=%ld\n", psub->name,(unsigned long) psub->b) );
      /*DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("basAvgCount for %s: Reset counters; psub->i = %ld\n",psub->name, (unsigned long)psub->i));*/
   }
-  /* No averaging requested? */
-  if (psub->b <= 0) {
-    psub->o = 1;
+  
+  /* always incr avgcnt*/
+  psub->q++;
+  /* if edef avg count done */
+  if (psub->b) {
+	/*  then averaging is done, and enable history buffer */
+	psub->x = 1;  /* enable history buff */
+	psub->q = 0;  /* reset avgcnt */
+	psub->o = 1;  /* reset counters next loop */
+	psub->z++;    /* inc outer loop count */
   } else {
-	if (psub->e < (psub->c+1) ) {
-	  /*if (psub->e < INVALID_ALARM) {*/
-      psub->m++; /* inc goodmeas */
-    }
-    /* always incr avgcnt*/
-    psub->q++;
-    /* if val >= EDEF AVGCNTMAX */
-    if (psub->q >= psub->b) {
-      /*  then averaging is done, and enable history buffer */
-      psub->x = 1;  /* enable history buff */
-	  psub->q = 0;  /* reset avgcnt */
-	  psub->o = 1;  /* reset counters next loop */
-	  psub->z++;    /* inc outer loop count */
-    } else {
-      /*  else averaging is NOT done */
- 	  psub->o = 0;
-    }
-  } 
-  /* now start the averaging */
-  /* first time thru for new cycle; reset previous avg, variance */
-  
-  /* compute running avg and variance                      */
-  /*        This is translated from REF_RMX_BPM:CUM.F86.   */
-  /*                                                       */
-  /*        CUM computes VAR as the sample variance:       */ 
-  /*          VAR = (SUMSQ - SUM*SUM/N)/(N-1)              */
-  /*          where SUM = sum of the N values, and         */
-  /*           SUMSQ = sum of the squares of the N values. */
-  /*                                                       */
-  /*        Note that CUM's method of computing VAR avoids */
-  /*        possible loss of significance.                 */
-  if (psub->m <= 1) {
-	psub->val = psub->a;
-	psub->h = 0;
-	psub->i = 0;
-	psub->j = 0;
-	psub->k = 0;
-	psub->l = 0;
-  } 
-  else {
-	psub->i = psub->m-1.0;
-	psub->j = psub->m-2.0;
-	psub->k = psub->a-psub->val;
-	psub->val += psub->k/psub->m;
-	psub->k /= psub->i;
-	psub->h = (psub->j*(psub->h/psub->i)) + (psub->m*psub->k*psub->k);
-	DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg for %s: Avg: %f; Var: %f \n", psub->name, psub->val, psub->h) );
-	if (psub->o) { /* rms val when avg is done */
-	  psub->l = psub->h/psub->m;
-	  psub->l = sqrt(psub->l);
-	}
+	/*  else averaging is NOT done */
+	psub->o = 0;
   }
-  psub->y++;  /* increment total count */
-  
+  if (psub->e < psub->c) {
+	/*if (psub->e < INVALID_ALARM) {*/
+	psub->m++; /* inc goodmeas cnt */
+
+	/* now start the averaging */
+	/* first time thru for new cycle; reset previous avg, variance */
+	
+	/* compute running avg and variance                      */
+	/*        This is translated from REF_RMX_BPM:CUM.F86.   */
+	/*                                                       */
+	/*        CUM computes VAR as the sample variance:       */ 
+	/*          VAR = (SUMSQ - SUM*SUM/N)/(N-1)              */
+	/*          where SUM = sum of the N values, and         */
+	/*           SUMSQ = sum of the squares of the N values. */
+	/*                                                       */
+	/*        Note that CUM's method of computing VAR avoids */
+	/*        possible loss of significance.                 */
+	if (psub->m <= 1) {
+	  psub->val = psub->a;
+	  psub->h = 0;
+	  psub->i = 0;
+	  psub->j = 0;
+	  psub->k = 0;
+	  psub->l = 0;
+	} 
+	else {
+	  psub->i = psub->m-1.0;
+	  psub->j = psub->m-2.0;
+	  psub->k = psub->a-psub->val;
+	  psub->val += psub->k/psub->m;
+	  psub->k /= psub->i;
+	  psub->h = (psub->j*(psub->h/psub->i)) + (psub->m*psub->k*psub->k);
+	  DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg for %s: Avg: %f; Var: %f \n", psub->name, psub->val, psub->h) );
+	  if (psub->o) { /* rms val when avg is done */
+		psub->l = psub->h/psub->m;
+		psub->l = sqrt(psub->l);
+	  }
+	}
+  } /* if good, include in averaging */
+  psub->y++;  /* increment total count */   
+  /* note that if no good pulses, psub->l remained 0 and a 0 is stored in history buff */
+#ifdef linux
+	psub->x = 1;  /* enable history buff */
+#endif
   return 0;
 }
 /*=============================================================================
@@ -227,13 +226,14 @@ static long bsaSecnAvg(sSubRecord *psub)
         INPA - EDEF:LCLS:$(MD):CTRL  1= active; 0 = inactive
 		
 		INPB - ESIM:$(IOC):1:MEASCNT$(MDID)
-		INPC - EDEF:SYS0:$(MD):CNTMAX
+		INPC -          EDEF:SYS0:$(MD):CNTMAX - now is calculated from inp I & J
         INPD - ESIM:SYS0:1:DONE$(MDID)
-
+		INPE - EDEF:SYS0:$(MD):AVGCNT
         INPF - ESIM:$(IOC):1:MODIFIER4
 		INPG - INCLUSION2
         INPH - 
-
+		INPI - EDEF:SYS0:$(MD):AVGCNT
+		INPJ - EDEF:SYS0:$(MD):MEASCNT
 for testing, match on Inclusion bits only;
 override modifier 4 if one hertz bit is set
         INPP - EDEF:$(IOC):$(MD):INCLUSION4
@@ -258,6 +258,7 @@ static long bsaSimCheckTest(sSubRecord *psub)
 {
   psub->val = 0;
   psub->q = 0;
+  
 
   if (psub->w>MAJOR_ALARM) {
     /* bad data - do nothing this pulse and return bad status */
@@ -265,7 +266,7 @@ static long bsaSimCheckTest(sSubRecord *psub)
   }
   /* if this edef is not active, exit */
   if (!psub->a) return 0;
-
+  psub->c = psub->i * psub->j;
   /* now check this pulse */
   /* check inclusion mask */
   if ( (unsigned long)psub->u ) psub->p = 10; /* force one hertz processing */
@@ -286,7 +287,7 @@ static long bsaSimCheckTest(sSubRecord *psub)
 					 psub->name, (unsigned long)psub->p, (unsigned long)psub->f ));
 
   /* check for end of measurement */
-  /* if SYS EDEF,EDEF:SYS0:MD:CNTMAX = -1, and this will go forever */ 
+  /* if SYS EDEF,EDEF:SYS0:MD:MEASCNT = -1, and this will go forever */ 
   if ( (psub->b==psub->c) && (!psub->d) ) { /* we're done - */
 	psub->val = 0;       /* clear modmatch flag */
 	psub->q = 1;         /* flag to DONE to disable downstream */
@@ -294,28 +295,6 @@ static long bsaSimCheckTest(sSubRecord *psub)
   }
 return 0;
 }
-/*=============================================================================
 
-  Name: bsaEdefShadow
-
-  Abs:  Dummy routine for sSub 
-
-		
-  Args: Type	            Name        Access	   Description
-        ------------------- -----------	---------- ----------------------------
-        subRecord *        psub        read       point to subroutine record
-
-  Rem:  Subroutine for $(DEV):EDEF*
-
-  Side: INPA-T contains 20 EDEF:SYSx:1-20: parameters
-      
-  Ret:  0
-
-==============================================================================*/
-static long bsaEdefShadow (sSubRecord *psub)
-{
-  return 0;
-}
 epicsRegisterFunction(bsaSecnAvg);
 epicsRegisterFunction(bsaSimCheckTest);
-epicsRegisterFunction(bsaEdefShadow);
