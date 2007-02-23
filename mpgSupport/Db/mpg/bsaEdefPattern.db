@@ -3,14 +3,16 @@
 #! DBD("../../dbd/edef.dbd")
 #! DBDEND
 
+
 record(ai, "EDEF:$(SYS):$(MD):$(SECN)") {
-  field(INP,  "$(DEV):PATTERN.$(SECNBIT) MS")
+  field(INP, "$(DEV):PATTERN.$(SECNBIT) MS")
   field(HOPR, "$(HOPR)")
   field(LOPR, "$(LOPR)")
   field(PREC, "$(PREC)")
-  field(EGU,  "$(EGU)")
+  field(EGU, "$(EGU)")
   field(FLNK, "EDEF:$(SYS):$(MD):$(SECN)HST")
 }
+
 
 record(compress, "EDEF:$(SYS):$(MD):$(SECN)HST") {
   field(INP, "EDEF:$(SYS):$(MD):$(SECN) MS")
@@ -20,9 +22,17 @@ record(compress, "EDEF:$(SYS):$(MD):$(SECN)HST") {
   field(LOPR, "$(LOPR)")
   field(PREC, "$(PREC)")
   field(EGU, "$(EGU)")
+  field(SDIS, "$(DEV):EDAVGDONE.$(BIT)")
 }
 
 #! Further lines contain data used by VisualDCT
-#! View(2759,2916,1.3)
-#! Record("EDEF:$(SYS):$(MD):$(SECN)HST",2326,2260,0,1,"EDEF:$(SYS):$(MD):$(SECN)HST")
-#! Field("EDEF:$(SYS):$(MD):$(SECN)HST.INP",16777215,1,"EDEF:$(SYS):$(MD):$(SECN)HST.INP")
+#! View(0,0,1.3)
+#! Record("EDEF:$(SYS):$(MD):$(SECN)",43,22,0,0,"EDEF:$(SYS):$(MD):$(SECN)")
+#! Field("EDEF:$(SYS):$(MD):$(SECN).INP",16777215,1,"EDEF:$(SYS):$(MD):$(SECN).INP")
+#! Field("EDEF:$(SYS):$(MD):$(SECN).FLNK",16777215,1,"EDEF:$(SYS):$(MD):$(SECN).FLNK")
+#! Link("EDEF:$(SYS):$(MD):$(SECN).FLNK","EDEF:$(SYS):$(MD):$(SECN)HST")
+#! Field("EDEF:$(SYS):$(MD):$(SECN).VAL",16777215,1,"EDEF:$(SYS):$(MD):$(SECN).VAL")
+#! Record("EDEF:$(SYS):$(MD):$(SECN)HST",362,103,0,0,"EDEF:$(SYS):$(MD):$(SECN)HST")
+#! Field("EDEF:$(SYS):$(MD):$(SECN)HST.INP",16777215,0,"EDEF:$(SYS):$(MD):$(SECN)HST.INP")
+#! Link("EDEF:$(SYS):$(MD):$(SECN)HST.INP","EDEF:$(SYS):$(MD):$(SECN).VAL")
+#! Field("EDEF:$(SYS):$(MD):$(SECN)HST.SDIS",16777215,1,"EDEF:$(SYS):$(MD):$(SECN)HST.SDIS")
