@@ -14,7 +14,6 @@ include $(TOP)/configure/CONFIG
 # B34 test stand and edef simulators
 DB += evgPatternXL15.db
 DB += edefSim.db
-DB += edefSimSys3.db
 # Production and B280 test stand
 DB += evgPatternIN20.db
 
