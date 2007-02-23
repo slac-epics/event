@@ -1,20 +1,18 @@
 #
 # BSA records
-#
-# One per IOC:
-#
-file bsaEdefShadow.db {
-  pattern { DEVICE       , SYSI }
-          { IOC:IN20:IM01, SYS0 } 
-} 
 
-file bsaBPMSEdef.db {
+file bsaTOROEdef.db {
 #      Device        ,loc'n , IOC unit, timing system  
   pattern {DEVICE    , LOC  ,  UN   }
-	  { BPMS:IN20:221, IN20 , IM01 }
-	  { BPMS:IN20:235, IN20 , IM01 }
-	  { BPMS:IN20:371, IN20 , IM01 }
-	  { BPMS:IN20:425, IN20 , IM01 }
-	  { BPMS:IN20:511, IN20 , IM01 }
-	  { BPMS:IN20:821, IN20 , IM01 }
+	  { TORO:IN20:215, IN20 , IM01 }
+	  { TORO:IN20:431, IN20 , IM01 }
+	  { TORO:IN20:791, IN20 , IM01 }
+	  { TORO:IN20:971, IN20 , IM01 }
+
+}
+file bsaFARCEdef.db {
+#      Device        ,loc'n , IOC unit, timing system  
+  pattern {DEVICE    , LOC  ,  UN   }
+	  { FARC:IN20:212, IN20 , IM01 }
+	  { FARC:IN20:898, IN20 , IM01 }
 }
