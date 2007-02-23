@@ -306,7 +306,7 @@ int pnetSeqCheck2Buf(void) {
     }
     
     printf("%d %d %d\n", ii, jj, 
-      ((int) seqCheck2Buf[jj]) & PNET_SEQ_CHECK /* only care about 3 LSBs */);
+      ((int) seqCheck2Buf[jj]) & TIMESLOT_VAL_MASK /* only care about 3 LSBs */);
   }
   printf("\n");
   return 0;

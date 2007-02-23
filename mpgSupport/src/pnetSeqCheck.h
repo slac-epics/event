@@ -15,10 +15,7 @@
 =============================================================================*/
 
 #ifndef INCpnetSeqH
-#define INCpnetSeqH 
-
-#define PNET_SEQ_CHECK          (0x00000007)  /* Sequence check mask         */
-                                              /* Left shift 29 first         */
+#define INCpnetSeqH
 
 int pnetSeqCheckData1(unsigned char currentSeqCheck1,
                       unsigned int  seqCheckSynced);
