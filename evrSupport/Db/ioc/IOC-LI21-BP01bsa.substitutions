@@ -1,11 +1,4 @@
 # BSA records
-#
-# One per IOC:
-file bsaEdefShadow.db {
-  pattern { DEVICE       , SYSI }
-          { IOC:LI21:BP01, SYS0 } 
-}
-
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaBPMSEdef.db!
 file bsaBPMSEdef.db {

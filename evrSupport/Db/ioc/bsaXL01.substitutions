@@ -4,12 +4,6 @@
 ####################
 # BSA records
 #
-# One per IOC:
-#
-file bsaEdefShadow.db {
-  pattern { DEVICE       , SYSI }
-          { IOC:XX05:1   , SYS0 } 
-}
 # One per device:
 
 file bsaBPMSEdef.db {
