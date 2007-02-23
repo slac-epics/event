@@ -65,10 +65,10 @@ typedef struct {
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
 }evrTime_ts;
-evrTime_ts evrTime_as[MAX_EVR_TIME];
+static evrTime_ts evrTime_as[MAX_EVR_TIME];
 
 /* EVR Time Timestamp RWMutex */
-epicsMutexId evrTimeRWMutex_ps;
+static epicsMutexId evrTimeRWMutex_ps;
 
 static unsigned int msgCount         = 0; /* # fiducials processed since boot/reset */ 
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
@@ -309,9 +309,6 @@ static int evrTimeInit(subRecord *psub)
                      ("evrTimeInit: Unable to create TimeRWMutex!\n"));
 	  return epicsTimeERROR;
 	}
-	DEBUGPRINT(DP_DEBUG, evrTimeFlag,
-                   ("evrTimeInit: system time sec= %d; nsec = %d!\n",
-                    sys_time.secPastEpoch, sys_time.nsec));	
   }
   /* For IOCs that support iocClock (RTEMS and vxWorks), register
      evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
