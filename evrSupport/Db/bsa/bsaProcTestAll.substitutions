@@ -2,7 +2,7 @@ file bsaProcTest.db
 {
 #             Meas Defn   
 #	            Name      
-  pattern { DEV      , MD,  MDID, LOCA   }
+  pattern { DEV      , MD,  MDID, LOCA       }
 	      {  $(DEVICE)  , 1,   1, $(LOC)     }
 	      {  $(DEVICE)  , 2,   2, $(LOC)     }
 	      {  $(DEVICE)  , 3,   3, $(LOC)     }
@@ -18,9 +18,9 @@ file bsaProcTest.db
 	      {  $(DEVICE)  ,13,   13, $(LOC)    }
 	      {  $(DEVICE)  ,14,   14, $(LOC)    }
 	      {  $(DEVICE)  ,15,   15, $(LOC)    }
-	      {  $(DEVICE)  ,16,   1HZ, $(LOC)   }
-	      {  $(DEVICE)  ,17,  10HZ, $(LOC)   }
-	      {  $(DEVICE)  ,18,  FULL, $(LOC)   }
-	      {  $(DEVICE)  ,19,  F1, $(LOC)     }
-	      {  $(DEVICE)  ,20,  F2, $(LOC)     }
+	      {  $(DEVICE)  ,16,   1H, $(LOC)    }
+	      {  $(DEVICE)  ,17,   TH, $(LOC)    }
+	      {  $(DEVICE)  ,18,   BR, $(LOC)    }
+	      {  $(DEVICE)  ,19,   F1, $(LOC)    }
+	      {  $(DEVICE)  ,20,   F2, $(LOC)    }
 }
