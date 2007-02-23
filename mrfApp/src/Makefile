@@ -51,11 +51,13 @@ DBDINC += $(CUSTOM_RECORDS)
 #
 DBD += drvMrfEg.dbd
 DBD += devMrfEg.dbd
+DBD += devMrfEgEvent.dbd
 DBD += drvMrfEr.dbd
 DBD += devMrfEr.dbd
 DBD += devMrfEgLib.dbd
 DBD += devMrfErLib.dbd
 devMrfEgLib_DBD += devMrfEg.dbd
+devMrfEgLib_DBD += devMrfEgEvent.dbd
 devMrfErLib_DBD += devMrfEr.dbd
 
 #---------------------

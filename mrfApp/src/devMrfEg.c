@@ -131,7 +131,6 @@ LOCAL long EgInitDev(int pass)
 
     if (firsttime) {
       firsttime = 0;
-      EgStartRamTask();
 
       for (pCard = (EgCardStruct *)EgGetCardStruct(-1); pCard != NULL; pCard = (EgCardStruct *)ellNext(&pCard->Link)) {
         EgResetAll(pCard); 
@@ -141,15 +140,6 @@ LOCAL long EgInitDev(int pass)
         pCard->Ram2Speed = 0;
         pCard->Ram2Dirty = 0;
         ellInit(&(pCard->EgEvent));
-      }
-    }
-  } else {
-    if (pass==1) { /* do any additional initialization */
-      for (pCard = (EgCardStruct *)EgGetCardStruct(-1);
-        pCard != NULL;
-        pCard = (EgCardStruct *)ellNext(&pCard->Link)) {
-
-        EgScheduleRamProgram(pCard->Cardno); /* OK to do more than once */
       }
     }
   }
@@ -889,6 +879,29 @@ LOCAL long EgProcEgRec(struct egRecord *pRec)
  * Support for initialization of egevent records.
  *
  **/
+/**
+ *
+ * Called at init time to init the egevent-device support code.
+ *
+ * NOTE: can be called more than once for each init pass.
+ *
+ **/
+LOCAL long EgInitEgEvent(int pass)
+{
+  EgInitDev(pass);
+  if (pass==0) { /* Do any hardware initialization (no records init'd yet) */
+    static int firsttime = 1;
+
+    if (firsttime) {
+      firsttime = 0;
+      EgStartRamTask();
+    }
+  } else if (pass==1) { /* do any additional initialization */
+    EgScheduleRamProgram(0); /* OK to do more than once */
+  }
+  return OK;
+}
+
 LOCAL long EgInitEgEventRec(struct egeventRecord *pRec)
 {
   EgCardStruct *pCard = EgGetCardStruct(pRec->out.value.vmeio.card);
@@ -1070,7 +1083,7 @@ LOCAL long EgProcEgEventRec(struct egeventRecord *pRec)
 
 /* Device Support Table (dset) for egevent records */
  
-static EgDsetStruct devEgEvent={ 5, NULL, EgInitDev, EgInitEgEventRec, NULL, EgProcEgEventRec};
+static EgDsetStruct devEgEvent={ 5, NULL, EgInitEgEvent, EgInitEgEventRec, NULL, EgProcEgEventRec};
 
 epicsExportAddress (dset, devEgEvent);
 
