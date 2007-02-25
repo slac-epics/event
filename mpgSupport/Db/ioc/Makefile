@@ -12,9 +12,11 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 
 # B34 test stand and edef simulators
+DB += evgXL15.db
 DB += evgPatternXL15.db
 DB += edefSim.db
 # Production and B280 test stand
+DB += evgIN20.db
 DB += evgPatternIN20.db
 
 include $(TOP)/configure/RULES
