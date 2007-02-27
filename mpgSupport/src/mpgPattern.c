@@ -74,9 +74,6 @@ static unsigned int modulo720SyncErrCount = 0; /* # of modulo720 sync errors */
 static unsigned int seqCheck1ErrCount     = 0;
 static unsigned int seqCheck2ErrCount     = 0;
 static unsigned int seqCheck3ErrCount     = 0;
-#ifdef __rtems__
-static unsigned int dataBufferSize = sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32);
-#endif
 
 /*=============================================================================
 
@@ -231,7 +228,7 @@ static long mpgPatternPnet(subRecord *psub)
       /* Check if modulo-720 can be resynchronized on this pulse. */
       if (modifier1 & MODULO720_MASK) {
         /* If we should be sync'ed but are not, update a counter */
-        if (modulo720Sync && (modulo720Count != 720)) {
+        if (modulo720Sync && (modulo720Count != MODULO720_COUNT)) {
           modulo720SyncErrCount++;
           errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
                        modulo720Count);
@@ -242,7 +239,7 @@ static long mpgPatternPnet(subRecord *psub)
         modulo720Sync  = 1;
       } else if (!modulo720Sync) {
         errFlag        = PATTERN_MODULO720_NO_SYNC;
-      } else if (modulo720Count >= 720) {
+      } else if (modulo720Count >= MODULO720_COUNT) {
         /* If we should be sync'ed but are not, update a counter */
         modulo720SyncErrCount++;
         errlogPrintf("mpgPatternPnet: Modulo 720 not synchronized, modulo720Count = %d\n",
@@ -292,7 +289,7 @@ static long mpgPatternPnet(subRecord *psub)
   /* Tell EVRs if data is out-of-sync */
   if (errFlag) modifier1 |= MPG_IPLING;
   if (pulsid > PULSEID_MAX) pulsid = 0;
-  if (modulo720Count >= 720) {
+  if (modulo720Count >= MODULO720_COUNT) {
     modifier1 |= MODULO720_MASK;
     modulo720Count = 0;
   }
@@ -330,7 +327,7 @@ static int mpgPatternProcInit(sSubRecord *psub)
    * and get the pointer to the card structure.
    */
 #ifdef __rtems__
-  EgDataBufferInit(0, dataBufferSize);
+  EgDataBufferInit(0, sizeof(evrMessagePattern_ts));
   psub->dpvt = (EgCardStruct *)EgGetCardStruct(0);
 #endif
   return 0;
@@ -365,8 +362,8 @@ static int mpgPatternProcInit(sSubRecord *psub)
        J - Beam Code
        K - EDAVGDONEN-3
        L - Pulse ID
-	   U - edef Init Mask
-	   V - edef MeasSevr Minor Mask
+       U - edef Init Mask
+       V - edef MeasSevr Minor Mask
        W - edef MeasSevr Major Mask
        Z - Modulo 720 Flag    
   Outputs:
@@ -392,6 +389,7 @@ static long mpgPatternProc(sSubRecord *psub)
   evrMessagePattern_ts   evrPatternWF_s;
   epicsTimeStamp         prev_time;
   double                 delta_time;
+  int                    edefIdx;
 
   psub->val = psub->b;
   psub->z  = (double)(((epicsUInt32)psub->d) & MODULO720_MASK);
@@ -437,9 +435,19 @@ static long mpgPatternProc(sSubRecord *psub)
 #ifdef __rtems__
   if (psub->dpvt) {
     EgDataBufferLoad(((EgCardStruct *)psub->dpvt)->pEg,
-                     (epicsUInt32 *)&evrPatternWF_s, dataBufferSize);
+                     (epicsUInt32 *)&evrPatternWF_s, sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32));
   }
 #endif
+  /* for every non-zero bit in ederInitMask, call post_event */
+  if (evrPatternWF_s.edefInitMask) { /* should we bother w loop? */
+    for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++) {
+      if (evrPatternWF_s.edefInitMask & (1 << edefIdx)) {/* init is set */
+        post_event(edefIdx + EVENT_EDEFINIT_MIN);
+      }
+    }
+  }
+  /* Post the modulo-720 sync event if the pattern has that bit set */
+  if (psub->z) post_event(EVENT_MODULO720);
   if (psub->val) return -1;
   return 0;
 }
@@ -449,8 +457,7 @@ static long mpgPatternProc(sSubRecord *psub)
   Name: mpgPatternState
 
   Abs:  Access to Last MPG Pattern State and Pattern Diagnostics.
-        This subroutine is for status only and should update at a low
-        rate like 1Hz.
+        This subroutine is for status only and must update at 0.5Hz.
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
@@ -483,6 +490,8 @@ static long mpgPatternProc(sSubRecord *psub)
        S - Number of times a seq ram was not in single mode
        T - Number of times a seq ram was still active
        U - Number of bad patterns in event processing
+       V - Previous ISR update count
+       W - ISR update rate
        VAL = Last Error flag (see mpgPatternProc for values)
 
   Side: File-scope counters may be reset.
@@ -494,7 +503,6 @@ static long mpgPatternState(sSubRecord *psub)
 {
   psub->val = psub->a;
   if (psub->b > 0.5) {
-    psub->b = 0.0;
     msgCount              = 0;
     msgRolloverCount      = 0;
     patternErrCount       = 0;
@@ -510,7 +518,16 @@ static long mpgPatternState(sSubRecord *psub)
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
   psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->f = patternErrCount;
-  evrMessageCounts(EVR_MESSAGE_PNET,&psub->g,&psub->h,&psub->i,&psub->j); 
+  psub->v = psub->g;
+  evrMessageCounts(EVR_MESSAGE_PNET,&psub->g,&psub->h,&psub->i,&psub->j);
+  /* Calculate ISR update rate unless a reset has been done. */
+  if (psub->b == 0) {
+    psub->w = psub->g;
+    if (psub->g < psub->v) psub->w += EVR_MAX_INT;
+    psub->w = (psub->w - psub->v)/MODULO720_SECS;
+  } else {
+    psub->b = 0.0;
+  }
   psub->k = pulseIDSyncErrCount;
   psub->l = modulo720SyncErrCount;
   psub->m = seqCheck1ErrCount;
