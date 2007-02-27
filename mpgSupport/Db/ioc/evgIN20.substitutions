@@ -21,6 +21,6 @@ file evg.db
 {
 #
 #	 Location      
-pattern { LOCA  , UNIT , CARD }
-	{ IN20  , EV01 ,  0   }
+pattern { DEV           , CARD }
+	{ EVG:IN20:EV01 ,  0   }
 }
