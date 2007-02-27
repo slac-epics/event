@@ -5,6 +5,7 @@
         mpgEventSeq       - MPG 360Hz Seq Ram Preparation
         mpgEventSeqSwitch - MPG 360Hz Seq Ram Switch
         mpgEventCode      - MPG Event Code Setup
+	mpgEventBCSelect  - MPG 360Hz Beam Code Fanout Selection
 	mpgEventBeamCode  - MPG 360Hz Beam Code Event Processing
 	mpgEventCounts    - Return Diagnostic Count Values
 	mpgEventCountReset- Reset Diagnostic Count Values
@@ -87,9 +88,9 @@ static ELLLIST        eventList_s;       /* Event list in sequence RAM order */
 static mpgEvent_ts    mpgEvent_as[MRF_NUM_EVENTS]; /* event code table       */
 static mpgRam_ts      mpgRam_as[MRF_NUM_SEQ_RAM];  /* ram flags              */
 static mpgTimeSlot_ts mpgTimeSlot_as[TIMESLOT_MAX]; /* time slot table       */
-/* 120hz (other TS), 120hz, 60hz, 30hz, 10hz, 5hz, 1hz, 0.5hz, spare, spare */
+/* 120hz (other TS), 120hz, 60hz, 30hz, 10hz, 5hz, 1hz, 0.5hz, 3 spares      */
 static int            tsCounterMax_a[EVENTS_PER_TIMESLOT] = 
-    { 0, 0, 0, 1, 6, 12, 60, 120, 120, 360, 360 };
+    { 0, 0, 0, 1, 5, 11, 59, 119, 360, 360, 360 };
 
 /* Control Flags */
 static unsigned int   eventEnable      = 0; /* global event enable flag      */
@@ -124,6 +125,8 @@ static unsigned int   patternErrCount  = 0; /* # bad patterns                */
      
   Outputs:
        Static data initialized.
+       EVG sequence ram initialized.
+       EVG sequence mode set to Off.
   
 ==============================================================================*/ 
 static int mpgEventSeqInit(subRecord *psub)
@@ -220,32 +223,24 @@ static int mpgEventSeqInit(subRecord *psub)
   Rem:  Subroutine for IOC:<LOCA>:<UNIT>:TIMESLOTN-1
 
   Inputs:
-       Beam codes supported in event code processing: 
-       A - Beam Code a
-       B - Beam Code b
-       C - Beam Code c
-       D - Beam Code d
-       E - Beam Code e
-       F - Beam Code f
        Pattern N-1 used on next fiducial:
-       G - Pattern N-1 Beam Code
-       H - Pattern N-1 Modifier1 (mpg_ipling, mod720resync bits, beam code)
-       I - Pattern N-1 Modifier4 (time slot)
+       A - Pattern N-1 Modifier1 (mpg_ipling, mod720resync bits, beam code)
+       B - Pattern N-1 Modifier4 (time slot)
             
   Outputs:
-       J - Spare
-       K - Time slot countdown after mod720resync
-       L - Beam code fanout selection
-       VAL - Current time slot (1 to 6)
+       L - Event Enable/Disable
+       VAL - N-1 time slot (1 to 6)
        EVG sequence ram updated.
+       EVG sequence mode set to single sequence.
+       Static data initialized.
   
 ==============================================================================*/ 
 static int mpgEventSeq(subRecord *psub)
 {
   mpgEvent_ts     *mpgEvent_ps;
   mpgTimeSlot_ts  *mpgTimeSlot_ps;
-  epicsUInt32      modifier1  = psub->h;
-  epicsUInt32      modifier4  = psub->i;
+  epicsUInt32      modifier1  = psub->a;
+  epicsUInt32      modifier4  = psub->b;
   epicsUInt32      lastTimestamp;
   int              ramPos;
   int              ram;
@@ -298,6 +293,7 @@ static int mpgEventSeq(subRecord *psub)
   /* Set up this sequence RAM only if all events are enabled. Note that
      the fiducial event is always position 0 so start at position 1
      in the sequence ram.  The fiducial timestamp is always zero. */
+  psub->l       = eventEnable;
   ramPos        = 1;
   lastTimestamp = 0;
   if (eventEnable) {
@@ -350,7 +346,7 @@ static int mpgEventSeq(subRecord *psub)
       mpgEvent_ps->ram_as[ramNext].Timestamp = lastTimestamp;
 #ifdef __rtems__
       if (evgCard_ps) EgSeqRamWrite(evgCard_ps, ram, ramPos,
-                                  &(mpgEvent_ps->ram_as[ramNext]));
+                                    &(mpgEvent_ps->ram_as[ramNext]));
 #endif
     }
   }
@@ -388,7 +384,41 @@ static int mpgEventSeq(subRecord *psub)
       }
     }
   }  
+  return 0;
+}
+
+/*=============================================================================
+
+  Name: mpgEventBCSelect
+
+  Abs:  360Hz Beam Code Fanout Selection
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        subRecord *         psub        read       point to subroutine record
+
+  Rem:  Subroutine for IOC:<LOCA>:<UNIT>:BEAMCODEN-1
+
+  Inputs:
+       Beam codes supported in event code processing: 
+       A - Beam Code a
+       B - Beam Code b
+       C - Beam Code c
+       D - Beam Code d
+       E - Beam Code e
+       F - Beam Code f
+       Pattern N-1 used on next fiducial:
+       G - Pattern N-1 Beam Code
+            
+  Outputs:
+       L - Beam code fanout selection
+       VAL - N-1 Beam Code (0 to 31)
+  
+==============================================================================*/ 
+static int mpgEventBCSelect(subRecord *psub)
+{
   /* Find beam code fanout selection */
+  if      (!eventEnable)       psub->l = 0;
   if      (psub->g == psub->a) psub->l = 1;
   else if (psub->g == psub->b) psub->l = 2;
   else if (psub->g == psub->c) psub->l = 3;
@@ -396,6 +426,7 @@ static int mpgEventSeq(subRecord *psub)
   else if (psub->g == psub->e) psub->l = 5;
   else if (psub->g == psub->f) psub->l = 6;
   else                         psub->l = 0;
+  psub->val = psub->g;
   
   return 0;
 }
@@ -626,4 +657,5 @@ epicsRegisterFunction(mpgEventSeqInit);
 epicsRegisterFunction(mpgEventSeq);
 epicsRegisterFunction(mpgEventSeqSwitch);
 epicsRegisterFunction(mpgEventCode);
+epicsRegisterFunction(mpgEventBCSelect);
 /*epicsRegisterFunction(mpgEventBeamCode);*/
