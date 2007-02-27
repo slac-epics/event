@@ -24,6 +24,7 @@
 #include <errlog.h>		/* for errlogPrintf */
 #include <epicsExport.h> 	/* for epicsExportAddress */
 #include <evrMessage.h>		/* for evrQueueCreate */
+#include <drvMrfEr.h>		/* for Er* prototypes */
 
 static int evrReport();
 static int evrInitialise();
@@ -33,10 +34,7 @@ struct drvet drvEvr = {
   (DRVSUPFUN) evrInitialise 	/* subroutine defined in this file */
 };
 epicsExportAddress(drvet, drvEvr);
-#ifdef __rtems__
-#include <drvMrfEr.h>		/* for Er* prototypes */
 static ErCardStruct  *pCard = 0;
-#endif
 
 /*=============================================================================
 
@@ -48,11 +46,9 @@ static ErCardStruct  *pCard = 0;
 static int evrReport( int interest )
 {
   if (interest > 0) {
-#ifdef __rtems__
     if (pCard) 
       printf("Pattern data from %s card %d\n",
              pCard->FormFactor?"PMC":"VME", pCard->Cardno);
-#endif    
     evrMessageReport(EVR_MESSAGE_PATTERN, EVR_MESSAGE_PATTERN_NAME);
 /*  evrMessageReport(EVR_MESSAGE_DATA,    EVR_MESSAGE_DATA_NAME); */
   }
