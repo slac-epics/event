@@ -244,7 +244,9 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
   evrMessage_as[messageIdx].messageNotRead = 1;
   if (locked) epicsMutexUnlock(evrMessage_as[messageIdx].messageRWMutex_ps);
   /* Tell listener it's time to read */
-  scanIoRequest(evrMessage_as[messageIdx].ioscanpvt_p);
+  if (evrMessage_as[messageIdx].receiverRegistered) {
+    scanIoRequest(evrMessage_as[messageIdx].ioscanpvt_p);
+  }
   
   return 0;
 }
