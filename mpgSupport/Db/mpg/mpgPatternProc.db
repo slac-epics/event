@@ -51,7 +51,6 @@ record(sSub, "$(DEV):PATTERNN-3") {
   field(INPW, "$(DEV):EDEFMEASSEVR.W NPP NMS")
   field(L, "131071")
   field(BRSV, "INVALID")
-  field(FLNK, "$(DEV):MOD720DIAG")
   field(INPK, "$(DEV):EDAVGDONEN-3")
 }
 
@@ -60,6 +59,15 @@ record(sSub, "$(DEV):PATTERNDIAG") {
   field(SNAM, "mpgPatternState")
   field(INPA, "$(DEV):PATTERN")
   field(BRSV, "INVALID")
+  field(FLNK, "$(DEV):FIDUCIALRATE")
+}
+
+record(ai, "$(DEV):FIDUCIALRATE") {
+  field(DESC, "FIDUCIAL Event Rate")
+  field(INP,  "$(DEV):PATTERNDIAG.W")
+  field(EGU,  "Hz")
+  field(PREC, "1")
+  field(HOPR, "360")
 }
 
 record(sSub, "$(DEV):MODIFIER5N-3") {
@@ -196,12 +204,20 @@ record(sub, "$(DEV):TIMESLOTN-1") {
   field(DESC, "Setup Next Sequence Ram")
   field(INAM, "mpgEventSeqInit")
   field(SNAM, "mpgEventSeq")
-  field(INPA, "1")
-  field(INPG, "$(DEV):PATTERNN-1.J")
-  field(INPH, "$(DEV):PATTERNN-1.D")
-  field(INPI, "$(DEV):PATTERNN-1.G")
+  field(INPA, "$(DEV):PATTERNN-1.D")
+  field(INPB, "$(DEV):PATTERNN-1.G")
   field(LOPR, "1")
   field(HOPR, "6")
+  field(BRSV, "INVALID")
+  field(FLNK, "$(DEV):BEAMCODEN-1")
+}
+
+record(sub, "$(DEV):BEAMCODEN-1") {
+  field(DESC, "Beam code fanout selection")
+  field(SNAM, "mpgEventBCSelect")
+  field(INPA, "1")
+  field(INPG, "$(DEV):PATTERNN-1.J")
+  field(HOPR, "31")
   field(BRSV, "INVALID")
   field(FLNK, "$(DEV):BEAMCODEFO")
 }
@@ -209,7 +225,7 @@ record(sub, "$(DEV):TIMESLOTN-1") {
 record(fanout, "$(DEV):BEAMCODEFO") {
   field(DESC, "Beam Code Event Fanout")
   field(SELM, "Specified")
-  field(SELL, "$(DEV):TIMESLOTN-1.L")
+  field(SELL, "$(DEV):BEAMCODEN-1.L")
   field(FLNK, "$(DEV):SEQRAM")
 }
 
