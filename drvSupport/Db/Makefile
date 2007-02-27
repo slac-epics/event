@@ -14,7 +14,7 @@ include $(TOP)/configure/CONFIG
 DB += evg.db
 # EVR
 DB += evr.db
-DB += evrEvent.db
+DB += evrEventCtrl.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
