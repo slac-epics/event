@@ -22,7 +22,17 @@ record(compress, "EDEF:$(SYS):$(MD):$(SECN)HST") {
   field(LOPR, "$(LOPR)")
   field(PREC, "$(PREC)")
   field(EGU, "$(EGU)")
+  field(DISV, "0")
   field(SDIS, "$(DEV):EDAVGDONE.$(BIT)")
+}
+
+record(seq, "EDEF:$(SYS):$(MD):$(SECN)INIT") {
+  field(DESC, "EDEF HST Reset Seq")
+  field(SELM, "All")
+  field(LNK1, "EDEF:$(SYS):$(MD):$(SECN)HST.RES")
+  field(DOL1, "1")
+  field(DISV, "1")
+  field(SCAN, "Passive")
 }
 
 #! Further lines contain data used by VisualDCT
