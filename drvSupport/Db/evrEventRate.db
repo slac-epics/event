@@ -3,7 +3,7 @@
 #! DBDEND
 
 
-record(event, "IOC:$(LOCA):$(UNIT):$(NAME)") {
+record(event, "$(DEV):$(NAME)") {
   field(DESC, "IOC $(NAME)")
   field(DTYP, "MRF Event Receiver")
   field(INP, "#C$(CARD) S$(ID) @")
@@ -13,46 +13,46 @@ record(event, "IOC:$(LOCA):$(UNIT):$(NAME)") {
   field(FLNK, "$(FLNK)")
 }
 
-record(calc, "IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST") {
+record(calc, "$(DEV):$(NAME)CNTFAST") {
   field(DESC, "IOC $(NAME) Fast Counter")
   field(SCAN, "Event")
   field(EVNT, "$(ID)")
-  field(INPA, "IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST")
+  field(INPA, "$(DEV):$(NAME)CNTFAST")
   field(CALC, "A+1")
 }
 
-record(ai, "IOC:$(LOCA):$(UNIT):$(NAME)CNT") {
+record(ai, "$(DEV):$(NAME)CNT") {
   field(DESC, "IOC $(NAME) Counter")
-  field(INP, "IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST")
-  field(FLNK, "IOC:$(LOCA):$(UNIT):$(NAME)RATE")
+  field(INP, "$(DEV):$(NAME)CNTFAST")
+  field(FLNK, "$(DEV):$(NAME)RATE")
   field(SCAN, "1 second")
 }
 
-record(calc, "IOC:$(LOCA):$(UNIT):$(NAME)RATE") {
+record(calc, "$(DEV):$(NAME)RATE") {
   field(DESC, "IOC $(NAME) Rate")
-  field(INPA, "IOC:$(LOCA):$(UNIT):$(NAME)RATE.B")
-  field(INPB, "IOC:$(LOCA):$(UNIT):$(NAME)CNT")
+  field(INPA, "$(DEV):$(NAME)RATE.B")
+  field(INPB, "$(DEV):$(NAME)CNT")
   field(CALC, "B-A")
   field(EGU, "Hz")
 }
 
 #! Further lines contain data used by VisualDCT
 #! View(0,8,1.2)
-#! Record("IOC:$(LOCA):$(UNIT):$(NAME)",20,17,0,0,"IOC:$(LOCA):$(UNIT):$(NAME)")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME).FLNK",16777215,1,"IOC:$(LOCA):$(UNIT):$(NAME).FLNK")
-#! Record("IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST",260,17,0,0,"IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST.VAL",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST.VAL")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST.INPA",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST.INPA")
-#! Link("IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST.INPA","IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST.VAL")
-#! Record("IOC:$(LOCA):$(UNIT):$(NAME)CNT",500,17,0,0,"IOC:$(LOCA):$(UNIT):$(NAME)CNT")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)CNT.INP",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)CNT.INP")
-#! Link("IOC:$(LOCA):$(UNIT):$(NAME)CNT.INP","IOC:$(LOCA):$(UNIT):$(NAME)CNTFAST.VAL")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)CNT.FLNK",16777215,1,"IOC:$(LOCA):$(UNIT):$(NAME)CNT.FLNK")
-#! Link("IOC:$(LOCA):$(UNIT):$(NAME)CNT.FLNK","IOC:$(LOCA):$(UNIT):$(NAME)RATE")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)CNT.VAL",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)CNT.VAL")
-#! Record("IOC:$(LOCA):$(UNIT):$(NAME)RATE",740,17,0,1,"IOC:$(LOCA):$(UNIT):$(NAME)RATE")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)RATE.B",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)RATE.B")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPA",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPA")
-#! Link("IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPA","IOC:$(LOCA):$(UNIT):$(NAME)RATE.B")
-#! Field("IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPB",16777215,0,"IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPB")
-#! Link("IOC:$(LOCA):$(UNIT):$(NAME)RATE.INPB","IOC:$(LOCA):$(UNIT):$(NAME)CNT.VAL")
+#! Record("$(DEV):$(NAME)",20,17,0,0,"$(DEV):$(NAME)")
+#! Field("$(DEV):$(NAME).FLNK",16777215,1,"$(DEV):$(NAME).FLNK")
+#! Record("$(DEV):$(NAME)CNTFAST",260,17,0,0,"$(DEV):$(NAME)CNTFAST")
+#! Field("$(DEV):$(NAME)CNTFAST.VAL",16777215,0,"$(DEV):$(NAME)CNTFAST.VAL")
+#! Field("$(DEV):$(NAME)CNTFAST.INPA",16777215,0,"$(DEV):$(NAME)CNTFAST.INPA")
+#! Link("$(DEV):$(NAME)CNTFAST.INPA","$(DEV):$(NAME)CNTFAST.VAL")
+#! Record("$(DEV):$(NAME)CNT",500,17,0,0,"$(DEV):$(NAME)CNT")
+#! Field("$(DEV):$(NAME)CNT.INP",16777215,0,"$(DEV):$(NAME)CNT.INP")
+#! Link("$(DEV):$(NAME)CNT.INP","$(DEV):$(NAME)CNTFAST.VAL")
+#! Field("$(DEV):$(NAME)CNT.FLNK",16777215,1,"$(DEV):$(NAME)CNT.FLNK")
+#! Link("$(DEV):$(NAME)CNT.FLNK","$(DEV):$(NAME)RATE")
+#! Field("$(DEV):$(NAME)CNT.VAL",16777215,0,"$(DEV):$(NAME)CNT.VAL")
+#! Record("$(DEV):$(NAME)RATE",740,17,0,1,"$(DEV):$(NAME)RATE")
+#! Field("$(DEV):$(NAME)RATE.B",16777215,0,"$(DEV):$(NAME)RATE.B")
+#! Field("$(DEV):$(NAME)RATE.INPA",16777215,0,"$(DEV):$(NAME)RATE.INPA")
+#! Link("$(DEV):$(NAME)RATE.INPA","$(DEV):$(NAME)RATE.B")
+#! Field("$(DEV):$(NAME)RATE.INPB",16777215,0,"$(DEV):$(NAME)RATE.INPB")
+#! Link("$(DEV):$(NAME)RATE.INPB","$(DEV):$(NAME)CNT.VAL")
