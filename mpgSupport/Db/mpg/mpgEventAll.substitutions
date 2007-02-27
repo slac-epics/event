@@ -2,7 +2,7 @@
 #
 # Abs:  MPG Pattern and Event Records
 #
-# Name: mpgPattern.substitutions
+# Name: mpgEventAll.substitutions
 #
 # Note: Signal names must be all uppercase and 12 chars or less to follow
 #       LCLS naming conventions.
@@ -21,7 +21,7 @@ file mpgEvent.db
 #                            Event  Delay in    Send Every
 #	 Location            Code   Clock Ticks Cycle
 pattern { DEV      , NAME    , ID , DELY      , ALWAYS   }
-	{$(DEVICE) , LCLSBEAM, 130,11900      , 0        }
+	{$(DEVICE) , LCLSBEAM, 140,11900      , 0        }
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 ,12950      , 1        }

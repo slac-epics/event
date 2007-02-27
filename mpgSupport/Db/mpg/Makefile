@@ -16,7 +16,7 @@ include $(TOP)/configure/CONFIG
 DB += bsaEdefAll.db
 DB += bsaEdefSim.db
 # MPG pattern processing and events
-DB += mpgPattern.db
+DB += mpgEventAll.db
 DB += mpgPatternTest.db
 
 include $(TOP)/configure/RULES
