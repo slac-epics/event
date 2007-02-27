@@ -1,5 +1,5 @@
-record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
-  field(DESC, "EVG $(UNIT) Control")
+record(eg, "$(DEV):CTRL") {
+  field(DESC, "EVG Control")
   field(DTYP, "MRF Event Generator")
   field(OUT, "#C$(CARD) S0 @")
   field(PINI, "YES")
@@ -27,7 +27,15 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
 # ADIV of 0 means bypass phase and divide logic.
   field(ADIV, "0")
   field(APHS, "0")
-# There are no input events, all ET* fields left at 0.
+# Externally trigger events - set to 100.
+  field(ET0,  "100")
+  field(ET1,  "100")
+  field(ET2,  "100")
+  field(ET3,  "100")
+  field(ET4,  "100")
+  field(ET5,  "100")
+  field(ET6,  "100")
+  field(ET7,  "100")
 # There is no multiplexed counter, all MC*,MD*,ME*,MS* fields left at 0.
 }
 
@@ -35,50 +43,50 @@ record(eg, "EVG:$(LOCA):$(UNIT):CTRL") {
 # (0x7D) events, longout records are used that have their output links 
 # pointed to the VME field on the above EG record. When they are processed, 
 # the DOL field of the longout record is sent out on the event system.
-record(longout, "EVG:$(LOCA):$(UNIT):HEARTBEAT") {
-  field(DESC, "EVG $(UNIT) Heartbeat")
+record(longout, "$(DEV):HEARTBEAT") {
+  field(DESC, "EVG Heartbeat")
   field(SCAN, "1 second")
-  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
+  field(OUT, "$(DEV):CTRL.VME  PP")
   field(DOL, "122")
   field(OMSL, "closed_loop")
 }
 
-record(longout, "EVG:$(LOCA):$(UNIT):RESYNC") {
-  field(DESC, "EVG $(UNIT) Resynchronize")
+record(longout, "$(DEV):RESYNC") {
+  field(DESC, "EVG Resynchronize")
   field(SCAN, "10 second")
-  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.VME  PP")
+  field(OUT, "$(DEV):CTRL.VME  PP")
   field(DOL, "125")
   field(OMSL, "closed_loop")
 }
 
-record(longout, "EVG:$(LOCA):$(UNIT):EVENT") {
-  field(DESC, "EVG $(UNIT) Event Code")
+record(longout, "$(DEV):EVENT") {
+  field(DESC, "EVG User Event Code")
   field(PINI, "YES")
   field(DRVH, "256")
-  field(DRVL, "1")
+  field(DRVL, "0")
   field(MDEL, "-1")
 }
 
-record(seq, "EVG:$(LOCA):$(UNIT):EVENTSEND") {
-  field(DESC, "EVG $(UNIT) Send Event Code")
-  field(DOL1, "EVG:$(LOCA):$(UNIT):EVENT")
-  field(LNK1, "EVG:$(LOCA):$(UNIT):CTRL.VME PP")
+record(seq, "$(DEV):EVENTSEND") {
+  field(DESC, "EVG Send User Event Code")
+  field(DOL1, "$(DEV):EVENT")
+  field(LNK1, "$(DEV):CTRL.VME PP")
 }
 
-record(bo, "EVG:$(LOCA):$(UNIT):SEQ1SEND") {
-  field(DESC, "EVG $(UNIT) Send Seq 1")
+record(bo, "$(DEV):SEQ1SEND") {
+  field(DESC, "EVG Send Seq 1")
   field(ZNAM, "No Trigger")
   field(ONAM, "Trigger")
   field(DOL,  "1")
   field(OMSL, "closed_loop")
-  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.TRG1 PP")
+  field(OUT, "$(DEV):CTRL.TRG1 PP")
 }
 
-record(bo, "EVG:$(LOCA):$(UNIT):SEQ2SEND") {
-  field(DESC, "EVG $(UNIT) Send Seq 2")
+record(bo, "$(DEV):SEQ2SEND") {
+  field(DESC, "EVG Send Seq 2")
   field(ZNAM, "No Trigger")
   field(ONAM, "Trigger")
   field(DOL,  "1")
   field(OMSL, "closed_loop")
-  field(OUT, "EVG:$(LOCA):$(UNIT):CTRL.TRG2 PP")
+  field(OUT, "$(DEV):CTRL.TRG2 PP")
 }
