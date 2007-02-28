@@ -2,73 +2,12 @@
 #
 # Abs:  LCLS EVR IOC records for IN20 PM02
 #
-# Name: EVR-IN20-PM02.substitutions
-#
-# Note: Signal names must be all uppercase and 12 chars or less to follow
-#       LCLS naming conventions.
-#
-# Macros:
-# Set LOCA to 4 char location name.
-#
-# For VME EVR modules, CARD must be set to the physical slot in the crate
-# where the EVR resides, starting from 1.  For PMC EVR modules, CARD must
-# be 0 for slot 1 and 1 for slot 2.
+# Name: IOC-IN20-PM02evr.substitutions
 #
 #==============================================================================
 #
-file evr.db
-{
-# PRIM = EVR
-# UNIT = xx01 for first EVR in crate, UNIT = xx02 for second EVR, etc.
-#     where xx = subsystem ID.
-#                               Default Pulse
-#	 Location Unit   Card   Delay   Width (clock ticks)    
-pattern { LOCA  , UNIT , CARD , DELAY , WIDTH }
-	{ IN20  , PM02 ,  0   ,   8   ,  13   }
-}
-file evrEvent.db
-{
-# PRIM = EVR
-# UNIT = xx01 for first EVR in card, UNIT = xx02 for second EVR, etc. 
-#
-#	 Location Unit   Card  <----------------------------  Event -------------------------->       
-pattern { LOCA  , UNIT , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,VME}
-	{ IN20  , PM02 ,   0  , EVENT1  , 1  , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT2  , 2  , 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT3  , 3  , 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT4  , 4  , 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT5  , 5  , 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT6  , 6  , 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT7  , 7  , 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT8  , 8  , 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT9  , 9  , 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT10 , 10 , 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT11 , 11 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT12 , 12 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 , 0 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT13 , 13 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1 , 0 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT14 , 14 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 1 , 0 , 1 }
-	{ IN20  , PM02 ,   0  , EVENT15 , 15 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 1 , 1 }
-}
-file evrEventRate.db
-{
-# PRIM = IOC
-# UNIT = xxyy, where xx = subsystem ID and yy=index of that subsystem in LOCA.
-#
-#	 Location Unit   Card        
-pattern { LOCA  , UNIT , CARD , NAME    , ID , FLNK                     }
-	{ IN20  , PM02 ,   0  , EVENT1  , 1  , "IOC:IN20:PM02:FIDUCIAL" }
-	{ IN20  , PM02 ,   0  , EVENT2  , 2  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT3  , 3  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT4  , 4  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT5  , 5  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT6  , 6  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT7  , 7  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT8  , 8  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT9  , 9  , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT10 , 10 , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT11 , 11 , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT12 , 12 , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT13 , 13 , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT14 , 14 , ""                       }
-	{ IN20  , PM02 ,   0  , EVENT15 , 15 , ""                       }
+file evrPMXX.db
+{   
+pattern { DEVICE        }
+	{ EVR:IN20:PM02 }
 }

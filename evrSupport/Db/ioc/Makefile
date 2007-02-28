@@ -11,12 +11,14 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 #
-DB += evrPatternProc.db
 # Test stands
+DB += evrXL05.db
+DB += evrXL09.db
+DB += evrXL16.db
 DB += evrPatternXL05.db
 DB += evrPatternXL09.db
 DB += evrPatternXL16.db
-#DB += IOC-IN20-EV02pattern.db
+# BSA Test Stands
 DB += bsaXL01.db
 DB += bsaSimXL01.db
 DB += bsaXL02.db
@@ -29,13 +31,19 @@ DB += bsaXL05.db
 DB += bsaSimXL05.db
 DB += bsaXL09.db
 DB += bsaSimXL09.db
-# Laser Room
+
+# Laser Room and Injector Laser Steering
+DB += IOC-LR20-LS01evr.db
+DB += IOC-IN20-LS11evr.db  
+DB += IOC-IN20-LS12evr.db  
+DB += IOC-IN20-LS13evr.db  
+DB += IOC-IN20-LS14evr.db  
+DB += IOC-IN20-LS15evr.db  
+DB += IOC-IN20-LS16evr.db  
+DB += IOC-IN20-LS17evr.db  
+DB += IOC-IN20-LS18evr.db  
+DB += IOC-IN20-LS19evr.db  
 DB += IOC-LR20-LS01pattern.db
-# Pattern Injector
-DB += IOC-IN20-AM01pattern.db  
-DB += IOC-IN20-BP01pattern.db  
-DB += IOC-IN20-BP02pattern.db  
-DB += IOC-IN20-IM01pattern.db  
 DB += IOC-IN20-LS11pattern.db  
 DB += IOC-IN20-LS12pattern.db  
 DB += IOC-IN20-LS13pattern.db  
@@ -44,9 +52,18 @@ DB += IOC-IN20-LS15pattern.db
 DB += IOC-IN20-LS16pattern.db  
 DB += IOC-IN20-LS17pattern.db  
 DB += IOC-IN20-LS18pattern.db  
-DB += IOC-IN20-LS19pattern.db  
-DB += IOC-IN20-MG01pattern.db  
-DB += IOC-IN20-MP01pattern.db
+DB += IOC-IN20-LS19pattern.db
+
+# Profile Monitor - Injector and Linac
+DB += IOC-IN20-PM01evr.db
+DB += IOC-IN20-PM02evr.db
+DB += IOC-IN20-PM03evr.db
+DB += IOC-IN20-PM04evr.db
+DB += IOC-IN20-PM05evr.db
+DB += IOC-IN20-PM06evr.db
+DB += IOC-IN20-PM07evr.db
+DB += IOC-LI21-PM01evr.db
+DB += IOC-LI25-PM01evr.db
 DB += IOC-IN20-PM01pattern.db
 DB += IOC-IN20-PM02pattern.db
 DB += IOC-IN20-PM03pattern.db
@@ -54,29 +71,51 @@ DB += IOC-IN20-PM04pattern.db
 DB += IOC-IN20-PM05pattern.db
 DB += IOC-IN20-PM06pattern.db
 DB += IOC-IN20-PM07pattern.db
-DB += IOC-IN20-RF01pattern.db
-DB += IOC-IN20-MC01pattern.db
-# Pattern Sector 21
-DB += IOC-LI21-BL01pattern.db
-DB += IOC-LI21-BP01pattern.db
-DB += IOC-LI21-MG01pattern.db
 DB += IOC-LI21-PM01pattern.db
-
-# Pattern Sector 21
 DB += IOC-LI25-PM01pattern.db
 
-# BSA Injector
-DB += IOC-IN20-BP01bsa.db
-DB += IOC-IN20-BP02bsa.db
-DB += IOC-IN20-IM01bsa.db
-DB += IOC-IN20-RF01bsa.db
-DB += IOC-IN20-MC01bsa.db
+# Injector - MPS, Alignment Mirror, Event
+DB += IOC-IN20-MP01evr.db
+DB += IOC-IN20-MP01pattern.db
+DB += IOC-IN20-AM01evr.db  
+DB += IOC-IN20-AM01pattern.db  
+#DB += IOC-IN20-EV01evr.db
+#DB += IOC-IN20-EV01pattern.db
 
-# BSA Sector 21
+# Bunch Length and Current Monitor - Injector and Linac
+DB += IOC-IN20-IM01evr.db  
+DB += IOC-IN20-IM01pattern.db
+DB += IOC-IN20-IM01bsa.db
+DB += IOC-LI21-BL01evr.db
+DB += IOC-LI21-BL01pattern.db
 DB += IOC-LI21-BL01bsa.db
-DB += IOC-LI21-BP01bsa.db
-DB += IOC-LI21-MC01bsa.db
+
+# RF and Motion Control - Injector and Linac
+DB += IOC-IN20-MC01evr.db
+DB += IOC-IN20-MC01pattern.db
+DB += IOC-IN20-MC01bsa.db
+DB += IOC-IN20-RF01evr.db
+DB += IOC-IN20-RF01pattern.db
+DB += IOC-IN20-RF01bsa.db
 DB += IOC-LI21-RF01bsa.db
+DB += IOC-LI24-RF01bsa.db
+
+# Magnet - Injector and Linac 
+DB += IOC-IN20-MG01evr.db  
+DB += IOC-IN20-MG01pattern.db  
+DB += IOC-LI21-MG01evr.db
+DB += IOC-LI21-MG01pattern.db
+
+# BPM - Injector and Linz
+DB += IOC-IN20-BP01evr.db  
+DB += IOC-IN20-BP01pattern.db  
+DB += IOC-IN20-BP01bsa.db
+DB += IOC-IN20-BP02evr.db  
+DB += IOC-IN20-BP02pattern.db  
+DB += IOC-IN20-BP02bsa.db
+DB += IOC-LI21-BP01evr.db
+DB += IOC-LI21-BP01pattern.db
+DB += IOC-LI21-BP01bsa.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
