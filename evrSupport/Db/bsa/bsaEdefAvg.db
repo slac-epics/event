@@ -5,7 +5,7 @@
 
 record(sSub, "$(DEV):$(SECN)$(MDID)") {
   field(DESC, "$(SECN) Avg for EDEF $(DESC)")
-  field(INPA, "$(DEV):$(SECN)")
+  field(INPA, "$(INP)")
   field(INPB, "IOC:$(LOCA):$(UNIT):EDAVGDONE.$(BIT)")
   field(EGU, "$(EGU)")
   field(HOPR, "$(HOPR)")
@@ -44,7 +44,6 @@ record(seq, "$(DEV):$(SECN)INIT$(MD)") {
   field(DOL1, "1")
   field(LNK1, "$(DEV):$(SECN)$(MDID).O")
   field(LNK2, "$(DEV):$(SECN)CNTHST$(MDID).RES")
-  field(DISV, "")
   field(SCAN, "Event")
   field(EVNT, "$(EC)")
   field(PRIO, "LOW")
