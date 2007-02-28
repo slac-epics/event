@@ -148,8 +148,6 @@ static int mpgEventSeqInit(subRecord *psub)
   if (!(mpgEventMutex_ps = epicsMutexCreate())) return -1;
   /* Initialize event code list used for sequence ram loading */
   ellInit(&eventList_s);
-  /* Initialize event code table */
-  memset(mpgEvent_as,    0, sizeof(mpgEvent_ts)    * MRF_NUM_EVENTS);
   /* Initialize time slot table */
   for (idx = 0, timeslot = TIMESLOT_MIN; idx < TIMESLOT_MAX; idx++, timeslot++) {
     /* First set up the event code for the other time slot */
@@ -170,6 +168,16 @@ static int mpgEventSeqInit(subRecord *psub)
   eventEnable = 0; /* disabled until enabled by mpgEventSeqPrep */
   ramNext     = 0; /* next sequence ram to go */
 
+  /* Initialize event code table */
+  memset(mpgEvent_as,    0, sizeof(mpgEvent_ts)    * MRF_NUM_EVENTS);
+  /* Initialize codes that are reserved for post-event and external
+     trigger so they cannot be used here */
+  mpgEvent_as[EVENT_EXTERNAL_TRIG].code      = EVENT_EXTERNAL_TRIG;
+  mpgEvent_as[EVENT_MODULO720].code          = EVENT_MODULO720;
+  for (idx = 0, eventcode = EVENT_EDEFINIT_MIN; idx < EDEF_MAX;
+       idx++,   eventcode++) {
+    mpgEvent_as[eventcode].code = eventcode;
+  }
   /* Initialize the start-of-sequence fiducial event  - this is NOT included
      in the linked list since it must ALWAYS be first */
   mpgEvent_as[EVENT_FIDUCIAL].code           = EVENT_FIDUCIAL;
