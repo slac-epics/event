@@ -1,4 +1,4 @@
-file mpgPattern.db
+file mpgEventAll.db
 {
 #                                  Check    Trigger
 #          Device                PNET Data  Seq Ram
@@ -11,6 +11,6 @@ file bsaEdefAll.db {
 }
 file evrPatternAll.db {
 #	    Device        , Time Slot Processing         PNET Processing     BSA Data Processing
-  pattern { DEVICE        ,         LINK4             ,      LINK5         ,      LINK6           , LINKD }
-	  { IOC:IN20:EV01 , IOC:IN20:EV01:TIMESLOTN-1 , IOC:IN20:EV01:PNET , IOC:IN20:EV01:EDEFFO ,  ""   }
+  pattern { DEVICE        ,         LINK4             ,      LINK5         ,      LINK6           }
+	  { IOC:IN20:EV01 , IOC:IN20:EV01:TIMESLOTN-1 , IOC:IN20:EV01:PNET , IOC:IN20:EV01:EDEFFO }
 }
