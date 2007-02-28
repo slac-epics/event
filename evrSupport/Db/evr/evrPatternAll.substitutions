@@ -4,9 +4,6 @@
 #
 # Name: evrPatternAll.substitutions
 #
-# Note: Signal names must be all uppercase and 12 chars or less to follow
-#       LCLS naming conventions.
-#
 # Macros:
 # Set DEVICE to PRIM:LOCA:UNIT where
 #   PRIM is "IOC".
@@ -42,9 +39,9 @@ pattern { DEV    , N      , NINP    , FLNK }
 
 file evrFiducial.db
 {
-#     Location  ,               PATTERNFO links       
-pattern { DEV      ,    LNK4  ,    LNK5  ,    LNK6  ,    LNKD  }
-	{ $(DEVICE), $(LINK4) , $(LINK5) , $(LINK6) , $(LINKD) }
+#     Location     ,         PATTERNFO links       
+pattern { DEV      ,    LNK4  ,    LNK5  ,    LNK6  }
+	{ $(DEVICE), $(LINK4) , $(LINK5) , $(LINK6) }
 }
 
 file generalTimeNonVx.template
