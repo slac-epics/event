@@ -3,10 +3,11 @@
 file evrPatternAll.db {
 #	    Device        ,  SLC Pattern Check LNK    , EVR/Trigger             
 #	                                                  Links       
-  pattern { DEVICE        ,        LINK4              , LINK5 , LINK6 , LINKD }
-	  { IOC:XL09:EV01 ,         ""                ,  ""   ,  ""   ,  ""   }
+  pattern { DEVICE    ,  LINK4     , LINK5 , LINK6 }
+	  { IOC:XL09:EV01 ,   ""       ,  ""   , "BPMS:XX09:1:EFX PP" }
 }
-file evrPatternProc.db {
-  pattern { DEVICE }
-	  { IOC:XL09:EV01}
+# Event records
+file evrEventAll.db {
+  pattern { DEVICE        }
+	  { IOC:XL09:EV01 }
 }
