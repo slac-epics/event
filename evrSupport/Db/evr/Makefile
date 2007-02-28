@@ -12,8 +12,17 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #
 # evrPattern support
+DB += evrPatternProc.db
+DB += evrEventAll.db
 DB += evrPatternAll.db
 DB += evrPatternTest.db
+# Type-Specific IOC support
+DB += evrPMXX.db
+DB += evrLSXX.db
+DB += evrBPXX.db
+DB += evrMGXX.db
+DB += evrIMXX.db
+DB += evrMCXX.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
