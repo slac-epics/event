@@ -36,14 +36,13 @@ record(sSub, "$(DEV):MODIFIER5") {
 }
 
 record(fanout, "$(DEV):MOD720DIAG") {
+  field(EVNT, "121")
+  field(SCAN, "Event")
   field(LNK1, "$(DEV):PATTERND")
   field(LNK2, "$(DEV):PATTERND-1")
   field(LNK3, "$(DEV):PATTERND-2")
   field(LNK4, "$(DEV):PATTERND-3")
   field(LNK5, "$(DEV):FIDUCIALDIAG")
-  field(LNK6, "$(LNKD)")
-  field(SDIS, "$(DEV):PATTERNN-3.Z")
-  field(DISV, "0")
 }
 
 record(sSub, "$(DEV):FIDUCIALDIAG") {
