@@ -3,6 +3,7 @@
   Name: evrPattern.c
            evrPatternProcInit  - Pattern Setup Initialization
            evrPatternProc      - 360Hz Pattern Setup
+           evrPatternRate      - EVR Event Rate Calculation
            evrPatternState     - Pattern Processing State and Diagnostics
 
   Abs: This file contains all subroutine support for evr Pattern processing
@@ -122,24 +123,24 @@ Error writing EVR timestamp set record invalid and pulse ID to 0
     B - PATTERNDATA.SEVR
     C - PATTERNDATA.NORD
    Outputs:
-	D - MODIFIER1N-3 (PNET)
-	E - MODIFIER2N-3 (PNET)
-	F - MODIFIER3N-3 (PNET)
-	G - MODIFIER4N-3 (PNET)
-	H - MODIFIER5N-3 (evr)
-	I - BUNCHARGEN-3 (evr)
-	J - BEAMCODEN-3 (decoded from PNET bits 8-12, MOD1 8-12)
+    D - MODIFIER1N-3 (PNET)
+    E - MODIFIER2N-3 (PNET)
+    F - MODIFIER3N-3 (PNET)
+    G - MODIFIER4N-3 (PNET)
+    H - MODIFIER5N-3 (evr)
+    I - BUNCHARGEN-3 (evr)
+    J - BEAMCODEN-3 (decoded from PNET bits 8-12, MOD1 8-12)
     K - EDAVGDONEN-3(evr)
-	L - PULSEIDN-3  (decoded from PNET bits, 17)   
+    L - PULSEIDN-3  (decoded from PNET bits, 17)   
     V - edefMinorMask
     W - edefMajorMask
-        VAL = Error flag:
+    Z - Modulo 720 Flag
+    VAL = Error flag:
              OK
              Invalid Waveform
              Invalid Waveform Header
              Invalid Timestamp
              MPG IPLing
-    Z - Modulo 720 Flag
    Output to evr timestamp table
   Ret: 0  
 =============================================================================*/ 
@@ -150,7 +151,7 @@ static long evrPatternProc(sSubRecord *psub)
   evrMessagePattern_ts  *evrPatternWF_ps;
   epicsUInt32            modifier1;
   int                    errFlag = PATTERN_OK;
-  unsigned short         edefInitMask = 0;
+  epicsUInt32            edefInitMask;
   int                    edefIdx;
 
   /* Keep a count of messages and reset before overflow */
@@ -183,9 +184,10 @@ static long evrPatternProc(sSubRecord *psub)
       psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
       if (psub->val) psub->z = 0;
       else           psub->z = 1;
-      psub->l   = PULSEID_INVALID;
-      errFlag   = PATTERN_INVALID_WF_HDR;
-      modifier1 = MPG_IPLING;
+      psub->l      = PULSEID_INVALID;
+      errFlag      = PATTERN_INVALID_WF_HDR;
+      modifier1    = MPG_IPLING;
+      edefInitMask = 0;
       evrTimePut(0, epicsTimeERROR);
     } else {
       
@@ -224,12 +226,14 @@ static long evrPatternProc(sSubRecord *psub)
 	/* for every non-zero bit in ederInitMask, call post_event */
 	if (edefInitMask) { /* should we bother w loop? */
 	  for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++) {
-		if ( (edefInitMask >> edefIdx) & 1) {/* init is set */
-		  post_event(edefIdx + 101);
+		if (edefInitMask & (1 << edefIdx)) {/* init is set */
+		  post_event(edefIdx + EVENT_EDEFINIT_MIN);
 		}
 	  }
 	}
   }
+  /* Post the modulo-720 sync event if the pattern has that bit set */
+  if (psub->z) post_event(EVENT_MODULO720);
   psub->d   = (double)modifier1;
   psub->val = (double)errFlag;
   if (errFlag) return -1;
@@ -238,11 +242,40 @@ static long evrPatternProc(sSubRecord *psub)
 
 /*=============================================================================
 
+  Name: evrPatternRate
+
+  Abs:  Calculate rate that an event code is received by the EVR ISR.
+        It is assumed this subroutine processes at 0.5hz.
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        subRecord *         psub        read       point to subroutine record
+
+  Rem:  Subroutine for IOC:LOCA:UNIT:NAMERATE
+
+  Inputs:
+       A - Counter that is updated every time the event is received
+     
+  Outputs:
+       L - Previous Counter Value
+       VAL = Rate in Hz
+  
+  Ret:  0 = OK
+
+==============================================================================*/
+static long evrPatternRate(subRecord *psub)
+{
+  psub->val = (psub->a - psub->l)/MODULO720_SECS;
+  psub->l   = psub->a;
+  return 0;
+}
+
+/*=============================================================================
+
   Name: evrPatternState
 
   Abs:  Access to Last Pattern State and Pattern Diagnostics.
-        This subroutine is for status only and should update at a low
-        rate like 1Hz.
+        This subroutine is for status only and must update at 0.5Hz.
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
@@ -290,7 +323,7 @@ static long evrPatternState(subRecord *psub)
   psub->k = syncErrCount;
   return 0;
 }
-
+
 /*=============================================================================
 
   Name: evrPatternSim
@@ -361,5 +394,6 @@ static long evrPatternSim(subRecord *psub)
 }
 epicsRegisterFunction(evrPatternProcInit);
 epicsRegisterFunction(evrPatternProc);
+epicsRegisterFunction(evrPatternRate);
 epicsRegisterFunction(evrPatternState);
 epicsRegisterFunction(evrPatternSim);
