@@ -1,0 +1,79 @@
+#==============================================================================
+#
+# Abs:  EVR Event Records
+#
+# Name: evrEventAll.substitutions
+#
+#==============================================================================
+#
+file evrPatternProc.db {
+pattern { DEV       }
+	{ $(DEVICE) }
+}
+file evrEventCtrl.db
+{
+#
+#	  Device      Card  <-----------------------------  Event -------------------------->
+pattern { DEV       , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,VME}
+	{ $(DEVICE) ,   0  , FIDUCIAL,  1 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
+}
+file evrEvent.db
+{
+#                            Event 
+#	 Location            Code   Priority    Forward Link
+pattern { DEV      , NAME    , ID , PRIO , FLNK               }
+	{$(DEVICE) , FIDUCIAL, 1  , HIGH , $(DEVICE):FIDUCIAL }
+	{$(DEVICE) , LCLSBEAM, 140, LOW  , ""                 }
+# Beam-Independent Time Slot Triggers
+#   360Hz
+	{$(DEVICE) , TSX_360_ , 9 , LOW  , ""                 }
+#   120Hz
+	{$(DEVICE) , TS1_120_, 10 , LOW  , ""                 }
+	{$(DEVICE) , TS2_120_, 20 , LOW  , ""                 }
+	{$(DEVICE) , TS3_120_, 30 , LOW  , ""                 }
+	{$(DEVICE) , TS4_120_, 40 , LOW  , ""                 }
+	{$(DEVICE) , TS5_120_, 50 , LOW  , ""                 }
+	{$(DEVICE) , TS6_120_, 60 , LOW  , ""                 }
+#    60Hz
+	{$(DEVICE) , TS1_60_ , 11 , LOW  , ""                 }
+	{$(DEVICE) , TS2_60_ , 21 , LOW  , ""                 }
+	{$(DEVICE) , TS3_60_ , 31 , LOW  , ""                 }
+	{$(DEVICE) , TS4_60_ , 41 , LOW  , ""                 }
+	{$(DEVICE) , TS5_60_ , 51 , LOW  , ""                 }
+	{$(DEVICE) , TS6_60_ , 61 , LOW  , ""                 }
+#    30Hz
+	{$(DEVICE) , TS1_30_ , 12 , LOW  , ""                 }
+	{$(DEVICE) , TS2_30_ , 22 , LOW  , ""                 }
+	{$(DEVICE) , TS3_30_ , 32 , LOW  , ""                 }
+	{$(DEVICE) , TS4_30_ , 42 , LOW  , ""                 }
+	{$(DEVICE) , TS5_30_ , 52 , LOW  , ""                 }
+	{$(DEVICE) , TS6_30_ , 62 , LOW  , ""                 }
+#    10Hz
+	{$(DEVICE) , TS1_10_ , 13 , LOW  , ""                 }
+	{$(DEVICE) , TS2_10_ , 23 , LOW  , ""                 }
+	{$(DEVICE) , TS3_10_ , 33 , LOW  , ""                 }
+	{$(DEVICE) , TS4_10_ , 43 , LOW  , ""                 }
+	{$(DEVICE) , TS5_10_ , 53 , LOW  , ""                 }
+	{$(DEVICE) , TS6_10_ , 63 , LOW  , ""                 }
+#     5Hz
+	{$(DEVICE) , TS1_5_  , 14 , LOW  , ""                 }
+	{$(DEVICE) , TS2_5_  , 24 , LOW  , ""                 }
+	{$(DEVICE) , TS3_5_  , 34 , LOW  , ""                 }
+	{$(DEVICE) , TS4_5_  , 44 , LOW  , ""                 }
+	{$(DEVICE) , TS5_5_  , 54 , LOW  , ""                 }
+	{$(DEVICE) , TS6_5_  , 64 , LOW  , ""                 }
+#     1Hz
+	{$(DEVICE) , TS1_1_  , 15 , LOW  , ""                 }
+	{$(DEVICE) , TS2_1_  , 25 , LOW  , ""                 }
+	{$(DEVICE) , TS3_1_  , 35 , LOW  , ""                 }
+	{$(DEVICE) , TS4_1_  , 45 , LOW  , ""                 }
+	{$(DEVICE) , TS5_1_  , 55 , LOW  , ""                 }
+	{$(DEVICE) , TS6_1_  , 65 , LOW  , ""                 }
+#   0.5Hz
+	{$(DEVICE) , TS1_HALF, 16 , LOW  , ""                 }
+	{$(DEVICE) , TS2_HALF, 26 , LOW  , ""                 }
+	{$(DEVICE) , TS3_HALF, 36 , LOW  , ""                 }
+	{$(DEVICE) , TS4_HALF, 46 , LOW  , ""                 }
+	{$(DEVICE) , TS5_HALF, 56 , LOW  , ""                 }
+	{$(DEVICE) , TS6_HALF, 66 , LOW  , ""                 }
+}

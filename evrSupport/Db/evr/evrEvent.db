@@ -1,0 +1,30 @@
+record(event, "$(DEV):$(NAME)EVNT") {
+  field(DESC, "$(NAME) Event")
+  field(DTYP, "MRF Event Receiver")
+  field(INP, "#C0 S$(ID) @")
+  field(SCAN, "I/O Intr")
+  field(PRIO, "$(PRIO)")
+  field(VAL, "$(ID)")
+  field(FLNK, "$(FLNK)")
+}
+
+record(calc, "$(DEV):$(NAME)CNT") {
+  field(DESC, "$(NAME) Event Counter")
+  field(SCAN, "Event")
+  field(EVNT, "$(ID)")
+  field(INPA, "$(DEV):$(NAME)CNT")
+  field(CALC, "A+1")
+}
+
+record(sub, "$(DEV):$(NAME)RATE") {
+  field(DESC, "$(NAME) Event Rate")
+  field(SNAM, "evrPatternRate")
+  field(BRSV, "INVALID")
+  field(SCAN, "Event")
+  field(EVNT, "121")
+  field(INPA, "$(DEV):$(NAME)CNT")
+  field(INPE, "$(ID)")
+  field(EGU,  "Hz")
+  field(PREC, "1")
+  field(HOPR, "360")
+}
