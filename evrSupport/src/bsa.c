@@ -36,9 +36,10 @@
 #include "debugPrint.h"
 #ifdef  DEBUG_PRINT
 #include <stdio.h>
-  int bsaSubFlag = DP_ERROR;
+  int bsaSubFlag = DP_FATAL;
 #endif
 
+#define bsadebug 1
 /* c includes */
 #include <string.h>        /* memcmp */
 #include <math.h>          /* sqrt   */
@@ -72,7 +73,7 @@
         SDIS - EVR:IOC:1:MODIFIER5 BIT for this MDID 1=  match
 		INPD - PRIM:LOCA:UNIT:SECN.STAT (was cum EPICS STAT for device, STATUS)
         INPE - PRIM:LOCA:UNIT:SECN.SEVR (was cum EPICS SEVR for device, STATUS.L)
-
+        INPG - Init flag - set upon init
 		OUT 
            H = Variance value used in RMS calc
            I = B - 1
@@ -83,6 +84,7 @@
 		   M = goodmeas cnt - # of pulses considered good when each pulse's severity
                is compared with the EDEF MEASSEVR value for this edef. This count
 			   will be stored in the $(SECN)CNTHST history buffer.
+		   N - Running count of inner loop * outer loop = total measured
            O - reset counters, values (avcnt, goodmeas, stat, timestamp check)
                Reset occurs from reset sequence
 	       Q = local, inner, avgcnt
@@ -103,34 +105,44 @@ static long bsaSecnAvg(sSubRecord *psub)
   epicsTimeStamp  timeSecn;  /* for comparison */
 #endif
 
+  /* simulator needs psub->g to always be 0 */
+#ifdef linux
+  psub->g = 0;
+#endif
+
+
   psub->x = 0;    /* default to history buff disable  */
   if (psub->g) {  /* set from reset seq at beg of acq */
 	psub->g = 0;
 	psub->n = 0;
+    psub->w = 0;  /* ts mismatch */
   }
-  psub->n++;      /* debug count of how many times this is processed */
+  psub->n++;      /* count of how many times this is processed */
 #ifndef linux
 
   /*EVR timestamp:*/
   if (dbGetTimeStamp(&psub->sdis, &timeEVR)){
-        DEBUGPRINT(DP_ERROR, bsaSubFlag, ("bsaSecnAvg for %s: Unable to determine EVR timestamp.\n",psub->name));
-        psub->w++;
-        return -1;
+	DEBUGPRINT(DP_ERROR, bsaSubFlag, ("bsaSecnAvg for %s: Unable to determine EVR timestamp.\n",psub->name));
+	psub->w++;
+	return -1;
   }
   /*Secondary timestamp:*/
   if (dbGetTimeStamp(&psub->inpa, &timeSecn)){
-        DEBUGPRINT(DP_ERROR, bsaSubFlag, ("bsaSecnAvg for %s: Unable to determine device timestamp.\n",psub->name));
-        psub->w++;
-        return -1;
+	DEBUGPRINT(DP_ERROR, bsaSubFlag, ("bsaSecnAvg for %s: Unable to determine device timestamp.\n",psub->name));
+	psub->w++;
+	return -1;
   }
   /* if timestamps are different, then processing is not synched */
   if (memcmp(&timeEVR,&timeSecn,sizeof(epicsTimeStamp))) {
 	DEBUGPRINT(DP_ERROR, bsaSubFlag, ("basSecnAvg for %s: Timestamp MISMATCH.\n",psub->name));
 	psub->w++;
+
+#ifndef bsadebug
 	return -1;
+#endif
   }
 #endif
-
+  
   /* Reinit for a new average */
   if (psub->o) {
 	psub->o = 0; /* no resetting next time around */
@@ -140,7 +152,6 @@ static long bsaSecnAvg(sSubRecord *psub)
     psub->val = 0;
 	psub->q = 0; /* avgcount    */
     psub->m = 0; /* goodmeas    */
-    psub->w = 0; /* ts mismatch */
 	
 	DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg: First time thru for %s; psub->b=%ld\n", psub->name,(unsigned long) psub->b) );
      /*DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("basAvgCount for %s: Reset counters; psub->i = %ld\n",psub->name, (unsigned long)psub->i));*/
@@ -148,6 +159,7 @@ static long bsaSecnAvg(sSubRecord *psub)
   
   /* always incr avgcnt*/
   psub->q++;
+
   /* if edef avg count done */
   if (psub->b) {
 	/*  then averaging is done, and enable history buffer */
@@ -198,11 +210,12 @@ static long bsaSecnAvg(sSubRecord *psub)
 	  }
 	}
   } /* if good, include in averaging */
+#ifdef linux
+  /* simulation won't be supporting averaging */
+  psub->b = 1;
+#endif
   psub->y++;  /* increment total count */   
   /* note that if no good pulses, psub->l remained 0 and a 0 is stored in history buff */
-#ifdef linux
-	psub->x = 1;  /* enable history buff */
-#endif
   return 0;
 }
 /*=============================================================================
