@@ -56,7 +56,6 @@
 #include "egRecord.h"         /* egMOD1_Off, egMOD1_Single   */
 #include "drvMrfEg.h"         /* MRF_NUM_EVENTS, Eg protos   */
 
-#define EVENT_FIDUCIAL        1 /* Fiducial event number     */
 #define EVENTS_PER_TIMESLOT  11 /* # events per timeslot     */
 
 /* Detail for one event code */
