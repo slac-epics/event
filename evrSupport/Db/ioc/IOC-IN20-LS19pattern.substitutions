@@ -1,12 +1,12 @@
 #
 # Pattern records
 file evrPatternAll.db {
-#	    Device        ,  SLC Pattern Check LNK    , EVR/Trigger             
+#	    Device        ,  SLC Pattern Check LNK    , EVR/Trigger    
 #	                                                  Links       
-  pattern { DEVICE        ,        LINK4              , LINK5 , LINK6 , LINKD }
-	  { IOC:IN20:LS19 ,         ""                ,  ""   ,  ""   ,  ""   }
+  pattern { DEVICE        ,        LINK4              , LINK5 , LINK6 }
+	  { IOC:IN20:LS19 ,         ""                ,  ""   ,  ""   }
 }
-file evrPatternProc.db {
+file evrEventAll.db {
   pattern { DEVICE }
 	  { IOC:IN20:LS19}
 }
