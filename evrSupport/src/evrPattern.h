@@ -49,8 +49,18 @@ extern "C" {
 #define MPG_IPLING              (0x00004000)  /* Set on MPG/EVG problem*/
   
 #define EDEF_MAX                 20           /* Maximum # event defns */
-#define TIMESLOT_MAX              6           /* Maximum time slot     */
 #define TIMESLOT_MIN              1           /* Minimum time slot     */
+#define TIMESLOT_MAX              6           /* Maximum time slot     */
+
+#define EVENT_FIDUCIAL            1           /* Fiducial event code   */
+#define EVENT_EXTERNAL_TRIG     100           /* External trigger event code */
+#define EVENT_EDEFINIT_MIN      101           /* Minimum event code for EDEF Init */
+#define EVENT_EDEFINIT_MAX      120           /* Maximum event code for EDEF Init */
+#define EVENT_MODULO720         121           /* Modulo 720 event code */
+
+/* Defines for MODULO720 Processing */
+#define MODULO720_COUNT 720   /* # of expected pulses for MOD720RESYNC */
+#define MODULO720_SECS    2   /* # of seconds MODULO720_COUNT          */
   
 /* VAL values set by pattern subroutines */
 #define PATTERN_OK                0
