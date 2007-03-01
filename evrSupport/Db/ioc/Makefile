@@ -95,6 +95,7 @@ DB += IOC-IN20-MC01evr.db
 DB += IOC-IN20-MC01pattern.db
 DB += IOC-IN20-MC01bsa.db
 DB += IOC-IN20-RF01evr.db
+DB += IOC-IN20-RF01Testevr.db
 DB += IOC-IN20-RF01pattern.db
 DB += IOC-IN20-RF01bsa.db
 DB += IOC-LI21-RF01bsa.db
@@ -108,6 +109,7 @@ DB += IOC-LI21-MG01pattern.db
 
 # BPM - Injector and Linz
 DB += IOC-IN20-BP01evr.db  
+DB += IOC-IN20-BP01Testevr.db  
 DB += IOC-IN20-BP01pattern.db  
 DB += IOC-IN20-BP01bsa.db
 DB += IOC-IN20-BP02evr.db  
