@@ -105,20 +105,29 @@ static long bsaSecnAvg(sSubRecord *psub)
   epicsTimeStamp  timeSecn;  /* for comparison */
 #endif
 
-  /* simulator needs psub->g to always be 0 */
+  
 #ifdef linux
-  psub->g = 0;
+  psub->g = 0;    /* simulator needs psub->g to always be 0 */
+  psub->x = 1;    /* if simulator always enable history buffer */
+  psub->o = 0;    /* no averaging, always reinit */
+  psub->y = 0;    /* total count */
+  psub->z = 0;    /* outer loop count reset */	
+  psub->m = 0;    /* always set goodmeas to 0, no averaging */
+  psub->q = 0;
+  psub->val = 0;
 #endif
 
 
+#ifndef linux
   psub->x = 0;    /* default to history buff disable  */
+
   if (psub->g) {  /* set from reset seq at beg of acq */
 	psub->g = 0;
 	psub->n = 0;
     psub->w = 0;  /* ts mismatch */
   }
   psub->n++;      /* count of how many times this is processed */
-#ifndef linux
+
 
   /*EVR timestamp:*/
   if (dbGetTimeStamp(&psub->sdis, &timeEVR)){
@@ -141,7 +150,6 @@ static long bsaSecnAvg(sSubRecord *psub)
 	return -1;
 #endif
   }
-#endif
   
   /* Reinit for a new average */
   if (psub->o) {
@@ -159,6 +167,7 @@ static long bsaSecnAvg(sSubRecord *psub)
   
   /* always incr avgcnt*/
   psub->q++;
+#endif
 
   /* if edef avg count done */
   if (psub->b) {
