@@ -5,11 +5,11 @@
 file bsaPHASEdef.db {
 #      Device               ,loc'n , IOC  , system, Attribute
   pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB   , EF    , IN                   }
-	  { TCAV:LI24:xxx       , LI24 , RF01 , SYS0  , P      , _P    , LLRF:IN20:RH:TC2_PAVG}
+	  { TCAV:LI24:800       , LI24 , RF01 , SYS0  , P      , _P    , TCAV:LI24:800:TC2_PAVG}
 }
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
 file bsaAMPLEdef.db {
 #      Device               ,loc'n , IOC  ,system , Attribute
   pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,  EF   , IN                    }
-	  { TCAV:LI24:xxx       , LI24 , RF01 , SYS0  , A      , _A    , LLRF:IN20:RH:TC2_AAVG}
+	  { TCAV:LI24:800       , LI24 , RF01 , SYS0  , A      , _A    , TCAV:LI24:800:TC2_AAVG}
