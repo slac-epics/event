@@ -86,7 +86,7 @@
 			   will be stored in the $(SECN)CNTHST history buffer.
 		   N - Running count of inner loop * outer loop = total measured
            O - reset counters, values (avcnt, goodmeas, stat, timestamp check)
-               Reset occurs from reset sequence
+               remembers B was set last time
 	       Q = local, inner, avgcnt
 		   W = Timestamp mismatch
 		   X = history buff enable(1)/disable (0)
@@ -125,6 +125,8 @@ static long bsaSecnAvg(sSubRecord *psub)
 	psub->g = 0;
 	psub->n = 0;
     psub->w = 0;  /* ts mismatch */
+    psub->z= 0;   /* outer loop count */
+	psub->y = 0;  /* total count */
   }
   psub->n++;      /* count of how many times this is processed */
 
@@ -151,30 +153,24 @@ static long bsaSecnAvg(sSubRecord *psub)
 #endif
   }
   
-  /* Reinit for a new average */
+  /* Reinit for a new average (avg done was flagged last time through) */
   if (psub->o) {
-	psub->o = 0; /* no resetting next time around */
-	psub->y = 0; /* total count */
-	psub->z = 0; /* outer loop count reset */	
+	psub->o = 0; /* flag- no resetting next time around */
     /*  reset avgcnt, meascnt, goodmeas, stat   */
     psub->val = 0;
 	psub->q = 0; /* avgcount    */
     psub->m = 0; /* goodmeas    */
-	
-	DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg: First time thru for %s; psub->b=%ld\n", psub->name,(unsigned long) psub->b) );
-     /*DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("basAvgCount for %s: Reset counters; psub->i = %ld\n",psub->name, (unsigned long)psub->i));*/
   }
   
-  /* always incr avgcnt*/
-  psub->q++;
+  psub->q++;  /* always incr avgcnt */
+  psub->y++;  /* increment total count */ 
 #endif
 
   /* if edef avg count done */
   if (psub->b) {
 	/*  then averaging is done, and enable history buffer */
 	psub->x = 1;  /* enable history buff */
-	psub->q = 0;  /* reset avgcnt */
-	psub->o = 1;  /* reset counters next loop */
+	psub->o = 1;  /* flag to reset pertinent counters next loop */
 	psub->z++;    /* inc outer loop count */
   } else {
 	/*  else averaging is NOT done */
@@ -223,7 +219,7 @@ static long bsaSecnAvg(sSubRecord *psub)
   /* simulation won't be supporting averaging */
   psub->b = 1;
 #endif
-  psub->y++;  /* increment total count */   
+ 
   /* note that if no good pulses, psub->l remained 0 and a 0 is stored in history buff */
   return 0;
 }
