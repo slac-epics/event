@@ -19,13 +19,6 @@ file bsaTestInput.db
 
 file bsaTestFanouts.db
 {
-#             Device          
-  pattern {    DEV    ,SECN,PHAS,        
-	           LNK2                     ,LNK3                       ,     LNK4             ,
-               LNK5                     ,LNK6                       ,     FLNK             ,
-	           LNK7                     ,LNK8                       ,     LNK9             }
-          { $(DEVICE) , X  ,  0,
-	          "$(DEVICE):Y PP"          , "$(DEVICE):TMIT PP"       ,"$(DEVICE):EFX PP" , 
-              ""                        , ""                        ,"", 
-              ""                        , ""                        ,""                    }
+  pattern {    DEV    ,  SECN  ,SCAN, LNK2              , LNK3               , LNK4              }
+          { $(DEVICE) ,    X   ,$(S), "$(DEVICE):Y PP"  ,"$(DEVICE):TMIT PP" ,"$(DEVICE):EFX PP" }
 }

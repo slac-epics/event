@@ -19,13 +19,6 @@ file bsaTestInput.db
 }
 file bsaTestFanouts.db
 {
-  pattern {    DEV    ,SECN,PHAS,        
-	           LNK2                     ,LNK3                       ,     LNK4             ,
-               LNK5                     ,LNK6                       ,     FLNK             ,
-	           LNK7                     ,LNK8                       ,     LNK9             }
-          { $(DEVICE) , POSN ,  0,
-	          "$(DEVICE):EFPOSN PP"     , ""                        , ""                   ,                   
-	          ""                        , ""                        , ""                   ,
-              ""                        , ""                        , ""                   }
+  pattern {    DEV    ,  SECN  ,SCAN, LNK2                   ,LNK3      , LNK4  }
+          { $(DEVICE) ,  POSN  ,$(S), "$(DEVICE):EFPOSN PP"  ,""        , ""    }
 }
-

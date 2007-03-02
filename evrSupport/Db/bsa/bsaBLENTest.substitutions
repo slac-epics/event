@@ -16,15 +16,8 @@ file bsaTestInput.db
   pattern {    DEV    ,SECN , CALC,  A , B ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, RES }
           { $(DEVICE) ,WIDTH, "A" , 299, 0 ,fsec,300, 100,  3 , .01,.001,.002 }
 }
-
 file bsaTestFanouts.db
 {
-  pattern {    DEV    ,SECN,PHAS,        
-	           LNK2                     ,LNK3                       ,     LNK4             ,
-               LNK5                     ,LNK6                       ,     FLNK             ,
-	           LNK7                     ,LNK8                       ,     LNK9             }
-          { $(DEVICE) , WIDTH ,  0,
-	          "$(DEVICE):EFWIDTH PP"    , ""                        , ""                   ,                
-	          ""                        , ""                        , ""                   ,
-              ""                        , ""                        , ""                   }
+  pattern {    DEV    ,  SECN  ,SCAN, LNK2                   ,LNK3      , LNK4  }
+          { $(DEVICE) , WIDTH  ,$(S), "$(DEVICE):EFWIDTH PP" ,""        , ""    }
 }
