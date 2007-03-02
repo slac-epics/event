@@ -18,12 +18,13 @@ record(mbboDirect, "EDEF:$(SYS):$(MD):$(SECN)B") {
   field(FLNK, "EDEF:$(SYS):$(MD):$(SECN) PP")
 }
 
-record(calc, "EDEF:$(SYS):$(MD):$(SECN)") {
+record(calcout, "EDEF:$(SYS):$(MD):$(SECN)") {
   field(DESC, "32 Bit Timing Mask")
   field(CALC, "(B<<16)|A")
   field(INPA, "EDEF:$(SYS):$(MD):$(SECN)A")
   field(INPB, "EDEF:$(SYS):$(MD):$(SECN)B")
   field(MDEL, "-1")
+  field(OUT,  "EDEF:$(SYS):$(MD):PATTERNCHECK.$(FIELD)") 
   field(FLNK, "$(DEV):MASKCHG")
 }
 
