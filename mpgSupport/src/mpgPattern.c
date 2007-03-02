@@ -604,7 +604,6 @@ static long mpgPatternCheck(sSubRecord *psub)
   
   /* are we done? - if so exit now */
   if (psub->a) return 0;
-  }
 
   /* check for bad data - do nothing with this pulse and return bad status */
   if (psub->w) return(-1);
