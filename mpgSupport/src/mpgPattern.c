@@ -565,7 +565,7 @@ static long mpgPatternState(sSubRecord *psub)
         INPG - Pnet Modifier 4 
         INPH - Modifier 5 without EDEF bits       
         INPI - EDEF Beam Code
-        INPJ - Spare (ie for future beam codes)
+        INPJ - EDEF MEASCNT * AVGCNT = CNTMAX
         INPM - EDEF INCLUSION1
         INPN - EDEF INCLUSION2
         INPO - EDEF INCLUSION3
@@ -584,17 +584,17 @@ static long mpgPatternState(sSubRecord *psub)
      	 no match = 0; enable/disable for bsacMeasCount
            A   = Counter before CTRL is turned off
 		   K   = Done averaging = 1; not done averaging = 0
-		   L   = Average Count
-           Y   = Measurement Count (= -1 means forever)
+		   L   = Running Average Count
+           Y   = Running Measurement Count (= -1 means forever)
 		   Z   = Done =1; not done measuring = 0
   Ret:  none
-
+ Note: A, Y, Z cleared by seq record when CTRL = ON
 ==============================================================================*/
 static long mpgPatternCheck(sSubRecord *psub)
 {
   psub->val = 0;
-  /* Allow for X = -1 = forever */
-  if ((psub->y >= psub->x) && (psub->x > 0.5)) {
+  /* Allow for X = -1 = forever  or X = 0  abort */
+  if ((psub->y >= psub->j) && (psub->x >= 0)) {
     /* we're done with measurement */
     psub->a++;
     /* Check is done for the N-3 pulse - don't turn CTRL OFF
@@ -604,6 +604,7 @@ static long mpgPatternCheck(sSubRecord *psub)
   
   /* are we done? - if so exit now */
   if (psub->a) return 0;
+  }
 
   /* check for bad data - do nothing with this pulse and return bad status */
   if (psub->w) return(-1);
@@ -633,10 +634,11 @@ static long mpgPatternCheck(sSubRecord *psub)
 		DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
                            ("mpgPatternCheck: exclusion match\n"));
 		psub->val = 1;  /* pattern match*/
-		if (psub->x > 0.5) psub->y++;      /* inc. meas. count */
-		else               psub->y = -1;
+		/*		if (psub->x > 0 ) psub->y++;*/      /* inc. meas. count */
+		/*else              psub->y =-1;*/
+		psub->y++;                         /* inc. meas. count */
 		psub->l++;                         /* inc. avg count */
-		if (psub->l >=psub->c) {
+		if (psub->l >=psub->c) {           /* avg cnt >= edef avg cnt?*/
 		  psub->k = 1;                     /* averaging done */
 		  psub->l = 0;                     /* reset avg count */
 		}
