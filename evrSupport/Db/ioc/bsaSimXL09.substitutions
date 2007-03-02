@@ -1,17 +1,17 @@
 # Simulation files :
 file bsaBPMSTest.db {
-  pattern { DEVICE       }
-	  { BPMS:XX09:1  }
-	  { BPMS:XX09:2  }
-	  { BPMS:XX09:3  }
-	  { BPMS:XX09:4  }
-	  { BPMS:XX09:5  }
-	  { BPMS:XX09:6  }
+  pattern { DEVICE       , S           }
+	  { BPMS:XX09:1  , ".1 second" }
+	  { BPMS:XX09:2  , ".1 second" }
+	  { BPMS:XX09:3  , ".1 second" }
+	  { BPMS:XX09:4  , ".1 second" }
+	  { BPMS:XX09:5  , ".1 second" }
+	  { BPMS:XX09:6  , ".1 second" }
 }
 file bsaTOROTest.db {
-  pattern { DEVICE       }
-	  { TORO:XX09:1  }
-	  { TORO:XX09:2  }
+  pattern { DEVICE       , S           }
+	  { TORO:XX09:1  , ".1 second" }
+	  { TORO:XX09:2  , ".1 second" }
 }
 # ESIM Pattern records (from EVG) to EVR:
 #file evrPatternTest.db {

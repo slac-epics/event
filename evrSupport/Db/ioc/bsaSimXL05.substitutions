@@ -1,15 +1,37 @@
 # Simulation files :
 file bsaBPMSTest.db {
-  pattern { DEVICE       }
-	  { BPMS:XX05:1  }
-	  { BPMS:XX05:2  }
-	  { BPMS:XX05:3  }
-	  { BPMS:XX05:4  }
-	  { BPMS:XX05:5  }
-	  { BPMS:XX05:6  }
+  pattern { DEVICE       , S           }
+	  { BPMS:XX05:1  , Event       }
+	  { BPMS:XX05:2  , Event       }
+	  { BPMS:XX05:3  , Event       }
+	  { BPMS:XX05:4  , Event       }
+	  { BPMS:XX05:5  , Event       }
+	  { BPMS:XX05:6  , Event       }
 }
 file bsaTOROTest.db {
-  pattern { DEVICE       }
-	  { TORO:XX05:1  }
-	  { TORO:XX05:2  }
+  pattern { DEVICE       , S           }
+	  { TORO:XX05:1  , Event       }
+	  { TORO:XX05:2  , Event       }
+}
+file bsaPMTTest.db {
+  pattern { DEVICE       , S           }
+	  { PMT:XX05:1   , Event       }
+	  { PMT:XX05:2   , Event       }
+	  { PMT:XX05:3   , Event       }
+	  { PMT:XX05:4   , Event       }
+	  { PMT:XX05:5   , Event       }
+	  { PMT:XX05:6   , Event       }
+}
+file bsaBLENTest.db {
+  pattern { DEVICE       , S           }
+	  { BLEN:XX05:1  , Event       }
+	  { BLEN:XX05:2  , Event       }
+	  { BLEN:XX05:3  , Event       }
+}
+file bsaWIRETest.db {
+  pattern { DEVICE       , S           }
+	  { WIRE:XX05:1  , Event       }
+	  { WIRE:XX05:2  , Event       }
+	  { WIRE:XX05:3  , Event       }
+	  { WIRE:XX05:4  , Event       }
 }

@@ -1,48 +1,48 @@
 # Simulation files :
 file bsaBPMSTest.db {
-  pattern { EIOC  , DEVICE  }
-	  { IOC:XX03:1  ,BPMS:XX03:1  }
-	  { IOC:XX03:1  ,BPMS:XX03:2  }
-	  { IOC:XX03:1  ,BPMS:XX03:3  }
-	  { IOC:XX03:1  ,BPMS:XX03:4  }
-	  { IOC:XX03:1  ,BPMS:XX03:5  }
-	  { IOC:XX03:1  ,BPMS:XX03:6  }
+  pattern { DEVICE       , S           }
+	  { BPMS:XX03:1  , ".1 second" }
+	  { BPMS:XX03:2  , ".1 second" }
+	  { BPMS:XX03:3  , ".1 second" }
+	  { BPMS:XX03:4  , ".1 second" }
+	  { BPMS:XX03:5  , ".1 second" }
+	  { BPMS:XX03:6  , ".1 second" }
 }
 file bsaTOROTest.db {
-  pattern { EIOC  ,  DEVICE }
-	  { IOC:XX03:1  ,TORO:XX03:1  }
-	  { IOC:XX03:1  ,TORO:XX03:2  }
+  pattern { DEVICE       , S           }
+	  { TORO:XX03:1  , ".1 second" }
+	  { TORO:XX03:2  , ".1 second" }
 }
 file bsaPMTTest.db {
-  pattern { EIOC  ,  DEVICE }
-	  { IOC:XX03:1  ,PMT:XX03:1   }
-	  { IOC:XX03:1  ,PMT:XX03:2   }
-	  { IOC:XX03:1  ,PMT:XX03:3   }
-	  { IOC:XX03:1  ,PMT:XX03:4   }
-	  { IOC:XX03:1  ,PMT:XX03:5   }
-	  { IOC:XX03:1  ,PMT:XX03:6   }
+  pattern { DEVICE       , S           }
+	  { PMT:XX03:1   , ".1 second" }
+	  { PMT:XX03:2   , ".1 second" }
+	  { PMT:XX03:3   , ".1 second" }
+	  { PMT:XX03:4   , ".1 second" }
+	  { PMT:XX03:5   , ".1 second" }
+	  { PMT:XX03:6   , ".1 second" }
 }
 file bsaBLENTest.db {
-  pattern { EIOC  ,  DEVICE }
-	  { IOC:XX03:1  ,BLEN:XX03:1  }
-	  { IOC:XX03:1  ,BLEN:XX03:2  }
-	  { IOC:XX03:1  ,BLEN:XX03:3  }
+  pattern { DEVICE       , S           }
+	  { BLEN:XX03:1  , ".1 second" }
+	  { BLEN:XX03:2  , ".1 second" }
+	  { BLEN:XX03:3  , ".1 second" }
 }
 file bsaWIRETest.db {
-  pattern { EIOC  ,  DEVICE }
-	  { IOC:XX03:1  ,WIRE:XX03:1  }
-	  { IOC:XX03:1  ,WIRE:XX03:2  }
-	  { IOC:XX03:1  ,WIRE:XX03:3  }
-	  { IOC:XX03:1  ,WIRE:XX03:4  }
+  pattern { DEVICE       , S           }
+	  { WIRE:XX03:1  , ".1 second" }
+	  { WIRE:XX03:2  , ".1 second" }
+	  { WIRE:XX03:3  , ".1 second" }
+	  { WIRE:XX03:4  , ".1 second" }
 }
 # ESIM Pattern records (from EVG) to EVR:
 file evrPatternTest.db {
-  pattern { EIOC  ,  DEVICE }
+  pattern {  EIOC       ,DEVICE       }
 	  { IOC:XX03:1  ,ESIM:XX03:1  }
 }
 
 # EVG EDEF checking simulation for Modifier5/ bsa enable/disable:
 file bsaProcTestAll.db {
-  pattern {  DEVICE,    LOC      }
-	      { ESIM:XX03:1, SYS0    }
+  pattern {  DEVICE    , LOC     }
+	  { ESIM:XX03:1, SYS0    }
 }
