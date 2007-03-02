@@ -13,20 +13,14 @@ file bsaTestInput.db
 {
 #                             
 #             Device          
-  pattern {    DEV    ,SECN,  CALC              , A  , B ,EGU    ,HOPR,LOPR,PREC,ADEL,MDEL, RES	}
-          { $(DEVICE) ,LOSS,  "A"               , 87 , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002 }
-#         { $(DEVICE) ,LOSS,  "C>=100?0:C+RNDM" , 0  , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002 }
+  pattern {    DEV    ,SECN  ,  CALC              , A  , B ,EGU    ,HOPR,LOPR,PREC,ADEL,MDEL, RES }
+          { $(DEVICE) ,QDCRAW,  "A"               , 87 , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002 }
+#         { $(DEVICE) ,QDCRAW,  "C>=100?0:C+RNDM" , 0  , 0 ,mRad/hr, 100,  0 ,  3 , .01,.001,.002 }
 }
 file bsaTestFanouts.db
 {
-  pattern {    DEV    ,SECN,PHAS,        
-	           LNK2                     ,LNK3                       ,     LNK4             ,
-               LNK5                     ,LNK6                       ,     FLNK             ,
-	           LNK7                     ,LNK8                       ,     LNK9             }
-          { $(DEVICE) , LOSS ,  0,
-	          "$(DEVICE):EFLOSS PP"     ,""                         , ""                   ,                
-	          ""                        , ""                        , ""                   ,
-              ""                        , ""                        , ""                   }
+  pattern {    DEV    ,  SECN  ,SCAN, LNK2                     ,LNK3      , LNK4  }
+          { $(DEVICE) , QDCRAW ,$(S), "$(DEVICE):EFQDCRAW PP"  ,""        , ""    }
 }
 
 
