@@ -40,8 +40,25 @@ record(sSub, "$(DEV):EDEFMEASSEVR") {
   field(INPW, "$(DEV):PATTERNN-3.W")
 }
 
+
+record(ao, "$(DEV):TREF") {
+  field(DESC, "Device trig width")
+  field(DTYP, "Raw Soft Channel")
+  field(OMSL, "supervisory")
+  field(LINR, "LINEAR")
+  field(EGU, "nSec")
+  field(HOPR, "2.8E06")
+  field(LOPR, "0")
+  field(EGUF, "2.8E06")
+  field(EGUL, "0")
+  field(DRVH, "2.8E06")
+  field(DRVL, "0")
+  field(PINI, "YES")
+  field(ESLO, "0.119")
+}
+
 #! Further lines contain data used by VisualDCT
-#! View(23,309,1.1)
+#! View(31,512,1.1)
 #! Record("$(DEV):PATTERNDATA",669,463,0,1,"$(DEV):PATTERNDATA")
 #! Field("$(DEV):PATTERNDATA.NORD",16777215,0,"$(DEV):PATTERNDATA.NORD")
 #! Field("$(DEV):PATTERNDATA.SEVR",16777215,0,"$(DEV):PATTERNDATA.SEVR")
@@ -64,9 +81,9 @@ record(sSub, "$(DEV):EDEFMEASSEVR") {
 #! Field("$(DEV):PATTERNDIAG.INPA",16777215,0,"$(DEV):PATTERNDIAG.INPA")
 #! Link("$(DEV):PATTERNDIAG.INPA","$(DEV):PATTERNN-3.VAL")
 #! Record("$(DEV):EDEFMEASSEVR",134,685,0,0,"$(DEV):EDEFMEASSEVR")
-#! Field("$(DEV):EDEFMEASSEVR.FLNK",16777215,1,"$(DEV):EDEFMEASSEVR.FLNK")
 #! Field("$(DEV):EDEFMEASSEVR.INPV",16777215,1,"$(DEV):EDEFMEASSEVR.INPV")
 #! Link("$(DEV):EDEFMEASSEVR.INPV","$(DEV):PATTERNN-3.V")
 #! Field("$(DEV):EDEFMEASSEVR.INPW",16777215,1,"$(DEV):EDEFMEASSEVR.INPW")
 #! Link("$(DEV):EDEFMEASSEVR.INPW","$(DEV):PATTERNN-3.W")
 #! TextBox(TB0,924,321,1304,541,0,"Dialog",12,1,16777215,"PATTERN\nInputs Waveform and parses into 5 MODIFIERS\nOutputs:\nE MODIFIER1, N-3\nF MODIFIER2, N-3\nG MODIFIER3, N-3\nH MODIFIER4, N-3\nI  MODIFIER5, N-3\nJ  BEAMCODE, N-3\nL  PULSEID, N-3",null)
+#! Record("$(DEV):TREF",516,787,0,1,"$(DEV):TREF")
