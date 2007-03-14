@@ -8,7 +8,6 @@ record(waveform, "$(DEV):PATTERNDATA") {
   field(DESC, "Pattern Data")
   field(DTYP, "EVR/PNET Receiver")
   field(INP, "@PATTERN")
-  field(SCAN, "I/O Intr")
   field(PRIO, "HIGH")
   field(NELM, "13")
   field(FTVL, "ULONG")
@@ -26,7 +25,7 @@ record(sSub, "$(DEV):PATTERNN-3") {
   field(FLNK, "$(DEV):EDEFMEASSEVR")
 }
 
-record(sub, "$(DEV):PATTERNDIAG") {
+record(sSub, "$(DEV):PATTERNDIAG") {
   field(DESC, "Pattern Processing State")
   field(SNAM, "evrPatternState")
   field(INPA, "$(DEV):PATTERNN-3")
@@ -34,31 +33,15 @@ record(sub, "$(DEV):PATTERNDIAG") {
 }
 
 record(sSub, "$(DEV):EDEFMEASSEVR") {
+  field(DESC, "Form meassevr masks")
   field(SNAM, "evrEdefMeasSevr")
   field(BRSV, "INVALID")
   field(INPV, "$(DEV):PATTERNN-3.V")
   field(INPW, "$(DEV):PATTERNN-3.W")
 }
 
-
-record(ao, "$(DEV):TREF") {
-  field(DESC, "Device trig width")
-  field(DTYP, "Raw Soft Channel")
-  field(OMSL, "supervisory")
-  field(LINR, "LINEAR")
-  field(EGU, "nSec")
-  field(HOPR, "2.8E06")
-  field(LOPR, "0")
-  field(EGUF, "2.8E06")
-  field(EGUL, "0")
-  field(DRVH, "2.8E06")
-  field(DRVL, "0")
-  field(PINI, "YES")
-  field(ESLO, "0.119")
-}
-
 #! Further lines contain data used by VisualDCT
-#! View(31,512,1.1)
+#! View(44,485,1.1)
 #! Record("$(DEV):PATTERNDATA",669,463,0,1,"$(DEV):PATTERNDATA")
 #! Field("$(DEV):PATTERNDATA.NORD",16777215,0,"$(DEV):PATTERNDATA.NORD")
 #! Field("$(DEV):PATTERNDATA.SEVR",16777215,0,"$(DEV):PATTERNDATA.SEVR")
@@ -86,4 +69,3 @@ record(ao, "$(DEV):TREF") {
 #! Field("$(DEV):EDEFMEASSEVR.INPW",16777215,1,"$(DEV):EDEFMEASSEVR.INPW")
 #! Link("$(DEV):EDEFMEASSEVR.INPW","$(DEV):PATTERNN-3.W")
 #! TextBox(TB0,924,321,1304,541,0,"Dialog",12,1,16777215,"PATTERN\nInputs Waveform and parses into 5 MODIFIERS\nOutputs:\nE MODIFIER1, N-3\nF MODIFIER2, N-3\nG MODIFIER3, N-3\nH MODIFIER4, N-3\nI  MODIFIER5, N-3\nJ  BEAMCODE, N-3\nL  PULSEID, N-3",null)
-#! Record("$(DEV):TREF",516,787,0,1,"$(DEV):TREF")
