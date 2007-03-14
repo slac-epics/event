@@ -227,36 +227,49 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   N  Number of times M has rolled over
   O  Number of same pulses
   P  Number of skipped pulses
+  S  Average Pattern-Fiducial Time    (us)
+  T  Maximum Pattern-Fiducial Time    (us)
+  U  Minimum Pattern-Fiducial Time    (us)
+  V  Minimum Fiducial Delta Start Time (us)
+  W  Maximum Fiducial Delta Start Time (us)
+  X  Average Fiducial Processing Time  (us)
+  Y  Standard Deviation of above       (us)
+  Z  Maximum Fiducial Processing Time  (us)
   VAL = Last Error flag from evrTimeProc
 ==============================================================================*/ 
 
 static long evrTimeDiag (sSubRecord *psub)
 {
-  unsigned short n;
+  int     idx;
+  double  dummy;
   double  *output_p = &psub->a;
   
   psub->val = psub->q;
+  psub->m = msgCount;          /* # fiducials processed since boot/reset */
+  psub->n = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
+  psub->o = samePulseCount;
+  psub->p = skipPulseCount;
+  evrMessageCounts(EVR_MESSAGE_FIDUCIAL,&dummy,&dummy,&dummy,&dummy, 
+                   &psub->v,&psub->w,&psub->x,&psub->y,&psub->z);
+  evrMessageDiffTimes(&psub->s,&dummy,&psub->t,&psub->u);
   if (psub->r > 0.5) {
     psub->r           = 0.0;
     msgCount          = 0;
     msgRolloverCount  = 0;
     samePulseCount    = 0;
     skipPulseCount    = 0;
+    evrMessageCountReset(EVR_MESSAGE_FIDUCIAL);
   }
-  psub->m = msgCount;          /* # fiducials processed since boot/reset */
-  psub->n = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
-  psub->o = samePulseCount;
-  psub->p = skipPulseCount;
 
   /* read evr timestamps in the pipeline*/
   if ((!evrTimeRWMutex_ps) || (epicsMutexLock(evrTimeRWMutex_ps)))
     return epicsTimeERROR;
-  for (n=0;n<MAX_EVR_TIME;n++) {
-    *output_p = (double)evrTime_as[n].time.secPastEpoch;
+  for (idx=0;idx<MAX_EVR_TIME;idx++) {
+    *output_p = (double)evrTime_as[idx].time.secPastEpoch;
     output_p++;
-    *output_p = (double)evrTime_as[n].time.nsec;
+    *output_p = (double)evrTime_as[idx].time.nsec;
     output_p++;
-    *output_p = (double)evrTime_as[n].status;
+    *output_p = (double)evrTime_as[idx].status;
     output_p++;
   }
   epicsMutexUnlock(evrTimeRWMutex_ps);
@@ -290,6 +303,9 @@ static int evrTimeInit(subRecord *psub)
   epicsTimeStamp sys_time;
   unsigned short i;
 
+  /* Register this record for the start of fiducial processing */
+  evrMessageRegister(EVR_MESSAGE_FIDUCIAL_NAME, 0, (dbCommon *)psub);
+  
   /* create read/write mutex around evr timestamp table array */
   if (!evrTimeRWMutex_ps) {
 	/* begin to init times with system time */
