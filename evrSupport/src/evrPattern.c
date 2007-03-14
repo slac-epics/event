@@ -3,6 +3,7 @@
   Name: evrPattern.c
            evrPatternProcInit  - Pattern Setup Initialization
            evrPatternProc      - 360Hz Pattern Setup
+           evrPatternCount     - EVR Event Count Update
            evrPatternRate      - EVR Event Rate Calculation
            evrPatternState     - Pattern Processing State and Diagnostics
 
@@ -40,6 +41,7 @@
 #include "subRecord.h"        /* for struct subRecord      */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
+#include "dbScan.h"           /* for post_event            */
 #include "dbAccess.h"         /* dbGetPdbAddrFromLink      */
 #include "sSubRecord.h"       /* for struct sSubRecord     */
 
@@ -208,12 +210,13 @@ static long evrPatternProc(sSubRecord *psub)
       psub->w = (double)(evrPatternWF_ps->edefMajorMask);
 
       /* modulo720 decoded from modifier 1*/
-      psub->z = (double)(modifier1 & MODULO720_MASK);
+      if (modifier1 & MODULO720_MASK) psub->z = 1;
+      else                            psub->z = 0;
       /* decode pulseid field to output j (keep lower 17 bits) */
       psub->l = (double)(evrPatternWF_ps->time.nsec & LOWER_17_BIT_MASK);
-	  /* get edefInitMask */
-	  edefInitMask = evrPatternWF_ps->edefInitMask;
-	  /* write to evr timestamp table and error check */
+      /* get edefInitMask */
+      edefInitMask = evrPatternWF_ps->edefInitMask;
+      /* write to evr timestamp table and error check */
       if (evrTimePut (&evrPatternWF_ps->time, epicsTimeOK)) {
         errFlag = PATTERN_INVALID_TIMESTAMP;
       /* Check if EVG reporting a problem  */
@@ -223,14 +226,14 @@ static long evrPatternProc(sSubRecord *psub)
       }
     }
     dbScanUnlock(wfAddr->precord);
-	/* for every non-zero bit in ederInitMask, call post_event */
-	if (edefInitMask) { /* should we bother w loop? */
-	  for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++) {
-		if (edefInitMask & (1 << edefIdx)) {/* init is set */
-		  post_event(edefIdx + EVENT_EDEFINIT_MIN);
-		}
-	  }
-	}
+    /* for every non-zero bit in ederInitMask, call post_event */
+    if (edefInitMask) { /* should we bother w loop? */
+      for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++) {
+        if (edefInitMask & (1 << edefIdx)) {/* init is set */
+          post_event(edefIdx + EVENT_EDEFINIT_MIN);
+        }
+      }
+    }
   }
   /* Post the modulo-720 sync event if the pattern has that bit set */
   if (psub->z) post_event(EVENT_MODULO720);
@@ -272,6 +275,33 @@ static long evrPatternRate(subRecord *psub)
 
 /*=============================================================================
 
+  Name: evrPatternCount
+
+  Abs:  Increment a counter for an event code
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        subRecord *         psub        read       point to subroutine record
+
+  Rem:  Subroutine for IOC:LOCA:UNIT:NAMECNT
+
+  Inputs:
+       VAL - Counter that is updated every time the event is received
+     
+  Outputs:
+       VAL - Incremented by 1
+  
+  Ret:  0 = OK
+
+==============================================================================*/
+static long evrPatternCount(subRecord *psub)
+{
+  psub->val++;
+  return 0;
+}
+
+/*=============================================================================
+
   Name: evrPatternState
 
   Abs:  Access to Last Pattern State and Pattern Diagnostics.
@@ -298,6 +328,12 @@ static long evrPatternRate(subRecord *psub)
        I - Number of times ISR overwrote a message
        J - Number of times ISR had a mutex lock error
        K - Number of unsynchronized patterns
+       L to U - Spares
+       V - Minimum Pattern Delta Start Time (us)
+       W - Maximum Pattern Delta Start Time (us)
+       X - Average Data Processing Time     (us)
+       Y - Standard Deviation of above      (us)
+       Z - Maximum Data Processing Time     (us)
        VAL = Last Error flag (see evrPatternProc for values)
 
   Side: File-scope counters may be reset.
@@ -305,22 +341,23 @@ static long evrPatternRate(subRecord *psub)
   Ret:  0 = OK
 
 ==============================================================================*/
-static long evrPatternState(subRecord *psub)
+static long evrPatternState(sSubRecord *psub)
 {
   psub->val = psub->a;
+  psub->d = msgCount;          /* # waveforms processed since boot/reset */
+  psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
+  psub->f = patternErrCount;
+  psub->k = syncErrCount;
+  evrMessageCounts(EVR_MESSAGE_PATTERN ,&psub->g,&psub->h,&psub->i,&psub->j, 
+                   &psub->v,&psub->w,&psub->x,&psub->y,&psub->z);
   if (psub->b > 0.5) {
-    psub->b = 0.0;
+    psub->b               = 0.0;
     msgCount              = 0;
     msgRolloverCount      = 0;
     patternErrCount       = 0;
     syncErrCount          = 0;
     evrMessageCountReset(EVR_MESSAGE_PATTERN);
   }
-  psub->d = msgCount;          /* # waveforms processed since boot/reset */
-  psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
-  psub->f = patternErrCount;
-  evrMessageCounts(EVR_MESSAGE_PATTERN,&psub->g,&psub->h,&psub->i,&psub->j); 
-  psub->k = syncErrCount;
   return 0;
 }
 
@@ -395,5 +432,6 @@ static long evrPatternSim(subRecord *psub)
 epicsRegisterFunction(evrPatternProcInit);
 epicsRegisterFunction(evrPatternProc);
 epicsRegisterFunction(evrPatternRate);
+epicsRegisterFunction(evrPatternCount);
 epicsRegisterFunction(evrPatternState);
 epicsRegisterFunction(evrPatternSim);
