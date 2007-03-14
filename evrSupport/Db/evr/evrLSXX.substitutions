@@ -13,6 +13,9 @@ file evr.db
 pattern { DEV      , CARD , DELAY , WIDTH }
 	{ $(DEVICE),  0   ,   0   ,  12   }
 }
+#Note - there is a dependency on event code assignments and triggers.
+#     When changing event code assignments below, also change the appropriate
+#     IOC-*-LS*trig.substitutions file!
 file evrEventCtrl.db
 {
 #	  Device      Card  <----------------------------  Event -------------------------->       
