@@ -22,9 +22,9 @@ record(fanout, "$(DEV):PATTERNFO") {
   field(LNK1, "$(DEV):PATTERN")
   field(LNK2, "$(DEV):PATTERNN-1")
   field(LNK3, "$(DEV):PATTERNN-2")
-  field(LNK4, "$(LNK4)")
-  field(LNK5, "$(LNK5)")
-  field(LNK6, "$(DEV):MODIFIER5")
+  field(LNK4, "$(DEV):MODIFIER5")
+  field(LNK5, "$(LNK4)")
+  field(LNK6, "$(LNK5)")
   field(FLNK, "$(LNK6)")
 }
 
@@ -104,6 +104,22 @@ record(mbbo, "$(DEV):TIMESLOTEDM") {
   field(THST, "TS4")
   field(FRST, "TS5")
   field(FVST, "TS6")
+}
+
+record(ao, "$(DEV):TREF") {
+  field(DESC, "IOC Trig Ref")
+  field(DTYP, "Raw Soft Channel")
+  field(OMSL, "supervisory")
+  field(LINR, "SLOPE")
+  field(EGU,  "nsec")
+  field(HOPR, "2.8E06")
+  field(LOPR, "-2.8E06")
+  field(DRVH, "2.8E06")
+  field(DRVL, "-2.8E06")
+  field(PINI, "YES")
+  field(ESLO, "8.40336692324359")
+  field(VAL, "$(VAL)")
+  field(PREC, "1")
 }
 
 #! Further lines contain data used by VisualDCT
