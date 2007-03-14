@@ -26,7 +26,6 @@
 #include "recGbl.h"             /* recGbl* prototypes          */
 #include "dbFldTypes.h"         /* DBF_ULONG                   */
 #include "dbAccess.h"           /* S_db_badField               */
-#include "dbScan.h"             /* IOSCANPVT                   */
 #include "devSup.h"             /* DEVSUPFUN                   */
 #include "waveformRecord.h"     /* waveformRecord typedef      */
 #include "epicsExport.h"        /* epicsExportAddress          */
@@ -36,7 +35,6 @@
 /* Create the dset for devWfMsgMessage */
 static long init_record();
 static long read_wf();
-static long get_ioint_info();
 struct {
 	long		number;
 	DEVSUPFUN	report;
@@ -49,7 +47,7 @@ struct {
 	NULL,
 	NULL,
 	init_record,
-	get_ioint_info,
+	NULL,
 	read_wf
 };
 epicsExportAddress(dset,devWFevrMessage);
@@ -71,7 +69,8 @@ static long init_record(waveformRecord *pwf)
   }
   /* Register this waveform with the EVR or PNET support and get queue ID */
   pwf->dpvt = (void *)evrMessageRegister(pwf->inp.value.instio.string,
-                                         pwf->nelm * sizeof(long));
+                                         pwf->nelm * sizeof(long),
+                                         (dbCommon *)pwf);
   if (pwf->dpvt < 0) return -1; 
   return 0;
 }
@@ -86,7 +85,3 @@ static long read_wf(waveformRecord *pwf)
   pwf->nord = pwf->nelm;
   return 0;
 } 
-static long get_ioint_info(int cmd, waveformRecord *pwf, IOSCANPVT *ppvt)
-{
-  return(evrMessageIoscanpvt((unsigned int)pwf->dpvt, ppvt));
-}
