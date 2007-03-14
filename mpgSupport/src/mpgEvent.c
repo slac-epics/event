@@ -52,6 +52,7 @@
 #include "epicsMutex.h"       /* EPICS Mutex support library */
 #include "ellLib.h"           /* EPICS Linked list library   */
 
+#include "evrMessage.h"       /* EVENT_FIDUCIAL              */
 #include "evrPattern.h"       /* Various bit masks           */
 #include "egRecord.h"         /* egMOD1_Off, egMOD1_Single   */
 #include "drvMrfEg.h"         /* MRF_NUM_EVENTS, Eg protos   */
@@ -468,14 +469,11 @@ static int mpgEventSeqSwitch(subRecord *psub)
   if (evgCard_ps) {
     /* For testing - when fiducial is not available, make it happen now. */
     if (psub->a) {
-      EgGetMode(evgCard_ps, ramCurr+1,
-                &mpgRam_as[ramCurr].busy,
-                &mpgRam_as[ramCurr].enable);
-      if (mpgRam_as[ramCurr].enable)
-        EgSeqTrigger(evgCard_ps, ramCurr+1);
+      EgEnableRam( evgCard_ps, ramCurr+1);
+      EgSeqTrigger(evgCard_ps, ramCurr+1);
     }
     /* Enable the next RAM for the next fiducial */
-    if (!mpgRam_as[ramNext].enable)
+    else if (!mpgRam_as[ramNext].enable)
       EgEnableRam(evgCard_ps, ramNext+1);
   }
 #endif
