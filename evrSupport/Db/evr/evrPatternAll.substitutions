@@ -40,8 +40,8 @@ pattern { DEV    , N      , NINP    , FLNK }
 file evrFiducial.db
 {
 #     Location     ,         PATTERNFO links       
-pattern { DEV      ,    LNK4  ,    LNK5  ,    LNK6  }
-	{ $(DEVICE), $(LINK4) , $(LINK5) , $(LINK6) }
+pattern { DEV      ,    LNK4  ,    LNK5  ,    LNK6  ,   VAL   }
+	{ $(DEVICE), $(LINK4) , $(LINK5) , $(LINK6) , $(TREF) }
 }
 
 file generalTimeNonVx.template
