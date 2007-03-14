@@ -23,8 +23,11 @@
 #include <drvSup.h> 		/* for DRVSUPFN */
 #include <errlog.h>		/* for errlogPrintf */
 #include <epicsExport.h> 	/* for epicsExportAddress */
+#include <epicsEvent.h> 	/* for epicsEvent* */
+#include <epicsThread.h> 	/* for epicsThreadCreate */
 #include <evrMessage.h>		/* for evrQueueCreate */
 #include <drvMrfEr.h>		/* for Er* prototypes */
+#include <devMrfEr.h>		/* for ErRegisterEventHandler proto */
 
 static int evrReport();
 static int evrInitialise();
@@ -34,7 +37,13 @@ struct drvet drvEvr = {
   (DRVSUPFUN) evrInitialise 	/* subroutine defined in this file */
 };
 epicsExportAddress(drvet, drvEvr);
-static ErCardStruct  *pCard = 0;
+
+static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
+static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
+volatile int            patternAvailable  = 0; /* pattern  available flag */
+volatile int            fiducialAvailable = 0; /* fiducial available flag */
+int                     patternBehind  = 0;
+int                     fiducialBehind = 0;
 
 /*=============================================================================
 
@@ -49,8 +58,10 @@ static int evrReport( int interest )
     if (pCard) 
       printf("Pattern data from %s card %d\n",
              pCard->FormFactor?"PMC":"VME", pCard->Cardno);
-    evrMessageReport(EVR_MESSAGE_PATTERN, EVR_MESSAGE_PATTERN_NAME);
-/*  evrMessageReport(EVR_MESSAGE_DATA,    EVR_MESSAGE_DATA_NAME); */
+    evrMessageReport(EVR_MESSAGE_FIDUCIAL, EVR_MESSAGE_FIDUCIAL_NAME,
+                     interest);
+    evrMessageReport(EVR_MESSAGE_PATTERN,  EVR_MESSAGE_PATTERN_NAME ,
+                     interest);
   }
   return interest;
 }
@@ -64,49 +75,102 @@ static int evrReport( int interest )
        the EVR simulator.
 
   Rem: Keep this routine to a minimum, so that CPU not blocked 
-       too long processing each interrupt. Some lessons learned about what 
-       can't be in an ISR, for the record.
-        - no printfs
-        - no floating point calculations
-        - no calls to epicsTimeGetCurrent (while it's true that an epicsTime-
-          stamp variable only contains longs, there is some sys call deep
-          down that uses f.p. and throws the ISR into this error:
- 
-          rtems-4.6.2(PowerPC/PowerPC 7455/mvme5500)
-          FATAL ERROR:
-          Internal error: No
-          Environment: RTEMS Core
-            Error occurred in a Thread Dispatching DISABLED context (level 1)
-            Error occurred from ISR context (ISR nest level 1)
-          Error 18: INTERNAL_ERROR_CALLED_FROM_WRONG_ENVIRONMENT
-          Stack Trace:
-
-          0x000B9D2C--> 0x000B9D2C--> 0x000DE6B8--> 0x001103CC--> 0x01F3798C
-          0x01F36EEC--> 0x01DA63B8--> 0x01D011A4--> 0x000BF460--> 0x000B8AA0
-          0x000B8844--> 0x000B8ED8
-
+       too long processing each interrupt.
+       
 =============================================================================*/
 void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 {
-  evrMessageWrite(((evrMessageHeader_ts *)message)->type,
-                  (evrMessage_tu *)message);
+  unsigned int messageType = ((evrMessageHeader_ts *)message)->type;
+
+  evrMessageStart(messageType);
+  evrMessageWrite(messageType, (evrMessage_tu *)message);
+  if  (patternAvailable) patternBehind++;
+  else patternAvailable = 1;
+  epicsEventSignal(evrTaskEventSem);
+}
+
+/*=============================================================================
+ 
+  Name: evrEvent
+
+  Abs: Called by the ErIrqHandler to handle event code 1 (fiducial) processing.
+
+  Rem: Keep this routine to a minimum, so that CPU not blocked 
+       too long processing each interrupt.
+       
+=============================================================================*/
+void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
+{
+  if (eventNum == EVENT_FIDUCIAL) {
+    evrMessageStart(EVR_MESSAGE_FIDUCIAL);
+    if  (fiducialAvailable) fiducialBehind++;
+    else fiducialAvailable = 1;
+    epicsEventSignal(evrTaskEventSem);
+  }
+}
+
+/*=============================================================================
+                                                                                
+  Name: evrTask
+                                                                                
+  Abs:  This task performs record processing and monitors the EVR module.                                                                         
+  Rem:  It's started by evrInitialise after the EVR module is configured. 
+    
+=============================================================================*/
+static int evrTask()
+{  
+  for (;;)
+  {
+    epicsEventMustWait(evrTaskEventSem);
+    while (fiducialAvailable || patternAvailable) {
+      if (fiducialAvailable) {
+        fiducialAvailable = 0;
+        evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
+      } else if (patternAvailable) {
+        patternAvailable = 0;
+        evrMessageProcess(EVR_MESSAGE_PATTERN);
+      }
+    }
+  }
+  return 0;
 }
 
 static int evrInitialise()
 {
 
-  /* Initialize space to hold EVR data buffer - for now,
-     only pattern is supported */
-  if (!evrMessageCreate(EVR_MESSAGE_PATTERN_NAME,
-                        sizeof(evrMessagePattern_ts))) return -1;
+  /* Create space for the pattern + diagnostics */
+  if (evrMessageCreate(EVR_MESSAGE_PATTERN_NAME,
+                       sizeof(evrMessagePattern_ts)) !=
+      EVR_MESSAGE_PATTERN) return -1;
+  
+  /* Create space for the fiducial + diagnostics */
+  if (evrMessageCreate(EVR_MESSAGE_FIDUCIAL_NAME, 0) !=
+      EVR_MESSAGE_FIDUCIAL) return -1;
+  
+  /* Create the semaphore used by the ISR to wake up the evr task */
+  evrTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
+  if (!evrTaskEventSem) {
+    errlogPrintf("evrInitialise: unable to create the EVR task semaphore\n");
+    return -1;
+  }
+  
+  /* Create the task to process records */
+  if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh,
+                         epicsThreadGetStackSize(epicsThreadStackMedium),
+                         (EPICSTHREADFUNC)evrTask, 0)) {
+    errlogPrintf("evrInitialise: unable to create the EVR task\n");
+    return -1;
+  }
+  
 #ifdef __rtems__
   /* Get first EVR in the list */
   pCard = ErGetCardStruct(0);
   if (!pCard) {
     errlogPrintf("evrInitialise: cannot find an EVR module\n");
-  /* Register the ISR function in this file with the EVR */
+  /* Register the ISR functions in this file with the EVR */
   } else {
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
+    ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
     /* Finally, enable the data stream on the EVR */
     ErEnableDBuff(pCard, 1);
   }
