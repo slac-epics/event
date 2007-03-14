@@ -4,17 +4,17 @@ file mpgEventAll.db
 {
 #                               Check    Trigger
 #          Device             PNET Data  Seq Ram
-  pattern { DEVICE     , SYSI , CHECKI , SENDI }
-          { IOC:SYS1:1 , SYS1 ,   0    ,   0   }
+  pattern { DEVICE     , SYSI , CHECKI , SENDI  , FLNKI           }
+          { IOC:SYS1:1 , SYS1 ,   0    ,   0    , IOC:SYS1:1:PNET }
 }
 file bsaEdefAll.db {
   pattern { DEVICE     , SYSI }
  	  { IOC:SYS1:1 , SYS1 }
 }
 file evrPatternAll.db {
-#	    Device     , Time Slot Processing      PNET Processing  BSA Data Processing           
-  pattern { DEVICE     ,         LINK4          ,      LINK5      ,      LINK6        }
-	  { IOC:SYS1:1 , IOC:SYS1:1:TIMESLOTN-1 , IOC:SYS1:1:PNET , IOC:SYS1:1:EDEFFO }
+#	    Device     , Time Slot Processing       Data Processing
+  pattern { DEVICE     ,         LINK4          ,      LINK5             , LINK6 , TREF }
+	  { IOC:SYS1:1 , IOC:SYS1:1:TIMESLOTN-1 , IOC:SYS1:1:PATTERNDATA ,  ""   , 1E06 }
 }
 file mpgPatternTest.db {
   pattern { SYSI  , UNITI }

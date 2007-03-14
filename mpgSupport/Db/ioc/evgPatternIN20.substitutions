@@ -2,15 +2,15 @@ file mpgEventAll.db
 {
 #                                  Check    Trigger
 #          Device                PNET Data  Seq Ram
-  pattern { DEVICE        , SYSI , CHECKI , SENDI }
-          { IOC:IN20:EV01 , SYS0 ,   1    ,   0   }
+  pattern { DEVICE        , SYSI , CHECKI , SENDI  , FLNKI                  }
+          { IOC:IN20:EV01 , SYS0 ,   1    ,   0    , IOC:IN20:EV01:FIDUCIAL }
 }
 file bsaEdefAll.db {
   pattern { DEVICE        , SYSI }
  	  { IOC:IN20:EV01 , SYS0 }
 }
 file evrPatternAll.db {
-#	    Device        , Time Slot Processing         PNET Processing     BSA Data Processing
-  pattern { DEVICE        ,         LINK4             ,      LINK5         ,      LINK6           }
-	  { IOC:IN20:EV01 , IOC:IN20:EV01:TIMESLOTN-1 , IOC:IN20:EV01:PNET , IOC:IN20:EV01:EDEFFO }
+#	    Device        , Time Slot Processing         PNET Processing     
+  pattern { DEVICE        ,         LINK4             ,      LINK5         , LINK6 , TREF }
+	  { IOC:IN20:EV01 , IOC:IN20:EV01:TIMESLOTN-1 , IOC:IN20:EV01:PNET ,  ""   , 1E06 }
 }
