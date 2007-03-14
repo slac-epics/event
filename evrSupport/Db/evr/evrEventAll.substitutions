@@ -22,7 +22,7 @@ file evrEvent.db
 #                            Event 
 #	 Location            Code   Priority    Forward Link
 pattern { DEV      , NAME    , ID , PRIO , FLNK               }
-	{$(DEVICE) , FIDUCIAL, 1  , HIGH , $(DEVICE):FIDUCIAL }
+	{$(DEVICE) , FIDUCIAL, 1  , LOW  , ""                 }
 	{$(DEVICE) , LCLSBEAM, 140, LOW  , ""                 }
 # Beam-Independent Time Slot Triggers
 #   360Hz
