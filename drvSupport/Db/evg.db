@@ -39,26 +39,6 @@ record(eg, "$(DEV):CTRL") {
 # There is no multiplexed counter, all MC*,MD*,ME*,MS* fields left at 0.
 }
 
-# In order to take care of the heart beat (0x7A) and time stamp reset/resync 
-# (0x7D) events, longout records are used that have their output links 
-# pointed to the VME field on the above EG record. When they are processed, 
-# the DOL field of the longout record is sent out on the event system.
-record(longout, "$(DEV):HEARTBEAT") {
-  field(DESC, "EVG Heartbeat")
-  field(SCAN, "1 second")
-  field(OUT, "$(DEV):CTRL.VME  PP")
-  field(DOL, "122")
-  field(OMSL, "closed_loop")
-}
-
-record(longout, "$(DEV):RESYNC") {
-  field(DESC, "EVG Resynchronize")
-  field(SCAN, "10 second")
-  field(OUT, "$(DEV):CTRL.VME  PP")
-  field(DOL, "125")
-  field(OMSL, "closed_loop")
-}
-
 record(longout, "$(DEV):EVENT") {
   field(DESC, "EVG User Event Code")
   field(PINI, "YES")
