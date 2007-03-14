@@ -23,6 +23,7 @@ record(fanout, "$(DEV):FANOUTSIM") {
   field(LNK2, "$(SIM):MODIFIER5")
   field(LNK3, "$(DEV):FIDUCIAL")
   field(LNK4, "$(DEV):PATTERNSIM")
+  field(LNK5, "$(DEV):PATTERNDATA")
 }
 
 record(sSub, "$(SIM):MODIFIER5") {
