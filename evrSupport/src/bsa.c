@@ -114,6 +114,7 @@ static long bsaSecnAvg(sSubRecord *psub)
   psub->z = 0;    /* outer loop count reset */	
   psub->m = 0;    /* always set goodmeas to 0, no averaging */
   psub->q = 0;
+  psub->c = 3;    /* simulator wants all data sevrs */
   psub->val = 0;
 #endif
 
