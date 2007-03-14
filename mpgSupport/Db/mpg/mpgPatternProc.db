@@ -7,11 +7,10 @@ record(waveform, "$(DEV):PATTERNDATA") {
   field(DESC, "PNET Data")
   field(DTYP, "EVR/PNET Receiver")
   field(INP, "@PNET")
-  field(SCAN, "I/O Intr")
   field(PRIO, "HIGH")
   field(NELM, "4")
   field(FTVL, "ULONG")
-  field(FLNK, "$(DEV):FIDUCIAL")
+  field(FLNK, "$(FLNK)")
 }
 
 record(bo, "$(DEV):PNETCHECK") {
@@ -52,6 +51,7 @@ record(sSub, "$(DEV):PATTERNN-3") {
   field(L, "131071")
   field(BRSV, "INVALID")
   field(INPK, "$(DEV):EDAVGDONEN-3")
+  field(FLNK, "$(DEV):EDEFFO")
 }
 
 record(sSub, "$(DEV):PATTERNDIAG") {
@@ -64,7 +64,7 @@ record(sSub, "$(DEV):PATTERNDIAG") {
 
 record(ai, "$(DEV):FIDUCIALRATE") {
   field(DESC, "FIDUCIAL Event Rate")
-  field(INP,  "$(DEV):PATTERNDIAG.W")
+  field(INP,  "$(DEV):PATTERNDIAG.C")
   field(EGU,  "Hz")
   field(PREC, "1")
   field(HOPR, "360")
@@ -73,6 +73,7 @@ record(ai, "$(DEV):FIDUCIALRATE") {
 record(sSub, "$(DEV):MODIFIER5N-3") {
   field(DESC, "Add EDEF bits to Modifier 5")
   field(SNAM, "evrModifier5")
+  field(BRSV, "INVALID")
   field(INPA, "EDEF:$(ELOCA):1:PATTERNCHECK PP")
   field(INPB, "EDEF:$(ELOCA):2:PATTERNCHECK PP")
   field(INPC, "EDEF:$(ELOCA):3:PATTERNCHECK PP")
@@ -100,6 +101,7 @@ record(sSub, "$(DEV):MODIFIER5N-3") {
 record(sSub, "$(DEV):EDAVGDONEN-3") {
   field(DESC, "Add EDAVGDONE to Pattern")
   field(SNAM, "evrModifier5")
+  field(BRSV, "INVALID")
   field(INPA, "EDEF:$(ELOCA):1:PATTERNCHECK.K")
   field(INPB, "EDEF:$(ELOCA):2:PATTERNCHECK.K")
   field(INPC, "EDEF:$(ELOCA):3:PATTERNCHECK.K")
@@ -126,11 +128,13 @@ record(sSub, "$(DEV):EDAVGDONEN-3") {
 record(sSub, "$(DEV):EDEFMEASSEVR") {
   field(DESC, "Form meassevr masks")
   field(SNAM, "mpgEdefMeasSevrMasks")
+  field(BRSV, "INVALID")
 }
 
 record(sSub, "$(DEV):EDEFINIT") {
   field(DESC, "Form edef init mask")
   field(SNAM, "mpgEdefInitMask")
+  field(BRSV, "INVALID")
   field(FLNK, "$(DEV):PATTERNN-3")
 }
 
