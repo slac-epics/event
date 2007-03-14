@@ -3,11 +3,11 @@
 file evrPatternAll.db {
 #	    Device        ,  SLC Pattern Check LNK    , EVR/Trigger             
 #	                                                  Links       
-  pattern { DEVICE        ,        LINK4              , LINK5 , LINK6 }
-	  { IOC:XL16:EV01 ,         ""                ,  ""   ,  ""   }
+  pattern { DEVICE        ,        LINK4              , LINK5 , LINK6 , TREF }
+	  { IOC:XL16:EV01 ,         ""                ,  ""   ,  ""   , 1E06 }
 }
 # Event records
 file evrEventAll.db {
-  pattern { DEVICE        }
-	  { IOC:XL16:EV01 }
+  pattern { DEVICE   , TREF }
+	  { IOC:XL16:EV01, 1E06 }
 }
