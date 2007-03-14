@@ -46,6 +46,7 @@
 #include "registryFunction.h" /* for epicsExport            */
 #include "epicsExport.h"      /* for epicsRegisterFunction  */
 #include "epicsTime.h"        /* for epicsTimeGetCurrent    */
+#include "dbScan.h"           /* for post_event             */
 #include "dbAccess.h"         /* DBADDR typedef and protos  */
 #include "errlog.h"           /* errlogPrintf               */
 #include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*   */
@@ -392,34 +393,7 @@ static long mpgPatternProc(sSubRecord *psub)
   int                    edefIdx;
 
   psub->val = psub->b;
-  psub->z  = (double)(((epicsUInt32)psub->d) & MODULO720_MASK);
-  
-  /* Initialize EVR timestamp to system time */
-  if (epicsTimeGetCurrent(&evrPatternWF_s.time)) {
-    evrTimePut(0, epicsTimeERROR);
-    psub->val = PATTERN_INVALID_TIMESTAMP;
-    return -1;
-  }
-  /* The time is for 3 pulses in the future - add 1/120sec */
-  epicsTimeAddSeconds(&evrPatternWF_s.time, EVG_DELTA_TIME);
-  /* Overlay the pulse ID into the lower 17 bits of the nsec field */
-  evrTimePutPulseID(&evrPatternWF_s.time, (unsigned int)psub->l);
-
-  /* The timestamp must ALWAYS be increasing.  Check if this time
-     is less than the previous time (due to rollover) and adjust up
-     slightly using bit 17 (the lower-most bit of the top 15 bits). */
-  if (!evrTimeGet(&prev_time, evrTimeNext3)) {
-    delta_time = epicsTimeDiffInSeconds(&evrPatternWF_s.time, &prev_time);
-    if (delta_time < 0.0) {
-      epicsTimeAddSeconds(&evrPatternWF_s.time, PULSEID_BIT17/NSEC_PER_SEC);
-      evrTimePutPulseID(&evrPatternWF_s.time, (unsigned int)psub->l);
-    }
-  }
-  /* write to evr timestamp table and error check */
-  if (evrTimePut(&evrPatternWF_s.time, epicsTimeOK)) {
-    psub->val = PATTERN_INVALID_TIMESTAMP;
-  }
-  /* Timestamp done - now fill in the rest of the pattern */
+  /* Fill in the the pattern except for time */
   evrPatternWF_s.header_s.type        = EVR_MESSAGE_PATTERN;
   evrPatternWF_s.header_s.version     = EVR_MESSAGE_PATTERN_VERSION;
   evrPatternWF_s.pnet_s.modifier_a[0] = psub->d;
@@ -430,14 +404,42 @@ static long mpgPatternProc(sSubRecord *psub)
   evrPatternWF_s.bunchcharge          = psub->i;
   evrPatternWF_s.edefInitMask         = psub->u;
   evrPatternWF_s.edefAvgDoneMask      = psub->k;
-  evrPatternWF_s.edefMinorMask        = psub->v; 
+  evrPatternWF_s.edefMinorMask        = psub->v;
   evrPatternWF_s.edefMajorMask        = psub->w;
+  
+  /* Initialize EVR timestamp to system time */
+  if (epicsTimeGetCurrent(&evrPatternWF_s.time)) {
+    evrTimePut(0, epicsTimeERROR);
+    psub->val = PATTERN_INVALID_TIMESTAMP;
+  } else {
+    /* The time is for 3 pulses in the future - add 1/120sec */
+    epicsTimeAddSeconds(&evrPatternWF_s.time, EVG_DELTA_TIME);
+    /* Overlay the pulse ID into the lower 17 bits of the nsec field */
+    evrTimePutPulseID(&evrPatternWF_s.time, (unsigned int)psub->l);
+
+    /* The timestamp must ALWAYS be increasing.  Check if this time
+       is less than the previous time (due to rollover) and adjust up
+       slightly using bit 17 (the lower-most bit of the top 15 bits). */
+    if (!evrTimeGet(&prev_time, evrTimeNext3)) {
+      delta_time = epicsTimeDiffInSeconds(&evrPatternWF_s.time, &prev_time);
+      if (delta_time < 0.0) {
+        epicsTimeAddSeconds(&evrPatternWF_s.time, PULSEID_BIT17/NSEC_PER_SEC);
+        evrTimePutPulseID(&evrPatternWF_s.time, (unsigned int)psub->l);
+      }
+    }
+    /* write to evr timestamp table and error check */
+    if (evrTimePut(&evrPatternWF_s.time, epicsTimeOK)) {
+      psub->val = PATTERN_INVALID_TIMESTAMP;
+    }
+    /* send pattern on to all EVRs */
 #ifdef __rtems__
-  if (psub->dpvt) {
-    EgDataBufferLoad(((EgCardStruct *)psub->dpvt)->pEg,
-                     (epicsUInt32 *)&evrPatternWF_s, sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32));
-  }
+    if (psub->dpvt) {
+      EgDataBufferLoad(((EgCardStruct *)psub->dpvt)->pEg,
+                       (epicsUInt32 *)&evrPatternWF_s,
+                       sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32));
+    }
 #endif
+  }
   /* for every non-zero bit in ederInitMask, call post_event */
   if (evrPatternWF_s.edefInitMask) { /* should we bother w loop? */
     for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++) {
@@ -447,7 +449,12 @@ static long mpgPatternProc(sSubRecord *psub)
     }
   }
   /* Post the modulo-720 sync event if the pattern has that bit set */
-  if (psub->z) post_event(EVENT_MODULO720);
+  if (evrPatternWF_s.pnet_s.modifier_a[0] & MODULO720_MASK) {
+    post_event(EVENT_MODULO720);
+    psub->z = 1;
+  } else {
+    psub->z = 0;
+  }
   if (psub->val) return -1;
   return 0;
 }
@@ -468,9 +475,9 @@ static long mpgPatternProc(sSubRecord *psub)
   Inputs:
        A - Error Flag from mpgPatternProc
        B - Counter Reset Flag
-       C - Spare
      
   Outputs:
+       C - ISR update rate
        D - Number of waveforms processed by mpgPatternPnet
        E - Number of times D has rolled over
        F - Number of bad waveforms
@@ -490,8 +497,11 @@ static long mpgPatternProc(sSubRecord *psub)
        S - Number of times a seq ram was not in single mode
        T - Number of times a seq ram was still active
        U - Number of bad patterns in event processing
-       V - Previous ISR update count
-       W - ISR update rate
+       V - Minimum PNET Delta Start Time (us)
+       W - Maximum PNET Delta Start Time (us)
+       X - Average        Data Processing Time (us)
+       Y - Standard Deviation of above (us)
+       Z - Maximum        Data Processing Time (us)
        VAL = Last Error flag (see mpgPatternProc for values)
 
   Side: File-scope counters may be reset.
@@ -501,8 +511,28 @@ static long mpgPatternProc(sSubRecord *psub)
 ==============================================================================*/
 static long mpgPatternState(sSubRecord *psub)
 {
+  static double prevISRupdate = 0;
+  
   psub->val = psub->a;
+  psub->d = msgCount;          /* # waveforms processed since boot/reset */
+  psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
+  psub->f = patternErrCount;
+  evrMessageCounts(EVR_MESSAGE_PNET,&psub->g,&psub->h,&psub->i,&psub->j,
+                   &psub->v,&psub->w,&psub->x,&psub->y,&psub->z);
+  /* Calculate ISR update rate. */
+  psub->c = psub->g;
+  if (psub->g < prevISRupdate) psub->c += EVR_MAX_INT;
+  psub->c = (psub->c - prevISRupdate)/MODULO720_SECS;
+  psub->k = pulseIDSyncErrCount;
+  psub->l = modulo720SyncErrCount;
+  psub->m = seqCheck1ErrCount;
+  psub->n = seqCheck2ErrCount;
+  psub->o = seqCheck3ErrCount;
+  psub->p = resyncCount;       /* # of times 6min 2s rollover happened since boot/reset */
+  mpgEventCounts(&psub->q,&psub->r,&psub->s,&psub->t,&psub->u);
   if (psub->b > 0.5) {
+    psub->b               = 0;
+    prevISRupdate         = 0;
     msgCount              = 0;
     msgRolloverCount      = 0;
     patternErrCount       = 0;
@@ -514,27 +544,9 @@ static long mpgPatternState(sSubRecord *psub)
     modulo720SyncErrCount = 0;
     evrMessageCountReset(EVR_MESSAGE_PNET);
     mpgEventCountReset();
-  }
-  psub->d = msgCount;          /* # waveforms processed since boot/reset */
-  psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
-  psub->f = patternErrCount;
-  psub->v = psub->g;
-  evrMessageCounts(EVR_MESSAGE_PNET,&psub->g,&psub->h,&psub->i,&psub->j);
-  /* Calculate ISR update rate unless a reset has been done. */
-  if (psub->b == 0) {
-    psub->w = psub->g;
-    if (psub->g < psub->v) psub->w += EVR_MAX_INT;
-    psub->w = (psub->w - psub->v)/MODULO720_SECS;
   } else {
-    psub->b = 0.0;
-  }
-  psub->k = pulseIDSyncErrCount;
-  psub->l = modulo720SyncErrCount;
-  psub->m = seqCheck1ErrCount;
-  psub->n = seqCheck2ErrCount;
-  psub->o = seqCheck3ErrCount;
-  psub->p = resyncCount;       /* # of times 6min 2s rollover happened since boot/reset */
-  mpgEventCounts(&psub->q,&psub->r,&psub->s,&psub->t,&psub->u);
+    prevISRupdate = psub->g;
+  }  
   return 0;
 }
 
