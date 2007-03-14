@@ -8,12 +8,12 @@ record(event, "$(DEV):$(NAME)EVNT") {
   field(FLNK, "$(FLNK)")
 }
 
-record(calc, "$(DEV):$(NAME)CNT") {
+record(sub, "$(DEV):$(NAME)CNT") {
   field(DESC, "$(NAME) Event Counter")
   field(SCAN, "Event")
   field(EVNT, "$(ID)")
-  field(INPA, "$(DEV):$(NAME)CNT")
-  field(CALC, "A+1")
+  field(SNAM, "evrPatternCount")
+  field(BRSV, "INVALID")
 }
 
 record(sub, "$(DEV):$(NAME)RATE") {
