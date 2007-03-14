@@ -13,6 +13,7 @@ record(sub, "$(SIM):PATTERNSIM") {
   field(INPK, "$(SIM):YY PP")
   field(INPL, "$(SIM):PULSEID PP")
   field(SNAM, "mpgPatternSim")
+  field(FLNK, "$(DEV):FIDUCIAL")
 }
 
 #! Further lines contain data used by VisualDCT

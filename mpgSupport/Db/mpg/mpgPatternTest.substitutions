@@ -28,6 +28,6 @@ file mpgPatternSim.db
 {
 #
 #        Location
-pattern { SIM                  }
-        { ESIM:$(SYSI):$(UNITI) }
+pattern { SIM                   , DEV                  }
+        { ESIM:$(SYSI):$(UNITI) , IOC:$(SYSI):$(UNITI) }
 }
