@@ -4,6 +4,7 @@
         pnetInitialise - hardware initialisation
         pnetReport     - driver report
         pnetISR        - interrupt service routine
+        pnetTask       - high priority pnet processing task
 
   Abs:  Driver support for VME PNET Receiver module. 
   
@@ -11,11 +12,10 @@
         http://www.slac.stanford.edu/grp/lcls/controls/global/subsystems/timing
 
   Compiler Flags:
-  DEBUGPRINT - 
-  PNET_TIMING - 
+  DEBUG_PRINT - To define debug flag. 
 
   Auth: 07-jul-2005, Dayle Kotturi (dayle):
-  Rev:  dd-mmm-200y, Tom Slick (TXS):
+  Rev:  13-mar-2007, S. Allison (saa)
 
 -----------------------------------------------------------------------------*/
 
@@ -33,8 +33,6 @@
  
 =============================================================================*/
 
-#include <math.h>               /* for sqrt */
-
 #include <drvSup.h> 		/* for DRVSUPFN */
 #ifdef __rtems__
 #include <devLib.h>		/* for dev*routines, atVMEA16 */
@@ -42,23 +40,14 @@
 #endif
 #include <errlog.h>		/* for errlogPrintf */
 #include <epicsExport.h> 	/* for epicsExportAddress */
+#include <epicsEvent.h> 	/* for epicsEvent* */
+#include <epicsThread.h> 	/* for epicsThreadCreate */
 #include <debugPrint.h>		/* for DEBUGPRINT */
 #include <evrMessage.h>		/* for evrMessage* protos */
 
 #define PNET_IRQ_LEVEL 		(1)	/* PNET interrupt level */
 #define PNET_IRQ_VECTOR 	(0xAA)	/* PNET interrupt vector */
 #define PNET_DEF_BASE_ADDRESS   (0x110) /* PNET default base address */
-
-/* Define this in order to measure/store durations in routines */
-#ifdef PNET_TIMING      
-  #ifdef __PPC__
-    #define MFTB(var) asm volatile("mftb %0":"=r"(var))
-  #else
-    #define MFTB(var) do {} ()
-  #endif
-  #define PNET_ISR_TIMING_SIZE	(100)
-  #define CLOCK_SPEED           (16.7)          /* MHz */
-#endif
 
 static int pnetReport();
 static int pnetInitialise();
@@ -76,62 +65,11 @@ epicsExportAddress(drvet, drvPnet);
 int drvPnetFlag = 0;
 #endif
 
-int intrEnabled = 0;
-
+static int              intrEnabled = 0;
 static unsigned long    vmePnetAddr = PNET_DEF_BASE_ADDRESS; /* base addr of PNET */
-#ifdef __rtems__
 static epicsUInt32     *pLocalBuf   = NULL; /* keep pLocalBuf a ptr for devRegAddr */
-#endif
-
-#ifdef PNET_TIMING
-  static unsigned long isrStart[PNET_ISR_TIMING_SIZE];
-  static unsigned long isrEnd[PNET_ISR_TIMING_SIZE];
-  static int isrTimingIndex = 0;
-#endif
-
-#ifdef PNET_TIMING
-/*=============================================================================
-
-  Name: pnetGetIsrTimes
-
-  Abs: Writes out the avg and stddev of last 100 durations of ISR processing 
-        time in microseconds 
-
-  Side: Output written to serial console stdout 
-
-=============================================================================*/
-int pnetGetIsrTimes() {
-  int ii;
-  int jj;
-  double duration[PNET_ISR_TIMING_SIZE];
-  double sumDurations = 0.;
-  double sumSqDurations = 0.;
-
-  for (ii=0; ii<PNET_ISR_TIMING_SIZE; ii++) {
-    jj = isrTimingIndex + ii;
-    if (jj > (PNET_ISR_TIMING_SIZE-1)) {
-      jj -= PNET_ISR_TIMING_SIZE;  
-    } 
-    duration[ii] = ((double)isrEnd[jj] - (double)isrStart[jj])/CLOCK_SPEED;
-    sumDurations += duration[ii]; 
-  }
-
-  /* convert sum to be the average */
-  sumDurations /= PNET_ISR_TIMING_SIZE;
-  printf("Average time in ISR for last 100 interrupts: %f usec\n", sumDurations);
-
-  /* std dev needs 2nd loop. formula is: SD = sqrt { sum(x - mu)^2 / (n-1) } */
-  for (ii=0; ii<PNET_ISR_TIMING_SIZE; ii++) {
-    sumSqDurations += (duration[ii] - sumDurations) *
-                      (duration[ii] - sumDurations);
-  }
-  sumSqDurations /= (PNET_ISR_TIMING_SIZE - 1);
-  sumSqDurations = sqrt(sumSqDurations);
-  printf("Stddev of times in ISR for last 100 interrupts: %f usec\n",
-         sumSqDurations);
-  return 0;
-}
-#endif
+static epicsEventId     pnetTaskEventSem = NULL;  /* pnet task semaphore */
+static volatile int     pnetAvailable    = 0;     /* flag that pnet data is ready */
 
 /*=============================================================================
 
@@ -143,22 +81,20 @@ int pnetGetIsrTimes() {
 static int pnetReport( int interest )
 {
   if (interest > 0) {
-    evrMessageReport(EVR_MESSAGE_PNET, EVR_MESSAGE_PNET_NAME);
-  
-    #ifdef PNET_TIMING
-    pnetGetIsrTimes();
-    #endif
+    printf ("PNET Card Address = %8.8x,  Vector = %3.3X,  Level = %d, %s\n",
+            (unsigned int)pLocalBuf, PNET_IRQ_VECTOR, PNET_IRQ_LEVEL,
+            intrEnabled? "Enabled" : "Disabled");
+    evrMessageReport(EVR_MESSAGE_PNET, EVR_MESSAGE_PNET_NAME, interest);
   }
   return interest;
 }
 
-#ifdef __rtems__
 /*=============================================================================
  
   Name: pnetISR
 
-  Abs: Process interrupts at PNET_IRQ_LEVEL, put each buffer of PNET data
-       into a message queue.
+  Abs: Process interrupts at PNET_IRQ_LEVEL - record start time and wake
+       up pnetTask.
 
   Rem: Strategy 1: read the entire buffer in before incrementing the pointer.
        This way the pointer always points to a complete buffer and so there
@@ -187,38 +123,48 @@ static int pnetReport( int interest )
           0x000B8844--> 0x000B8ED8
 
 =============================================================================*/
-static void pnetISR (
+void pnetISR (
   /* if there was more than one PNET board, this would spec which one */
-  void *arg 
-) {
+  void *arg)
+{
+  evrMessageStart(EVR_MESSAGE_PNET);
+  pnetAvailable = 1;
+  epicsEventSignal(pnetTaskEventSem);
+}
+
+/*=============================================================================
+                                                                                
+  Name: pnetTask
+                                                                                
+  Abs:  This task performs record processing and monitors the PNET module.                                                                         
+  Rem:  It's started by pnetInitialise after the PNET module is configured. 
+    
+=============================================================================*/
+static int pnetTask()
+{  
+#ifdef __rtems__
   unsigned long ii;
   evrMessage_tu message_u;
-
-  #ifdef PNET_TIMING
-  /* Start counting the clock ticks to see how long spent in here */
-  MFTB(isrStart[isrTimingIndex]);
-  #endif
-
- /* Take a local copy of the message into the NEXT space so that it won't be
-     accessed */
-  for (ii=0; ii<EVR_PNET_MODIFIER_MAX; ii++) {
-    message_u.pnet_s.modifier_a[ii] = in_be32((volatile void *)&(pLocalBuf[ii]));
-  }
-  /* Send the data on to the waveform record.*/
+#endif
   
-  evrMessageWrite(EVR_MESSAGE_PNET, &message_u);
-  
-  #ifdef PNET_TIMING
-  /* Stop counting the clock ticks to see how long spent in here */
-  MFTB(isrEnd[isrTimingIndex]);
-  if (isrTimingIndex == PNET_ISR_TIMING_SIZE ) {
-    isrTimingIndex = 0;
-  } else {
-    isrTimingIndex++; 
+  for (;;)
+  {
+    epicsEventMustWait(pnetTaskEventSem);
+    if (pnetAvailable) {
+#ifdef __rtems__
+      for (ii=0; ii<EVR_PNET_MODIFIER_MAX; ii++) {
+        message_u.pnet_s.modifier_a[ii] =
+          in_be32((volatile void *)&(pLocalBuf[ii]));
+      }
+      evrMessageWrite(EVR_MESSAGE_PNET, &message_u);
+#endif
+      /* Process the pipeline and data records */
+      evrMessageProcess(EVR_MESSAGE_PNET);
+      pnetAvailable = 0;
+    }
   }
-  #endif
+  return 0;
 }
-#endif  /* ifdef __rtems__ */
 
 /*=============================================================================
  
@@ -273,8 +219,28 @@ int pnetDisableIntr() {
 }
 
 static int pnetInitialise() {
-#ifdef __rtems__
+
   int rc;
+
+  /* Create space for the PNET message + diagnostics */
+  rc = evrMessageCreate(EVR_MESSAGE_PNET_NAME, sizeof(evrMessagePnet_ts));
+  if (rc != EVR_MESSAGE_PNET    ) return -1;
+  
+  /* Create the semaphore used by the ISR to wake up the pnet task */
+  pnetTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
+  if (!pnetTaskEventSem) {
+    errlogPrintf("pnetInitialise: unable to create the PNET task semaphore\n");
+    return -1;
+  }  
+  /* Create the task to read the message */
+  if (!epicsThreadCreate("pnetTask", epicsThreadPriorityHigh,
+                         epicsThreadGetStackSize(epicsThreadStackMedium),
+                         (EPICSTHREADFUNC)pnetTask, 0)) {
+    errlogPrintf("pnetInitialise: unable to create the PNET task\n");
+    return -1;
+  }
+  
+#ifdef __rtems__
 
   /* Notes:
      - vmePnetAddr was set to default at boot but could have been changed by
@@ -293,11 +259,11 @@ static int pnetInitialise() {
                  (int) vmePnetAddr);
     return -1;
   }
-
   DEBUGPRINT(DP_INFO, drvPnetFlag,
              ("pnetInitialise: hardware registered at 0x%08x\n",
               (int) vmePnetAddr));
   
+
   /* connect up the interrupt vector with the interrupt service routine */
   rc = devConnectInterruptVME(PNET_IRQ_VECTOR, pnetISR, 0);
   if (rc != 0) {
@@ -306,8 +272,6 @@ static int pnetInitialise() {
     return -1;
   }
 #endif  /* ifdef __rtems__ */
-  if (evrMessageCreate(EVR_MESSAGE_PNET_NAME, sizeof(evrMessagePnet_ts)))
-    return -1;
 
   /* enable the interrupt. Note: if this code is executed,
      the LED on the PNET board starts flashing */
