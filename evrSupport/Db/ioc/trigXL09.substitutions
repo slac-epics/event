@@ -1,0 +1,44 @@
+# Trigger records
+# 
+# refer to Sharepoint document: Controls | Timing | timingTriggers.xls
+#
+# Must also have pattern records
+# Note: WID, DES, TEC are in terms of nSec and are unique per device
+# 
+file evrDevTrig.db {
+#      Device	      , Description   , EVR  ,  width ,desired  , EC delay   , EVR  , EVR,  IOC          , slope 
+#			                            Trigger       wrt TREF   wrt fiducial loca   unit                 1/119Mhz
+  pattern { DEV       ,  DESC         , T    ,  WID   , DES     , TEC        , LOCA , UNIT, IOC          , ESLO            
+                      ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG}
+	{ TRIG:XL09:1: ,  "trigger 0"     , 0    ,  100   , 10      , LCLSBEAM   , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01}
+	{ TRIG:XL09:2: ,  "trigger 1"     , 1    ,  100   , 10      , TS1_120_,  , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01}
+	{ TRIG:XL09:3: ,  "trigger 2"     , 2    ,  100   , 10      , TS1_60_    , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:4: ,  "trigger 3"     , 3    ,  100   , 10      , TS1_30_    , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:5: ,  "trigger 4"     , 4    ,  100   , 10      , TS1_10_    , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:6: ,  "trigger 5"     , 5    ,  100   , 10      , TS1_5_     , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:7: ,  "trigger 6"     , 6    ,  100   , 10      , TS4_120_   , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:8: ,  "trigger 7"     , 7    ,  100   , 10      , TS4_60_    , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01}
+	{ TRIG:XL09:9: ,  "trigger 8"     , 8    ,  100   , 10      , TS4_30_    , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:10:,  "trigger 9 "    , 9    ,  100   , 10      , TS4_10_    , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:11:,  "trigger 10"    , A    ,  100   , 10      , TS4_5_     , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01}
+	{ TRIG:XL09:12:,  "trigger 11"    , B    ,  100   , 10      , TS4_1_     , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	{ TRIG:XL09:13:,  "trigger 12"    , C    ,  100   , 10      , TS4_HALF_  , XL09 , EV01, IOC:XL09:EV01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+
+
+
+
+}
+

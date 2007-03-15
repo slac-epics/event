@@ -1,0 +1,32 @@
+# Trigger records - Current Monitor (IM)
+# 
+# refer to Sharepoint document: Controls | Timing | timingTriggers.xls
+#
+# Must also have pattern records
+# Note: WID, DES, TEC are in terms of nSec and are unique per device
+# 
+file evrDevTrig.db {
+#      Device	      , Description   , EVR  ,  width ,desired  , EC delay  , EVR  , EVR,  IOC          , slope 
+#			                            Trigger       wrt TREF   wrt fiducial loca   unit                 1/119Mhz
+  pattern { DEV       ,  DESC         , T    ,  WID   , DES     , TEC      , LOCA , UNIT, IOC          , ESLO            
+                      ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG }
+	  { TORO:IN20:215:,  "IM01"       , 0    ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	  { TORO:IN20:431:,  "IM02"       , 1    ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	  { TORO:IN20:791:,  "IM03"       , 2    ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	  { TORO:IN20:971:,  "IMS1"       , 5    ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 } 
+	  { FARC:IN20:212:,  "FC01"       , 6    ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01} 
+	  { FARC:IN20:898:,  "FCG1"       , 7    ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	  { DTIZ:IN20:IM01:, "Fast Digitizer"  ,8   ,  100   , 10   , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	  { TRIG:IN20:IM01:CALB,"Calibration 1",C   ,  100   , 10   , TS5_120_, IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+	  { TRIG:IN20:1M02:CALB,"Calibration 2",D   ,  100   , 10   , TS5_120_, IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
+}
+
