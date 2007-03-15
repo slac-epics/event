@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 02/16/2007
+Instructions for RTEMS EVR users                    Last Updated 03/14/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -44,6 +44,8 @@ Note that the order of the above libraries is important.
    DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>pattern.db
    And for IOCs that support beam-synchronous acquisition:
    DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>bsa.db
+   And for IOCs that have triggers:
+   DB_INSTALLS += $(EVENT)/db/IOC-<area>-<xxyy>trig.db
 
    where area = LR20, IN20, LI21, etc
    and   xx = subsystem ID (AM, BL, BP, IM, LS, MG, MP, PM, RF, WS)
