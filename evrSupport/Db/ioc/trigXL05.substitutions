@@ -34,7 +34,7 @@ file evrDevTrig.db {
                       ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01}
 	{ TRIG:XL05:12:,  "trigger 11"    , B    ,  100   , 10      , TS4_1_     , XL05 , EV01, IOC:XL05:EV01, 8.40336692324359
                       ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
-	{ TRIG:XL05:13:,  "trigger 12"    , C    ,  100   , 10      , TS4_HALF_  , XL05 , EV01, IOC:XL05:EV01, 8.40336692324359
+	{ TRIG:XL05:13:,  "trigger 12"    , C    ,  100   , 10      , TS4_HALF   , XL05 , EV01, IOC:XL05:EV01, 8.40336692324359
                       ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 }
 
 
