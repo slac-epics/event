@@ -123,8 +123,9 @@ Error writing EVR timestamp set record invalid and pulse ID to 0
    Inputs:
     A - PATTERNDATA.VAL
     B - PATTERNDATA.SEVR
-    C - PATTERNDATA.NORD
+    M - PATTERNDATA.NORD
    Outputs:
+    C - Time Slot
     D - MODIFIER1N-3 (PNET)
     E - MODIFIER2N-3 (PNET)
     F - MODIFIER3N-3 (PNET)
@@ -167,10 +168,10 @@ static long evrPatternProc(sSubRecord *psub)
   /*   set record invalid; pulse id =0, and                        */
   /*   evr timestamp/status to last good time with invalid status */
   if (psub->b || (!wfAddr) ||
-      (psub->c < (sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32))) ||
+      (psub->m < (sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32))) ||
       (!(evrPatternWF_ps = (evrMessagePattern_ts *)wfAddr->pfield))) {
     if (psub->b) patternErrCount++;
-    psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
+    psub->c = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
     if (psub->val) psub->z = 0;
     else           psub->z = 1;
     psub->l   = PULSEID_INVALID;
@@ -183,7 +184,7 @@ static long evrPatternProc(sSubRecord *psub)
     if ((evrPatternWF_ps->header_s.type    != EVR_MESSAGE_PATTERN  ) ||
         (evrPatternWF_ps->header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
       patternErrCount++;
-      psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
+      psub->c = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
       if (psub->val) psub->z = 0;
       else           psub->z = 1;
       psub->l      = PULSEID_INVALID;
@@ -202,6 +203,9 @@ static long evrPatternProc(sSubRecord *psub)
       psub->i = (double)(evrPatternWF_ps->bunchcharge);
       /* beamcode decoded from modifier 1*/
       psub->j = (double)((modifier1 >> 8) & BEAMCODE_BIT_MASK);
+      /* timeslot decoded from modifier 4*/
+      psub->c = (double)((evrPatternWF_ps->pnet_s.modifier_a[3] >> 29) &
+                         TIMESLOT_VAL_MASK);
       /* edef avg done mask   */
       psub->k = (double)(evrPatternWF_ps->edefAvgDoneMask);
       /* edef meassevr minor mask;  upon error, last value is kept  */
