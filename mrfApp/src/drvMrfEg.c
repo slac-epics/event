@@ -98,6 +98,106 @@
 #include <egRecord.h>           /* For driver to load seq rams, we need to know the mode          */
 #include <egeventRecord.h>      /* In order to do sth with egeventRecord */
 
+/**************************************************************************************************/
+/*  Series 200 VME Event Generator Register Map                                                   */
+/**************************************************************************************************/
+typedef struct MrfEVGRegs
+{
+  epicsUInt16 Control   ;
+  epicsUInt16 EventMask ;
+  epicsUInt16 VmeEvent  ;       /* and distributed bus data (byte wide) */
+  epicsUInt16 obsolete_Seq2Addr  ;
+  epicsUInt16 obsolete_Seq2Data  ;
+  epicsUInt16 obsolete_Seq1Addr  ;
+  epicsUInt16 obsolete_Seq1Data  ;
+
+  epicsUInt16 Event0Map   ;     /**< Event Mapping Register for external (HW) input 0 */
+  epicsUInt16 Event1Map   ;     /**< Event Mapping Register for external (HW) input 1 */
+  epicsUInt16 Event2Map   ;     /**< Event Mapping Register for external (HW) input 2 */
+  epicsUInt16 Event3Map   ;     /**< Event Mapping Register for external (HW) input 3 */
+  epicsUInt16 Event4Map   ;     /**< Event Mapping Register for external (HW) input 4 */
+  epicsUInt16 Event5Map   ;     /**< Event Mapping Register for external (HW) input 5 */
+  epicsUInt16 Event6Map   ;     /**< Event Mapping Register for external (HW) input 6 */
+  epicsUInt16 Event7Map   ;     /**< Event Mapping Register for external (HW) input 7 */
+
+  /* Extended registers */
+  epicsUInt16 MuxCountDbEvEn;   /**< Multiplexed counter distributed bus (byte wide) */
+                                            /**< enables and event trigger enables (byte wide) */
+  epicsUInt16 obsolete_Seq1ExtAddr  ;      /**< Extended address SEQ RAM 1 */
+  epicsUInt16 obsolete_Seq2ExtAddr  ;      /**< Extended address SEQ RAM 2 */
+  epicsUInt16 Seq1ClockSel  ;     /**< Sequence RAM 1 clock selection */
+  epicsUInt16 Seq2ClockSel  ;     /**< Sequence RAM 2 clock selection */
+  epicsUInt16 ACinputControl;     /**< AC related controls register */
+  epicsUInt16 MuxCountSelect;     /**< reset, Mux seq. trigger enable and Mux select */
+  epicsUInt16 MuxPrescaler;       /**< Mux prescaler values (25MHz/value) */
+  epicsUInt16 FPGAVersion ;      /**< FPGA firmware register number (only series 100) */
+  epicsUInt32 Reserved_0x30;
+  epicsUInt32 Reserved_0x34;
+  epicsUInt32 Reserved_0x38;
+  epicsUInt32 Reserved_0x3C;
+  epicsUInt16 RfSelect;         /* 0x40, RF Clock Selection register */
+  epicsUInt16 MxcPolarity;      /* 0x42, Mpx counter reset polarity */
+  epicsUInt16 Seq1Addr;         /* 0x44, 11 bit address, 0-2047 (2 kB event RAM) */
+  epicsUInt16 Seq1Data;         /* 0x46, Event code, 8 bits */
+  epicsUInt32 Seq1Time;         /* 0x48, Time offset in event clock from trigger */
+  epicsUInt32 Seq1Pos;          /* 0x52, Current sequence time position */
+  epicsUInt16 Seq2Addr;         /* 0x56, 11 bit address, 0-2047 */
+  epicsUInt16 Seq2Data;         /* 0x58,  Event code, 8 bits */
+  epicsUInt32 Seq2Time;         /**< Time offset in event clock from trigger */
+  epicsUInt32 Seq2Pos;          /**< Current sequence time position */
+  epicsUInt16 EvanControl;      /**< Event analyser control register */
+  epicsUInt16 EvanEvent;        /**< Event analyser event code, 8 bits */
+  epicsUInt32 EvanTimeH;        /**< Bits 63-32 of event analyser time counter */
+  epicsUInt32 EvanTimeL;        /**< Bits 31-0 of event analyser time counter */
+  epicsUInt16 uSecDiv;          /* 0x68, Divider to get from event clock to ~1 MHz */
+  epicsUInt16 DataBufControl;  /* 0x6A, Data Buffer control register */
+  epicsUInt16 DataBufSize;    /* 0x6C, Data Buffer transfer size in bytes,
+                            multiple of four */
+  epicsUInt16 DBusEvents;  /* 0x6E, Distributed bus events enable, these are for
+                         special event codes:
+                         DBUS7: event code 0x7D, reset prescaler/load seconds
+                         DBUS6: event code 0x71, seconds '1'
+                         DBUS5: event code 0x70, seconds '0' */
+  epicsUInt32 Reserved_0x70;
+  epicsUInt32 Reserved_0x74;
+  epicsUInt32 Reserved_0x78;
+  epicsUInt32 Reserved_0x7C;
+  epicsUInt32 FracDivControl;   /* 0x80, Micrel SY87739L programming word */
+  epicsUInt32 DelayRf;          /* 0x84 */
+  epicsUInt32 DelayRx;          /* 0x88 */
+  epicsUInt32 DelayTx;          /* 0x8C */
+  epicsUInt32 AdiControl;       /* 0x90 */              
+  epicsUInt32 FbTxFrac;         /* 0x94 */
+  epicsUInt32 DelayRFInit;      /* 0x98, Init value for RF Delay Chip */
+  epicsUInt32 DelayRxInit;      /* 0x9C, Init value for Rx Delay Chip */
+  epicsUInt32 DelayTxInit;      /* 0xA0, Init value for Tx Delay Chip */
+  epicsUInt32 Reserved_0xA4;
+  epicsUInt32 Reserved_0xA8;
+  epicsUInt32 Reserved_0xAC;
+  epicsUInt32 Reserved_0xB0;
+  epicsUInt32 Reserved_0xB4;
+  epicsUInt32 Reserved_0xB8;
+  epicsUInt32 Reserved_0xBC;
+  epicsUInt32 Reserved_0xC0;
+  epicsUInt32 Reserved_0xC4;
+  epicsUInt32 Reserved_0xC8;
+  epicsUInt32 Reserved_0xCC;
+  epicsUInt32 Reserved_0xD0;
+  epicsUInt32 Reserved_0xD4;
+  epicsUInt32 Reserved_0xD8;
+  epicsUInt32 Reserved_0xDC;
+  epicsUInt32 Reserved_0xE0;
+  epicsUInt32 Reserved_0xE4;
+  epicsUInt32 Reserved_0xE8;
+  epicsUInt32 Reserved_0xEC;
+  epicsUInt32 Reserved_0xF0;
+  epicsUInt32 Reserved_0xF4;
+  epicsUInt32 Reserved_0xF8;
+  epicsUInt32 Reserved_0xFC;
+  epicsUInt32 Reserved_0x100[0x700/4];
+  epicsUInt32 DataBuffer[EVG_MAX_DATA_ARRAY_SIZE];
+}MrfEVGRegs;
+
 #define EG_MONITOR                      /* Include the EG monitor program */
 #define RAM_LOAD_SPIN_DELAY     1       /* taskDelay() for waiting on RAM */
 
@@ -357,7 +457,7 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
     MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT_SY87729L);
   else
     MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT);
-  pCard->pEg    = pEvg;
+  pCard->pEg    = (void *)pEvg;
   pCard->Cardno = Card;
   pCard->Slot   = Slot;
   ellAdd (&EgCardList, &pCard->Link); /* NEW 3/30/06 */
@@ -842,7 +942,9 @@ long EgRamClockSet(EgCardStruct *pParm, long Ram, long Clock)
  **/
 long EgMasterEnableGet(EgCardStruct *pParm)
 {
-  if (MRF_VME_REG16_READ(&pParm->pEg->Control)&0x8000)
+  volatile MrfEVGRegs *pEg = pParm->pEg;
+  
+  if (MRF_VME_REG16_READ(&pEg->Control)&0x8000)
     return(0);
 
   return(1);
@@ -2078,78 +2180,90 @@ int EgSeqRamWrite(EgCardStruct *pParm, int ram, unsigned short address,
   return OK;
 }
 
-int EgDataBufferMode(volatile MrfEVGRegs *pEvg, int enable)
+int EgDataBufferMode(EgCardStruct *pParm, int enable)
 {
   int mask;
+  volatile MrfEVGRegs *pEg = pParm->pEg;
 
-  mask = MRF_VME_REG16_READ(&pEvg->DataBufControl) & ~EVG_DBUF_MODE;
+  mask = MRF_VME_REG16_READ(&pEg->DataBufControl) & ~EVG_DBUF_MODE;
 
   if (enable)
     mask |= EVG_DBUF_MODE;
 
-  MRF_VME_REG16_WRITE(&pEvg->DataBufControl, mask);
+  MRF_VME_REG16_WRITE(&pEg->DataBufControl, mask);
 
-  if (enable && (MRF_VME_REG16_READ(&pEvg->DataBufControl) & EVG_DBUF_MODE))
+  if (enable && (MRF_VME_REG16_READ(&pEg->DataBufControl) & EVG_DBUF_MODE))
     return OK;
 
   return ERROR;
 }
 
-int EgDataBufferEnable(volatile MrfEVGRegs *pEvg, int enable)
+int EgDataBufferEnable(EgCardStruct *pParm, int enable)
 {
   int mask;
+  volatile MrfEVGRegs *pEg = pParm->pEg;
 
-  mask = MRF_VME_REG16_READ(&pEvg->DataBufControl) & ~EVG_DBUF_ENABLE;
+  mask = MRF_VME_REG16_READ(&pEg->DataBufControl) & ~EVG_DBUF_ENABLE;
 
   if (enable)
     mask |= EVG_DBUF_ENABLE;
 
-  MRF_VME_REG16_WRITE(&pEvg->DataBufControl, mask);
+  MRF_VME_REG16_WRITE(&pEg->DataBufControl, mask);
 
-  if (enable && (MRF_VME_REG16_READ(&pEvg->DataBufControl) & EVG_DBUF_ENABLE))
+  if (enable && (MRF_VME_REG16_READ(&pEg->DataBufControl) & EVG_DBUF_ENABLE))
     return OK;
 
   return ERROR;
 }
 
-int EgDataBufferSetSize(volatile MrfEVGRegs *pEvg, unsigned short size)
+int EgDataBufferSetSize(EgCardStruct *pParm, unsigned short size)
 {
+  volatile MrfEVGRegs *pEg = pParm->pEg;
   if (size == 0 || size > EVG_MAX_BUFFER || (size & 3))
     return ERROR;
 
-  MRF_VME_REG16_WRITE(&pEvg->DataBufSize, size);
+  MRF_VME_REG16_WRITE(&pEg->DataBufSize, size);
 
-  if (MRF_VME_REG16_READ(&pEvg->DataBufSize) == size)
+  if (MRF_VME_REG16_READ(&pEg->DataBufSize) == size)
     return OK;
 
   return ERROR;
 }
-void EgDataBufferLoad(volatile MrfEVGRegs *pEvg, epicsUInt32 *data, int nelm) 
+void EgDataBufferLoad(EgCardStruct *pParm, epicsUInt32 *data, unsigned int nelm) 
 {
   /* Update registers and send */
-  EgDataBufferUpdate(pEvg, data, nelm);
-  EgDataBufferSend(pEvg);
-}
-void EgDataBufferUpdate(volatile MrfEVGRegs *pEvg, epicsUInt32 *data, int nelm)
-{
   int ii; 
+  volatile MrfEVGRegs *pEg = pParm->pEg;
+
+  if (nelm > EVG_MAX_DATA_ARRAY_SIZE) return;
 
   for (ii = 0; ii < nelm; ii++) {
-    MRF_VME_REG32_WRITE(&pEvg->DataBuffer[ii], data[ii]);
+    MRF_VME_REG32_WRITE(&pEg->DataBuffer[ii], data[ii]);
   }
+  EgDataBufferSend(pParm);
 }
 
-void EgDataBufferSend(volatile MrfEVGRegs *pEvg)
+void EgDataBufferUpdate(EgCardStruct *pParm, epicsUInt32 data,
+                        unsigned int dataIdx)
+{
+  volatile MrfEVGRegs *pEg = pParm->pEg;
+  
+  if (dataIdx >= EVG_MAX_DATA_ARRAY_SIZE) return;
+
+  MRF_VME_REG32_WRITE(&pEg->DataBuffer[dataIdx], data);
+}
+
+void EgDataBufferSend(EgCardStruct *pParm)
 {
   int mask;
+  volatile MrfEVGRegs *pEg = pParm->pEg;
 
-  mask = MRF_VME_REG16_READ(&pEvg->DataBufControl);
+  mask = MRF_VME_REG16_READ(&pEg->DataBufControl);
   mask |= EVG_DBUF_TRIGGER;
-  MRF_VME_REG16_WRITE(&pEvg->DataBufControl, mask);
+  MRF_VME_REG16_WRITE(&pEg->DataBufControl, mask);
 }
 
 int EgDataBufferInit(int Card, int nelm) {
-  volatile MrfEVGRegs *pEvg;
   int rc;
   EgCardStruct *pCard = EgGetCardStruct(Card);
   if (pCard == NULL) {
@@ -2158,12 +2272,10 @@ int EgDataBufferInit(int Card, int nelm) {
     return ERROR;
   }
 
-  pEvg = pCard->pEg;
-
-  rc = EgDataBufferMode(pEvg, 1); /* set "shared" for data with dist'd bus sig */ 
-  rc = EgDataBufferEnable(pEvg, 1);
+  rc = EgDataBufferMode(pCard, 1); /* set "shared" for data with dist'd bus sig */ 
+  rc = EgDataBufferEnable(pCard, 1);
   /* Set size of data buffer in h/w */
-  rc = EgDataBufferSetSize(pEvg, nelm);
+  rc = EgDataBufferSetSize(pCard, nelm);
   if (rc == ERROR) {
     /* COMPLAIN */
     return rc;
