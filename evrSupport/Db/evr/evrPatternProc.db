@@ -19,7 +19,7 @@ record(sSub, "$(DEV):PATTERNN-3") {
   field(SNAM, "evrPatternProc")
   field(INPA, "$(DEV):PATTERNDATA.VAL")
   field(INPB, "$(DEV):PATTERNDATA.SEVR")
-  field(INPC, "$(DEV):PATTERNDATA.NORD")
+  field(INPM, "$(DEV):PATTERNDATA.NORD")
   field(L, "131071")
   field(BRSV, "INVALID")
   field(FLNK, "$(DEV):EDEFMEASSEVR")
