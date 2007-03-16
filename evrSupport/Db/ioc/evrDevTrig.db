@@ -78,28 +78,12 @@ record(ao, "$(DEV)TDLY") {
   field(FLNK, "EVR:$(LOCA):$(UNIT):CTRL.OT$(T)D")
 }
 
-record(ai, "$(DEV)TDLYEC") {
-  field(DESC, "trig EC delay wrt fiducial")
-  field(DTYP, "Raw Soft Channel")
-  field(LINR, "LINEAR")
-  field(EGU, "$(EGU)")
-  field(HOPR, "$(DRVH)")
-  field(LOPR, "0")
-  field(EGUF, "$(DRVH)")
-  field(EGUL, "0")
-  field(ESLO, "$(ESLO)")
-  field(PINI, "YES")
-  field(FLNK, "$(DEV)TDLYCALC")
-  field(PREC, "$(PREC)")
-  field(INP, "IOC:$(EVG):$(TEC)EVNT.B CA ")
-}
-
 record(calc, "$(DEV)TDLYCALC") {
   field(FLNK, "$(DEV)TDLY")
   field(CALC, "A+B-C")
   field(INPA, "$(DEV)TDES.VAL ")
   field(INPB, "$(IOC):TREF CPP")
-  field(INPC, "$(DEV)TDLYEC.VAL")
+  field(INPC, "IOC:$(EVG):$(TEC)EVNT.I CPP")
 }
 
 #! Further lines contain data used by VisualDCT
@@ -120,11 +104,6 @@ record(calc, "$(DEV)TDLYCALC") {
 #! Field("$(DEV)TDLY.DOL",16777215,0,"$(DEV)TDLY.DOL")
 #! Link("$(DEV)TDLY.DOL","$(DEV)TDLYCALC.VAL")
 #! Field("$(DEV)TDLY.FLNK",16777215,1,"$(DEV)TDLY.FLNK")
-#! Record("$(DEV)TDLYEC",2773,2360,0,1,"$(DEV)TDLYEC")
-#! Field("$(DEV)TDLYEC.VAL",16777215,1,"$(DEV)TDLYEC.VAL")
-#! Field("$(DEV)TDLYEC.FLNK",16777215,1,"$(DEV)TDLYEC.FLNK")
-#! Link("$(DEV)TDLYEC.FLNK","$(DEV)TDLYCALC")
-#! Field("$(DEV)TDLYEC.INP",16777215,1,"$(DEV)TDLYEC.INP")
 #! Record("$(DEV)TDLYCALC",3090,1995,0,1,"$(DEV)TDLYCALC")
 #! Field("$(DEV)TDLYCALC.INPA",16777215,0,"$(DEV)TDLYCALC.INPA")
 #! Link("$(DEV)TDLYCALC.INPA","$(DEV)TDES.VAL")
