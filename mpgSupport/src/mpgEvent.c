@@ -170,7 +170,7 @@ static int mpgEventSeqInit(subRecord *psub)
   ramNext     = 0; /* next sequence ram to go */
 
   /* Initialize event code table */
-  memset(mpgEvent_as,    0, sizeof(mpgEvent_ts)    * MRF_NUM_EVENTS);
+  memset(mpgEvent_as,    0, sizeof(mpgEvent_ts) * MRF_NUM_EVENTS);
   /* Initialize codes that are reserved for post-event and external
      trigger so they cannot be used here */
   mpgEvent_as[EVENT_EXTERNAL_TRIG].code      = EVENT_EXTERNAL_TRIG;
@@ -184,6 +184,11 @@ static int mpgEventSeqInit(subRecord *psub)
   mpgEvent_as[EVENT_FIDUCIAL].code           = EVENT_FIDUCIAL;
   mpgEvent_as[EVENT_FIDUCIAL].enable         = 1;
   mpgEvent_as[EVENT_FIDUCIAL].everyCycle     = 1;
+  /* Initialize the heartbeat event  - this is NOT included
+     in the linked list since it is internal. */
+  mpgEvent_as[EVENT_HEARTBEAT].code          = EVENT_HEARTBEAT;
+  mpgEvent_as[EVENT_HEARTBEAT].enable        = 1;
+  mpgEvent_as[EVENT_HEARTBEAT].everyCycle    = 1;
   /* Initialize the end-of-sequence event  - this is NOT included in the
      linked list since the delay (Timestamp) is unknown until other
      events are added */
@@ -199,9 +204,12 @@ static int mpgEventSeqInit(subRecord *psub)
     mpgEvent_as[EVENT_FIDUCIAL].ramPos_a[idx]             = 0;
     mpgEvent_as[EVENT_FIDUCIAL].ram_as[idx].EventCode     = EVENT_FIDUCIAL;
     mpgEvent_as[EVENT_FIDUCIAL].ram_as[idx].Timestamp     = 0;
-    mpgEvent_as[EVENT_END_SEQUENCE].ramPos_a[idx]         = 1;
+    mpgEvent_as[EVENT_HEARTBEAT].ramPos_a[idx]            = 1;
+    mpgEvent_as[EVENT_HEARTBEAT].ram_as[idx].EventCode    = EVENT_HEARTBEAT;
+    mpgEvent_as[EVENT_HEARTBEAT].ram_as[idx].Timestamp    = 1;
+    mpgEvent_as[EVENT_END_SEQUENCE].ramPos_a[idx]         = 2;
     mpgEvent_as[EVENT_END_SEQUENCE].ram_as[idx].EventCode = EVENT_END_SEQUENCE;
-    mpgEvent_as[EVENT_END_SEQUENCE].ram_as[idx].Timestamp = 1;
+    mpgEvent_as[EVENT_END_SEQUENCE].ram_as[idx].Timestamp = 2;
 #ifdef __rtems__
     if (evgCard_ps) {
       /* Set RAM off - EVG initialization will do this too. */
@@ -209,6 +217,9 @@ static int mpgEventSeqInit(subRecord *psub)
       EgSeqRamWrite(evgCard_ps, ram,
                     mpgEvent_as[EVENT_FIDUCIAL].ramPos_a[idx],
                     &mpgEvent_as[EVENT_FIDUCIAL].ram_as[idx]);
+      EgSeqRamWrite(evgCard_ps, ram,
+                    mpgEvent_as[EVENT_HEARTBEAT].ramPos_a[idx],
+                    &mpgEvent_as[EVENT_HEARTBEAT].ram_as[idx]);
       EgSeqRamWrite(evgCard_ps, ram,
                     mpgEvent_as[EVENT_END_SEQUENCE].ramPos_a[idx],
                     &mpgEvent_as[EVENT_END_SEQUENCE].ram_as[idx]);
@@ -233,7 +244,7 @@ static int mpgEventSeqInit(subRecord *psub)
   Inputs:
        Pattern N-1 used on next fiducial:
        A - Pattern N-1 Modifier1 (mpg_ipling, mod720resync bits, beam code)
-       B - Pattern N-1 Modifier4 (time slot)
+       B - Pattern N-1 Time Slot
             
   Outputs:
        L - Event Enable/Disable
@@ -248,11 +259,10 @@ static int mpgEventSeq(subRecord *psub)
   mpgEvent_ts     *mpgEvent_ps;
   mpgTimeSlot_ts  *mpgTimeSlot_ps;
   epicsUInt32      modifier1  = psub->a;
-  epicsUInt32      modifier4  = psub->b;
   epicsUInt32      lastTimestamp;
   int              ramPos;
   int              ram;
-  int              idx;
+  unsigned int     idx;
   int              eidx;
 
   eventEnable = 1;
@@ -299,11 +309,12 @@ static int mpgEventSeq(subRecord *psub)
   }
 #endif
   /* Set up this sequence RAM only if all events are enabled. Note that
-     the fiducial event is always position 0 so start at position 1
-     in the sequence ram.  The fiducial timestamp is always zero. */
+     the fiducial and heartbeat events are always position 0 and 1 so
+     start at position 2 in the sequence ram.  The fiducial and
+     heartbeat timestamps are always 0 and 1. */
   psub->l       = eventEnable;
-  ramPos        = 1;
-  lastTimestamp = 0;
+  ramPos        = 2;
+  lastTimestamp = 1;
   if (eventEnable) {
     int ramUpdate;
     ELLNODE *node_ps = ellFirst(&eventList_s);
@@ -367,11 +378,10 @@ static int mpgEventSeq(subRecord *psub)
     }
   }
   /* Find time slot */
-  idx       = (modifier4 >> 29) & TIMESLOT_VAL_MASK;
-  psub->val = idx;
-  idx--;
+  psub->val = psub->b;
+  idx       = (unsigned int)psub->b - 1;
   /* Enable the event codes associated with this time slot */
-  if (idx >= 0) {
+  if (idx<TIMESLOT_MAX) {
     mpgTimeSlot_ps = &mpgTimeSlot_as[idx];
     for (eidx = 0; eidx < EVENTS_PER_TIMESLOT; eidx++) {
       /* Are we ready to send this one?  Look at counter. */
@@ -508,8 +518,10 @@ static int mpgEventSeqSwitch(subRecord *psub)
        D - Maximum Delay (clock ticks)
        E - Enable/Disable this event code
        F - Event code applies to every cycle
+       G - Sequence Ram Speed (Hz)
      
   Outputs:
+       I - Desired Delay in the Sequence Ram (nsec)
        J - Actual Enable/Disable
        K - Actual Every Cycle Flag
        L - Actual Delay in the Sequence Ram (clock ticks)
@@ -585,6 +597,10 @@ static long mpgEventCode(subRecord *psub)
   } else {
     psub->j = psub->k = psub->l = psub->val = 0;
   }
+  /* Convert from clock ticks to nanoseconds */
+  if (psub->g > 0) psub->i = psub->b/psub->g * 1E9;
+  else             psub->i = 0;
+  
   /* Now set up new attributes for this event - 360Hz processing will change
      RAM position and update event code */
   mpgEvent_as[newcode].code                = newcode;
