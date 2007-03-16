@@ -2,8 +2,8 @@ file mpgEventAll.db
 {
 #                                  Check    Trigger
 #          Device                PNET Data  Seq Ram
-  pattern { DEVICE        , SYSI , CHECKI , SENDI  , FLNKI                  }
-          { IOC:IN20:EV01 , SYS0 ,   1    ,   0    , IOC:IN20:EV01:FIDUCIAL }
+  pattern { DEVICE        , SYSI , CHECKI , SENDI  , FLNKI                  , SPEED                   }
+          { IOC:IN20:EV01 , SYS0 ,   1    ,   0    , IOC:IN20:EV01:FIDUCIAL , EVG:IN20:EV01:CTRL.R1SP }
 }
 file bsaEdefAll.db {
   pattern { DEVICE        , SYSI }
