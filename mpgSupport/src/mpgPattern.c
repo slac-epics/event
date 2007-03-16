@@ -350,7 +350,6 @@ static int mpgPatternProcInit(sSubRecord *psub)
     DPVT - Pointer to EVG Card Structure
        A - Spare
        B - Pnet processing error flag
-       C - Spare
        D - Pnet Modifier 1
        E - Pnet Modifier 2
        F - Pnet Modifier 3
@@ -368,6 +367,7 @@ static int mpgPatternProcInit(sSubRecord *psub)
        W - edef MeasSevr Major Mask
        Z - Modulo 720 Flag    
   Outputs:
+       C - Time Slot
        L - Pulse ID
        VAL = Error flag:
              0 = OK
@@ -434,7 +434,7 @@ static long mpgPatternProc(sSubRecord *psub)
     /* send pattern on to all EVRs */
 #ifdef __rtems__
     if (psub->dpvt) {
-      EgDataBufferLoad(((EgCardStruct *)psub->dpvt)->pEg,
+      EgDataBufferLoad((EgCardStruct *)psub->dpvt,
                        (epicsUInt32 *)&evrPatternWF_s,
                        sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32));
     }
@@ -455,6 +455,9 @@ static long mpgPatternProc(sSubRecord *psub)
   } else {
     psub->z = 0;
   }
+  /* Find time slot */
+  psub->c = (double)((evrPatternWF_s.pnet_s.modifier_a[3] >> 29) &
+                     TIMESLOT_VAL_MASK);
   if (psub->val) return -1;
   return 0;
 }
