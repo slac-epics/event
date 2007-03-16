@@ -155,6 +155,7 @@ record(fanout, "$(DEV):EDEFFO") {
   field(LNK5, "EDEF:$(ELOCA):5:PATTERNFO")
   field(LNK6, "EDEF:$(ELOCA):6:PATTERNFO")
   field(FLNK, "$(DEV):EDEFFO1")
+  field(SDIS, "$(DEV):FIDUCIAL.L")
 }
 
 record(fanout, "$(DEV):EDEFFO1") {
@@ -209,7 +210,7 @@ record(sub, "$(DEV):TIMESLOTN-1") {
   field(INAM, "mpgEventSeqInit")
   field(SNAM, "mpgEventSeq")
   field(INPA, "$(DEV):PATTERNN-1.D")
-  field(INPB, "$(DEV):PATTERNN-1.G")
+  field(INPB, "$(DEV):PATTERNN-1.C")
   field(LOPR, "1")
   field(HOPR, "6")
   field(BRSV, "INVALID")
