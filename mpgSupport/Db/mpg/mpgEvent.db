@@ -8,6 +8,7 @@ record(sub, "$(DEV):$(NAME)EVNT") {
   field(INPD, "119000")
   field(INPE, "1")
   field(INPF, "$(ALWAYS)")
+  field(INPG, "$(CONV)")
   field(LOPR, "1")
   field(HOPR, "255")
   field(BRSV, "INVALID")
