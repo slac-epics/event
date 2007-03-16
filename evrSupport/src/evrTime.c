@@ -110,9 +110,9 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
   epicsTimeStamp * epicsTime_ps write  ptr to epics timestamp to be returned
   evrTimeId_te   id             read   timestamp pipeline index;
 	                                  0=time associated w this pulse
-					  1=time associated w next pulse
-                                          2=time assoc'ed w pulse 2 ahead
-                                          3=time assoc'ed w pulse 3 ahead
+                                       Future:
+                                          1 to 255 = time associated with
+                                          event codes 1 to 255.
 
   Rem:  Routine to get the epics timestamp from the evr timestamp table
         that is populated from incoming broadcast from EVG
@@ -126,8 +126,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 {
   int status;
   
-  if ((id < 0) || (id > MAX_EVR_TIME) || (!evrTimeRWMutex_ps)) {
-    DEBUGPRINT(DP_ERROR,evrTimeFlag,("evrTimeGet: Bad event! %d\n", id));
+  if ((id != evrTimeCurrent) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
   }
@@ -282,9 +281,12 @@ static long evrTimeDiag (sSubRecord *psub)
 
   Abs:  Creates the evrTimeRWMutex_ps read/write mutex 
         and initializes the evrTime_as array.
-		The evr timestamp table is initialized to system time
-		and invalid status. During processing, if a timestamp status goes
-		invalid, the time is overwritten to the last good evr timestamp.
+	The evr timestamp table is initialized to system time
+	and invalid status. During processing, if a timestamp status goes
+	invalid, the time is overwritten to the last good evr timestamp.
+
+        Checks the first active time slot for this IOC and determines the
+        corresponding second one.
 
   Side: EVR Time Timestamp table
   pulse pipeline n  , status - 0=OK; -1=invalid
@@ -402,13 +404,12 @@ pulse pipeline n  , status - 0=OK; 1=last good; 2=invalid
    E - PULSEIDN-3 severity
    F - PULSEIDN-2 severity
    G - PULSEIDN-1 severity
+   H - TIMESLOTN-1
+   I - First  Active Time Slot for this IOC (1, 2, 3)
+   J - Second Active Time Slot for this IOC (4, 5, 6)
    
    Input/Outputs:
-   H   Spare
-   I   Counter of same pulses in a row
-   J   Spare
-   K   Spare
-   L   Spare
+   L - Enable/Disable flag for current pattern and timestamp update
    VAL = Error Flag
    Ret:  0
    
@@ -418,6 +419,7 @@ static int evrTimeProc (subRecord *psub)
   int errFlag = EVR_TIME_OK;
   int n;
   int diff;
+  int startidx;
 
   /* Keep a count of messages and reset before overflow */
   if (msgCount < EVR_MAX_INT) {
@@ -446,33 +448,29 @@ static int evrTimeProc (subRecord *psub)
       }
     }
   }
+  if ((psub->h == 0) ||
+      (psub->h == psub->i) || (psub->h == psub->j)) startidx = 0;
+  else                                              startidx = 1;
   /* advance the evr timestamps in the pipeline */
   if (!epicsMutexLock(evrTimeRWMutex_ps)) {
-    for (n=0;n<evrTimeNext3;n++) {
+    for (n=startidx;n<evrTimeNext3;n++) {
       evrTime_as[n] = evrTime_as[n+1];
     }
     /* determine if next is the same as last pulse */
-    /* Allow 3 same pulses in a row before setting the next time to invalid */
     /* Same pulses means the EVG is not sending timestamps and this forces
        record timestamps to revert to system time */
-    if (psub->d==psub->c) {
-      if (psub->i > evrTimeNext3) {
-        evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
-      } else {
-        ++psub->i;
-      }
-    } else {
-      psub->i = 0;
+    if ((!startidx) && (psub->d==psub->c)) {
+      evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
     }
     epicsMutexUnlock(evrTimeRWMutex_ps);
   /* If we cannot lock - bad problem somewhere. Set everything to bad status */
   } else {
-    ++psub->i;
     errFlag = EVR_TIME_INVALID;
     for (n=0;n<evrTimeNext3;n++) {
       evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
     }
   }
+  psub->l   = startidx;
   psub->val = (double) errFlag;
   if (errFlag) return epicsTimeERROR;
   return epicsTimeOK;
