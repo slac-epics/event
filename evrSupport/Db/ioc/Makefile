@@ -37,8 +37,12 @@ DB += bsaSimXL05.db
 DB += bsaXL09.db
 DB += bsaSimXL09.db
 
+# bsac testing on XL04
+DB += patternSimXL04.db
+
 # Laser Room and Injector Laser Steering
 DB += IOC-LR20-LS01evr.db
+DB += IOC-LR20-LS02evr.db
 DB += IOC-IN20-LS11evr.db  
 DB += IOC-IN20-LS12evr.db  
 DB += IOC-IN20-LS13evr.db  
@@ -49,6 +53,7 @@ DB += IOC-IN20-LS17evr.db
 DB += IOC-IN20-LS18evr.db  
 DB += IOC-IN20-LS19evr.db  
 DB += IOC-LR20-LS01pattern.db
+DB += IOC-LR20-LS02pattern.db
 DB += IOC-IN20-LS11pattern.db  
 DB += IOC-IN20-LS12pattern.db  
 DB += IOC-IN20-LS13pattern.db  
@@ -59,6 +64,7 @@ DB += IOC-IN20-LS17pattern.db
 DB += IOC-IN20-LS18pattern.db  
 DB += IOC-IN20-LS19pattern.db
 DB += IOC-LR20-LS01trig.db
+DB += IOC-LR20-LS02trig.db
 DB += IOC-IN20-LS11trig.db
 DB += IOC-IN20-LS12trig.db  
 DB += IOC-IN20-LS13trig.db 

@@ -9,10 +9,10 @@ file evrDevTrig.db {
 #      Device	      , Description   , EVR  ,  width ,desired  , EC delay   , EVR  , EVR,  IOC          , slope 
 #			                            Trigger       wrt TREF   wrt fiducial loca   unit                 1/119Mhz
   pattern { DEV       ,  DESC         , T    ,  WID   , DES     , TEC        , LOCA , UNIT, IOC          , ESLO            
-                      ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG}
+                      ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG        , OTP}
 	  { BLEN:LI21:265:,  "BL11"       , 0    ,  100   , 10      , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01}
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0}
 	  { BLEN:LI21:280:,  "BL12"       , 1    ,  100   , 10      , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01}
+                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP1}
 }
 

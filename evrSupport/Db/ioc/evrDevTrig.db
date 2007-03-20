@@ -7,10 +7,10 @@ record(longout, "$(DEV)EVENTCTRL") {
   field(DESC, "$(DESC)")
 }
 
-record(bo, "$(DEV)STATE") {
-  field(DESC, "$(DESC) En/Disable")
+record(bo, "$(DEV)TCTL") {
+  field(DESC, "$(DESC) Control")
   field(DTYP, "Soft Channel")
-  field(OUT, "EVR:$(LOCA):$(UNIT):CTRL.OTP$(T) PP")
+  field(OUT, "EVR:$(LOCA):$(UNIT):CTRL.$(OTP) PP")
   field(ZNAM, "Disabled")
   field(ONAM, "Enabled")
   field(OMSL, "supervisory")
