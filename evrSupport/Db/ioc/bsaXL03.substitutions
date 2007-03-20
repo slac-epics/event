@@ -52,6 +52,6 @@ file evrPatternAll.db {
 	  { IOC:XX03:1 , "IOC:XX03:1:FANOUTSLC PP" ,  ""   ,    ""   , 1E06 }
 }
 file evrPatternProc.db {
-  pattern { DEVICE }
+  pattern { DEV }
 	  { IOC:XX03:1}
 }
