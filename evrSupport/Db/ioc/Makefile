@@ -12,14 +12,17 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #
 # Test stands
+DB += evrXL04.db
 DB += evrXL05.db
 DB += evrXL09.db
 DB += evrXL16.db
+DB += evrPatternXL04.db
 DB += evrPatternXL05.db
 DB += evrPatternXL09.db
 DB += evrPatternXL16.db
 DB += trigXL09.db
 DB += trigXL05.db
+DB += trigXL04.db
 
 DB += evrDevTrig.db
 
@@ -36,9 +39,6 @@ DB += bsaXL05.db
 DB += bsaSimXL05.db
 DB += bsaXL09.db
 DB += bsaSimXL09.db
-
-# bsac testing on XL04
-DB += patternSimXL04.db
 
 # Laser Room and Injector Laser Steering
 DB += IOC-LR20-LS01evr.db

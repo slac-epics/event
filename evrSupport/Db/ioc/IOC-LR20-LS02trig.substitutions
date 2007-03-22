@@ -8,37 +8,37 @@
 file evrDevTrig.db {
 #      Device	      , Description   , EVR  ,  width ,desired  , EC delay   , EVR  , EVR,  IOC          , slope 
 #			                            Trigger       wrt TREF   wrt fiducial loca   unit                 1/119Mhz
-  pattern { DEV       ,  DESC         , T    ,  WID   , DES     , TEC       , LOCA , UNIT, IOC          , ESLO            
-                      ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG       , OTP  }
-	 { PKLS:LR20:168: , "Pockels Cell" , 0    ,  100   , 10     , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP0 }
-	 { TRIG:LR20:LS01:, "Medox PC 1"  , 1    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP1 }
-	 { TRIG:LR20:LS02:, "Medox PC 2"  , 2    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP2 }
-	 { TRIG:LR20:LS03:, "Pulse Cleaner", 3    ,  100   , 10     , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP3 }
-	 { TRIG:LR20:LS04:, "Dazzler"     , 4    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP4 }
-	 { TRIG:LR20:LS05:, "Streak Camera", 5    ,  100   , 10     , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP5 }
-	 { TRIG:LR20:LS06:, "AutoCor ext PC",6    ,  100   , 10     , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP6 }
-	 { SCOP:LR20:LS01:, "Oscilloscope 1", 7    ,  100   , 10    , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP7 }
-	 { TRIG:LR20:LS07:, "Jedi 1 diode", 8    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP8 }
-	 { TRIG:LR20:LS08:, "Jedi 1 Q-Switch", 9    ,  100   , 10   , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP9 }
-	 { TRIG:LR20:LS09:, "Jedi 2 diode", A    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPA }
-	 { TRIG:LR20:LS10:, "Jedi 2 Q-Switch", B    ,  100   , 10   , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPB }
-	 { TRIG:LR20:LS11:, "BB1 Camera"  , C    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPC }
-	 { TRIG:LR20:LS12:, "BB2 Camera"  , D    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-                      ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPD }
-#	 { TRIG:LR20:LS13:, "Diagnostic"  , D    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
-#                     ,  1            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP  }
+  pattern { DEV       ,  DESC         , POL  ,  WID   , DES     , TEC       , LOCA , UNIT, IOC          , ESLO            
+                      ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG       , TCTL , TPOL, TWID, TDES}
+	 { TRIG:LR20:LS01:, "Laser trig"  , 0    ,  10000 , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , DG0E , DG0P, DG0W, DG0D}
+	 { TRIG:LR20:LS02:, "Medox PC 1"  , 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP1 , OT1P, OT1W, OT1D}
+	 { TRIG:LR20:LS03:, "Medox PC 2"  , 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP2 , OT2P, OT2W, OT2D}
+	 { TRIG:LR20:LS04:, "Pulse Cleaner", 0   ,  100   , 10     , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP3 , OT3P, OT3W, OT3D}
+	 { TRIG:LR20:LS05:, "Dazzler"     , 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP4 , OT4P, OT4W, OT4D}
+	 { TRIG:LR20:LS06:, "Streak Camera", 0   ,  100   , 10     , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP5 , OT5P, OT5W, OT5D}
+	 { TRIG:LR20:LS07:, "AutoCor ext PC",0   ,  100   , 10     , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP6 , OT6P, OT6W, OT6D}
+	 { SCOP:LR20:LS01:, "Oscilloscope 1", 0  ,  100   , 10    , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP7 , OT7P, OT7W, OT7D}
+	 { TRIG:LR20:LS08:, "Jedi 1 diode", 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP8 , OT8P, OT8W, OT8D}
+	 { TRIG:LR20:LS09:, "Jedi 1 Q-Switch", 0 ,  100   , 10   , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP9 , OT9P, OT9W, OT9D}
+	 { TRIG:LR20:LS10:, "Jedi 2 diode", 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPA , OTAP, OTAW, OTAD}
+	 { TRIG:LR20:LS11:, "Jedi 2 Q-Switch", 0 ,  100   , 10   , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPB , OTBP, OTBW, OTBD}
+	 { TRIG:LR20:LS12:, "BB1 Camera"  , 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPC , OTCP, OTCW, OTCD}
+	 { TRIG:LR20:LS13:, "BB2 Camera"  , 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPD , OTDP, OTDW, OTDD}
+#	 { TRIG:LR20:LS14:, "Diagnostic"  , 0    ,  100   , 10      , LCLSBEAM  , LR20 , LS02, IOC:LR20:LS02, 8.40336692324359
+#                     ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTP0 , OT0P, OT0W, OT0D}
 }
 

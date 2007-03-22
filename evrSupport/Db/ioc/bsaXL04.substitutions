@@ -6,51 +6,39 @@
 # One per device:
 #
 file bsaBPMSEdef.db {
-  pattern {DEVICE  , LOC  , UN, SYS}
-	  { BPMS:XX04:1, XX04 , 1 , SYS0}
-	  { BPMS:XX04:2, XX04 , 1 , SYS0}
-	  { BPMS:XX04:3, XX04 , 1 , SYS0}
-	  { BPMS:XX04:4, XX04 , 1 , SYS0}
-	  { BPMS:XX04:5, XX04 , 1 , SYS0}
-	  { BPMS:XX04:6, XX04 , 1 , SYS0}
+  pattern {DEVICE      , LOC  , UN, SYS }
+	  { BPMS:XX04:1, XL04,EV01, SYS0}
+	  { BPMS:XX04:2, XL04,EV01, SYS0}
+	  { BPMS:XX04:3, XL04,EV01, SYS0}
+	  { BPMS:XX04:4, XL04,EV01, SYS0}
+	  { BPMS:XX04:5, XL04,EV01, SYS0}
+	  { BPMS:XX04:6, XL04,EV01, SYS0}
 }
 
 file bsaTOROEdef.db {
-  pattern {DEVICE  , LOC  , UN, SYS}
-	  { TORO:XX04:1 ,XX04 , 1, SYS0}
-	  { TORO:XX04:2 ,XX04 , 1, SYS0}
+  pattern {DEVICE       , LOC , UN , SYS }
+	  { TORO:XX04:1 ,XL04 ,EV01, SYS0}
+	  { TORO:XX04:2 ,XL04 ,EV01, SYS0}
 }
 file bsaPMTEdef.db {
-  pattern {DEVICE  , LOC  , UN, SYS}
-	  { PMT:XX04:1 , XX04 ,  1, SYS0}
-	  { PMT:XX04:2 , XX04 ,  1, SYS0}
-	  { PMT:XX04:3 , XX04 ,  1, SYS0}
-	  { PMT:XX04:4 , XX04 ,  1, SYS0}
-	  { PMT:XX04:5 , XX04 ,  1, SYS0}
-	  { PMT:XX04:6 , XX04 ,  1, SYS0}
+  pattern {DEVICE      , LOC , UN , SYS }
+	  { PMT:XX04:1 , XL04,EV01, SYS0}
+	  { PMT:XX04:2 , XL04,EV01, SYS0}
+	  { PMT:XX04:3 , XL04,EV01, SYS0}
+	  { PMT:XX04:4 , XL04,EV01, SYS0}
+	  { PMT:XX04:5 , XL04,EV01, SYS0}
+	  { PMT:XX04:6 , XL04,EV01, SYS0}
 }
 file bsaBLENEdef.db {
-  pattern {DEVICE   , LOC  , UN, SYS}
-	  { BLEN:XX04:1 , XX04,  1, SYS0 }
-	  { BLEN:XX04:2 , XX04,  1, SYS0 }
-	  { BLEN:XX04:3 , XX04,  1, SYS0 }
+  pattern {DEVICE       , LOC , UN , SYS }
+	  { BLEN:XX04:1 , XL04,EV01, SYS0}
+	  { BLEN:XX04:2 , XL04,EV01, SYS0}
+	  { BLEN:XX04:3 , XL04,EV01, SYS0}
 }
 file bsaWIREEdef.db {
-  pattern {DEVICE   , LOC  , UN, SYS}
-	  { WIRE:XX04:1 , XX04 ,  1, SYS0}
-	  { WIRE:XX04:2 , XX04 ,  1, SYS0}
-	  { WIRE:XX04:3 , XX04 ,  1, SYS0}
-	  { WIRE:XX04:4 , XX04 ,  1, SYS0}
-}
-#
-# Pattern records
-file evrPatternAll.db {
-#	    Device    ,  SLC Pattern Check LNK     ,  EVR/Trigger    
-#	                                                 Links          
-  pattern { DEVICE     ,        LINK4              , LINK5 ,   LINK6 , TREF }
-	  { IOC:XX04:1 , "IOC:XX04:1:FANOUTSLC PP" ,  ""   ,    ""   , 1E06 }
-}
-file evrPatternProc.db {
-  pattern { DEV }
-	  { IOC:XX04:1}
+  pattern {DEVICE       , LOC , UN , SYS }
+	  { WIRE:XX04:1 , XL04,EV01, SYS0}
+	  { WIRE:XX04:2 , XL04,EV01, SYS0}
+	  { WIRE:XX04:3 , XL04,EV01, SYS0}
+	  { WIRE:XX04:4 , XL04,EV01, SYS0}
 }
