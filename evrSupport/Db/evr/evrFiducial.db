@@ -122,7 +122,7 @@ record(ao, "$(DEV):TREF") {
   field(PINI, "YES")
   field(ESLO, "8.40336692324359")
   field(VAL, "$(VAL)")
-  field(PREC, "1")
+  field(PREC, "0")
 }
 
 #! Further lines contain data used by VisualDCT
