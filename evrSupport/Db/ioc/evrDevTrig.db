@@ -32,7 +32,7 @@ record(bo, "$(DEV)TPOL") {
 }
 
 record(ao, "$(DEV)TWID") {
-  field(DESC, "$(DESC) trig width ")
+  field(DESC, "$(DESC) width")
   field(DTYP, "Raw Soft Channel")
   field(OUT, "EVR:$(LOCA):$(UNIT):CTRL.$(TWID)")
   field(OMSL, "supervisory")
@@ -52,7 +52,7 @@ record(ao, "$(DEV)TWID") {
 }
 
 record(ao, "$(DEV)TDES") {
-  field(DESC, "$(DESC) des trig")
+  field(DESC, "$(DESC) desired")
   field(DTYP, "Raw Soft Channel")
   field(OMSL, "supervisory")
   field(LINR, "LINEAR")
