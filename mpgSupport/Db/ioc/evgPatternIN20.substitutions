@@ -10,7 +10,7 @@ file bsaEdefAll.db {
  	  { IOC:IN20:EV01 , SYS0 }
 }
 file evrPatternAll.db {
-#	    Device        , Time Slot Processing         PNET Processing     
-  pattern { DEVICE        ,         LINK4             ,      LINK5         , LINK6 , TREF }
-	  { IOC:IN20:EV01 , IOC:IN20:EV01:TIMESLOTN-1 , IOC:IN20:EV01:PNET ,  ""   , 1E06 }
+#	    Device        ,    PNET Processing   Time Slot Processing           BSA Processing
+  pattern { DEVICE        ,         LINK4      ,      LINK5                ,         LINK6        , TREF }
+	  { IOC:IN20:EV01 , IOC:IN20:EV01:PNET , IOC:IN20:EV01:TIMESLOTN-1 , IOC:IN20:EV01:EDEFFO , 1E06 }
 }

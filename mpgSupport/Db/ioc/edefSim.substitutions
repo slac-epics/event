@@ -12,9 +12,9 @@ file bsaEdefAll.db {
  	  { IOC:SYS1:1 , SYS1 }
 }
 file evrPatternAll.db {
-#	    Device     , Time Slot Processing       Data Processing
-  pattern { DEVICE     ,         LINK4          ,      LINK5             , LINK6 , TREF }
-	  { IOC:SYS1:1 , IOC:SYS1:1:TIMESLOTN-1 , IOC:SYS1:1:PATTERNDATA ,  ""   , 1E06 }
+#	    Device     ,  Pattern Processing        Time Slot Processing      BSA Processing
+  pattern { DEVICE     ,         LINK4          ,         LINK5          ,      LINK6        , TREF }
+	  { IOC:SYS1:1 , IOC:SYS1:1:PATTERNDATA , IOC:SYS1:1:TIMESLOTN-1 , IOC:SYS1:1:EDEFFO , 1E06 }
 }
 file mpgPatternTest.db {
   pattern { SYSI  , UNITI }
