@@ -1,7 +1,7 @@
 /*=============================================================================
 
   Name: evrMessage.c
-           evrMessageCreate    - Initialize Message Space and Init Scan I/O
+           evrMessageCreate    - Initialize Message Space
            evrMessageRegister  - Register Reader of the Message
            evrMessageWrite     - Write a Message
            evrMessageRead      - Read  a Message
@@ -271,13 +271,6 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
     evrMessage_as[messageIdx].lockErrorCount++;
     locked = 0;
   }
-  /* Update diagnostics counters */
-  if (evrMessage_as[messageIdx].updateCount < EVR_MAX_INT) {
-    evrMessage_as[messageIdx].updateCount++;
-  } else {
-    evrMessage_as[messageIdx].updateCountRollover++;
-    evrMessage_as[messageIdx].updateCount = 0;
-  }
   if (evrMessage_as[messageIdx].messageNotRead) {
     evrMessage_as[messageIdx].overwriteCount++;
   }
@@ -406,6 +399,14 @@ int evrMessageStart(unsigned int messageIdx)
   
   /* Reset time that processing ends */
   evrMessage_as[messageIdx].procTimeEnd = 0;
+
+  /* Update diagnostics counters */
+  if (evrMessage_as[messageIdx].updateCount < EVR_MAX_INT) {
+    evrMessage_as[messageIdx].updateCount++;
+  } else {
+    evrMessage_as[messageIdx].updateCountRollover++;
+    evrMessage_as[messageIdx].updateCount = 0;
+  }
 
   return 0;
 }
