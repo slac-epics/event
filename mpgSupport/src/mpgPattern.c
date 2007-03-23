@@ -40,6 +40,8 @@
   Mod:  (newest to oldest)
 
 =============================================================================*/
+#include <string.h>           /* for memset                 */
+
 #include "debugPrint.h"
 #include "subRecord.h"        /* for struct subRecord       */
 #include "sSubRecord.h"       /* for struct sSubRecord      */
@@ -65,6 +67,11 @@
      be set to 0 here and altered via prompt or in st.cmd file */
 int mpgPatternFlag = DP_INFO;
 #endif
+
+/* Time Slot Counters - one counter per supported rate */
+static int tsCounter_a[TIMESLOT_RATE_MAX];
+/* 30hz, 10hz, 5hz, 1hz, 0.5hz */
+static int tsCounterMax_a[TIMESLOT_RATE_MAX] = { 1, 5, 11, 59, 119 };
 
 static unsigned int msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
@@ -98,6 +105,9 @@ static unsigned int seqCheck3ErrCount     = 0;
 static int mpgPatternPnetInit(subRecord *psub)
 {
   DBADDR *wfAddr = dbGetPdbAddrFromLink(&psub->inpa);
+  
+  /* Initialize rate counters for every timeslot and every rate */
+  memset(tsCounter_a, 0, sizeof(int) * TIMESLOT_RATE_MAX);
   /*
    * inpa must be a DB link and must be the proper type.
    */
@@ -125,8 +135,9 @@ static int mpgPatternPnetInit(subRecord *psub)
        A - Pnet waveform, used to access waveform data
        B - Pnet waveform severity
        C - Pnet waveform number of elements
-       H - Flag to stop sequence checking
+       H - Previous Modifier5 without EDEF bits
        I - Previous Modulo 720 Count
+       K - Flag to stop sequence checking
        L - Previous Pulse ID
      
   Outputs:
@@ -134,9 +145,9 @@ static int mpgPatternPnetInit(subRecord *psub)
        E - Pnet Modifier 2
        F - Pnet Modifier 3
        G - Pnet Modifier 4
+       H - Modifier5 without EDEF bits
        I - Modulo 720 Count
        J - Beam Code
-       K - Spare
        L - Pulse ID (set invalid if error)
        VAL = Error flag:
              0 = OK
@@ -158,10 +169,13 @@ static long mpgPatternPnet(subRecord *psub)
   DBADDR                *wfAddr = (DBADDR *)psub->dpvt;
   epicsUInt32           *pnet_a;
   epicsUInt32            modifier1;
+  epicsUInt32            modifier5mask;
+  epicsUInt32            modifier5      = psub->h;
   int                    pulsid         = psub->l + 1.1;
   int                    modulo720Count = psub->i + 1.1;
   int                    errFlag        = PATTERN_OK;
   int                    pulsid_resync;
+  unsigned int           idx;
   unsigned char          traveling_one;
   unsigned char          timeslot;
   static unsigned int    pulseIDSync   = 0; /* EVG and SLC MPG pulse ID  synced */
@@ -184,6 +198,7 @@ static long mpgPatternPnet(subRecord *psub)
     if (psub->b) patternErrCount++;
     psub->e = psub->f = psub->g = psub->j = 0.0;
     modifier1     = 0;
+    modifier5     = 0;
     errFlag       = PATTERN_INVALID_WF;
     pulseIDSync   = 0;
     modulo720Sync = 0;
@@ -196,6 +211,7 @@ static long mpgPatternPnet(subRecord *psub)
     psub->e = (double)(pnet_a[1]);
     psub->f = (double)(pnet_a[2]);
     psub->g = (double)(pnet_a[3]);
+    timeslot = (unsigned char)((pnet_a[3] >> 29) & TIMESLOT_VAL_MASK);
     /* beamcode decoded from modifier 1*/
     psub->j = (double)((modifier1 >> 8) & BEAMCODE_BIT_MASK);
   
@@ -206,9 +222,8 @@ static long mpgPatternPnet(subRecord *psub)
       modulo720Sync = 0;
       seqCheckSync  = 0;
     /* Do sync checking if requested */
-    } else if (psub->h > 0.5) {
+    } else if (psub->k > 0.5) {
       traveling_one = (unsigned char)(pnet_a[1] & TIMESLOT_MASK);
-      timeslot      = (unsigned char)((pnet_a[3] >> 29) & TIMESLOT_VAL_MASK);
       if (pnetSeqCheckData1(traveling_one, seqCheckSync)) { /* "traveling 1" check */
         errFlag = PATTERN_SEQ_CHECK1_ERR;
         seqCheck1ErrCount++;
@@ -228,6 +243,10 @@ static long mpgPatternPnet(subRecord *psub)
 
       /* Check if modulo-720 can be resynchronized on this pulse. */
       if (modifier1 & MODULO720_MASK) {
+        /* Synch all time slot counters on MOD720 */
+        for (idx = 0; idx < TIMESLOT_RATE_MAX; idx++) {
+          tsCounter_a[idx] = tsCounterMax_a[idx];
+        }
         /* If we should be sync'ed but are not, update a counter */
         if (modulo720Sync && (modulo720Count != MODULO720_COUNT)) {
           modulo720SyncErrCount++;
@@ -285,6 +304,20 @@ static long mpgPatternPnet(subRecord *psub)
       modulo720Sync = 0;
       seqCheckSync  = 0;
     }
+    /* For timeslot 1, update counters and rate bits in modifier5 */
+    if (timeslot == 1) {
+      modifier5     = 0;
+      modifier5mask = 1<<EDEF_MAX;
+      for (idx = 0; idx < TIMESLOT_RATE_MAX; idx++) {
+        if (tsCounter_a[idx] >= tsCounterMax_a[idx]) {
+          tsCounter_a[idx] = 0;
+          if (!errFlag) modifier5 |= modifier5mask;
+        } else {
+          tsCounter_a[idx]++;
+        }
+        modifier5mask = modifier5mask<<1;
+      }
+    }
     dbScanUnlock(wfAddr->precord);
   }
   /* Tell EVRs if data is out-of-sync */
@@ -295,6 +328,7 @@ static long mpgPatternPnet(subRecord *psub)
     modulo720Count = 0;
   }
   psub->d   = (double)modifier1;
+  psub->h   = (double)modifier5;
   psub->i   = (double)modulo720Count;
   psub->l   = (double)pulsid;
   psub->val = (double)errFlag;
@@ -331,6 +365,7 @@ static int mpgPatternProcInit(sSubRecord *psub)
   EgDataBufferInit(0, sizeof(evrMessagePattern_ts));
   psub->dpvt = (EgCardStruct *)EgGetCardStruct(0);
 #endif
+
   return 0;
 }
 
@@ -344,7 +379,7 @@ static int mpgPatternProcInit(sSubRecord *psub)
         ------------------- ----------- ---------- ----------------------------
         subRecord *         psub        read       point to subroutine record
 
-  Rem:  Subroutine for IOC:LOCA:UNIT:PATTERN
+  Rem:  Subroutine for IOC:LOCA:UNIT:PATTERNN-3
 
   Inputs:
     DPVT - Pointer to EVG Card Structure
@@ -358,6 +393,7 @@ static int mpgPatternProcInit(sSubRecord *psub)
                One bit per BSA event definition (EDEF).
                20 EDEF total.
                0 = don't process this pulse, 1 = process this pulse.
+               Also, 5 time slot rate bits.
        I - Bunch Charge
        J - Beam Code
        K - EDAVGDONEN-3
@@ -581,16 +617,16 @@ static long mpgPatternState(sSubRecord *psub)
         INPH - Modifier 5 without EDEF bits       
         INPI - EDEF Beam Code
         INPJ - EDEF MEASCNT * AVGCNT = CNTMAX
-        INPM - EDEF INCLUSION1
-        INPN - EDEF INCLUSION2
-        INPO - EDEF INCLUSION3
-        INPP - EDEF INCLUSION4
-        INPQ - EDEF INCLUSION5
-        INPR - EDEF EXCLUSION1
-        INPS - EDEF EXCLUSION2
-        INPT - EDEF EXCLUSION3
-        INPU - EDEF EXCLUSION4
-        INPV - EDEF EXCLUSION5
+        INPM - EDEF INCLUSION1 (for Modifier2)
+        INPN - EDEF INCLUSION2 (for Modifier3)
+        INPO - EDEF INCLUSION3 (for Modifier4)
+        INPP - EDEF INCLUSION4 (for Modifier5)
+        INPQ - EDEF INCLUSION5 (not used)
+        INPR - EDEF EXCLUSION1 (for Modifier2) 
+        INPS - EDEF EXCLUSION2 (for Modifier3)
+        INPT - EDEF EXCLUSION3 (for Modifier4)
+        INPU - EDEF EXCLUSION4 (for Modifier5)
+        INPV - EDEF EXCLUSION5 (not used)
         INPW - Beam Code SEVR
         INPX - EDEF MEASCNT (= -1 means forever)
 		
@@ -628,23 +664,20 @@ static long mpgPatternCheck(sSubRecord *psub)
 	/* check inclusion mask */
 	DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
                    ("\t mpgPatternCheck: Beam Codes match \n"));	  
-	if (    (((unsigned long)psub->d & (unsigned long)psub->m) ==
+	if (    (((unsigned long)psub->e & (unsigned long)psub->m) ==
                  (unsigned long)psub->m) &&
-                (((unsigned long)psub->e & (unsigned long)psub->n) ==
+                (((unsigned long)psub->f & (unsigned long)psub->n) ==
                  (unsigned long)psub->n) &&
-                (((unsigned long)psub->f & (unsigned long)psub->o) ==
+                (((unsigned long)psub->g & (unsigned long)psub->o) ==
                  (unsigned long)psub->o) &&
-                (((unsigned long)psub->g & (unsigned long)psub->p) ==
-                 (unsigned long)psub->p) &&
-                (((unsigned long)psub->h & (unsigned long)psub->q) ==
-                 (unsigned long)psub->q)) {
+                (((unsigned long)psub->h & (unsigned long)psub->p) ==
+                 (unsigned long)psub->p)) {
           DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
                      ("mpgPatternCheck: inclusion match\n"));	  
-	  if (  (((unsigned long)psub->r & (unsigned long)psub->d) == 0) &&
-                (((unsigned long)psub->s & (unsigned long)psub->e) == 0) &&
-                (((unsigned long)psub->t & (unsigned long)psub->f) == 0) &&
-                (((unsigned long)psub->u & (unsigned long)psub->g) == 0) &&
-                (((unsigned long)psub->v & (unsigned long)psub->h) == 0)) {
+	  if (  (((unsigned long)psub->r & (unsigned long)psub->e) == 0) &&
+                (((unsigned long)psub->s & (unsigned long)psub->f) == 0) &&
+                (((unsigned long)psub->t & (unsigned long)psub->g) == 0) &&
+                (((unsigned long)psub->u & (unsigned long)psub->h) == 0)) {
 		DEBUGPRINT(DP_DEBUG, mpgPatternFlag,
                            ("mpgPatternCheck: exclusion match\n"));
 		psub->val = 1;  /* pattern match*/
