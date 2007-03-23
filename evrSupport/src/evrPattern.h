@@ -51,11 +51,16 @@ extern "C" {
 #define EDEF_MAX                 20           /* Maximum # event defns */
 #define TIMESLOT_MIN              1           /* Minimum time slot     */
 #define TIMESLOT_MAX              6           /* Maximum time slot     */
+#define TIMESLOT_RATE_MAX         5           /* # limited rates       */
+                                              /* 30, 10, 5, 1, 0.5hz   */
 
 #define EVENT_EXTERNAL_TRIG     100           /* External trigger event code */
 #define EVENT_EDEFINIT_MIN      101           /* Minimum event code for EDEF Init */
 #define EVENT_EDEFINIT_MAX      120           /* Maximum event code for EDEF Init */
-#define EVENT_MODULO720         121           /* Modulo 720 event code */
+#define EVENT_MODULO720         121           /* Modulo 720 event code    */
+#define EVENT_MODULO36_MIN      201           /* Min modulo 36 event code */
+#define EVENT_MODULO36_MAX      236           /* Max modulo 36 event code */
+#define MODULO36_MAX            36            /* # modulo 36 event codes  */
 
 /* VAL values set by pattern subroutines */
 #define PATTERN_OK                0
