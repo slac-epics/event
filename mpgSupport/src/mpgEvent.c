@@ -5,7 +5,6 @@
         mpgEventSeq       - MPG 360Hz Seq Ram Preparation
         mpgEventSeqSwitch - MPG 360Hz Seq Ram Switch
         mpgEventCode      - MPG Event Code Setup
-	mpgEventBCSelect  - MPG 360Hz Beam Code Fanout Selection
 	mpgEventBeamCode  - MPG 360Hz Beam Code Event Processing
 	mpgEventCounts    - Return Diagnostic Count Values
 	mpgEventCountReset- Reset Diagnostic Count Values
@@ -57,7 +56,10 @@
 #include "egRecord.h"         /* egMOD1_Off, egMOD1_Single   */
 #include "drvMrfEg.h"         /* MRF_NUM_EVENTS, Eg protos   */
 
-#define EVENTS_PER_TIMESLOT  11 /* # events per timeslot     */
+#define EVENTS_PER_TIMESLOT 10 /* # events per timeslot      */
+#define EVENTS_PER_TIMESLOT_ALWAYS 3 /* # events always sent */
+#define EVENTS_PER_BEAMCODE  7 /* # events per beamcode      */
+#define EVENTS_PER_BEAMCODE_ALWAYS 2 /* # events always sent */
 
 /* Detail for one event code */
 typedef struct {
@@ -77,20 +79,13 @@ typedef struct {
   int    busy;  
 } mpgRam_ts;
 
-/* Detail for one time slot */
-typedef struct {
-  int         counter_a[EVENTS_PER_TIMESLOT];
-  epicsUInt16 eventcode_a[EVENTS_PER_TIMESLOT];
-} mpgTimeSlot_ts;
-
 /* Tables and Lists */
 static ELLLIST        eventList_s;       /* Event list in sequence RAM order */
 static mpgEvent_ts    mpgEvent_as[MRF_NUM_EVENTS]; /* event code table       */
 static mpgRam_ts      mpgRam_as[MRF_NUM_SEQ_RAM];  /* ram flags              */
-static mpgTimeSlot_ts mpgTimeSlot_as[TIMESLOT_MAX]; /* time slot table       */
-/* 120hz (other TS), 120hz, 60hz, 30hz, 10hz, 5hz, 1hz, 0.5hz, 3 spares      */
-static int            tsCounterMax_a[EVENTS_PER_TIMESLOT] = 
-    { 0, 0, 0, 1, 5, 11, 59, 119, 360, 360, 360 };
+static epicsUInt16    tsEventCode_aa[TIMESLOT_MAX][EVENTS_PER_TIMESLOT];
+/* Modulo36 event code - incremented on every pulse */
+static epicsUInt16    mod36EventCode   = EVENT_MODULO36_MIN;
 
 /* Control Flags */
 static unsigned int   eventEnable      = 0; /* global event enable flag      */
@@ -131,8 +126,8 @@ static unsigned int   patternErrCount  = 0; /* # bad patterns                */
 ==============================================================================*/ 
 static int mpgEventSeqInit(subRecord *psub)
 {
+  int tidx;
   int idx;
-  int eidx;
   int timeslot;
   int eventcode;
   int ram;
@@ -150,19 +145,18 @@ static int mpgEventSeqInit(subRecord *psub)
   /* Initialize event code list used for sequence ram loading */
   ellInit(&eventList_s);
   /* Initialize time slot table */
-  for (idx = 0, timeslot = TIMESLOT_MIN; idx < TIMESLOT_MAX; idx++, timeslot++) {
+  for (tidx = 0, timeslot = TIMESLOT_MIN; tidx < TIMESLOT_MAX;
+       tidx++,   timeslot++) {
     /* First set up the event code for the other time slot */
     eventcode = timeslot + (TIMESLOT_MAX/2);
     if (eventcode > TIMESLOT_MAX) eventcode -= TIMESLOT_MAX;
-    eventcode *= EVENTS_PER_TIMESLOT-1;
-    eidx       = 0;
-    mpgTimeSlot_as[idx].eventcode_a[eidx] = eventcode;
-    mpgTimeSlot_as[idx].counter_a[eidx]   = 0;
+    eventcode *= EVENTS_PER_TIMESLOT;
+    idx        = 0;
+    tsEventCode_aa[tidx][idx] = eventcode;
     /* Now set up the event codes for this time slot. */
-    for (eidx++, eventcode = timeslot * (EVENTS_PER_TIMESLOT-1);
-         eidx < EVENTS_PER_TIMESLOT; eidx++, eventcode++) {
-      mpgTimeSlot_as[idx].eventcode_a[eidx] = eventcode;
-      mpgTimeSlot_as[idx].counter_a[eidx]   = 0;
+    for (idx++, eventcode = timeslot * EVENTS_PER_TIMESLOT;
+         idx < EVENTS_PER_TIMESLOT; idx++, eventcode++) {
+      tsEventCode_aa[tidx][idx] = eventcode;
     }
   }
   /* Start with all events disabled.  RAM 1 will be next. */
@@ -170,13 +164,19 @@ static int mpgEventSeqInit(subRecord *psub)
   ramNext     = 0; /* next sequence ram to go */
 
   /* Initialize event code table */
-  memset(mpgEvent_as,    0, sizeof(mpgEvent_ts) * MRF_NUM_EVENTS);
+  memset(mpgEvent_as, 0, sizeof(mpgEvent_ts) * MRF_NUM_EVENTS);
   /* Initialize codes that are reserved for post-event and external
      trigger so they cannot be used here */
   mpgEvent_as[EVENT_EXTERNAL_TRIG].code      = EVENT_EXTERNAL_TRIG;
   mpgEvent_as[EVENT_MODULO720].code          = EVENT_MODULO720;
-  for (idx = 0, eventcode = EVENT_EDEFINIT_MIN; idx < EDEF_MAX;
-       idx++,   eventcode++) {
+  for (eventcode = EVENT_EDEFINIT_MIN; eventcode <= EVENT_EDEFINIT_MAX;
+       eventcode++) {
+    mpgEvent_as[eventcode].code = eventcode;
+  }
+  /* Initialize codes that are reserved for MOD36 event codes,
+     except for the first one which is set up like other event codes. */
+  for (eventcode = EVENT_MODULO36_MIN+1; eventcode <= EVENT_MODULO36_MAX;
+       eventcode++) {
     mpgEvent_as[eventcode].code = eventcode;
   }
   /* Initialize the start-of-sequence fiducial event  - this is NOT included
@@ -245,25 +245,30 @@ static int mpgEventSeqInit(subRecord *psub)
        Pattern N-1 used on next fiducial:
        A - Pattern N-1 Modifier1 (mpg_ipling, mod720resync bits, beam code)
        B - Pattern N-1 Time Slot
+       C - Pattern N-1 Modifier5 (for rate bits)
             
   Outputs:
        L - Event Enable/Disable
        VAL - N-1 time slot (1 to 6)
        EVG sequence ram updated.
        EVG sequence mode set to single sequence.
-       Static data initialized.
+       Static data updated.
   
 ==============================================================================*/ 
 static int mpgEventSeq(subRecord *psub)
 {
   mpgEvent_ts     *mpgEvent_ps;
-  mpgTimeSlot_ts  *mpgTimeSlot_ps;
-  epicsUInt32      modifier1  = psub->a;
+  epicsUInt32      modifier1     = psub->a;
+  epicsUInt32      modifier5     = psub->c;
+  epicsUInt32      modifier5mask = 1<<EDEF_MAX;
   epicsUInt32      lastTimestamp;
   int              ramPos;
-  int              ram;
+#ifdef __rtems__
+  int              ram = ramNext + 1;
+#endif
+  int              ramUpdate;
+  unsigned int     tidx;
   unsigned int     idx;
-  int              eidx;
 
   eventEnable = 1;
   /* Lock the event data - this lock is kept throughout time slot
@@ -278,11 +283,15 @@ static int mpgEventSeq(subRecord *psub)
     patternErrCount++;
     eventEnable = 0;
   }
+  if ((modifier1 & MODULO720_MASK) || (mod36EventCode == EVENT_MODULO36_MAX)) {
+    mod36EventCode = EVENT_MODULO36_MIN;
+  } else {
+    mod36EventCode++;
+  }     
   /* Make sure the next ram is still in single mode and is inactive -
      after sequence control sends out a ram that's in single mode
      (which was done on the fiducial of the last pulse),
      it will automatically deactivate it.  */
-  ram = ramNext + 1;
 #ifdef __rtems__
   if (evgCard_ps) {
     int mode = EgGetMode(evgCard_ps, ram,
@@ -302,7 +311,7 @@ static int mpgEventSeq(subRecord *psub)
     /* If a RAM is still enabled, this means the fiducial didn't happen or
        the sequence ram is too long.  Disabling doesn't make a difference,
        we have to let it play out. */
-    else if (mpgRam_as[ram].enable) {
+    else if (mpgRam_as[ramNext].enable) {
       eventEnable = 0;
       enableErrCount++;
     }
@@ -316,7 +325,6 @@ static int mpgEventSeq(subRecord *psub)
   ramPos        = 2;
   lastTimestamp = 1;
   if (eventEnable) {
-    int ramUpdate;
     ELLNODE *node_ps = ellFirst(&eventList_s);
     
     /* Go through each event and disable it if it's enabled unless it.
@@ -331,7 +339,12 @@ static int mpgEventSeq(subRecord *psub)
         ramUpdate = 1;
       }
       if (mpgEvent_ps->everyCycle && mpgEvent_ps->enable) {
-        if (mpgEvent_ps->ram_as[ramNext].EventCode != mpgEvent_ps->code) {
+        /* Modulo36 event code is actually 36 event codes that share the
+           same delay.  Switch to the next event code now. */
+        if (mpgEvent_ps->code == EVENT_MODULO36_MIN) {
+          mpgEvent_ps->ram_as[ramNext].EventCode = mod36EventCode;
+          ramUpdate = 1;
+        } else if (mpgEvent_ps->ram_as[ramNext].EventCode != mpgEvent_ps->code) {
           mpgEvent_ps->ram_as[ramNext].EventCode = mpgEvent_ps->code;
           ramUpdate = 1;
         }
@@ -369,26 +382,24 @@ static int mpgEventSeq(subRecord *psub)
 #endif
     }
   }
-  /* Synch all time slot counters on MOD720 */
-  if (modifier1 & MODULO720_MASK) {
-    for (idx = 0; idx < TIMESLOT_MAX; idx++) {
-      for (eidx = 0; eidx < EVENTS_PER_TIMESLOT; eidx++) {
-        mpgTimeSlot_as[idx].counter_a[eidx] = tsCounterMax_a[eidx];
-      }
-    }
-  }
   /* Find time slot */
   psub->val = psub->b;
-  idx       = (unsigned int)psub->b - 1;
+  tidx      = (unsigned int)psub->b - 1;
   /* Enable the event codes associated with this time slot */
-  if (idx<TIMESLOT_MAX) {
-    mpgTimeSlot_ps = &mpgTimeSlot_as[idx];
-    for (eidx = 0; eidx < EVENTS_PER_TIMESLOT; eidx++) {
-      /* Are we ready to send this one?  Look at counter. */
-      if (mpgTimeSlot_ps->counter_a[eidx] >= tsCounterMax_a[eidx]) {
-        mpgTimeSlot_ps->counter_a[eidx] = 0;
-        mpgEvent_ps = &mpgEvent_as[mpgTimeSlot_ps->eventcode_a[eidx]];
-        if (eventEnable && mpgEvent_ps->enable) {
+  if ((tidx < TIMESLOT_MAX) && eventEnable) {
+    for (idx = 0; idx < EVENTS_PER_TIMESLOT; idx++) {
+      /* First 3 event codes are always sent.  The next
+         8 event codes depend on the rate bits in modifier5. */
+      if (idx < EVENTS_PER_TIMESLOT_ALWAYS) {
+        ramUpdate = 1;
+      } else {
+        if (modifier5 & modifier5mask) ramUpdate = 1;
+        else                           ramUpdate = 0;
+        modifier5mask = modifier5mask<<1;
+      }
+      if (ramUpdate) {
+        mpgEvent_ps = &mpgEvent_as[tsEventCode_aa[tidx][idx]];
+        if (mpgEvent_ps->enable) {
           mpgEvent_ps->ram_as[ramNext].EventCode = mpgEvent_ps->code;
 #ifdef __rtems__
           if (evgCard_ps) EgSeqRamWrite(evgCard_ps, ram,
@@ -396,9 +407,6 @@ static int mpgEventSeq(subRecord *psub)
                                         &(mpgEvent_ps->ram_as[ramNext]));
 #endif
         }
-      /* Not ready to send. Increment counter. */
-      } else {
-        mpgTimeSlot_ps->counter_a[eidx]++;
       }
     }
   }  
@@ -407,45 +415,101 @@ static int mpgEventSeq(subRecord *psub)
 
 /*=============================================================================
 
-  Name: mpgEventBCSelect
+  Name: mpgEventBeamCode
 
-  Abs:  360Hz Beam Code Fanout Selection
+  Abs:  360Hz Beam Code Event Codes
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
+        sSubRecord *        psub        read       point to subroutine record
 
-  Rem:  Subroutine for IOC:<LOCA>:<UNIT>:BEAMCODEN-1
+  Rem:  Subroutine for IOC:<LOCA>:<UNIT>:LCLSBEAM, etc
 
   Inputs:
-       Beam codes supported in event code processing: 
-       A - Beam Code a
-       B - Beam Code b
-       C - Beam Code c
-       D - Beam Code d
-       E - Beam Code e
-       F - Beam Code f
-       Pattern N-1 used on next fiducial:
-       G - Pattern N-1 Beam Code
+       A - Beam Code Base Event Code
+       B - Beam Code Rate Event Code Flag
+           (if zero, only set the base event code)
+           (if non-zero, set the event codes for other rates
+            when the time slot matches)
+       C - Beam Code associated with this Event Code
+       From Pattern N-1, N-2, N-3:
+       D - Beam Code
+       E - Modifier2
+       F - Modifier3
+       G - Modifier4
+       H - Modifier5 (for rate bits)
+       From the user:
+       I - Modifier2 Inclusion Mask
+       J - Modifier3 Inclusion Mask
+       K - Modifier4 Inclusion Mask
+       L - Modifier5 Inclusion Mask
+       M - Modifier2 Exclusion Mask
+       N - Modifier3 Exclusion Mask
+       O - Modifier4 Exclusion Mask
+       P - Modifier5 Exclusion Mask
             
   Outputs:
-       L - Beam code fanout selection
-       VAL - N-1 Beam Code (0 to 31)
+       VAL - Pattern Matches - one or more event codes are set
+       EVG sequence ram updated.
   
 ==============================================================================*/ 
-static int mpgEventBCSelect(subRecord *psub)
+static int mpgEventBeamCode(sSubRecord *psub)
 {
-  /* Find beam code fanout selection */
-  if      (!eventEnable)       psub->l = 0;
-  if      (psub->g == psub->a) psub->l = 1;
-  else if (psub->g == psub->b) psub->l = 2;
-  else if (psub->g == psub->c) psub->l = 3;
-  else if (psub->g == psub->d) psub->l = 4;
-  else if (psub->g == psub->e) psub->l = 5;
-  else if (psub->g == psub->f) psub->l = 6;
-  else                         psub->l = 0;
-  psub->val = psub->g;
-  
+  mpgEvent_ts     *mpgEvent_ps;
+  epicsUInt32      modifier5     = psub->h;
+  epicsUInt32      modifier5mask = 1<<EDEF_MAX;
+#ifdef __rtems__
+  int              ram           = ramNext + 1;
+#endif
+  int              ramUpdate     = 1;
+  int              eventcode     = psub->a;
+  unsigned int     idx           = 0;
+
+  if ((!eventEnable) || (psub->c != psub->d)) return 0;
+  if ((eventcode <= 0) || (eventcode >= MRF_NUM_EVENTS)) return -1;
+  psub->val = 0;  /* pattern doesn't match*/
+  if ((((unsigned long)psub->e & (unsigned long)psub->i) ==
+       (unsigned long)psub->i) &&
+      (((unsigned long)psub->f & (unsigned long)psub->j) ==
+       (unsigned long)psub->j) &&
+      (((unsigned long)psub->g & (unsigned long)psub->k) ==
+       (unsigned long)psub->k) &&
+      (((unsigned long)psub->h & (unsigned long)psub->l) ==
+       (unsigned long)psub->l)) {
+    if ((((unsigned long)psub->e & (unsigned long)psub->m) == 0) &&
+        (((unsigned long)psub->f & (unsigned long)psub->n) == 0) &&
+        (((unsigned long)psub->g & (unsigned long)psub->o) == 0) &&
+        (((unsigned long)psub->h & (unsigned long)psub->p) == 0)) {
+      psub->val = 1;  /* pattern match */
+      do {
+        /* First event code is always always sent.  The reset
+           depend on the rate bits in modifier5. */
+        if (idx < EVENTS_PER_BEAMCODE_ALWAYS) {
+          ramUpdate = 1;
+        } else {
+          if (modifier5 & modifier5mask) ramUpdate = 1;
+          else                           ramUpdate = 0;
+          modifier5mask = modifier5mask<<1;
+        }
+        if (ramUpdate) {
+          mpgEvent_ps = &mpgEvent_as[eventcode];
+          if (mpgEvent_ps->enable) {
+            mpgEvent_ps->ram_as[ramNext].EventCode = mpgEvent_ps->code;
+#ifdef __rtems__
+            if (evgCard_ps) EgSeqRamWrite(evgCard_ps, ram,
+                                          mpgEvent_ps->ramPos_a[ramNext],
+                                          &(mpgEvent_ps->ram_as[ramNext]));
+#endif
+          }
+        }
+        if (psub->b == 0) idx = EVENTS_PER_BEAMCODE;
+        else {
+          idx++;
+          eventcode++;
+        }
+      } while (idx < EVENTS_PER_BEAMCODE);
+    }
+  }  
   return 0;
 }
 
@@ -678,5 +742,4 @@ epicsRegisterFunction(mpgEventSeqInit);
 epicsRegisterFunction(mpgEventSeq);
 epicsRegisterFunction(mpgEventSeqSwitch);
 epicsRegisterFunction(mpgEventCode);
-epicsRegisterFunction(mpgEventBCSelect);
-/*epicsRegisterFunction(mpgEventBeamCode);*/
+epicsRegisterFunction(mpgEventBeamCode);
