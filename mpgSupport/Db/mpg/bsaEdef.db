@@ -58,7 +58,7 @@ record(sSub, "EDEF:$(SYS):$(MD):PATTERNCHECK") {
   field(INPE, "$(DEV):PNET.E MS")
   field(INPF, "$(DEV):PNET.F MS")
   field(INPG, "$(DEV):PNET.G MS")
-  field(INPH, "$(DEV):MODIFIER5INP")
+  field(INPH, "$(DEV):PNET.H MS")
   field(INPW, "$(DEV):PNET.SEVR")
   field(BRSV, "INVALID")
   field(DISV, "0")
