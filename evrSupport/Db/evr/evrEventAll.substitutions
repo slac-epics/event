@@ -24,6 +24,22 @@ file evrEvent.db
 pattern { DEV      , NAME    , ID , PRIO , FLNK               }
 	{$(DEVICE) , FIDUCIAL, 1  , LOW  , ""                 }
 	{$(DEVICE) , LCLSBEAM, 140, LOW  , ""                 }
+	{$(DEVICE) , LCLS_60_, 141, LOW  , ""                 }
+	{$(DEVICE) , LCLS_30_, 142, LOW  , ""                 }
+	{$(DEVICE) , LCLS_10_, 143, LOW  , ""                 }
+	{$(DEVICE) , LCLS_5_ , 144, LOW  , ""                 }
+	{$(DEVICE) , LCLS_1_ , 145, LOW  , ""                 }
+	{$(DEVICE) , LCLSHALF, 146, LOW  , ""                 }
+	{$(DEVICE) , LCLS_N-1, 147, LOW  , ""                 }
+	{$(DEVICE) , LCLS_N-2, 148, LOW  , ""                 }
+# LCLS TBD Event Codes
+	{$(DEVICE) , LCLSTBD1, 151, LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD2, 152, LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD3, 153, LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD4, 154, LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD5, 155, LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD6, 156, LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD7, 157, LOW  , ""                 }
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 , LOW  , ""                 }
