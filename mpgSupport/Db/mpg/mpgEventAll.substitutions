@@ -13,8 +13,8 @@ file mpgPatternProc.db
 {
 #
 #        Location
-pattern { DEV      , ELOCA , CHECK     , SEND     ,   FLNK   }
-        {$(DEVICE) ,$(SYSI), $(CHECKI) , $(SENDI) , $(FLNKI) }
+pattern { DEV      , ELOCA , CHECK     , SEND     }
+        {$(DEVICE) ,$(SYSI), $(CHECKI) , $(SENDI) }
 }
 file mpgEvent.db
 {
