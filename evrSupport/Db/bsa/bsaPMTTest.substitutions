@@ -19,8 +19,8 @@ file bsaTestInput.db
 }
 file bsaTestFanouts.db
 {
-  pattern {    DEV    ,  SECN  ,SCAN, LNK2                     ,LNK3      , LNK4  }
-          { $(DEVICE) , QDCRAW ,$(S), "$(DEVICE):EFQDCRAW PP"  ,""        , ""    }
+  pattern {    DEV    ,  SECN  ,SCAN, LNK2                     ,LNK3                   , LNK4, LNK5}
+          { $(DEVICE) , QDCRAW ,$(S), "$(DEVICE):EFQDCRAW PP"  ,"$(DEVICE):MDQDCRAW PP", ""  , ""  }
 }
 
 
