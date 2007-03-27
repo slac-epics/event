@@ -127,7 +127,20 @@ void pnetISR (
   /* if there was more than one PNET board, this would spec which one */
   void *arg)
 {
+#ifdef __rtems__
+  unsigned long ii;
+  evrMessage_tu message_u;
+#endif
+  
   evrMessageStart(EVR_MESSAGE_PNET);
+#ifdef __rtems__
+  for (ii=0; ii<EVR_PNET_MODIFIER_MAX; ii++) {
+    message_u.pnet_s.modifier_a[ii] =
+      in_be32((volatile void *)&(pLocalBuf[ii]));
+  }
+  evrMessageWrite(EVR_MESSAGE_PNET, &message_u);
+#endif
+  evrMessageStart(EVR_MESSAGE_FIDUCIAL);
   pnetAvailable = 1;
   epicsEventSignal(pnetTaskEventSem);
 }
@@ -142,23 +155,12 @@ void pnetISR (
 =============================================================================*/
 static int pnetTask()
 {  
-#ifdef __rtems__
-  unsigned long ii;
-  evrMessage_tu message_u;
-#endif
-  
   for (;;)
   {
     epicsEventMustWait(pnetTaskEventSem);
     if (pnetAvailable) {
-#ifdef __rtems__
-      for (ii=0; ii<EVR_PNET_MODIFIER_MAX; ii++) {
-        message_u.pnet_s.modifier_a[ii] =
-          in_be32((volatile void *)&(pLocalBuf[ii]));
-      }
-      evrMessageWrite(EVR_MESSAGE_PNET, &message_u);
-#endif
-      /* Process the pipeline and data records */
+      /* Advance the pipeline and then process the data */
+      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
       evrMessageProcess(EVR_MESSAGE_PNET);
       pnetAvailable = 0;
     }
@@ -222,10 +224,13 @@ static int pnetInitialise() {
 
   int rc;
 
+  /* Create space for the fiducial + diagnostics */
+  rc = evrMessageCreate(EVR_MESSAGE_FIDUCIAL_NAME, 0);
+  if (rc != EVR_MESSAGE_FIDUCIAL) return -1;
+  
   /* Create space for the PNET message + diagnostics */
   rc = evrMessageCreate(EVR_MESSAGE_PNET_NAME, sizeof(evrMessagePnet_ts));
-  if (rc != EVR_MESSAGE_PNET    ) return -1;
-  
+  if (rc != EVR_MESSAGE_PNET) return -1;
   /* Create the semaphore used by the ISR to wake up the pnet task */
   pnetTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
   if (!pnetTaskEventSem) {
