@@ -68,7 +68,7 @@ typedef struct {
 static evrTime_ts evrTime_as[MAX_EVR_TIME];
 
 /* EVR Time Timestamp RWMutex */
-static epicsMutexId evrTimeRWMutex_ps;
+static epicsMutexId evrTimeRWMutex_ps = 0;
 
 static unsigned int msgCount         = 0; /* # fiducials processed since boot/reset */ 
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
@@ -170,7 +170,6 @@ int evrTimePut (epicsTimeStamp  *epicsTime_ps, int status)
   /* invalid mutex id or error - must set status to invalid for the caller */
   else {
     evrTime_as[evrTimeNext3].status = epicsTimeERROR;
-    DEBUGPRINT(DP_ERROR,evrTimeFlag,("evrTimePut: Bad TimeRWMutex! \n"));
     return epicsTimeERROR;
   }
   return epicsTimeOK;
@@ -306,7 +305,8 @@ static int evrTimeInit(subRecord *psub)
   unsigned short i;
 
   /* Register this record for the start of fiducial processing */
-  evrMessageRegister(EVR_MESSAGE_FIDUCIAL_NAME, 0, (dbCommon *)psub);
+  if (evrMessageRegister(EVR_MESSAGE_FIDUCIAL_NAME, 0, (dbCommon *)psub) < 0)
+    return epicsTimeERROR;
   
   /* create read/write mutex around evr timestamp table array */
   if (!evrTimeRWMutex_ps) {
@@ -452,7 +452,7 @@ static int evrTimeProc (subRecord *psub)
       (psub->h == psub->i) || (psub->h == psub->j)) startidx = 0;
   else                                              startidx = 1;
   /* advance the evr timestamps in the pipeline */
-  if (!epicsMutexLock(evrTimeRWMutex_ps)) {
+  if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     for (n=startidx;n<evrTimeNext3;n++) {
       evrTime_as[n] = evrTime_as[n+1];
     }
@@ -463,12 +463,10 @@ static int evrTimeProc (subRecord *psub)
       evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
     }
     epicsMutexUnlock(evrTimeRWMutex_ps);
-  /* If we cannot lock - bad problem somewhere. Set everything to bad status */
+  /* If we cannot lock - bad problem somewhere. */
   } else {
     errFlag = EVR_TIME_INVALID;
-    for (n=0;n<evrTimeNext3;n++) {
-      evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
-    }
+    evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
   }
   psub->l   = startidx;
   psub->val = (double) errFlag;
