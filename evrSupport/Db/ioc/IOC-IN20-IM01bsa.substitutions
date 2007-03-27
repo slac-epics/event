@@ -8,6 +8,8 @@ file bsaTOROEdef.db {
 	  { TORO:IN20:431, IN20 , IM01 }
 	  { TORO:IN20:791, IN20 , IM01 }
 	  { TORO:IN20:971, IN20 , IM01 }
+	  { TORO:LI21:205, IN20 , IM01 }
+	  { TORO:LI21:277, IN20 , IM01 }
 
 }
 file bsaFARCEdef.db {
