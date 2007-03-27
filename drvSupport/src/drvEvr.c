@@ -20,14 +20,14 @@
  
 =============================================================================*/
 
-#include <drvSup.h> 		/* for DRVSUPFN */
-#include <errlog.h>		/* for errlogPrintf */
+#include <drvSup.h> 		/* for DRVSUPFN           */
+#include <errlog.h>		/* for errlogPrintf       */
 #include <epicsExport.h> 	/* for epicsExportAddress */
-#include <epicsEvent.h> 	/* for epicsEvent* */
-#include <epicsThread.h> 	/* for epicsThreadCreate */
-#include <evrMessage.h>		/* for evrQueueCreate */
-#include <drvMrfEr.h>		/* for Er* prototypes */
-#include <devMrfEr.h>		/* for ErRegisterEventHandler proto */
+#include <epicsEvent.h> 	/* for epicsEvent*        */
+#include <epicsThread.h> 	/* for epicsThreadCreate  */
+#include <evrMessage.h>		/* for evrMessageCreate   */
+#include <drvMrfEr.h>		/* for ErRegisterDevDBuffHandler */
+#include <devMrfEr.h>		/* for ErRegisterEventHandler    */
 
 static int evrReport();
 static int evrInitialise();
@@ -42,8 +42,6 @@ static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 volatile int            patternAvailable  = 0; /* pattern  available flag */
 volatile int            fiducialAvailable = 0; /* fiducial available flag */
-int                     patternBehind  = 0;
-int                     fiducialBehind = 0;
 
 /*=============================================================================
 
@@ -84,8 +82,7 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 
   evrMessageStart(messageType);
   evrMessageWrite(messageType, (evrMessage_tu *)message);
-  if  (patternAvailable) patternBehind++;
-  else patternAvailable = 1;
+  patternAvailable = 1;
   epicsEventSignal(evrTaskEventSem);
 }
 
@@ -103,8 +100,7 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
   if (eventNum == EVENT_FIDUCIAL) {
     evrMessageStart(EVR_MESSAGE_FIDUCIAL);
-    if  (fiducialAvailable) fiducialBehind++;
-    else fiducialAvailable = 1;
+    fiducialAvailable = 1;
     epicsEventSignal(evrTaskEventSem);
   }
 }
@@ -113,7 +109,8 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
                                                                                 
   Name: evrTask
                                                                                 
-  Abs:  This task performs record processing and monitors the EVR module.                                                                         
+  Abs:  This task performs record processing and monitors the EVR module.
+  
   Rem:  It's started by evrInitialise after the EVR module is configured. 
     
 =============================================================================*/
@@ -171,8 +168,6 @@ static int evrInitialise()
   } else {
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
     ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
-    /* Finally, enable the data stream on the EVR */
-    ErEnableDBuff(pCard, 1);
   }
 #endif
   
