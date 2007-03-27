@@ -11,11 +11,12 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 
-# B34 test stand and edef simulators
+# Test stands and edef simulators
 DB += evgXL15.db
 DB += evgPatternXL15.db
 DB += edefSim.db
-# Production and B280 test stand
+DB += evgPatternXL00.db
+# Production
 DB += evgIN20.db
 DB += evgPatternIN20.db
 
