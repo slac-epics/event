@@ -4,6 +4,7 @@
         mpgEventSeqInit   - MPG 360Hz Seq Ram Preparation Initialization
         mpgEventSeq       - MPG 360Hz Seq Ram Preparation
         mpgEventSeqSwitch - MPG 360Hz Seq Ram Switch
+        mpgEventSeqSend   - MPG 360Hz Seq Ram Send (for test stand)
         mpgEventCode      - MPG Event Code Setup
 	mpgEventBeamCode  - MPG 360Hz Beam Code Event Processing
 	mpgEventCounts    - Return Diagnostic Count Values
@@ -161,7 +162,7 @@ static int mpgEventSeqInit(subRecord *psub)
   }
   /* Start with all events disabled.  RAM 1 will be next. */
   eventEnable = 0; /* disabled until enabled by mpgEventSeqPrep */
-  ramNext     = 0; /* next sequence ram to go */
+  ramNext     = 1; /* next sequence ram to go */
 
   /* Initialize event code table */
   memset(mpgEvent_as, 0, sizeof(mpgEvent_ts) * MRF_NUM_EVENTS);
@@ -263,9 +264,7 @@ static int mpgEventSeq(subRecord *psub)
   epicsUInt32      modifier5mask = 1<<EDEF_MAX;
   epicsUInt32      lastTimestamp;
   int              ramPos;
-#ifdef __rtems__
-  int              ram = ramNext + 1;
-#endif
+  int              ram;
   int              ramUpdate;
   unsigned int     tidx;
   unsigned int     idx;
@@ -292,6 +291,10 @@ static int mpgEventSeq(subRecord *psub)
      after sequence control sends out a ram that's in single mode
      (which was done on the fiducial of the last pulse),
      it will automatically deactivate it.  */
+  /* Find the current ram that has gone out with the fiducial */
+  if (ramNext) ramNext = 0;
+  else         ramNext = 1;
+  ram = ramNext+1;
 #ifdef __rtems__
   if (evgCard_ps) {
     int mode = EgGetMode(evgCard_ps, ram,
@@ -526,7 +529,7 @@ static int mpgEventBeamCode(sSubRecord *psub)
   Rem:  Subroutine for IOC:<LOCA>:<UNIT>:SEQRAM
 
   Inputs:
-       A - For testing - send out a fiducial
+       None
             
   Outputs:
        VAL - Sequence Ram To Go on the next Fiducial
@@ -534,30 +537,52 @@ static int mpgEventBeamCode(sSubRecord *psub)
 ==============================================================================*/ 
 static int mpgEventSeqSwitch(subRecord *psub)
 {
-  int ramCurr;
   
-  /* Find the current ram that has gone out with the fiducial */
-  if (ramNext) ramCurr = 0;
-  else         ramCurr = 1;
 #ifdef __rtems__
-  if (evgCard_ps) {
-    /* For testing - when fiducial is not available, make it happen now. */
-    if (psub->a) {
-      EgEnableRam( evgCard_ps, ramCurr+1);
-      EgSeqTrigger(evgCard_ps, ramCurr+1);
-    }
+  if (evgCard_ps && (!mpgRam_as[ramNext].enable)) {
     /* Enable the next RAM for the next fiducial */
-    else if (!mpgRam_as[ramNext].enable)
-      EgEnableRam(evgCard_ps, ramNext+1);
+    EgEnableRam(evgCard_ps, ramNext+1);
+    mpgRam_as[ramNext].enable = 1;
   }
 #endif
-  /* Set the next RAM for the next time through */
-  psub->val   = ramNext;
-  ramNext     = ramCurr;
+  /* Set to the ram that was just enabled */
+  psub->val = ramNext;
   /* All events disabled until enabled by mpgEventSeq */
   eventEnable = 0;
   /* Unlock the static data so user requests can now be serviced. */
   if (!lockStatus) epicsMutexUnlock(mpgEventMutex_ps);
+  
+  return 0;
+}
+
+/*=============================================================================
+
+  Name: mpgEventSeqSend
+
+  Abs:  360Hz Sequence RAM Send (for test stand)
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        subRecord *         psub        read       point to subroutine record
+
+  Rem:  Subroutine for IOC:<LOCA>:<UNIT>:SEQRAMSEND
+
+  Inputs:
+       A - For testing - send out a fiducial
+            
+  Outputs:
+       VAL - Sequence Ram Sent
+  
+==============================================================================*/ 
+static int mpgEventSeqSend(subRecord *psub)
+{
+#ifdef __rtems__
+  if (evgCard_ps && psub->a && mpgRam_as[ramNext].enable) {
+    /* For testing - when fiducial is not available, make it happen now. */
+    EgSeqTrigger(evgCard_ps, ramNext+1);
+  }
+#endif
+  psub->val = ramNext;
   
   return 0;
 }
@@ -741,5 +766,6 @@ int mpgEventCountReset(void)
 epicsRegisterFunction(mpgEventSeqInit);
 epicsRegisterFunction(mpgEventSeq);
 epicsRegisterFunction(mpgEventSeqSwitch);
+epicsRegisterFunction(mpgEventSeqSend);
 epicsRegisterFunction(mpgEventCode);
 epicsRegisterFunction(mpgEventBeamCode);
