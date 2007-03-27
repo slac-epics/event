@@ -16,7 +16,7 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , DG0E , DG0P, DG0W, DG0D}
 	 { ADC:LR20:LS01: , "ADC 1"       , 1    ,  1000  , 10      , TS4_10    , LR20 , LS01, IOC:LR20:LS01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , DG1E , DG1P, DG1W, DG1D}
-	 { PMTR:LR20:LS01:, "Power Meter 1",0    ,  100   , 10     , TS4_10    , LR20 , LS01, IOC:LR20:LS01, 8.40336692324359
+	 { PMTR:LR20:LS01:, "Power Meter 1",0    ,  100   , 10      , TS4_10    , LR20 , LS01, IOC:LR20:LS01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , DG2E , DG2P, DG2W, DG2D}
 
 }

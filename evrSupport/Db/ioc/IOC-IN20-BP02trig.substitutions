@@ -52,5 +52,12 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP8 , OT8P, OT8W, OT8D}
  { BPMS:IN20:981:CALB ,  "BPMS3 Calb" , 0    ,  100   , 10      , TS5_120_   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP9 , OT9P, OT9W, OT9D}
+# spare triggers 4-6
+	 { TRIG:IN20:BP04:, "Spare Trig 4", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
+	 { TRIG:IN20:BP05:, "Spare Trig 5", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG0W, DG1D}
+	 { TRIG:IN20:BP06:, "Spare Trig 6", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
 }
 

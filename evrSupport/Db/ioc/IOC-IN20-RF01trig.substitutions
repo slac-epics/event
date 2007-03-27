@@ -37,6 +37,19 @@ file evrDevTrig.db {
 { GUN:IN20:1:GN2_D_  ,  "RF Gun 2 PAD"
 		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP9 , OT9P, OT9W, OT9D}
+#  spare triggers 1- 4
+{ TRIG:IN20:1:RF01   ,  "Spare Trig 1"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
+{ TRIG:IN20:1:RF02   ,  "Spare Trig 2"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D}
+{ TRIG:IN20:1:RF03   ,  "Spare Trig 3"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
+{ TRIG:IN20:1:RF04   ,  "Spare Trig 4"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG3E , DG3P, DG3W, DG3D}
 #EVR:IN20:RF02
 { ACCL:IN20:300:L0A_D_,  "L0A/B PAD"
 		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
@@ -62,6 +75,19 @@ file evrDevTrig.db {
 { SCOP:IN20:RH:SC2_   ,  "oscope 2"
 		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP7 , OT7P, OT7W, OT7D}
+#  spare triggers 5 - 8
+{ TRIG:IN20:1:RF05   ,  "Spare Trig 5"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
+{ TRIG:IN20:1:RF06   ,  "Spare Trig 6"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D}
+{ TRIG:IN20:1:RF07   ,  "Spare Trig 7"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
+{ TRIG:IN20:1:RF08   ,  "Spare Trig 8"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG3E , DG3P, DG3W, DG3D}
 #EVR:IN20:RF03
 { TCAV:IN20:490:TC0_C_1_,"L0 Tcav PAC"
 		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
@@ -104,6 +130,13 @@ file evrDevTrig.db {
 { ACCL:LI21:180:L1X_C_2_ ,"L1X PAC"
 		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPB , OTBP, OTBW, OTBD}
+#  spare triggers 9 -10
+{ TRIG:IN20:1:RF09   ,  "Spare Trig 9"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
+{ TRIG:IN20:1:RF10   ,  "Spare Trig 10"
+		                              , 0    ,  100   , 10      , TS4_30_    , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D}
 
 
 }

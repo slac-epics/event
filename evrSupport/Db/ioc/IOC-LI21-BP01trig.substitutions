@@ -38,6 +38,13 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  IN20:EV01    , OTPC , OTCP, OTCW, OTCD}
 { BPMS:LI21:315:CALB  ,  "BPMM14 Calb", 0    ,  100   , 10      , TS5_120_   , LI21 , BP01, IOC:LI21:BP01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  IN20:EV01    , OTPD , OTDP, OTDW, OTDD}
+# spare triggers 1-3
+	 { TRIG:LI21:BP01:, "Spare Trig 1", 0    ,  100   , 10      , TS5_120_   , LI21 , BP01, IOC:LI21:BP01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , LI21:EV01  , DG0E , DG0P, DG0W, DG0D}
+	 { TRIG:LI21:BP02:, "Spare Trig 2", 0    ,  100   , 10      , TS5_120_   , LI21 , BP01, IOC:LI21:BP01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , LI21:EV01  , DG1E , DG1P, DG0W, DG1D}
+	 { TRIG:LI21:BP03:, "Spare Trig 3", 0    ,  100   , 10      , TS5_120_   , LI21 , BP01, IOC:LI21:BP01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , LI21:EV01  , DG2E , DG2P, DG2W, DG2D}
 
 
 

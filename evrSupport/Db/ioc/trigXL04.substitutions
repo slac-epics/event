@@ -36,6 +36,12 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPB , OTBP, OTBW, OTBD}
 	{ TRIG:XL04:13:,  "trig 12TTB"    , 0    ,  100   , 10      , TS4_HALF , XL04 , EV01, IOC:XL04:EV01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPC , OTCP, OTCW, OTCD}
+	 { TRIG:XL04:XL01:, "Spare trig 1", 0    ,  100   , 10      , LCLSBEAM , XL04 , EV01, IOC:XL04:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG0E , DG0P, DG0W, DG0D}
+	 { TRIG:XL04:XL02:, "Spare trig 2", 0    ,  100   , 10      , LCLSBEAM , XL04 , EV01, IOC:XL04:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG1E , DG1P, DG1W, DG1D}
+	 { TRIG:XL04:XL03:, "Spare trig 3", 0    ,  100   , 10      , LCLSBEAM , XL04 , EV01, IOC:XL04:LS02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG2E , DG2P, DG2W, DG2D}
 
 
 

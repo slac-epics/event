@@ -10,9 +10,11 @@ file evrDevTrig.db {
 #			                            Trigger       wrt TREF   wrt fiducial loca   unit                 1/119Mhz
   pattern { DEV       ,  DESC         ,POL   ,  WID   , DES     , TEC        , LOCA , UNIT, IOC          , ESLO            
                       ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG        , TCTL , TPOL, TWID, TDES}
-	  { LENS:IN20:265:,  "CRG1"       , 0    ,  100   , 10      , LCLSBEAM   , IN20 , AM01, IOC:IN20:AM01, 8.40336692324359
+	  { CRAD:IN20:237:,  "CRG1"       , 0    ,  100   , 10      , LCLSBEAM   , IN20 , AM01, IOC:IN20:AM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
-	  { LENS:IN20:280:,  "CR01"       , 0    ,  100   , 10      , LCLSBEAM   , IN20 , AM01, IOC:IN20:AM01, 8.40336692324359
+	  { CRAD:IN20:842:,  "CR01"       , 0    ,  100   , 10      , LCLSBEAM   , IN20 , AM01, IOC:IN20:AM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D}
+	  { TRIG:IN20:AM01:, "Spare Trig 1", 0   ,  100   , 10      , LCLSBEAM   , IN20 , AM01, IOC:IN20:AM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
 }
 

@@ -14,5 +14,7 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
 	  { OTRS:LI21:291:,  "OTR12"      , 0    ,  100   , 10      , LCLS_10_   , LI21 , PM01, IOC:LI21:PM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D}
+	  { TRIG:LI21:PM01:  "Spare Trig 1", 0   ,  100   , 10      , LCLS_10_   , LI21 , PM01, IOC:LI21:PM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
 }
 

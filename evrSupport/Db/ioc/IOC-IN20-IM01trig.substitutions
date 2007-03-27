@@ -32,5 +32,11 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPC , OTCP, OTCW, OTCD}
 	  { TRIG:IN20:1M02:CALB,"Calibration 2",0   ,  100   , 10   , TS5_120_,  IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPD , OTDP, OTDW, OTDD}
+	  { TRIG:IN20:IM01:, "Spare Trig 1", 0   ,  100   , 10      , TS4_30_, IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG0E , DG0P, DG0W, DG0D}
+	  { TRIG:IN20:IM02:, "Spare Trig 2", 0   ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG1E , DG1P, DG1W, DG1D}
+	  { TRIG:IN20:IM03:, "Spare Trig 3", 0   ,  100   , 10      , TS4_30__ , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG2E , DG2P, DG2W, DG2D}
 }
 

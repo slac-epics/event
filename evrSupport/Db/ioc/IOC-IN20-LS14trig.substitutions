@@ -12,4 +12,8 @@ file evrDevTrig.db {
                       ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG        , TCTL , TPOL, TWID, TDES}
 	{ CAMR:IN20:186:  ,  "camera VCC" , 0    ,  100   , 10      , TS4_10_    , IN20 , LS14, IOC:IN20:LS14, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
+	{ TRIG:IN20:LS13: ,  "Spare Trig 1", 0   ,  100   , 10      , TS4_10_    , IN20 , LS14, IOC:IN20:LS14, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D}
+	{ TRIG:IN20:LS14: ,  "Spare Trig 2", 0   ,  100   , 10      , TS4_10_    , IN20 , LS14, IOC:IN20:LS14, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
 }
