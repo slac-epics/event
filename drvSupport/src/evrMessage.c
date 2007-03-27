@@ -42,6 +42,8 @@
 #include "errlog.h"             /* errlogPrintf                */
 #include "evrMessage.h"         /* prototypes in this file     */
 
+#define MAX_DELTA_TIME 1000000
+
 typedef struct 
 {
   epicsMutexId        messageRWMutex_ps;
@@ -224,7 +226,11 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
   int messageIdx = evrMessageIndex(messageName_a, messageSize);
   
   if (messageIdx < 0) return -1;
-  if (!evrMessage_as[messageIdx].messageRWMutex_ps) return -1;
+  if (!evrMessage_as[messageIdx].messageRWMutex_ps) {
+    errlogPrintf("evrMessageRegister - Message %s not yet created\n",
+                 messageName_a);
+    return -1;
+  }
   
   if (evrMessage_as[messageIdx].record_ps) {
     errlogPrintf("evrMessageRegister - Message %s already has a reader\n",
@@ -354,6 +360,8 @@ int evrMessageRead(unsigned int  messageIdx, evrMessage_tu *message_pu)
       case EVR_MESSAGE_PATTERN:
         message_pu->pattern_s = evrMessage_as[messageIdx].message_u.pattern_s;
         break;
+      case EVR_MESSAGE_FIDUCIAL:
+        break;
       case EVR_MESSAGE_DATA:
       default:
         status = -1;
@@ -392,10 +400,12 @@ int evrMessageStart(unsigned int messageIdx)
   prevTimeStart = evrMessage_as[messageIdx].procTimeStart;
   MFTB(evrMessage_as[messageIdx].procTimeStart);
   deltaTimeStart = evrMessage_as[messageIdx].procTimeStart - prevTimeStart;
-  if (evrMessage_as[messageIdx].procTimeDeltaStartMax < deltaTimeStart)
-    evrMessage_as[messageIdx].procTimeDeltaStartMax = deltaTimeStart;
-  if (evrMessage_as[messageIdx].procTimeDeltaStartMin > deltaTimeStart)
-    evrMessage_as[messageIdx].procTimeDeltaStartMin = deltaTimeStart;
+  if (deltaTimeStart < MAX_DELTA_TIME) {
+    if (evrMessage_as[messageIdx].procTimeDeltaStartMax < deltaTimeStart)
+      evrMessage_as[messageIdx].procTimeDeltaStartMax = deltaTimeStart;
+    if (evrMessage_as[messageIdx].procTimeDeltaStartMin > deltaTimeStart)
+      evrMessage_as[messageIdx].procTimeDeltaStartMin = deltaTimeStart;
+  }
   
   /* Reset time that processing ends */
   evrMessage_as[messageIdx].procTimeEnd = 0;
@@ -458,11 +468,13 @@ int evrMessageEnd(unsigned int messageIdx)
     evrMessage_ts *emf_ps = evrMessage_as + EVR_MESSAGE_FIDUCIAL;
     evrDiffTimeDelta_a[evrDiffTimeDeltaCount] =
       em_ps->procTimeStart - emf_ps->procTimeStart;
-    if (evrDiffTimeDeltaMax < evrDiffTimeDelta_a[evrDiffTimeDeltaCount]) {
-      evrDiffTimeDeltaMax = evrDiffTimeDelta_a[evrDiffTimeDeltaCount];
-    }
-    if (evrDiffTimeDeltaMin > evrDiffTimeDelta_a[evrDiffTimeDeltaCount]) {
-      evrDiffTimeDeltaMin = evrDiffTimeDelta_a[evrDiffTimeDeltaCount];
+    if (evrDiffTimeDelta_a[evrDiffTimeDeltaCount] < MAX_DELTA_TIME) {
+      if (evrDiffTimeDeltaMax < evrDiffTimeDelta_a[evrDiffTimeDeltaCount]) {
+        evrDiffTimeDeltaMax = evrDiffTimeDelta_a[evrDiffTimeDeltaCount];
+      }
+      if (evrDiffTimeDeltaMin > evrDiffTimeDelta_a[evrDiffTimeDeltaCount]) {
+        evrDiffTimeDeltaMin = evrDiffTimeDelta_a[evrDiffTimeDeltaCount];
+      }
     }
     evrDiffTimeDeltaCount++;
     if (evrDiffTimeDeltaCount >= MODULO720_COUNT) {
@@ -696,11 +708,11 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].lockErrorCount        = 0;
   evrMessage_as[messageIdx].procTimeDeltaMax      = 0;
   evrMessage_as[messageIdx].procTimeDeltaStartMax = 0;
-  evrMessage_as[messageIdx].procTimeDeltaStartMin = 1E6;
+  evrMessage_as[messageIdx].procTimeDeltaStartMin = MAX_DELTA_TIME;
   /* Save counter reset time for reporting purposes */
   epicsTimeGetCurrent(&evrMessage_as[messageIdx].resetTime_s);
   if (messageIdx == EVR_MESSAGE_FIDUCIAL) {
-    evrDiffTimeDeltaMin = 1E6;
+    evrDiffTimeDeltaMin = MAX_DELTA_TIME;
     evrDiffTimeDeltaMax = 0;
   }
   return 0;
