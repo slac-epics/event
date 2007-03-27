@@ -49,7 +49,6 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction  */
 #include "epicsTime.h"        /* for epicsTimeGetCurrent    */
 #include "dbScan.h"           /* for post_event             */
-#include "dbAccess.h"         /* DBADDR typedef and protos  */
 #include "errlog.h"           /* errlogPrintf               */
 #include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*   */
 #include "evrTime.h"          /* for evrTime* prototypes    */
@@ -95,28 +94,20 @@ static unsigned int seqCheck3ErrCount     = 0;
 
   Rem:  Initialization subroutine for IOC:LOCA:UNIT:PNET
 
-  Inputs:
-       A - Pnet waveform, used to access waveform data
+  Inputs:  None
      
-  Outputs:
-       DPVT - pointer to waveform data
+  Outputs: None
   
 ==============================================================================*/ 
 static int mpgPatternPnetInit(subRecord *psub)
 {
-  DBADDR *wfAddr = dbGetPdbAddrFromLink(&psub->inpa);
-  
+  /* Register this record for pattern processing */
+  if (evrMessageRegister(EVR_MESSAGE_PNET_NAME, sizeof(evrMessagePnet_ts),
+                         (dbCommon *)psub) < 0) return -1;
+
   /* Initialize rate counters for every timeslot and every rate */
   memset(tsCounter_a, 0, sizeof(int) * TIMESLOT_RATE_MAX);
-  /*
-   * inpa must be a DB link and must be the proper type.
-   */
-  if (wfAddr && (wfAddr->field_type == DBF_ULONG))
-    psub->dpvt = (void *)wfAddr;
-  else
-    psub->dpvt = 0;
-  if (psub->dpvt) return 0;
-  else            return -1;
+  return 0;
 }
 
 /*=============================================================================
@@ -132,15 +123,15 @@ static int mpgPatternPnetInit(subRecord *psub)
   Rem:  Subroutine for IOC:LOCA:UNIT:PNET
 
   Inputs:
-       A - Pnet waveform, used to access waveform data
-       B - Pnet waveform severity
-       C - Pnet waveform number of elements
+       A - Not used
+       B - Not used
        H - Previous Modifier5 without EDEF bits
        I - Previous Modulo 720 Count
        K - Flag to stop sequence checking
        L - Previous Pulse ID
      
   Outputs:
+       C - Time Slot
        D - Pnet Modifier 1
        E - Pnet Modifier 2
        F - Pnet Modifier 3
@@ -166,8 +157,7 @@ static int mpgPatternPnetInit(subRecord *psub)
 ==============================================================================*/
 static long mpgPatternPnet(subRecord *psub)
 {
-  DBADDR                *wfAddr = (DBADDR *)psub->dpvt;
-  epicsUInt32           *pnet_a;
+  evrMessage_tu          evrMessage_u;
   epicsUInt32            modifier1;
   epicsUInt32            modifier5mask;
   epicsUInt32            modifier5      = psub->h;
@@ -189,14 +179,12 @@ static long mpgPatternPnet(subRecord *psub)
     msgRolloverCount++;
     msgCount = 0;
   }  
-  /* if waveform is invalid or has invalid size or type            */
-  /*   set record invalid and pulse id to 0 and set flag           */
-  /*   evr timestamp/status to last good time with invalid status  */
-
-  if (psub->b || (!wfAddr) || (psub->c != EVR_PNET_MODIFIER_MAX) ||
-      (!(pnet_a = (epicsUInt32 *)wfAddr->pfield))) {
-    if (psub->b) patternErrCount++;
+  /* if we cannot read the message                                 */
+  /*   set record invalid and pulse id to 0           */
+  if (evrMessageRead(EVR_MESSAGE_PNET, &evrMessage_u)) {
+    patternErrCount++;
     psub->e = psub->f = psub->g = psub->j = 0.0;
+    timeslot      = 0;
     modifier1     = 0;
     modifier5     = 0;
     errFlag       = PATTERN_INVALID_WF;
@@ -204,14 +192,13 @@ static long mpgPatternPnet(subRecord *psub)
     modulo720Sync = 0;
     seqCheckSync  = 0;
   } else {
-    /* read from the waveform now */
-    dbScanLock(wfAddr->precord);
     /* set outputs to the modifiers */
-    modifier1 = pnet_a[0] & (~0x80000000);
-    psub->e = (double)(pnet_a[1]);
-    psub->f = (double)(pnet_a[2]);
-    psub->g = (double)(pnet_a[3]);
-    timeslot = (unsigned char)((pnet_a[3] >> 29) & TIMESLOT_VAL_MASK);
+    modifier1 = evrMessage_u.pnet_s.modifier_a[0] & (~0x80000000);
+    psub->e = (double)(evrMessage_u.pnet_s.modifier_a[1]);
+    psub->f = (double)(evrMessage_u.pnet_s.modifier_a[2]);
+    psub->g = (double)(evrMessage_u.pnet_s.modifier_a[3]);
+    timeslot = (unsigned char)((evrMessage_u.pnet_s.modifier_a[3] >> 29) &
+                               TIMESLOT_VAL_MASK);
     /* beamcode decoded from modifier 1*/
     psub->j = (double)((modifier1 >> 8) & BEAMCODE_BIT_MASK);
   
@@ -223,7 +210,8 @@ static long mpgPatternPnet(subRecord *psub)
       seqCheckSync  = 0;
     /* Do sync checking if requested */
     } else if (psub->k > 0.5) {
-      traveling_one = (unsigned char)(pnet_a[1] & TIMESLOT_MASK);
+      traveling_one = (unsigned char)(evrMessage_u.pnet_s.modifier_a[1] &
+                                      TIMESLOT_MASK);
       if (pnetSeqCheckData1(traveling_one, seqCheckSync)) { /* "traveling 1" check */
         errFlag = PATTERN_SEQ_CHECK1_ERR;
         seqCheck1ErrCount++;
@@ -318,7 +306,6 @@ static long mpgPatternPnet(subRecord *psub)
         modifier5mask = modifier5mask<<1;
       }
     }
-    dbScanUnlock(wfAddr->precord);
   }
   /* Tell EVRs if data is out-of-sync */
   if (errFlag) modifier1 |= MPG_IPLING;
@@ -327,6 +314,7 @@ static long mpgPatternPnet(subRecord *psub)
     modifier1 |= MODULO720_MASK;
     modulo720Count = 0;
   }
+  psub->c   = (double)timeslot;
   psub->d   = (double)modifier1;
   psub->h   = (double)modifier5;
   psub->i   = (double)modulo720Count;
@@ -385,6 +373,7 @@ static int mpgPatternProcInit(sSubRecord *psub)
     DPVT - Pointer to EVG Card Structure
        A - Spare
        B - Pnet processing error flag
+       C - Time Slot
        D - Pnet Modifier 1
        E - Pnet Modifier 2
        F - Pnet Modifier 3
@@ -401,9 +390,7 @@ static int mpgPatternProcInit(sSubRecord *psub)
        U - edef Init Mask
        V - edef MeasSevr Minor Mask
        W - edef MeasSevr Major Mask
-       Z - Modulo 720 Flag    
   Outputs:
-       C - Time Slot
        L - Pulse ID
        VAL = Error flag:
              0 = OK
@@ -487,13 +474,7 @@ static long mpgPatternProc(sSubRecord *psub)
   /* Post the modulo-720 sync event if the pattern has that bit set */
   if (evrPatternWF_s.pnet_s.modifier_a[0] & MODULO720_MASK) {
     post_event(EVENT_MODULO720);
-    psub->z = 1;
-  } else {
-    psub->z = 0;
   }
-  /* Find time slot */
-  psub->c = (double)((evrPatternWF_s.pnet_s.modifier_a[3] >> 29) &
-                     TIMESLOT_VAL_MASK);
   if (psub->val) return -1;
   return 0;
 }
