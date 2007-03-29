@@ -11,9 +11,9 @@ file evr.db
 #                               Default Pulse
 #	  Device         Card   Delay   Width (clock ticks)    
 pattern { DEV          , CARD , DELAY , WIDTH }
-	{ EVR:IN20:RF01,  0   ,   0   ,  12   }
-	{ EVR:IN20:RF02,  1   ,   0   ,  12   }
-	{ EVR:IN20:RF03,  2   ,   0   ,  12   }
+	{ EVR:IN20:RF01,  0   , 110000,  12   }
+	{ EVR:IN20:RF02,  1   , 110000,  12   }
+	{ EVR:IN20:RF03,  2   , 110000,  12   }
 }
 file evrEventCtrl.db
 {
