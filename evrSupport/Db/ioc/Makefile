@@ -70,10 +70,13 @@ DB += IOC-IN20-LS12trig.db
 DB += IOC-IN20-LS13trig.db 
 DB += IOC-IN20-LS14trig.db 
 DB += IOC-IN20-LS15trig.db 
-#DB += IOC-IN20-LS16trig.db
-#DB += IOC-IN20-LS17trig.db  
-#DB += IOC-IN20-LS18trig.db 
-#DB += IOC-IN20-LS19trig.db 
+CW += IOC-LR20-LS01trig.cwConfig
+CW += IOC-LR20-LS02trig.cwConfig
+CW += IOC-IN20-LS11trig.cwConfig
+CW += IOC-IN20-LS12trig.cwConfig
+CW += IOC-IN20-LS13trig.cwConfig
+CW += IOC-IN20-LS14trig.cwConfig
+CW += IOC-IN20-LS15trig.cwConfig
 
 # Profile Monitor - Injector and Linac
 DB += IOC-IN20-PM01evr.db
@@ -103,13 +106,23 @@ DB += IOC-IN20-PM06trig.db
 DB += IOC-IN20-PM07trig.db
 DB += IOC-LI21-PM01trig.db
 DB += IOC-LI25-PM01trig.db
+CW += IOC-IN20-PM01trig.cwConfig
+CW += IOC-IN20-PM02trig.cwConfig
+CW += IOC-IN20-PM03trig.cwConfig
+CW += IOC-IN20-PM04trig.cwConfig
+CW += IOC-IN20-PM05trig.cwConfig
+CW += IOC-IN20-PM06trig.cwConfig
+CW += IOC-IN20-PM07trig.cwConfig
+CW += IOC-LI21-PM01trig.cwConfig
+CW += IOC-LI25-PM01trig.cwConfig
 
 # Injector - MPS, Alignment Mirror, Event
 DB += IOC-IN20-MP01evr.db
 DB += IOC-IN20-MP01pattern.db
 DB += IOC-IN20-AM01evr.db  
 DB += IOC-IN20-AM01pattern.db 
-DB += IOC-IN20-AM01trig.substitutions 
+DB += IOC-IN20-AM01trig.db
+CW += IOC-IN20-AM01trig.cwConfig
 #DB += IOC-IN20-EV01evr.db
 #DB += IOC-IN20-EV01pattern.db
 
@@ -118,23 +131,27 @@ DB += IOC-IN20-IM01evr.db
 DB += IOC-IN20-IM01pattern.db
 DB += IOC-IN20-IM01bsa.db
 DB += IOC-IN20-IM01trig.db
+CW += IOC-IN20-IM01trig.cwConfig
 DB += IOC-LI21-BL01evr.db
 DB += IOC-LI21-BL01pattern.db
 DB += IOC-LI21-BL01bsa.db
 DB += IOC-LI21-BL01trig.db
+CW += IOC-LI21-BL01trig.cwConfig
 
 # RF and Motion Control - Injector and Linac
 DB += IOC-IN20-MC01evr.db
 DB += IOC-IN20-MC01pattern.db
 DB += IOC-IN20-MC01bsa.db
 DB += IOC-IN20-MC01trig.db
+CW += IOC-IN20-MC01trig.cwConfig
 DB += IOC-IN20-RF01evr.db
 DB += IOC-IN20-RF01Testevr.db
 DB += IOC-IN20-RF01pattern.db
 DB += IOC-IN20-RF01bsa.db
+DB += IOC-IN20-RF01trig.db
+CW += IOC-IN20-RF01trig.cwConfig
 DB += IOC-LI21-RF01bsa.db
 DB += IOC-LI24-RF01bsa.db
-DB += IOC-IN20-RF01trig.db
 
 # Magnet - Injector and Linac 
 DB += IOC-IN20-MG01evr.db  
@@ -148,18 +165,22 @@ DB += IOC-IN20-BP01Testevr.db
 DB += IOC-IN20-BP01pattern.db  
 DB += IOC-IN20-BP01bsa.db
 DB += IOC-IN20-BP01trig.db 
+CW += IOC-IN20-BP01trig.cwConfig
 DB += IOC-IN20-BP02evr.db  
 DB += IOC-IN20-BP02pattern.db  
 DB += IOC-IN20-BP02bsa.db
 DB += IOC-IN20-BP02trig.db 
+CW += IOC-IN20-BP02trig.cwConfig 
 DB += IOC-LI21-BP01evr.db
 DB += IOC-LI21-BP01pattern.db
 DB += IOC-LI21-BP01bsa.db
 DB += IOC-LI21-BP01trig.db
+CW += IOC-LI21-BP01trig.cwConfig
 
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
 include $(TOP)/configure/RULES.Db
+include $(TOP)/configure/RULES.Cw
 
 
