@@ -39,7 +39,18 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPC , OTCP, OTCW, OTCD}
  { BPMS:IN20:781:CALB ,  "BPM15 Calb" , 0    ,  100   , 10      , TS5_120_   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPD , OTDP, OTDW, OTDD}
-#EVR:IN20:BP03
+# spare triggers 8-12, FP (VME)
+	 { TRIG:IN20:BP08:, "Spare Trig 8", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
+	 { TRIG:IN20:BP09:, "Spare Trig 9", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG0W, DG1D}
+	 { TRIG:IN20:BP10:, "Spare Trig 10", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
+	 { TRIG:IN20:BP11:, "Spare Trig 11", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG3E , DG3P, DG3W, DG3D}
+	 { TRIG:IN20:BP12:, "Spare Trig 12", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG4E , DG4P, DG4W, DG4D}
+#EVR:IN20:BP03 
 	 { BPMS:IN20:925: ,  "BPMS1"      , 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0 , OT0P, OT0W, OT0D}
 	 { BPMS:IN20:945: ,  "BPMS2"      , 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
@@ -52,12 +63,36 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP8 , OT8P, OT8W, OT8D}
  { BPMS:IN20:981:CALB ,  "BPMS3 Calb" , 0    ,  100   , 10      , TS5_120_   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP9 , OT9P, OT9W, OT9D}
-# spare triggers 4-6
-	 { TRIG:IN20:BP04:, "Spare Trig 4", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+# spare triggers 13-17, FP (VME)
+	 { TRIG:IN20:BP13:, "Spare Trig 13", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
-	 { TRIG:IN20:BP05:, "Spare Trig 5", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+	 { TRIG:IN20:BP14:, "Spare Trig 14", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG0W, DG1D}
-	 { TRIG:IN20:BP06:, "Spare Trig 6", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+	 { TRIG:IN20:BP15:, "Spare Trig 15", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
+	 { TRIG:IN20:BP16:, "Spare Trig 16", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG3E , DG3P, DG3W, DG3D}
+	 { TRIG:IN20:BP17:, "Spare Trig 17", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG4E , DG4P, DG4W, DG4D}
+
+# spare triggers 18-25, TTB 3-6; 10-13
+	 { TRIG:IN20:BP18:, "Spare Trig 18", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP3 , OT3P, OT3W, OT3D}
+	 { TRIG:IN20:BP19:, "Spare Trig 19", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP4 , OT4P, OT4W, OT4D}
+	 { TRIG:IN20:BP20:, "Spare Trig 20", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP5 , OT5P, OT5W, OT5D}
+	 { TRIG:IN20:BP21:, "Spare Trig 21", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP6 , OT6P, OT6W, OT6D}
+
+	 { TRIG:IN20:BP22:, "Spare Trig 22", 0   ,  100   , 10      , TS5_120_   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPA , OTAP, OTAW, OTAD}
+	 { TRIG:IN20:BP23:, "Spare Trig 23", 0   ,  100   , 10      , TS5_120_   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPB , OTBP, OTBW, OTBD}
+	 { TRIG:IN20:BP24:, "Spare Trig 24", 0   ,  100   , 10      , TS5_120_   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPC , OTCP, OTCW, OTCD}
+	 { TRIG:IN20:BP25:, "Spare Trig 25", 0   ,  100   , 10      , TS5_120_   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPD , OTDP, OTDW, OTDD}
+
 }
 

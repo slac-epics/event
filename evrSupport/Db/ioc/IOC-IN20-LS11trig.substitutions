@@ -12,7 +12,7 @@ file evrDevTrig.db {
                       ,  PREC         , EGU  ,  DRVL  , DRVH    , EVG       , TCTL , TPOL, TWID, TDES}
 	  { AFG:IN20:LS11: ,  "Horiz Drive", 0   ,  100   , 10      , TS4_10_   , IN20 , LS11, IOC:IN20:LS11, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , DG0E , DG0P, DG0W, DG0D}
-	  { CAMR:IN20:LS11:, "Vert Drive"  , 0   ,  100   , 10      , TS4_10_   , IN20 , LS11, IOC:IN20:LS11, 8.40336692324359
+	  { CAMR:IN20:1:  , "Vert Drive"  , 0   ,  100    , 10      , TS4_10_   , IN20 , LS11, IOC:IN20:LS11, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , DG1E , DG1P, DG1W, DG1D}
 	  { ADC:IN20:LS11: , "ADC 1"       , 1   ,  1000  , 10      , TS4_10_   , IN20 , LS11, IOC:IN20:LS11, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , DG2E , DG2P, DG2W, DG2D}

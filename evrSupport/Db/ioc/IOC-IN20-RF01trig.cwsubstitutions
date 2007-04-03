@@ -15,15 +15,16 @@ file evrDevTrig.cwConfig {
 { LASR:IN20:1:LSR_D_     }
 { GUN:IN20:1:GN1_D_      }
 { GUN:IN20:1:GN2_D_      }
-{ TRIG:IN20:RF01         }
-{ TRIG:IN20:RF02         }
-{ TRIG:IN20:RF03         }
-{ TRIG:IN20:RF04         }
-# spare triggers 5-8 TTB 10-13
-{ TRIG:IN20:RF05         }
-{ TRIG:IN20:RF06         }
-{ TRIG:IN20:RF07         }
-{ TRIG:IN20:RF08         }
+{ TRIG:IN20:RF01:        }
+{ TRIG:IN20:RF02:        }
+{ TRIG:IN20:RF03:        }
+{ TRIG:IN20:RF04:        }
+{ TRIG:IN20:RF05:        }
+# spare triggers 6-9 TTB 10-13
+{ TRIG:IN20:RF06:        }
+{ TRIG:IN20:RF07:        }
+{ TRIG:IN20:RF08:        }
+{ TRIG:IN20:RF09:        }
 #EVR:IN20:RF02
 { ACCL:IN20:300:L0A_D_   }
 { TCAV:IN20:490:TC0_D_   }
@@ -33,18 +34,19 @@ file evrDevTrig.cwConfig {
 { PCAV:LI21:300:PH2_D_   }
 { SCOP:IN20:RH:SC1_      }
 { SCOP:IN20:RH:SC2_      }
-#  spare triggers 9- 12 FP (VME)
-{ TRIG:IN20:RF09         }
-{ TRIG:IN20:RF10         }
-{ TRIG:IN20:RF11         }
-{ TRIG:IN20:RF12         }
-# spare triggers 13-18 TTB 8-13
-{ TRIG:IN20:RF13         }
-{ TRIG:IN20:RF14         }
-{ TRIG:IN20:RF15         }
-{ TRIG:IN20:RF16         }
-{ TRIG:IN20:RF17         }
-{ TRIG:IN20:RF18         }
+#  spare triggers 10- 14 FP (VME)
+{ TRIG:IN20:RF10:         }
+{ TRIG:IN20:RF11:         }
+{ TRIG:IN20:RF12:         }
+{ TRIG:IN20:RF13:         }
+{ TRIG:IN20:RF14:         }
+# spare triggers 15-20 TTB 8-13
+{ TRIG:IN20:RF15:         }
+{ TRIG:IN20:RF16:         }
+{ TRIG:IN20:RF17:         }
+{ TRIG:IN20:RF18:         }
+{ TRIG:IN20:RF19:         }
+{ TRIG:IN20:RF20:         }
 #EVR:IN20:RF03
 { TCAV:IN20:490:TC0_C_1_ }
 { TCAV:IN20:490:TC0_C_2_ }
@@ -58,11 +60,15 @@ file evrDevTrig.cwConfig {
 { ACCL:LI21:1:L1S_C_2_   }
 { ACCL:LI21:180:L1X_C_1_ }
 { ACCL:LI21:180:L1X_C_2_ } 
-#  spare triggers 19 -22, FP (VME)
-{ TRIG:IN20:RF19         }
-{ TRIG:IN20:RF20         }
-{ TRIG:IN20:RF21         }
-{ TRIG:IN20:RF22         }
+#  spare triggers 21 -25, FP (VME)
+{ TRIG:IN20:RF21:         }
+{ TRIG:IN20:RF22:         }
+{ TRIG:IN20:RF23:         }
+{ TRIG:IN20:RF24:         }
+{ TRIG:IN20:RF25:         }
+# spare triggers 26-27, TTB
+{ TRIG:IN20:RF26:         }
+{ TRIG:IN20:RF27:         }
 }
 file evrIocTrig.cwConfig {
 #      Device	      

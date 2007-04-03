@@ -20,11 +20,12 @@ file evrDevTrig.cwConfig {
 	 { BPMS:IN20:731:CALB }
 	 { BPMS:IN20:771:CALB }
 	 { BPMS:IN20:781:CALB }
-# spare triggers 7-10, FP (VME)
-	 { TRIG:IN20:BP07:}
+# spare triggers 8-12, FP (VME)
 	 { TRIG:IN20:BP08:}
 	 { TRIG:IN20:BP09:}
 	 { TRIG:IN20:BP10:}
+	 { TRIG:IN20:BP11:}
+	 { TRIG:IN20:BP12:}
 #EVR:IN20:BP03 
 	 { BPMS:IN20:925: }
 	 { BPMS:IN20:945: }
@@ -32,20 +33,21 @@ file evrDevTrig.cwConfig {
 	 { BPMS:IN20:925:CALB }
 	 { BPMS:IN20:945:CALB }
 	 { BPMS:IN20:981:CALB }
-# spare triggers 11-14, FP (VME)
-	 { TRIG:IN20:BP11:}
-	 { TRIG:IN20:BP12:}
+# spare triggers 13-17, FP (VME)
 	 { TRIG:IN20:BP13:}
 	 { TRIG:IN20:BP14:}
-# spare triggers 15-22, TTB 3-6; 10-13
 	 { TRIG:IN20:BP15:}
 	 { TRIG:IN20:BP16:}
 	 { TRIG:IN20:BP17:}
+# spare triggers 18-25, TTB 3-6; 10-13
 	 { TRIG:IN20:BP18:}
 	 { TRIG:IN20:BP19:}
 	 { TRIG:IN20:BP20:}
 	 { TRIG:IN20:BP21:}
 	 { TRIG:IN20:BP22:}
+	 { TRIG:IN20:BP23:}
+	 { TRIG:IN20:BP24:}
+	 { TRIG:IN20:BP25:}
 }
 file evrIocTrig.cwConfig {
 #      Device	      

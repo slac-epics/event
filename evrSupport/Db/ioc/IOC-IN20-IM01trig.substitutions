@@ -28,15 +28,23 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTP7 , OT7P, OT7W, OT7D}
 	  { DTIZ:IN20:IM01:, "Fast Digitizer",0  ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTP8 , OT8P, OT8W, OT8D}
-	  { TRIG:IN20:IM01:CALB,"Calibration 1",0   ,  100   , 10   , TS5_120_,  IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+	  { CHAS:IN20:IM11:CALB,"Calibration 1",0   ,  100   , 10   , TS5_120_,  IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPC , OTCP, OTCW, OTCD}
-	  { TRIG:IN20:1M02:CALB,"Calibration 2",0   ,  100   , 10   , TS5_120_,  IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+	  { CHAS:IN20:1M12:CALB,"Calibration 2",0   ,  100   , 10   , TS5_120_,  IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPD , OTDP, OTDW, OTDD}
+# FP Spares
 	  { TRIG:IN20:IM01:, "Spare Trig 1", 0   ,  100   , 10      , TS4_30_, IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG0E , DG0P, DG0W, DG0D}
 	  { TRIG:IN20:IM02:, "Spare Trig 2", 0   ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG1E , DG1P, DG1W, DG1D}
 	  { TRIG:IN20:IM03:, "Spare Trig 3", 0   ,  100   , 10      , TS4_30__ , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, DG2E , DG2P, DG2W, DG2D}
+# TTB Spares
+	  { TRIG:IN20:IM04:, "Spare TTB 4",0     ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTP9 , OT9P, OT9W, OT9D}
+	  { TRIG:IN20:IM05:, "Spare TTB 5",0     ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPA , OTAP, OTAW, OTAD}
+	  { TRIG:IN20:IM06:, "Spare TTB 6",0     ,  100   , 10      , TS4_30_  , IN20 , IM01, IOC:IN20:IM01, 8.40336692324359
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01, OTPB , OTBP, OTBW, OTBD}
 }
 

@@ -19,10 +19,12 @@ file evrDevTrig.cwConfig {
 	 { BPMS:LI21:278:CALB  }
 	 { BPMS:LI21:301:CALB  }
 	 { BPMS:LI21:315:CALB  }
-# spare triggers 1-3
+# spare triggers 1-5 FP (VME)
 	 { TRIG:LI21:BP01:     }
 	 { TRIG:LI21:BP02:     }
 	 { TRIG:LI21:BP03:     }
+	 { TRIG:LI21:BP04:     }
+	 { TRIG:LI21:BP05:     }
 }
 file evrIocTrig.cwConfig {
 #      Device
