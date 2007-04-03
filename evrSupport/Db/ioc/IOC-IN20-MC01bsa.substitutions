@@ -6,18 +6,18 @@
 #
 file bsaWIREEdef.db {
 #      Device        ,loc'n ,IOC unit, timing system
-  pattern {DEVICE    , LOC  ,  UN    , SYS  }
-	  { WIRE:IN20:531, IN20 ,  MC01  , SYS0 }
-	  { WIRE:IN20:561, IN20 ,  MC01  , SYS0 }
-	  { WIRE:IN20:611, IN20 ,  MC01  , SYS0 }
-	  { WIRE:IN20:741, IN20 ,  MC01  , SYS0 }
+  pattern {DEVICE    , LOC  ,  UN    , SYS , SLCLNK }
+	  { WIRE:IN20:531, IN20 ,  MC01  , SYS0, "" }
+	  { WIRE:IN20:561, IN20 ,  MC01  , SYS0, "" }
+	  { WIRE:IN20:611, IN20 ,  MC01  , SYS0, "" }
+	  { WIRE:IN20:741, IN20 ,  MC01  , SYS0, "" }
 # 
 file bsaPMTEdef.db {
 #      Device        ,loc'n ,IOC unit, timing system
-  pattern {DEVICE    , LOC  ,  UN    , SYS  }
-	  { PMT:IN20:621 , IN20 ,  MC01  , SYS0 }
-	  { PMT:IN20:622 , IN20 ,  MC01  , SYS0 }
-	  { PMT:IN20:761 , IN20 ,  MC01  , SYS0 }
-	  { PMT:IN20:762 , IN20 ,  MC01  , SYS0 }
-	  { PMT:IN20:511 , IN20 ,  MC01  , SYS0 }
-	  { PMT:IN20:512 , IN20 ,  MC01  , SYS0 }
+  pattern {DEVICE    , LOC  ,  UN    , SYS , SLCLNK }
+	  { PMT:IN20:621 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:IN20:622 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:IN20:761 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:IN20:762 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:IN20:511 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:IN20:512 , IN20 ,  MC01  , SYS0, "" }

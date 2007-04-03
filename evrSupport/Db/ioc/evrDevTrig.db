@@ -14,7 +14,7 @@ record(bo, "$(DEV)TCTL") {
   field(ZNAM, "Disabled")
   field(ONAM, "Enabled")
   field(OMSL, "supervisory")
-  field(VAL, "1")
+  field(VAL, "$(CTL)")
   field(PINI, "YES")
   field(FLNK, "EVR:$(LOCA):$(UNIT):CTRL.$(TCTL) PP")
 }

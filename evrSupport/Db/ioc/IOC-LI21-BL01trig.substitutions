@@ -9,12 +9,12 @@ file evrDevTrig.db {
 #      Device	      , Description   , EVR  ,  width ,desired  , EC delay   , EVR  , EVR,  IOC          , slope 
 #			                            Trigger       wrt TREF   wrt fiducial loca   unit                 1/119Mhz
   pattern { DEV       ,  DESC         , PREC ,  WID   , DES     , TEC        , LOCA , UNIT, IOC          , ESLO            
-                      ,  POL          , EGU  ,  DRVL  , DRVH    , EVG        , TCTL , TPOL, TWID, TDES}
+                      ,  POL          , EGU  ,  DRVL  , DRVH    , EVG        , TCTL , TPOL, TWID, TDES, CTL}
 	  { BLEN:LI21:265:,  "BL11"       , 0    ,  100   , 10      , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, 8.40336692324359
-                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D}
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D, 1 }
 	  { BLEN:LI21:280:,  "BL12"       , 0    ,  100   , 10      , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, 8.40336692324359
-                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D}
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D, 1 }
 	  { TRIG:LI21:BL01:, "Spare trig 1", 0   ,  100   , 10      , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, 8.40336692324359
-                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D}
+                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D, 1 }
 }
 

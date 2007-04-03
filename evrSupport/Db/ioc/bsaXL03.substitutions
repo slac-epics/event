@@ -7,41 +7,41 @@
 # One per device:
 #
 file bsaBPMSEdef.db {
-  pattern {DEVICE  , LOC  , UN, SYS}
-	  { BPMS:XX03:1, XX03 , 1 , SYS0}
-	  { BPMS:XX03:2, XX03 , 1 , SYS0}
-	  { BPMS:XX03:3, XX03 , 1 , SYS0}
-	  { BPMS:XX03:4, XX03 , 1 , SYS0}
-	  { BPMS:XX03:5, XX03 , 1 , SYS0}
-	  { BPMS:XX03:6, XX03 , 1 , SYS0}
+  pattern {DEVICE  , LOC  , UN, SYS, SLCLNK}
+	  { BPMS:XX03:1, XX03 , 1 , SYS0, ""}
+	  { BPMS:XX03:2, XX03 , 1 , SYS0, ""}
+	  { BPMS:XX03:3, XX03 , 1 , SYS0, ""}
+	  { BPMS:XX03:4, XX03 , 1 , SYS0, ""}
+	  { BPMS:XX03:5, XX03 , 1 , SYS0, ""}
+	  { BPMS:XX03:6, XX03 , 1 , SYS0, ""}
 }
 
 file bsaTOROEdef.db {
-  pattern {DEVICE  , LOC  , UN, SYS}
-	  { TORO:XX03:1 ,XX03 , 1, SYS0}
-	  { TORO:XX03:2 ,XX03 , 1, SYS0}
+  pattern {DEVICE  , LOC  , UN, SYS, SLCLNK}
+	  { TORO:XX03:1 ,XX03 , 1, SYS0, ""}
+	  { TORO:XX03:2 ,XX03 , 1, SYS0, ""}
 }
 file bsaPMTEdef.db {
-  pattern {DEVICE  , LOC  , UN, SYS}
-	  { PMT:XX03:1 , XX03 ,  1, SYS0}
-	  { PMT:XX03:2 , XX03 ,  1, SYS0}
-	  { PMT:XX03:3 , XX03 ,  1, SYS0}
-	  { PMT:XX03:4 , XX03 ,  1, SYS0}
-	  { PMT:XX03:5 , XX03 ,  1, SYS0}
-	  { PMT:XX03:6 , XX03 ,  1, SYS0}
+  pattern {DEVICE  , LOC  , UN, SYS, SLCLNK}
+	  { PMT:XX03:1 , XX03 ,  1, SYS0, ""}
+	  { PMT:XX03:2 , XX03 ,  1, SYS0, ""}
+	  { PMT:XX03:3 , XX03 ,  1, SYS0, ""}
+	  { PMT:XX03:4 , XX03 ,  1, SYS0, ""}
+	  { PMT:XX03:5 , XX03 ,  1, SYS0, ""}
+	  { PMT:XX03:6 , XX03 ,  1, SYS0, ""}
 }
 file bsaBLENEdef.db {
-  pattern {DEVICE   , LOC  , UN, SYS}
-	  { BLEN:XX03:1 , XX03,  1, SYS0 }
-	  { BLEN:XX03:2 , XX03,  1, SYS0 }
-	  { BLEN:XX03:3 , XX03,  1, SYS0 }
+  pattern {DEVICE   , LOC  , UN, SYS, SLCLNK}
+	  { BLEN:XX03:1 , XX03,  1, SYS0, "" }
+	  { BLEN:XX03:2 , XX03,  1, SYS0, "" }
+	  { BLEN:XX03:3 , XX03,  1, SYS0, "" }
 }
 file bsaWIREEdef.db {
-  pattern {DEVICE   , LOC  , UN, SYS}
-	  { WIRE:XX03:1 , XX03 ,  1, SYS0}
-	  { WIRE:XX03:2 , XX03 ,  1, SYS0}
-	  { WIRE:XX03:3 , XX03 ,  1, SYS0}
-	  { WIRE:XX03:4 , XX03 ,  1, SYS0}
+  pattern {DEVICE   , LOC  , UN, SYS, SLCLNK}
+	  { WIRE:XX03:1 , XX03 ,  1, SYS0, ""}
+	  { WIRE:XX03:2 , XX03 ,  1, SYS0, ""}
+	  { WIRE:XX03:3 , XX03 ,  1, SYS0, ""}
+	  { WIRE:XX03:4 , XX03 ,  1, SYS0, ""}
 }
 #
 # Pattern records

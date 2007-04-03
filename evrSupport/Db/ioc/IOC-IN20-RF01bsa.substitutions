@@ -4,26 +4,26 @@
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.db!
 file bsaPHASEdef.db {
 #      Device               ,loc'n , IOC  , system, Attribute
-  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,   EF  , IN                   }
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,   EF  , IN                   , SLCLNK}
 #	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , REF_P , _REF_P, }
 #	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , P     , _P      }
-	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , P     , _P    , GUN:IN20:1:GN1_PAVG}
-	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , P     , _P    , GUN:IN20:1:GN2_PAVG}
-	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_P , _L0A_P, ACCL:IN20:300:L0A_PAVG}
-	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , L0B_P , _L0B_P, ACCL:IN20:300:L0B_PAVG}
-	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , P     , _P    , TCAV:IN20:490:TC0_PAVG}
-	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , P     , _P    , PCAC:IN20:365:PH1_PACT}
+	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , P     , _P    , GUN:IN20:1:GN1_PAVG, ""}
+	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , P     , _P    , GUN:IN20:1:GN2_PAVG, ""}
+	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_P , _L0A_P, ACCL:IN20:300:L0A_PAVG, ""}
+	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , L0B_P , _L0B_P, ACCL:IN20:300:L0B_PAVG, ""}
+	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , P     , _P    , TCAV:IN20:490:TC0_PAVG, ""}
+	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , P     , _P    , PCAC:IN20:365:PH1_PACT, ""}
 }
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
 file bsaAMPLEdef.db {
 #      Device               ,loc'n , IOC  ,system , Attribute
-  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,   EF  , IN                  }
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,   EF  , IN                  , SLCLNK}
 #	  { LLRF:IN20:1         , IN20 , RF01 , SYS0  , REF_A , _REF_A}
 #	  { LASR:IN20:1         , IN20 , RF01 , SYS0  , A     , _A    }
-	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , A     , _A    , GUN:IN20:1:GN1_AAVG}
-	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , A     , _A    , GUN:IN20:1:GN2_AAVG}
-	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_A , _L0A_A, ACCL:IN20:300:L0A_AAVG}
-	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , L0B_A , _L0B_A, ACCL:IN20:400:L0B_AAVG}
-	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , A     , _A    , TCAV:IN20:490:TC0_AAVG}
-	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , A     , _A    , PCAV:IN20:365:PH1_AACT}
+	  { GUN:IN20:1          , IN20 , RF01 , SYS0  , A     , _A    , GUN:IN20:1:GN1_AAVG, ""}
+	  { GUN:IN20:2          , IN20 , RF01 , SYS0  , A     , _A    , GUN:IN20:1:GN2_AAVG, ""}
+	  { ACCL:IN20:300       , IN20 , RF01 , SYS0  , L0A_A , _L0A_A, ACCL:IN20:300:L0A_AAVG, ""}
+	  { ACCL:IN20:400       , IN20 , RF01 , SYS0  , L0B_A , _L0B_A, ACCL:IN20:400:L0B_AAVG, ""}
+	  { TCAV:IN20:490       , IN20 , RF01 , SYS0  , A     , _A    , TCAV:IN20:490:TC0_AAVG, ""}
+	  { PCAV:IN20:365       , IN20 , RF01 , SYS0  , A     , _A    , PCAV:IN20:365:PH1_AACT, ""}

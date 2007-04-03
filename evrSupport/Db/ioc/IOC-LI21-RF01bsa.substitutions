@@ -4,16 +4,16 @@
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaPHASEdef.db!
 file bsaPHASEdef.db {
 #      Device               ,loc'n , IOC  , system, Attribute
-  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB   , EF    , IN                    }
-	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_P  , _L1S_P, ACCL:LI21:1:L1S_PAVG  }
-	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_P  , _L1X_P, ACCL:LI21:180:L1X_PAVG}
-	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , P      , _P    , PCAV:LI21:300:PH2_PACT}
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB   , EF    , IN                    , SLCLNK}
+	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_P  , _L1S_P, ACCL:LI21:1:L1S_PAVG  , ""}
+	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_P  , _L1X_P, ACCL:LI21:180:L1X_PAVG, ""}
+	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , P      , _P    , PCAV:LI21:300:PH2_PACT, ""}
 }
 # One per device:
 # Please check the HOPR,LOPR,PREC,ADEL,MDEL values provided in bsaAMPLEdef.db!
 file bsaAMPLEdef.db {
 #      Device               ,loc'n , IOC  ,system , Attribute
-  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,  EF   , IN                    }
-	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_A , _L1S_A, ACCL:LI21:1:L1S_AAVG  }
-	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_A , _L1X_A, ACCL:LI21:180:L1X_AAVG}
-	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , A     , _A    , PCAV:LI21:300:PH2_AAVG}
+  pattern {DEVICE           , LOC  ,  UN  , SYS   , ATRB  ,  EF   , IN                    , SLCLNK}
+	  { ACCL:LI21:1         , LI21 , RF01 , SYS0  , L1S_A , _L1S_A, ACCL:LI21:1:L1S_AAVG  , ""}
+	  { ACCL:LI21:180       , LI21 , RF01 , SYS0  , L1X_A , _L1X_A, ACCL:LI21:180:L1X_AAVG, ""}
+	  { PCAV:LI21:300       , LI21 , RF01 , SYS0  , A     , _A    , PCAV:LI21:300:PH2_AAVG, ""}
