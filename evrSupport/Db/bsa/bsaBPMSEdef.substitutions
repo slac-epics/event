@@ -86,6 +86,6 @@ file bsaEdefFanouts.db
   pattern {DEV    ,SECN , FLNK  }
 	  { $(DEVICE) , X   , "$(DEVICE):EFY PP" }
 	  { $(DEVICE) , Y   , "$(DEVICE):EFTMIT PP" }
-	  { $(DEVICE) ,TMIT , "" }
+	  { $(DEVICE) ,TMIT , $(SLCLNK) }
 }
 

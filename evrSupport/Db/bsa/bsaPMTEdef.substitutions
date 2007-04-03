@@ -43,6 +43,6 @@ file bsaEdefFanouts.db
 {
 #	      Device            Name
   pattern {DEV    ,SECN   , FLNK }
-	  { $(DEVICE) ,QDCRAW , ""   }
+	  { $(DEVICE) ,QDCRAW , $(SLCLNK)   }
 }
 
