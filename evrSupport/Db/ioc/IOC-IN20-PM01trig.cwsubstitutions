@@ -2,7 +2,7 @@
 # 
 # refer to Sharepoint document: Controls | Timing | timingTriggers.xls
 #
-file evrDevTrig.cwConfig {
+file evrPMXXTrig.cwConfig {
 #      Device	      
   pattern { DEV             }
 	  { YAGS:IN20:211:  }
