@@ -6,6 +6,7 @@ record(fanout, "$(DEV):FANOUT") {
   field(LNK4, "BPMS:$(LOCA):4:FANOUT PP")
   field(LNK5, "BPMS:$(LOCA):5:FANOUT PP")
   field(LNK6, "BPMS:$(LOCA):6:FANOUT PP")
+  field(SDIS, "$(DEV):FIDUCIAL.L")
   field(FLNK, "$(DEV):FANOUT1")
 }
 
