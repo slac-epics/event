@@ -21,5 +21,4 @@ file bsaTestFanouts.db
 {
   pattern {    DEV    ,  SECN  ,SCAN, LNK2                   ,LNK3                 , LNK4, LNK5}
           { $(DEVICE) ,  POSN  ,$(S), "$(DEVICE):EFPOSN PP"  ,"", ""  , ""  }
-#          { $(DEVICE) ,  POSN  ,$(S), "$(DEVICE):EFPOSN PP"  ,"$(DEVICE):MDPOSN PP", ""  , ""  }
 }

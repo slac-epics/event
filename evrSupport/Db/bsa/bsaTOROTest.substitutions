@@ -19,5 +19,4 @@ file bsaTestFanouts.db
 {
   pattern {    DEV    ,  SECN  ,SCAN, LNK2                   ,LNK3                  , LNK4, LNK5 }
           { $(DEVICE) ,  TMIT  ,$(S), "$(DEVICE):EFTMIT PP"  ,"" , ""  , ""   }
-#          { $(DEVICE) ,  TMIT  ,$(S), "$(DEVICE):EFTMIT PP"  ,"$(DEVICE):MDTMIT PP" , ""  , ""   }
 }

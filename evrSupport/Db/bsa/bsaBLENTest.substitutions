@@ -20,5 +20,4 @@ file bsaTestFanouts.db
 {
   pattern {    DEV    ,  SECN  ,SCAN, LNK2                   ,LNK3                  , LNK4, LNK5}
           { $(DEVICE) , WIDTH  ,$(S), "$(DEVICE):EFWIDTH PP" ,"", ""  , ""  }
-#          { $(DEVICE) , WIDTH  ,$(S), "$(DEVICE):EFWIDTH PP" ,"$(DEVICE):MDWIDTH PP", ""  , ""  }
 }
