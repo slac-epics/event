@@ -13,6 +13,8 @@ USR_CFLAGS += -DDEBUG_PRINT
 
 SRC_DIRS += $(TOP)/drvSupport/src
 
+INC+=evrTime.h
+
 DBD += evrSupport.dbd
 DBD += evrPattern.dbd
 DBD += evrModifier5.dbd
