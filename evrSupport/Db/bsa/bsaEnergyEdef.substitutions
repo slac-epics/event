@@ -11,9 +11,9 @@
 
 file bsaEdefAvg.db
 {
-#	      Device           Name                                          IOC    IOC   mod5  Init 
-#                                                                        loc'n  unit  bit   Event Code
-  pattern {DEV    ,SECN   ,      INP         ,MDID ,MD,DESC, EGU,HOPR,LOPR,PREC,ADEL,MDEL   , LOCA  , UNIT ,BIT , EC }
+#	      Device   Name                                                                    IOC    IOC   mod5  Init 
+#                                                                                              loc'n  unit  bit   Event Code
+  pattern {   DEV     ,SECN   ,      INP         ,MDID ,MD,DESC,EGU,HOPR,LOPR,PREC,ADEL,MDEL , LOCA  , UNIT ,BIT , EC }
 	  { $(DEVICE) ,$(SECI), $(DEVICE):$(SECI),  1  , 1,  1 , "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), A ,  101}
 	  { $(DEVICE) ,$(SECI), $(DEVICE):$(SECI),  2  , 2,  2 , "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), B ,  102}
 	  { $(DEVICE) ,$(SECI), $(DEVICE):$(SECI),  3  , 3,  3 , "",100 ,-100,  8 ,   0,    0, $(LOC), $(UN), C ,  103}
@@ -37,8 +37,8 @@ file bsaEdefAvg.db
 }
 file bsaEdefFanouts.db
 {
-#	      Device           Name
-  pattern {DEV    ,SECN   , FLNK}
-	  { $(DEVICE) ,$(SECI), $(SLCLNK)  }
+#	      Device     Name
+  pattern {   DEV     ,  SECN  ,  LOCA  , UNIT  ,   FLNK    }
+	  { $(DEVICE) ,$(SECI) , $(LOC) , $(UN) , $(SLCLNK) }
 }
 

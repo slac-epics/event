@@ -15,48 +15,48 @@
 #
 file bsaEdefAvg.db
 {
-#	      Device           Name                                          IOC    IOC   mod5  Init 
-#                                                                        loc'n  unit  bit   Event Code
-  pattern {DEV    ,SECN, INP , MDID   ,MD , DESC, EGU,HOPR,LOPR,PREC,ADEL,MDEL   , LOCA  , UNIT ,BIT , EC }
+#	      Device   Name                                                                  IOC    IOC   mod5  Init 
+#                                                                                            loc'n  unit  bit   Event Code
+  pattern {   DEV     ,SECN,  INP         , MDID,MD , DESC,EGU,HOPR,LOPR,PREC,ADEL, MDEL   , LOCA  , UNIT ,BIT ,  EC }
 	  { $(DEVICE) , X  ,$(DEVICE):X,    1   , 1 , 1   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), A  ,  101}
 	  { $(DEVICE) , Y  ,$(DEVICE):Y,    1   , 1 , 1   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), A  ,  101}
 	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 1   , 1 , 1   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), A  ,  101}
-	  { $(DEVICE) , X  ,$(DEVICE):X,    2   , 2 , 2   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), B  ,  102}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    2   , 2 , 2   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), B  ,  102}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 2   , 2 , 2   ,"","3E10","1E10",3,"1E8","1E7"  , $(LOC), $(UN), B  ,  102}
-	  { $(DEVICE) , X  ,$(DEVICE):X,    3   , 3 , 3   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), C  ,  103}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    3   , 3 , 3   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), C  ,  103}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 3   , 3 , 3   ,"","3E10","1E10",3,"1E8","1E7"  , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) , X  ,$(DEVICE):X,    2   , 2 , 2   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    2   , 2 , 2   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 2   , 2 , 2   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) , X  ,$(DEVICE):X,    3   , 3 , 3   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    3   , 3 , 3   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 3   , 3 , 3   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), C  ,  103}
 	  { $(DEVICE) , X  ,$(DEVICE):X,    4   , 4 , 4   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), D  ,  104}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    4   , 4 , 4   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), D  ,  104}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 4   , 4 , 4   ,"","3E10","1E10",3,"1E8","1E7"  , $(LOC), $(UN), D  ,  104}
-	  { $(DEVICE) , X  ,$(DEVICE):X,    5   , 5 , 5   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), E  ,  105}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    5   , 5 , 5   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), E  ,  105}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 5   , 5 , 5   ,"","3E10","1E10",3,"1E8","1E7"  , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    4   , 4 , 4   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 4   , 4 , 4   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) , X  ,$(DEVICE):X,    5   , 5 , 5   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    5   , 5 , 5   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 5   , 5 , 5   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), E  ,  105}
 	  { $(DEVICE) , X  ,$(DEVICE):X,    6   , 6 , 6   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), F  ,  106}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    6   , 6 , 6   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), F  ,  106}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    6   , 6 , 6   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), F  ,  106}
 	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 6   , 6 , 6   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), F  ,  106}
-	  { $(DEVICE) , X  ,$(DEVICE):X,    7   , 7 , 7   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), G  ,  107}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    7   , 7 , 7   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), G  ,  107}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 7   , 7 , 7   ,"","3E10","1E10",3,"1E8","1E7"  , $(LOC), $(UN), G  ,  107}
-	  { $(DEVICE) , X  ,$(DEVICE):X,    8   , 8 , 8   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), H  ,  108}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    8   , 8 , 8   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), H  ,  108}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 8   , 8 , 8   ,"","3E10","1E10",3,"1E8","1E7"  , $(LOC), $(UN), H  ,  108}
-	  { $(DEVICE) , X  ,$(DEVICE):X,    9   , 9 , 9   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), I  ,  109}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,    9   , 9 , 9   ,mm,   3,  -3,  3 , .01,.001     , $(LOC), $(UN), I  ,  109}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 9   , 9 , 9   ,"","3E10","1E10",3,"1E8","1E7"  , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) , X  ,$(DEVICE):X,    7   , 7 , 7   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    7   , 7 , 7   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 7   , 7 , 7   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) , X  ,$(DEVICE):X,    8   , 8 , 8   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    8   , 8 , 8   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 8   , 8 , 8   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) , X  ,$(DEVICE):X,    9   , 9 , 9   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,    9   , 9 , 9   , mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT, 9   , 9 , 9   , "","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), I  ,  109}
 	  { $(DEVICE) , X  ,$(DEVICE):X,   10   , 10, 10   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), J  ,  110}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,   10   , 10, 10   , mm,   3,  -3,  3 , .01,.001   , $(LOC), $(UN), J  ,  110}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,   10   , 10, 10   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), J  ,  110}
 	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT,10   , 10, 10   ,"","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), J  ,  110}
-	  { $(DEVICE) , X  ,$(DEVICE):X,   11   , 11, 11   , mm,   3,  -3,  3 , .01,.001   , $(LOC), $(UN), K  ,  111}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,   11   , 11, 11   , mm,   3,  -3,  3 , .01,.001   , $(LOC), $(UN), K  ,  111}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT,11   , 11, 11   , "","3E10","1E10",3,"1E8","1E7", $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) , X  ,$(DEVICE):X,   11   , 11, 11   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,   11   , 11, 11   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT,11   , 11, 11   ,"","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), K  ,  111}
 	  { $(DEVICE) , X  ,$(DEVICE):X,   12   , 12, 12   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), L  ,  112}
 	  { $(DEVICE) , Y  ,$(DEVICE):Y,   12   , 12, 12   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), L  ,  112}
 	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT,12   , 12, 12   ,"","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), L  ,  112}
 	  { $(DEVICE) , X  ,$(DEVICE):X,   13   , 13, 13   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), M  ,  113}
-	  { $(DEVICE) , Y  ,$(DEVICE):Y,   13   , 13, 13   , mm,   3,  -3,  3 , .01,.001   , $(LOC), $(UN), M  ,  113}
-	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT,13   , 13, 13   , "","3E10","1E10",3,"1E8","1E7", $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) , Y  ,$(DEVICE):Y,   13   , 13, 13   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT,13   , 13, 13   ,"","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), M  ,  113}
 	  { $(DEVICE) , X  ,$(DEVICE):X,   14   , 14, 14   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), N  ,  114}
 	  { $(DEVICE) , Y  ,$(DEVICE):Y,   14   , 14, 14   ,mm,   3,  -3,  3 , .01,.001    , $(LOC), $(UN), N  ,  114}
 	  { $(DEVICE) ,TMIT,$(DEVICE):TMIT,14   , 14, 14   ,"","3E10","1E10",3,"1E8","1E7" , $(LOC), $(UN), N  ,  114}
@@ -82,10 +82,10 @@ file bsaEdefAvg.db
 
 file bsaEdefFanouts.db
 {
-#	      Device           Name
-  pattern {DEV    ,SECN , FLNK  }
-	  { $(DEVICE) , X   , "$(DEVICE):EFY PP" }
-	  { $(DEVICE) , Y   , "$(DEVICE):EFTMIT PP" }
-	  { $(DEVICE) ,TMIT , $(SLCLNK) }
+#	      Device   Name
+  pattern {   DEV     ,SECN  ,  LOCA  , UNIT  ,   FLNK                }
+	  { $(DEVICE) , X    , $(LOC) , $(UN) , "$(DEVICE):EFY PP"    }
+	  { $(DEVICE) , Y    , $(LOC) , $(UN) , "$(DEVICE):EFTMIT PP" }
+	  { $(DEVICE) ,TMIT  , $(LOC) , $(UN) ,  $(SLCLNK)            }
 }
 

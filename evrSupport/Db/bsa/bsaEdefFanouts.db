@@ -25,6 +25,7 @@ record(fanout, "$(DEV):EF$(SECN)") {
   field(LNK5, "$(DEV):$(SECN)5 PP")
   field(LNK6, "$(DEV):$(SECN)6 PP")
   field(FLNK, "$(DEV):EF1$(SECN) PP")
+  field(SDIS, "IOC:$(LOCA):$(UNIT):FIDUCIAL.L")
 }
 
 record(fanout, "$(DEV):EF2$(SECN)") {
