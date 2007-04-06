@@ -97,18 +97,6 @@ record(sSub, "$(DEV):EDAVGDONE") {
   field(BRSV, "INVALID")
 }
 
-record(mbbo, "$(DEV):TIMESLOTEDM") {
-  field(DESC, "EDM Time Slot Selection")
-  field(DOL, "3")
-  field(PINI, "YES")
-  field(ZRST, "TS1")
-  field(ONST, "TS2")
-  field(TWST, "TS3")
-  field(THST, "TS4")
-  field(FRST, "TS5")
-  field(FVST, "TS6")
-}
-
 record(ao, "$(DEV):TREF") {
   field(DESC, "IOC Trig Ref")
   field(DTYP, "Raw Soft Channel")
@@ -116,9 +104,7 @@ record(ao, "$(DEV):TREF") {
   field(LINR, "SLOPE")
   field(EGU,  "nsec")
   field(HOPR, "2.8E06")
-  field(LOPR, "-2.8E06")
   field(DRVH, "2.8E06")
-  field(DRVL, "-2.8E06")
   field(PINI, "YES")
   field(ESLO, "8.40336692324359")
   field(VAL, "$(VAL)")
