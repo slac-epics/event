@@ -128,6 +128,8 @@ static long bsaSecnAvg(sSubRecord *psub)
     psub->w = 0;  /* ts mismatch */
     psub->z= 0;   /* outer loop count */
 	psub->y = 0;  /* total count */
+    psub->l = 0;  /* RMS */
+    psub->val = 0; /* Average */
   }
   psub->n++;      /* count of how many times this is processed */
 
@@ -158,7 +160,6 @@ static long bsaSecnAvg(sSubRecord *psub)
   if (psub->o) {
 	psub->o = 0; /* flag- no resetting next time around */
     /*  reset avgcnt, meascnt, goodmeas, stat   */
-    psub->val = 0;
 	psub->q = 0; /* avgcount    */
     psub->m = 0; /* goodmeas    */
   }
@@ -195,27 +196,34 @@ static long bsaSecnAvg(sSubRecord *psub)
 	/*        Note that CUM's method of computing VAR avoids */
 	/*        possible loss of significance.                 */
 	if (psub->m <= 1) {
-	  psub->val = psub->a;
+	  psub->v = psub->a;
 	  psub->h = 0;
 	  psub->i = 0;
 	  psub->j = 0;
 	  psub->k = 0;
-	  psub->l = 0;
 	} 
 	else {
 	  psub->i = psub->m-1.0;
 	  psub->j = psub->m-2.0;
-	  psub->k = psub->a-psub->val;
-	  psub->val += psub->k/psub->m;
+	  psub->k = psub->a-psub->v;
+	  psub->v += psub->k/psub->m;
 	  psub->k /= psub->i;
 	  psub->h = (psub->j*(psub->h/psub->i)) + (psub->m*psub->k*psub->k);
-	  DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg for %s: Avg: %f; Var: %f \n", psub->name, psub->val, psub->h) );
-	  if (psub->o) { /* rms val when avg is done */
-		psub->l = psub->h/psub->m;
-		psub->l = sqrt(psub->l);
-	  }
+	  DEBUGPRINT(DP_DEBUG, bsaSubFlag, ("bsaSecnAvg for %s: Avg: %f; Var: %f \n", psub->name, psub->v, psub->h) );
 	}
   } /* if good, include in averaging */
+
+  if (psub->o) { /* values when avg is done */
+    if (psub->m > 0) {
+	  psub->l = psub->h/psub->m;
+      psub->l = sqrt(psub->l);
+      psub->val = psub->v;
+    } else {
+      psub->l=0.0;
+      psub->val = 0.0;
+	}
+  }
+   
 #ifdef linux
   /* simulation won't be supporting averaging */
   psub->b = 1;
