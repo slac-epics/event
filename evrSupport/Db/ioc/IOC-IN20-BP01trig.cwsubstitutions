@@ -17,12 +17,11 @@ file evrDevTrig.cwConfig {
 { BPMS:IN20:425:CALB  }
 { BPMS:IN20:511:CALB  }
 { BPMS:IN20:821:CALB  } 
-# spare triggers FP 1-5 (VME)
+# spare triggers FP 1-4 (VME)
 { TRIG:IN20:BP01:}
 { TRIG:IN20:BP02:}
 { TRIG:IN20:BP03:}
 { TRIG:IN20:BP04:}
-{ TRIG:IN20:BP05:}
 # spare triggers 6-7; for TTB6, TTB13
 { TRIG:IN20:BP06:}
 { TRIG:IN20:BP07:}

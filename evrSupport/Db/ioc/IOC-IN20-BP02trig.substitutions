@@ -39,7 +39,7 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPC , OTCP, OTCW, OTCD, 1}
  { BPMS:IN20:781:CALB ,  "BPM15 Calb" , 0    ,  100   , 10      , TS5_120_   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPD , OTDP, OTDW, OTDD, 1}
-# spare triggers 8-12, FP (VME)
+# spare triggers 8-11, FP (VME)
 	 { TRIG:IN20:BP08:, "Spare Trig 8", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D, 1}
 	 { TRIG:IN20:BP09:, "Spare Trig 9", 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
@@ -48,8 +48,6 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D, 1}
 	 { TRIG:IN20:BP11:, "Spare Trig 11", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG3E , DG3P, DG3W, DG3D, 1}
-	 { TRIG:IN20:BP12:, "Spare Trig 12", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP02, IOC:IN20:BP02, 8.40336692324359
-                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG4E , DG4P, DG4W, DG4D, 1}
 #EVR:IN20:BP03 
 	 { BPMS:IN20:925: ,  "BPMS1"      , 0    ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0 , OT0P, OT0W, OT0D, 1}
@@ -63,7 +61,7 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP8 , OT8P, OT8W, OT8D, 1}
  { BPMS:IN20:981:CALB ,  "BPMS3 Calb" , 0    ,  100   , 10      , TS5_120_   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP9 , OT9P, OT9W, OT9D, 1}
-# spare triggers 13-17, FP (VME)
+# spare triggers 13-16, FP (VME)
 	 { TRIG:IN20:BP13:, "Spare Trig 13", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D, 1}
 	 { TRIG:IN20:BP14:, "Spare Trig 14", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
@@ -72,8 +70,6 @@ file evrDevTrig.db {
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D, 1}
 	 { TRIG:IN20:BP16:, "Spare Trig 16", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG3E , DG3P, DG3W, DG3D, 1}
-	 { TRIG:IN20:BP17:, "Spare Trig 17", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359
-                      ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG4E , DG4P, DG4W, DG4D, 1}
 
 # spare triggers 18-25, TTB 3-6; 10-13
 	 { TRIG:IN20:BP18:, "Spare Trig 18", 0   ,  100   , 10      , LCLSBEAM   , IN20 , BP03, IOC:IN20:BP02, 8.40336692324359

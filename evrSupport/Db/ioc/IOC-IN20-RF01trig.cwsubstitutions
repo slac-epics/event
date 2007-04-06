@@ -19,7 +19,6 @@ file evrDevTrig.cwConfig {
 { TRIG:IN20:RF02:        }
 { TRIG:IN20:RF03:        }
 { TRIG:IN20:RF04:        }
-{ TRIG:IN20:RF05:        }
 # spare triggers 6-9 TTB 10-13
 { TRIG:IN20:RF06:        }
 { TRIG:IN20:RF07:        }
@@ -39,7 +38,6 @@ file evrDevTrig.cwConfig {
 { TRIG:IN20:RF11:         }
 { TRIG:IN20:RF12:         }
 { TRIG:IN20:RF13:         }
-{ TRIG:IN20:RF14:         }
 # spare triggers 15-20 TTB 8-13
 { TRIG:IN20:RF15:         }
 { TRIG:IN20:RF16:         }
@@ -65,7 +63,6 @@ file evrDevTrig.cwConfig {
 { TRIG:IN20:RF22:         }
 { TRIG:IN20:RF23:         }
 { TRIG:IN20:RF24:         }
-{ TRIG:IN20:RF25:         }
 # spare triggers 26-27, TTB
 { TRIG:IN20:RF26:         }
 { TRIG:IN20:RF27:         }
