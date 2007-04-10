@@ -32,12 +32,14 @@ pattern { DEV      , NAME    , ID , PRIO , FLNK               }
 	{$(DEVICE) , LCLSHALF, 146, LOW  , ""                 }
 	{$(DEVICE) , LCLS_N-1, 147, LOW  , ""                 }
 	{$(DEVICE) , LCLS_N-2, 148, LOW  , ""                 }
-# LCLS TBD Event Codes
-	{$(DEVICE) , LCLSTBD1, 151, LOW  , ""                 }
+# LCLS Specialized Event Codes
+	{$(DEVICE) , LCLSTBD1, 149, LOW  , ""                 }
+	{$(DEVICE) , LCLS_SS_, 150, LOW  , ""                 }
+	{$(DEVICE) , LCLS_ACC, 151, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD2, 152, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD3, 153, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD4, 154, LOW  , ""                 }
-	{$(DEVICE) , LCLSTBD5, 155, LOW  , ""                 }
+	{$(DEVICE) , STRAIGHT, 155, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD6, 156, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD7, 157, LOW  , ""                 }
 # Beam-Independent Time Slot Triggers
