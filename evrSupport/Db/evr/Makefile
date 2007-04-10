@@ -24,6 +24,7 @@ DB += evrBPXX.db
 DB += evrMGXX.db
 DB += evrIMXX.db
 DB += evrMCXX.db
+DB += evrAMXX.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
