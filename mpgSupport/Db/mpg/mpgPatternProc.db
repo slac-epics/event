@@ -203,7 +203,9 @@ record(fanout, "$(DEV):LCLSBEAMFO") {
   field(LNK1, "$(DEV):LCLSBEAM")
   field(LNK2, "$(DEV):LCLS_N-1")
   field(LNK3, "$(DEV):LCLS_N-2")
-  field(LNK4, "$(DEV):LCLSTBDFO")
+  field(LNK4, "$(DEV):LCLS_ACC")
+  field(LNK5, "$(DEV):LCLS_SS_")
+  field(LNK6, "$(DEV):LCLSTBDFO")
   field(FLNK, "$(DEV):SEQRAM")
 }
 
@@ -213,7 +215,7 @@ record(fanout, "$(DEV):LCLSTBDFO") {
   field(LNK2, "$(DEV):LCLSTBD2")
   field(LNK3, "$(DEV):LCLSTBD3")
   field(LNK4, "$(DEV):LCLSTBD4")
-  field(LNK5, "$(DEV):LCLSTBD5")
+  field(LNK5, "$(DEV):STRAIGHT")
   field(LNK6, "$(DEV):LCLSTBD6")
   field(FLNK, "$(DEV):LCLSTBD7")
 }
@@ -224,6 +226,7 @@ record(sub, "$(DEV):SEQRAM") {
   field(HOPR, "1")
   field(BRSV, "INVALID")
   field(FLNK, "$(DEV):EDEFFO")
+  field(INPA, "$(DEV):SEQRAMSEND.A")
 }
 
 record(sub, "$(DEV):SEQRAMSEND") {
