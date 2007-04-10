@@ -65,6 +65,7 @@ epicsExportAddress(drvet, drvPnet);
 int drvPnetFlag = 0;
 #endif
 
+int                     pnetDoFiducial = 1;
 static int              intrEnabled = 0;
 static unsigned long    vmePnetAddr = PNET_DEF_BASE_ADDRESS; /* base addr of PNET */
 static epicsUInt32     *pLocalBuf   = NULL; /* keep pLocalBuf a ptr for devRegAddr */
@@ -85,6 +86,10 @@ static int pnetReport( int interest )
             (unsigned int)pLocalBuf, PNET_IRQ_VECTOR, PNET_IRQ_LEVEL,
             intrEnabled? "Enabled" : "Disabled");
     evrMessageReport(EVR_MESSAGE_PNET, EVR_MESSAGE_PNET_NAME, interest);
+    if (pnetDoFiducial) {
+      evrMessageReport(EVR_MESSAGE_FIDUCIAL, EVR_MESSAGE_FIDUCIAL_NAME,
+                       interest);
+    } 
   }
   return interest;
 }
@@ -140,7 +145,7 @@ void pnetISR (
   }
   evrMessageWrite(EVR_MESSAGE_PNET, &message_u);
 #endif
-  evrMessageStart(EVR_MESSAGE_FIDUCIAL);
+  if (pnetDoFiducial) evrMessageStart(EVR_MESSAGE_FIDUCIAL);
   pnetAvailable = 1;
   epicsEventSignal(pnetTaskEventSem);
 }
@@ -160,7 +165,7 @@ static int pnetTask()
     epicsEventMustWait(pnetTaskEventSem);
     if (pnetAvailable) {
       /* Advance the pipeline and then process the data */
-      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
+      if (pnetDoFiducial) evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
       evrMessageProcess(EVR_MESSAGE_PNET);
       pnetAvailable = 0;
     }
@@ -225,9 +230,10 @@ static int pnetInitialise() {
   int rc;
 
   /* Create space for the fiducial + diagnostics */
-  rc = evrMessageCreate(EVR_MESSAGE_FIDUCIAL_NAME, 0);
-  if (rc != EVR_MESSAGE_FIDUCIAL) return -1;
-  
+  if (pnetDoFiducial) {
+    rc = evrMessageCreate(EVR_MESSAGE_FIDUCIAL_NAME, 0);
+    if (rc != EVR_MESSAGE_FIDUCIAL) return -1;
+  }
   /* Create space for the PNET message + diagnostics */
   rc = evrMessageCreate(EVR_MESSAGE_PNET_NAME, sizeof(evrMessagePnet_ts));
   if (rc != EVR_MESSAGE_PNET) return -1;
