@@ -31,11 +31,11 @@ string edefNRPOS;
 assign edefNRPOS to "";
 string edefNRPOSPV;
 
-int dgrpINCM[3]; 
+unsigned long dgrpINCM[3]; 
 assign dgrpINCM to "VX00:DGRP:1150:INCM";
 monitor dgrpINCM;
 
-int dgrpEXCM[3];
+unsigned long dgrpEXCM[3];
 assign dgrpEXCM to "VX00:DGRP:1150:EXCM";
 monitor dgrpEXCM;
 
@@ -153,25 +153,25 @@ ss edefReserveStateSet
 		  pvAssign (edefNRPOS, edefNRPOSPV);
 		  pvPut (edefNRPOS);
                   for (i=0; i<3; i++) {
-                    dgrpSHORT = dgrpINCM[i] & 0x00FF;
+                    dgrpSHORT = dgrpINCM[i] & 0x0000FFFF;
                     sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dA", SYS, edefNumber, 1+i);
                     pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                     INCLUSIONvalSHORT = dgrpSHORT;
                     pvPut (INCLUSIONvalSHORT);
 
-                    dgrpSHORT = (dgrpINCM[i] & 0xFF00) >> 16;
+                    dgrpSHORT = (dgrpINCM[i] & 0xFFFF0000) >> 16;
                     sprintf (INCLUSIONpvSHORT, "EDEF:%s:%d:INCLUSION%dB", SYS, edefNumber, 1+i);
                     pvAssign (INCLUSIONvalSHORT, INCLUSIONpvSHORT);
                     INCLUSIONvalSHORT = dgrpSHORT;
                     pvPut (INCLUSIONvalSHORT);
 
-                    dgrpSHORT = dgrpEXCM[i] & 0x00FF;
+                    dgrpSHORT = dgrpEXCM[i] & 0x0000FFFF;
                     sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dA", SYS, edefNumber, 1+i);
                     pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                     EXCLUSIONvalSHORT = dgrpSHORT;
                     pvPut (EXCLUSIONvalSHORT);
 
-                    dgrpSHORT = (dgrpEXCM[i] & 0xFF00) >> 16;
+                    dgrpSHORT = (dgrpEXCM[i] & 0xFFFF0000) >> 16;
                     sprintf (EXCLUSIONpvSHORT, "EDEF:%s:%d:EXCLUSION%dB", SYS, edefNumber, 1+i);
                     pvAssign (EXCLUSIONvalSHORT, EXCLUSIONpvSHORT);
                     EXCLUSIONvalSHORT = dgrpSHORT;
