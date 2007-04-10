@@ -47,6 +47,7 @@
 #include "sSubRecord.h"       /* for struct sSubRecord      */
 #include "registryFunction.h" /* for epicsExport            */
 #include "epicsExport.h"      /* for epicsRegisterFunction  */
+#include "epicsMutex.h"       /* EPICS Mutex support        */
 #include "epicsTime.h"        /* for epicsTimeGetCurrent    */
 #include "dbScan.h"           /* for post_event             */
 #include "errlog.h"           /* errlogPrintf               */
@@ -457,9 +458,11 @@ static long mpgPatternProc(sSubRecord *psub)
     /* send pattern on to all EVRs */
 #ifdef __rtems__
     if (psub->dpvt) {
+      epicsMutexLock(((EgCardStruct *)psub->dpvt)->EgLock);
       EgDataBufferLoad((EgCardStruct *)psub->dpvt,
                        (epicsUInt32 *)&evrPatternWF_s,
                        sizeof(evrMessagePattern_ts)/sizeof(epicsUInt32));
+      epicsMutexUnlock(((EgCardStruct *)psub->dpvt)->EgLock);
     }
 #endif
   }
