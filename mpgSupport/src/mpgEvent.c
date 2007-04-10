@@ -68,6 +68,7 @@ typedef struct {
   unsigned int    code;
   int             enable;
   int             everyCycle;
+  int             singleShot;
   unsigned short  ramPos_a[MRF_NUM_SEQ_RAM];
   MrfEvgSeqStruct ram_as[MRF_NUM_SEQ_RAM];
   
@@ -95,6 +96,7 @@ static epicsMutexId   mpgEventMutex_ps = 0; /* Mutex for above information   */
 static unsigned int   lockStatus       = 0; /* Mutex lock status             */
 #ifdef __rtems__
 static EgCardStruct  *evgCard_ps       = 0; /* EVG card information          */
+static unsigned int   evgLockStatus    = 0; /* Mutex lock status             */
 #endif
 
 /* Diagnostics Counters */
@@ -273,7 +275,7 @@ static int mpgEventSeq(subRecord *psub)
   /* Lock the event data - this lock is kept throughout time slot
      and beam code event 360Hz processing and then released on the
      final record (sequence switch). */
-  lockStatus = epicsMutexTryLock(mpgEventMutex_ps);
+  lockStatus = epicsMutexLock(mpgEventMutex_ps);
   if (lockStatus) {
     lockErrCount++;
     eventEnable = 0;
@@ -297,9 +299,19 @@ static int mpgEventSeq(subRecord *psub)
   ram = ramNext+1;
 #ifdef __rtems__
   if (evgCard_ps) {
-    int mode = EgGetMode(evgCard_ps, ram,
-                         &mpgRam_as[ramNext].busy,
-                         &mpgRam_as[ramNext].enable);
+    int mode;
+
+    /* Lock the EVG card - this lock is kept throughout time slot
+       and beam code event 360Hz processing and then released on the
+       final record (sequence switch). */
+    evgLockStatus = epicsMutexLock(evgCard_ps->EgLock);
+    if (evgLockStatus) {
+      lockErrCount++;
+      eventEnable = 0;
+    }
+    mode = EgGetMode(evgCard_ps, ram,
+                     &mpgRam_as[ramNext].busy,
+                     &mpgRam_as[ramNext].enable);
     /* For now, ignore the busy status. */
     if (mpgRam_as[ramNext].busy) {
       busyErrCount++;
@@ -497,6 +509,7 @@ static int mpgEventBeamCode(sSubRecord *psub)
         if (ramUpdate) {
           mpgEvent_ps = &mpgEvent_as[eventcode];
           if (mpgEvent_ps->enable) {
+            if (mpgEvent_ps->singleShot) mpgEvent_ps->enable = 0;
             mpgEvent_ps->ram_as[ramNext].EventCode = mpgEvent_ps->code;
 #ifdef __rtems__
             if (evgCard_ps) EgSeqRamWrite(evgCard_ps, ram,
@@ -529,7 +542,7 @@ static int mpgEventBeamCode(sSubRecord *psub)
   Rem:  Subroutine for IOC:<LOCA>:<UNIT>:SEQRAM
 
   Inputs:
-       None
+       A - For testing - don't enable RAM if nonzero
             
   Outputs:
        VAL - Sequence Ram To Go on the next Fiducial
@@ -539,10 +552,13 @@ static int mpgEventSeqSwitch(subRecord *psub)
 {
   
 #ifdef __rtems__
-  if (evgCard_ps && (!mpgRam_as[ramNext].enable)) {
+  if (evgCard_ps) {
     /* Enable the next RAM for the next fiducial */
-    EgEnableRam(evgCard_ps, ramNext+1);
-    mpgRam_as[ramNext].enable = 1;
+    if ((!mpgRam_as[ramNext].enable) && (!psub->a)) {
+      EgEnableRam(evgCard_ps, ramNext+1);
+      mpgRam_as[ramNext].enable = 1;
+    }
+    if (!evgLockStatus) epicsMutexUnlock(evgCard_ps->EgLock);
   }
 #endif
   /* Set to the ram that was just enabled */
@@ -577,9 +593,15 @@ static int mpgEventSeqSwitch(subRecord *psub)
 static int mpgEventSeqSend(subRecord *psub)
 {
 #ifdef __rtems__
-  if (evgCard_ps && psub->a && mpgRam_as[ramNext].enable) {
+  if (evgCard_ps && psub->a) {
     /* For testing - when fiducial is not available, make it happen now. */
+    epicsMutexLock(evgCard_ps->EgLock);
+    if (!mpgRam_as[ramNext].enable) {
+      EgEnableRam(evgCard_ps, ramNext+1);
+      mpgRam_as[ramNext].enable = 1;
+    }
     EgSeqTrigger(evgCard_ps, ramNext+1);
+    epicsMutexUnlock(evgCard_ps->EgLock);
   }
 #endif
   psub->val = ramNext;
@@ -608,6 +630,7 @@ static int mpgEventSeqSend(subRecord *psub)
        E - Enable/Disable this event code
        F - Event code applies to every cycle
        G - Sequence Ram Speed (Hz)
+       H - Single Shot - this event automatically disabled after one send
      
   Outputs:
        I - Desired Delay in the Sequence Ram (nsec)
@@ -693,6 +716,7 @@ static long mpgEventCode(subRecord *psub)
   /* Now set up new attributes for this event - 360Hz processing will change
      RAM position and update event code */
   mpgEvent_as[newcode].code                = newcode;
+  mpgEvent_as[newcode].singleShot          = psub->h;
   mpgEvent_as[newcode].enable              = psub->j;
   mpgEvent_as[newcode].everyCycle          = psub->k;
   mpgEvent_as[newcode].ram_as[0].Timestamp = newTimestamp;  
