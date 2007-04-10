@@ -15,6 +15,7 @@ DB += evg.db
 # EVR
 DB += evr.db
 DB += evrWithDelays.db
+DB += evrWithExtDelays.db
 DB += evrEventCtrl.db
 
 include $(TOP)/configure/RULES
