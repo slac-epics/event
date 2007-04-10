@@ -4,6 +4,6 @@
 file bsaBLENEdef.db {
 #      Device        ,loc'n , IOC unit, timing system
   pattern {DEVICE    , LOC  ,  UN  , SYS , SLCLNK }
-	  { BLEN:LI21:265, LI21 , BL01 , SYS0, "" }
-	  { BLEN:LI21:280, LI21 , BL01 , SYS0, "" }
+	  { BLEN:LI21:265, LI21 , BL01 , SYS0, BLEN:LI21:265:FANOUTSLC }
+	  { BLEN:LI21:280, LI21 , BL01 , SYS0, BLEN:LI21:280:FANOUTSLC }
 }
