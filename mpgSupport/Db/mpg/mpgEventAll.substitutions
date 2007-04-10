@@ -18,80 +18,82 @@ pattern { DEV      , ELOCA , CHECK     , SEND     }
 }
 file mpgEvent.db
 {
-#                            Event  Delay in    Send Every
-#	 Location            Code   Clock Ticks Cycle
-pattern { DEV      , NAME    , ID , DELY      , ALWAYS   ,   CONV   }
-	{$(DEVICE) , LCLSBEAM, 140,11900      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLS_60_, 141,11901      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLS_30_, 142,11902      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLS_10_, 143,11903      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLS_5_ , 144,11904      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLS_1_ , 145,11905      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLSHALF, 146,11906      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLS_N-1, 147,11907      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLS_N-2, 148,11908      , 0        , $(SPEED) }
-# LCLS TBD Event Codes
-	{$(DEVICE) , LCLSTBD1, 151,11911      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLSTBD2, 152,11912      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLSTBD3, 153,11913      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLSTBD4, 154,11914      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLSTBD5, 155,11915      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLSTBD6, 156,11916      , 0        , $(SPEED) }
-	{$(DEVICE) , LCLSTBD7, 157,11917      , 0        , $(SPEED) }
+#                            Event  Delay in    Send Every  # Ticks  Single
+#	 Location            Code   Clock Ticks Cycle       in 1sec  Shot  Enable
+pattern { DEV      , NAME    , ID , DELY      , ALWAYS   ,   CONV   , SS , ENA}
+	{$(DEVICE) , LCLSBEAM, 140,11900      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_60_, 141,11901      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_30_, 142,11902      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_10_, 143,11903      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_5_ , 144,11904      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_1_ , 145,11905      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSHALF, 146,11906      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_N-1, 147,11907      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_N-2, 148,11908      , 0        , $(SPEED) ,  0 ,  1 }
+# LCLS Specialized Event Codes
+	{$(DEVICE) , LCLSTBD1, 149,11909      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLS_SS_, 150,11910      , 0        , $(SPEED) ,  1 ,  0 }
+	{$(DEVICE) , LCLS_ACC, 151,11911      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD2, 152,11912      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD3, 153,11913      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD4, 154,11914      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , STRAIGHT, 155,11915      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD6, 157,11916      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD7, 158,11917      , 0        , $(SPEED) ,  0 ,  1 }
 # Beam-Independent Time Slot Triggers
 #   360Hz
-	{$(DEVICE) , TSX_360_ , 9 ,12950      , 1        , $(SPEED) }
+	{$(DEVICE) , TSX_360_ , 9 ,12950      , 1        , $(SPEED) ,  0 ,  1 }
 #   Modulo36 base event code
-	{$(DEVICE) , TSXMOD36 ,201,13000      , 1        , $(SPEED) }
+	{$(DEVICE) , TSXMOD36 ,201,13000      , 1        , $(SPEED) ,  0 ,  1 }
 #   120Hz
-	{$(DEVICE) , TS1_120_, 10 ,13001      , 0        , $(SPEED) }
-	{$(DEVICE) , TS2_120_, 20 ,13002      , 0        , $(SPEED) }
-	{$(DEVICE) , TS3_120_, 30 ,13003      , 0        , $(SPEED) }
-	{$(DEVICE) , TS4_120_, 40 ,13004      , 0        , $(SPEED) }
-	{$(DEVICE) , TS5_120_, 50 ,13005      , 0        , $(SPEED) }
-	{$(DEVICE) , TS6_120_, 60 ,13006      , 0        , $(SPEED) }
+	{$(DEVICE) , TS1_120_, 10 ,13001      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS2_120_, 20 ,13002      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS3_120_, 30 ,13003      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS4_120_, 40 ,13004      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS5_120_, 50 ,13005      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS6_120_, 60 ,13006      , 0        , $(SPEED) ,  0 ,  1 }
 #    60Hz
-	{$(DEVICE) , TS1_60_ , 11 ,13011      , 0        , $(SPEED) }
-	{$(DEVICE) , TS2_60_ , 21 ,13012      , 0        , $(SPEED) }
-	{$(DEVICE) , TS3_60_ , 31 ,13013      , 0        , $(SPEED) }
-	{$(DEVICE) , TS4_60_ , 41 ,13014      , 0        , $(SPEED) }
-	{$(DEVICE) , TS5_60_ , 51 ,13015      , 0        , $(SPEED) }
-	{$(DEVICE) , TS6_60_ , 61 ,13016      , 0        , $(SPEED) }
+	{$(DEVICE) , TS1_60_ , 11 ,13011      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS2_60_ , 21 ,13012      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS3_60_ , 31 ,13013      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS4_60_ , 41 ,13014      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS5_60_ , 51 ,13015      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS6_60_ , 61 ,13016      , 0        , $(SPEED) ,  0 ,  1 }
 #    30Hz
-	{$(DEVICE) , TS1_30_ , 12 ,13021      , 0        , $(SPEED) }
-	{$(DEVICE) , TS2_30_ , 22 ,13022      , 0        , $(SPEED) }
-	{$(DEVICE) , TS3_30_ , 32 ,13023      , 0        , $(SPEED) }
-	{$(DEVICE) , TS4_30_ , 42 ,13024      , 0        , $(SPEED) }
-	{$(DEVICE) , TS5_30_ , 52 ,13025      , 0        , $(SPEED) }
-	{$(DEVICE) , TS6_30_ , 62 ,13026      , 0        , $(SPEED) }
+	{$(DEVICE) , TS1_30_ , 12 ,13021      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS2_30_ , 22 ,13022      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS3_30_ , 32 ,13023      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS4_30_ , 42 ,13024      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS5_30_ , 52 ,13025      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS6_30_ , 62 ,13026      , 0        , $(SPEED) ,  0 ,  1 }
 #    10Hz
-	{$(DEVICE) , TS1_10_ , 13 ,13031      , 0        , $(SPEED) }
-	{$(DEVICE) , TS2_10_ , 23 ,13032      , 0        , $(SPEED) }
-	{$(DEVICE) , TS3_10_ , 33 ,13033      , 0        , $(SPEED) }
-	{$(DEVICE) , TS4_10_ , 43 ,13034      , 0        , $(SPEED) }
-	{$(DEVICE) , TS5_10_ , 53 ,13035      , 0        , $(SPEED) }
-	{$(DEVICE) , TS6_10_ , 63 ,13036      , 0        , $(SPEED) }
+	{$(DEVICE) , TS1_10_ , 13 ,13031      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS2_10_ , 23 ,13032      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS3_10_ , 33 ,13033      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS4_10_ , 43 ,13034      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS5_10_ , 53 ,13035      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS6_10_ , 63 ,13036      , 0        , $(SPEED) ,  0 ,  1 }
 #     5Hz
-	{$(DEVICE) , TS1_5_  , 14 ,13041      , 0        , $(SPEED) }
-	{$(DEVICE) , TS2_5_  , 24 ,13042      , 0        , $(SPEED) }
-	{$(DEVICE) , TS3_5_  , 34 ,13043      , 0        , $(SPEED) }
-	{$(DEVICE) , TS4_5_  , 44 ,13044      , 0        , $(SPEED) }
-	{$(DEVICE) , TS5_5_  , 54 ,13045      , 0        , $(SPEED) }
-	{$(DEVICE) , TS6_5_  , 64 ,13046      , 0        , $(SPEED) }
+	{$(DEVICE) , TS1_5_  , 14 ,13041      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS2_5_  , 24 ,13042      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS3_5_  , 34 ,13043      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS4_5_  , 44 ,13044      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS5_5_  , 54 ,13045      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS6_5_  , 64 ,13046      , 0        , $(SPEED) ,  0 ,  1 }
 #     1Hz
-	{$(DEVICE) , TS1_1_  , 15 ,13051      , 0        , $(SPEED) }
-	{$(DEVICE) , TS2_1_  , 25 ,13052      , 0        , $(SPEED) }
-	{$(DEVICE) , TS3_1_  , 35 ,13053      , 0        , $(SPEED) }
-	{$(DEVICE) , TS4_1_  , 45 ,13054      , 0        , $(SPEED) }
-	{$(DEVICE) , TS5_1_  , 55 ,13055      , 0        , $(SPEED) }
-	{$(DEVICE) , TS6_1_  , 65 ,13056      , 0        , $(SPEED) }
+	{$(DEVICE) , TS1_1_  , 15 ,13051      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS2_1_  , 25 ,13052      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS3_1_  , 35 ,13053      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS4_1_  , 45 ,13054      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS5_1_  , 55 ,13055      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS6_1_  , 65 ,13056      , 0        , $(SPEED) ,  0 ,  1 }
 #   0.5Hz
-	{$(DEVICE) , TS1_HALF, 16 ,13061      , 0        , $(SPEED) }
-	{$(DEVICE) , TS2_HALF, 26 ,13062      , 0        , $(SPEED) }
-	{$(DEVICE) , TS3_HALF, 36 ,13063      , 0        , $(SPEED) }
-	{$(DEVICE) , TS4_HALF, 46 ,13064      , 0        , $(SPEED) }
-	{$(DEVICE) , TS5_HALF, 56 ,13065      , 0        , $(SPEED) }
-	{$(DEVICE) , TS6_HALF, 66 ,13066      , 0        , $(SPEED) }
+	{$(DEVICE) , TS1_HALF, 16 ,13061      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS2_HALF, 26 ,13062      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS3_HALF, 36 ,13063      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS4_HALF, 46 ,13064      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS5_HALF, 56 ,13065      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , TS6_HALF, 66 ,13066      , 0        , $(SPEED) ,  0 ,  1 }
 }
 file mpgEventBeamCode.db
 {
@@ -103,11 +105,13 @@ pattern { DEV      , NAME    , ID ,  BC ,  RF   ,NINP ,DISV,  IN2  ,  IN3   , IN
 	{$(DEVICE) , LCLSBEAM, 140,  1  ,  1    ,"N-1", 1  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLS_N-1, 147,  1  ,  0    ,"N-2", 1  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLS_N-2, 148,  1  ,  0    ,"N-3", 1  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
-	{$(DEVICE) , LCLSTBD1, 151,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0  ,32768,  0  ,  0  ,  0  }
+	{$(DEVICE) , LCLSTBD1, 149,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
+	{$(DEVICE) , LCLS_SS_, 150,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0,8421376,524288, 0  ,  0  }
+	{$(DEVICE) , LCLS_ACC, 151,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0  ,32768,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD2, 152,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD3, 153,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD4, 154,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
-	{$(DEVICE) , LCLSTBD5, 155,  3  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0  ,311296, 0  ,  0  ,  0  }
+	{$(DEVICE) , STRAIGHT, 155,  3  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0  ,311296, 0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD6, 156,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD7, 157,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 }
