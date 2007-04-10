@@ -6,12 +6,12 @@
 #
 #==============================================================================
 #
-file evr.db
+file evrWithExtDelays.db
 {
-#                           Default Pulse
-#	 Device      Card   Delay   Width (clock ticks)    
-pattern { DEV      , CARD , DELAY , WIDTH }
-	{ $(DEVICE),  0   ,   0   ,  12   }
+#                      Default Pulse <--------------------------- Extended Delays -------------------------------------->
+#	 Device     Card Delay Width State    Clock PreScaler   Pulse Widths       Delays             Polarities     
+pattern { DEV      ,CARD,DELAY,WIDTH,STATE   , DG0C,DG1C,DG2C, DG0W,DG1W,DG2W, DG0D,DG1D,DG2D,   DG0P  ,  DG1P  ,  DG2P  }
+	{ $(DEVICE), 0  ,  0  , 12  ,Disabled, 119 ,119 ,119 , 1000,1000,1000, 500 ,500 ,500 , Inverted,Inverted,Inverted}
 }
 #Note - there is a dependency on event code assignments and triggers.
 #     When changing event code assignments below, also change the appropriate
