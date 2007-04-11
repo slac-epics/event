@@ -15,7 +15,7 @@ file evrDevTrig.cwConfig {
 	  { FARC:IN20:898: }
 	  { DTIZ:IN20:IM01:}
 	  { CHAS:IN20:IM11:CALB}
-	  { CHAS:IN20:1M12:CALB}
+	  { CHAS:IN20:IM12:CALB}
 # FP Spares
 	  { TRIG:IN20:IM01:}
 	  { TRIG:IN20:IM02:}
