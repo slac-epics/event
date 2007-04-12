@@ -18,9 +18,9 @@ pattern { DEV      , ELOCA , CHECK     , SEND     }
 }
 file mpgEvent.db
 {
-#                            Event  Delay in    Send Every  # Ticks  Single
-#	 Location            Code   Clock Ticks Cycle       in 1sec  Shot  Enable
-pattern { DEV      , NAME    , ID , DELY      , ALWAYS   ,   CONV   , SS , ENA}
+#                            Event  Delay in    Send Every  # Ticks  # to
+#	 Location            Code   Clock Ticks Cycle       in 1sec  Send  Enable
+pattern { DEV      , NAME    , ID , DELY      , ALWAYS   ,   CONV   ,NUM , ENA}
 	{$(DEVICE) , LCLSBEAM, 140,11900      , 0        , $(SPEED) ,  0 ,  1 }
 	{$(DEVICE) , LCLS_60_, 141,11901      , 0        , $(SPEED) ,  0 ,  1 }
 	{$(DEVICE) , LCLS_30_, 142,11902      , 0        , $(SPEED) ,  0 ,  1 }
@@ -31,15 +31,15 @@ pattern { DEV      , NAME    , ID , DELY      , ALWAYS   ,   CONV   , SS , ENA}
 	{$(DEVICE) , LCLS_N-1, 147,11907      , 0        , $(SPEED) ,  0 ,  1 }
 	{$(DEVICE) , LCLS_N-2, 148,11908      , 0        , $(SPEED) ,  0 ,  1 }
 # LCLS Specialized Event Codes
-	{$(DEVICE) , LCLSTBD1, 149,11909      , 0        , $(SPEED) ,  0 ,  1 }
-	{$(DEVICE) , LCLS_SS_, 150,11910      , 0        , $(SPEED) ,  1 ,  0 }
+	{$(DEVICE) , LCLSTBD1, 149,11909      , 0        , $(SPEED) ,  0 ,  0 }
+	{$(DEVICE) , LCLSBURS, 150,11910      , 0        , $(SPEED) ,  1 ,  0 }
 	{$(DEVICE) , LCLS_ACC, 151,11911      , 0        , $(SPEED) ,  0 ,  1 }
-	{$(DEVICE) , LCLSTBD2, 152,11912      , 0        , $(SPEED) ,  0 ,  1 }
-	{$(DEVICE) , LCLSTBD3, 153,11913      , 0        , $(SPEED) ,  0 ,  1 }
-	{$(DEVICE) , LCLSTBD4, 154,11914      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD2, 152,11912      , 0        , $(SPEED) ,  0 ,  0 }
+	{$(DEVICE) , LCRFONLY, 153,11913      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD4, 154,11914      , 0        , $(SPEED) ,  0 ,  0 }
 	{$(DEVICE) , STRAIGHT, 155,11915      , 0        , $(SPEED) ,  0 ,  1 }
-	{$(DEVICE) , LCLSTBD6, 157,11916      , 0        , $(SPEED) ,  0 ,  1 }
-	{$(DEVICE) , LCLSTBD7, 158,11917      , 0        , $(SPEED) ,  0 ,  1 }
+	{$(DEVICE) , LCLSTBD6, 157,11916      , 0        , $(SPEED) ,  0 ,  0 }
+	{$(DEVICE) , LCLSTBD7, 158,11917      , 0        , $(SPEED) ,  0 ,  0 }
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 ,12950      , 1        , $(SPEED) ,  0 ,  1 }
@@ -106,11 +106,12 @@ pattern { DEV      , NAME    , ID ,  BC ,  RF   ,NINP ,DISV,  IN2  ,  IN3   , IN
 	{$(DEVICE) , LCLS_N-1, 147,  1  ,  0    ,"N-2", 1  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLS_N-2, 148,  1  ,  0    ,"N-3", 1  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD1, 149,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
-	{$(DEVICE) , LCLS_SS_, 150,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0,8421376,524288, 0  ,  0  }
-	{$(DEVICE) , LCLS_ACC, 151,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0  ,32768,  0  ,  0  ,  0  }
+	{$(DEVICE) , LCLSBURS, 150,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
+	{$(DEVICE) , LCLS_ACC, 151,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0,1081344,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD2, 152,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
-	{$(DEVICE) , LCLSTBD3, 153,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
-	{$(DEVICE) , LCLSTBD4, 154,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
+	{$(DEVICE) , LCRFONLY, 153,  1  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0,9469952,524288, 0  ,  0  }
+# The following bit mask produces a trigger for no-gun-permit and 10hz
+	{$(DEVICE) , LCLSTBD4, 154,  1  ,  0    ,"N-1", 0  ,1048576,    0   ,  0  ,2097152,0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , STRAIGHT, 155,  3  ,  0    ,"N-1", 1  ,  0    ,    0   ,  0  ,  0  ,311296, 0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD6, 156,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
 	{$(DEVICE) , LCLSTBD7, 157,  1  ,  0    ,"N-1", 0  ,8388608, 524288 ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  }
