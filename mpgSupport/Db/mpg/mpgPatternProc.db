@@ -47,11 +47,11 @@ record(sSub, "$(DEV):PATTERNDIAG") {
   field(SNAM, "mpgPatternState")
   field(INPA, "$(DEV):PATTERN")
   field(BRSV, "INVALID")
-  field(FLNK, "$(DEV):FIDUCIALRATE")
+  field(FLNK, "$(DEV):RATE")
 }
 
-record(ai, "$(DEV):FIDUCIALRATE") {
-  field(DESC, "FIDUCIAL Event Rate")
+record(ai, "$(DEV):RATE") {
+  field(DESC, "Pattern Rate")
   field(INP, "$(DEV):PATTERNDIAG.C")
   field(EGU, "Hz")
   field(PREC, "1")
@@ -204,7 +204,7 @@ record(fanout, "$(DEV):LCLSBEAMFO") {
   field(LNK2, "$(DEV):LCLS_N-1")
   field(LNK3, "$(DEV):LCLS_N-2")
   field(LNK4, "$(DEV):LCLS_ACC")
-  field(LNK5, "$(DEV):LCLS_SS_")
+  field(LNK5, "$(DEV):LCLSBURS")
   field(LNK6, "$(DEV):LCLSTBDFO")
   field(FLNK, "$(DEV):SEQRAM")
 }
@@ -213,7 +213,7 @@ record(fanout, "$(DEV):LCLSTBDFO") {
   field(DESC, "Beam Code Event Fanout")
   field(LNK1, "$(DEV):LCLSTBD1")
   field(LNK2, "$(DEV):LCLSTBD2")
-  field(LNK3, "$(DEV):LCLSTBD3")
+  field(LNK3, "$(DEV):LCRFONLY")
   field(LNK4, "$(DEV):LCLSTBD4")
   field(LNK5, "$(DEV):STRAIGHT")
   field(LNK6, "$(DEV):LCLSTBD6")
@@ -296,11 +296,11 @@ record(bo, "$(DEV):SEQSEND") {
 #! Record("$(DEV):PATTERNDIAG",540,252,0,0,"$(DEV):PATTERNDIAG")
 #! Field("$(DEV):PATTERNDIAG.INPA",16777215,0,"$(DEV):PATTERNDIAG.INPA")
 #! Field("$(DEV):PATTERNDIAG.FLNK",16777215,1,"$(DEV):PATTERNDIAG.FLNK")
-#! Link("$(DEV):PATTERNDIAG.FLNK","$(DEV):FIDUCIALRATE")
+#! Link("$(DEV):PATTERNDIAG.FLNK","$(DEV):RATE")
 #! Field("$(DEV):PATTERNDIAG.C",16777215,1,"$(DEV):PATTERNDIAG.C")
-#! Record("$(DEV):FIDUCIALRATE",820,292,0,0,"$(DEV):FIDUCIALRATE")
-#! Field("$(DEV):FIDUCIALRATE.INP",16777215,0,"$(DEV):FIDUCIALRATE.INP")
-#! Link("$(DEV):FIDUCIALRATE.INP","$(DEV):PATTERNDIAG.C")
+#! Record("$(DEV):RATE",820,292,0,0,"$(DEV):RATE")
+#! Field("$(DEV):RATE.INP",16777215,0,"$(DEV):RATE.INP")
+#! Link("$(DEV):RATE.INP","$(DEV):PATTERNDIAG.C")
 #! Record("$(DEV):MODIFIER5N-3",800,902,0,0,"$(DEV):MODIFIER5N-3")
 #! Field("$(DEV):MODIFIER5N-3.VAL",16777215,1,"$(DEV):MODIFIER5N-3.VAL")
 #! Field("$(DEV):MODIFIER5N-3.INPA",16777215,1,"$(DEV):MODIFIER5N-3.INPA")
