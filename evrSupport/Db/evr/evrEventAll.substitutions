@@ -34,10 +34,10 @@ pattern { DEV      , NAME    , ID , PRIO , FLNK               }
 	{$(DEVICE) , LCLS_N-2, 148, LOW  , ""                 }
 # LCLS Specialized Event Codes
 	{$(DEVICE) , LCLSTBD1, 149, LOW  , ""                 }
-	{$(DEVICE) , LCLS_SS_, 150, LOW  , ""                 }
+	{$(DEVICE) , LCLSBURS, 150, LOW  , ""                 }
 	{$(DEVICE) , LCLS_ACC, 151, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD2, 152, LOW  , ""                 }
-	{$(DEVICE) , LCLSTBD3, 153, LOW  , ""                 }
+	{$(DEVICE) , LCRFONLY, 153, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD4, 154, LOW  , ""                 }
 	{$(DEVICE) , STRAIGHT, 155, LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD6, 156, LOW  , ""                 }
