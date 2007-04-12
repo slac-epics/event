@@ -35,15 +35,12 @@ record(ao, "$(DEV)TWID") {
   field(OUT, "EVR:$(LOCA):$(UNIT):CTRL.$(TWID) PP")
   field(OMSL, "supervisory")
   field(LINR, "SLOPE")
-  field(EGU, "$(EGU)")
-  field(HOPR, "$(DRVH)")
-  field(LOPR, "0")
-  field(DRVH, "$(DRVH)")
-  field(DRVL, "0")
+  field(EGU,  "nsec")
+  field(HOPR, "1000000000")
+  field(DRVH, "1000000000")
   field(ESLO, "8.40336692324359")
   field(PINI, "YES")
   field(VAL,  "$(WID)")
-  field(PREC, "0")
 }
 
 record(ao, "$(DEV)TDES") {
@@ -60,7 +57,6 @@ record(ao, "$(DEV)TDES") {
   field(PINI, "YES")
   field(FLNK, "$(DEV)TDLYCALC")
   field(VAL, "$(DES)")
-  field(PREC, "0")
 }
 
 record(calc, "$(DEV)TDLYCALC") {
@@ -71,9 +67,7 @@ record(calc, "$(DEV)TDLYCALC") {
   field(INPB, "$(IOC):TREF CPP")
   field(INPC, "IOC:$(EVG):$(TEC)EVNT.I CPP")
   field(EGU,  "nsec")
-  field(HOPR, "$(DRVH)")
-  field(LOPR, "$(DRVL)")
-  field(PREC, "0")
+  field(HOPR, "1000000000")
 }
 
 record(ao, "$(DEV)TDLY") {
@@ -85,9 +79,8 @@ record(ao, "$(DEV)TDLY") {
   field(EGU,  "nsec")
   field(ESLO, "8.40336692324359")
   field(DOL,  "$(DEV)TDLYCALC")
-  field(HOPR, "$(DRVH)")
-  field(LOPR, "$(DRVL)")
-  field(PREC, "0")
+  field(HOPR, "1000000000")
+  field(DRVH, "1000000000")
 }
 
 
