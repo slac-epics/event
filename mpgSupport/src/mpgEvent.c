@@ -68,7 +68,7 @@ typedef struct {
   unsigned int    code;
   int             enable;
   int             everyCycle;
-  int             singleShot;
+  int             numPulses;
   unsigned short  ramPos_a[MRF_NUM_SEQ_RAM];
   MrfEvgSeqStruct ram_as[MRF_NUM_SEQ_RAM];
   
@@ -464,6 +464,7 @@ static int mpgEventSeq(subRecord *psub)
        P - Modifier5 Exclusion Mask
             
   Outputs:
+       Z - Pulse Counter
        VAL - Pattern Matches - one or more event codes are set
        EVG sequence ram updated.
   
@@ -480,9 +481,10 @@ static int mpgEventBeamCode(sSubRecord *psub)
   int              eventcode     = psub->a;
   unsigned int     idx           = 0;
 
-  if ((!eventEnable) || (psub->c != psub->d)) return 0;
   if ((eventcode <= 0) || (eventcode >= MRF_NUM_EVENTS)) return -1;
+  if (!eventEnable) return 0;
   psub->val = 0;  /* pattern doesn't match*/
+  if (psub->c != psub->d) return 0;
   if ((((unsigned long)psub->e & (unsigned long)psub->i) ==
        (unsigned long)psub->i) &&
       (((unsigned long)psub->f & (unsigned long)psub->j) ==
@@ -509,14 +511,21 @@ static int mpgEventBeamCode(sSubRecord *psub)
         if (ramUpdate) {
           mpgEvent_ps = &mpgEvent_as[eventcode];
           if (mpgEvent_ps->enable) {
-            if (mpgEvent_ps->singleShot) mpgEvent_ps->enable = 0;
+            if (mpgEvent_ps->numPulses) {
+              psub->z++;
+              if (psub->z >= mpgEvent_ps->numPulses) mpgEvent_ps->enable = 0;
+            } else {
+              psub->z = 0;
+            }  
             mpgEvent_ps->ram_as[ramNext].EventCode = mpgEvent_ps->code;
 #ifdef __rtems__
             if (evgCard_ps) EgSeqRamWrite(evgCard_ps, ram,
                                           mpgEvent_ps->ramPos_a[ramNext],
                                           &(mpgEvent_ps->ram_as[ramNext]));
 #endif
-          }
+          } else {
+            psub->z = 0;
+          } 
         }
         if (psub->b == 0) idx = EVENTS_PER_BEAMCODE;
         else {
@@ -630,7 +639,8 @@ static int mpgEventSeqSend(subRecord *psub)
        E - Enable/Disable this event code
        F - Event code applies to every cycle
        G - Sequence Ram Speed (Hz)
-       H - Single Shot - this event automatically disabled after one send
+       H - Number of Pulses to Send - this event automatically disables
+           after number is sent.  0 = always send
      
   Outputs:
        I - Desired Delay in the Sequence Ram (nsec)
@@ -675,6 +685,8 @@ static long mpgEventCode(subRecord *psub)
   /* Add this event to the event list in the proper order based on delay. */
   if (newcode && (!mpgEvent_as[newcode].code)) {
     int addEvent = 1;
+    mpgEvent_as[newcode].ram_as[0].EventCode = 0;
+    mpgEvent_as[newcode].ram_as[1].EventCode = 0;
     node_ps  = ellFirst(&eventList_s);
     while(node_ps) {
       mpgEvent_ps = (mpgEvent_ts *)node_ps;
@@ -716,13 +728,16 @@ static long mpgEventCode(subRecord *psub)
   /* Now set up new attributes for this event - 360Hz processing will change
      RAM position and update event code */
   mpgEvent_as[newcode].code                = newcode;
-  mpgEvent_as[newcode].singleShot          = psub->h;
   mpgEvent_as[newcode].enable              = psub->j;
+  if (psub->h > 0) mpgEvent_as[newcode].numPulses = psub->h;
+  else             mpgEvent_as[newcode].numPulses = 0;
+  /* Burst mode will disable after sending pulses */
+  if (mpgEvent_as[newcode].numPulses > 0) {
+    psub->e = psub->j = 0;
+  }
   mpgEvent_as[newcode].everyCycle          = psub->k;
   mpgEvent_as[newcode].ram_as[0].Timestamp = newTimestamp;  
   mpgEvent_as[newcode].ram_as[1].Timestamp = newTimestamp;
-  mpgEvent_as[newcode].ram_as[0].EventCode = 0;  
-  mpgEvent_as[newcode].ram_as[1].EventCode = 0;
   
   epicsMutexUnlock(mpgEventMutex_ps);
     
