@@ -9,7 +9,7 @@ record(sub, "$(DEV):$(NAME)EVNT") {
   field(INPE, "$(ENA)")
   field(INPF, "$(ALWAYS)")
   field(INPG, "$(CONV)")
-  field(INPH, "$(SS)")
+  field(INPH, "$(NUM)")
   field(LOPR, "1")
   field(HOPR, "255")
   field(BRSV, "INVALID")
