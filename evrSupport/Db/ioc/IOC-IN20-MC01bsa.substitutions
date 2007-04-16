@@ -11,6 +11,9 @@ file bsaWIREEdef.db {
 	  { WIRE:IN20:561, IN20 ,  MC01  , SYS0, "" }
 	  { WIRE:IN20:611, IN20 ,  MC01  , SYS0, "" }
 	  { WIRE:IN20:741, IN20 ,  MC01  , SYS0, "" }
+	  { WIRE:IN20:285, IN20 ,  MC01  , SYS0, "" }
+	  { WIRE:IN20:293, IN20 ,  MC01  , SYS0, "" }
+	  { WIRE:IN20:301, IN20 ,  MC01  , SYS0, "" }
 # 
 file bsaPMTEdef.db {
 #      Device        ,loc'n ,IOC unit, timing system
@@ -21,3 +24,8 @@ file bsaPMTEdef.db {
 	  { PMT:IN20:762 , IN20 ,  MC01  , SYS0, "" }
 	  { PMT:IN20:511 , IN20 ,  MC01  , SYS0, "" }
 	  { PMT:IN20:512 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:LI21:285 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:LI21:293 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:LI21:301 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:LI21:401 , IN20 ,  MC01  , SYS0, "" }
+	  { PMT:LI21:402 , IN20 ,  MC01  , SYS0, "" }
