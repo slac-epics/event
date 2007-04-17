@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 03/14/2007
+Instructions for RTEMS EVR users                    Last Updated 04/17/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -204,7 +204,7 @@ if there are.
 select each box and examine the display (all channels must be connected):
   * EVR display - look for non-zero FPGA, and "YES" for Phase Lock and 0 for 
     "Rx Fail".  From the EVR display, select "Events".  Check that the rate 
-    for event code 1 is around 353Hz.
+    for event code 1 is exactly 360Hz.
   * Pattern display - check that data is changing every 2 seconds.  From the 
     main Event display, select "IOC:IN20:EV01...", then select "Pattern".  
     The data on your EVR pattern display and the EVG pattern display must 
