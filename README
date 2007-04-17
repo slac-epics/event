@@ -4,15 +4,17 @@ Instructions for RTEMS EVR users                    Last Updated 03/14/2007
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
 
-(1) Add EVENT, GENERALTIME, and SSUBRECORD to configure/RELEASE and 
+(1) Add EVENT, GENERALTIME, SSUBRECORD, and RESTORE to configure/RELEASE and 
 clean/rebuild configure:
 
 EVENT=/afs/slac/g/lcls/epics/site/src/event
 GENERALTIME=/afs/slac/g/lcls/epics/site/src/generalTime
 SSUBRECORD=/afs/slac/g/lcls/epics/site
+RESTORE=/afs/slac/g/lcls/epics/site/src/restore
  OR 
 include $(TOP)/../site/configure/RELEASE-event
 include $(TOP)/../site/configure/RELEASE-generalTime
+include $(TOP)/../site/configure/RELEASE-restore
 SSUBRECORD=$(TOP)/../site
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
@@ -23,10 +25,12 @@ SSUBRECORD=$(TOP)/../site
    xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
    xxx_LIBS += mrfVme64x
+   xxx_LIBS += restore
  OR (if including /afs/slac/g/lcls/epics/site/configure/RELEASE-event in
      your xxxApp/configure/RELEASE):
    xxx_LIBS += $(EVR_IOC_LIBS)
    xxx_LIBS += $(EVR_RTEMS_IOC_LIBS)
+   xxx_LIBS += restore
 
 Note that the order of the above libraries is important.
 
@@ -35,6 +39,7 @@ Note that the order of the above libraries is important.
 
    xxx_DBD += evrSupport.dbd
    xxx_DBD += devMrfEr.dbd
+   xxx_DBD += dbRestore.dbd
 
 (4) Install the following applicable ioc-specific database 
     files from the event package to your application by adding to 
@@ -77,14 +82,21 @@ instructions in /afs/slac/g/lcls/epics/ioc/iocBoot/README.
     If your IOC already supports waveforms larger than 30000 bytes for other
     reasons, then this command is not needed. 
 
-(3) Add database templates to st.cmd (before iocInit): 
+(3) For RTEMS IOCs with triggers, add this nfsMount command to your startup 
+    file after epicsEnvSet<Dev,Dmz,Prod> is invoked:
+
+    nfsMount(getenv("NFS_FILE_SYSTEM"),getenv("NFS_IOC_DATA"),"/dat")
+
+(4) Add database templates to st.cmd (before iocInit): 
 
     dbLoadRecords("db/IOC-<area>-<xxyy>evr.db")
     dbLoadRecords("db/IOC-<area>-<xxyy>pattern.db")
     And for IOCs that support beam-synchronous acquisition:
     dbLoadRecords("db/IOC-<area>-<xxyy>bsa.db")
+    And for IOCs that have triggers:
+    dbLoadRecords("db/IOC-<area>-<xxyy>trig.db")
 
-(4) Add ErConfigure for each EVR (before iocInit).
+(5) Add ErConfigure for each EVR (before iocInit).
 
     VME: ErConfigure(<instance>,<address>,<vector>,<level>,0)
     PMC: ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
@@ -102,6 +114,11 @@ instructions in /afs/slac/g/lcls/epics/ioc/iocBoot/README.
                      (0 for PMC)
     and   0        = VME
        or 1        = PMC
+
+(6) For IOCs with triggers, add this line after databases are loaded and
+    before iocInit:
+
+    dbRestore("/dat/<ioc-name>/IOC-<area>-<xxyy>trig.sav")
 
 III - Hardware Setup:
 ---------------------
