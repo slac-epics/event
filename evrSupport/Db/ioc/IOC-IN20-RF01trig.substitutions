@@ -11,18 +11,18 @@ file evrDevTrig.db {
   pattern { DEV       ,  DESC         ,PREC  ,  WID   , DES     , TEC       , LOCA , UNIT, IOC          , ESLO            
                       ,  POL          , EGU  ,  DRVL  , DRVH    , EVG       , TCTL , TPOL, TWID, TDES, CTL}
 #EVR:IN20:RF01
-{ LLRF:IN20:RH:REF_D_ ,  "RF Dist PAD", 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+{ LLRF:IN20:RH:REF_D_ ,  "RF Dist PAD"        , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0 , OT0P, OT0W, OT0D, 1}
-{ LLRF:IN20:RH:MDL_C_ ,  "RF Dist SPAC (MDL)"
+{ LLRF:IN20:RH:MDL_C_ ,  "RF SPAC (MDL)"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP1 , OT1P, OT1W, OT1D, 1}
-{ LLRF:IN20:RH:RFR_C_ ,  "RF Dist SPAC (RF Ref)"
+{ LLRF:IN20:RH:RFR_C_ ,  "RF SPAC (RF Ref)"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP2 , OT2P, OT2W, OT2D, 1}
-{ LLRF:IN20:RH:LCL_C_ ,  "RF Dist SPAC (Loc OSC)"
+{ LLRF:IN20:RH:LCL_C_ ,  "RF SPAC (Loc OSC)"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP3 , OT3P, OT3W, OT3D, 1}
-{ LLRF:IN20:RH:CLK_C_ ,  "RF Dist SPAC (CLK)"
+{ LLRF:IN20:RH:CLK_C_ ,  "RF SPAC (CLK)"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP4 , OT4P, OT4W, OT4D, 1}
 { LASR:IN20:1:LSR_C_  ,  "Laser SPAC"
@@ -32,10 +32,10 @@ file evrDevTrig.db {
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP7 , OT7P, OT7W, OT7D, 1}
 { GUN:IN20:1:GN1_D_,  "RF Gun 1 PAD"
-		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -4950   , LCLS_ACC   , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP8 , OT8P, OT8W, OT8D, 1}
 { GUN:IN20:1:GN2_D_   ,  "RF Gun 2 PAD"
-		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -5540   , LCLS_ACC   , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP9 , OT9P, OT9W, OT9D, 1}
 #  spare triggers 1- 4 FP (VME)
 { TRIG:IN20:RF01:    ,  "Spare Trig 1", 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
@@ -59,7 +59,7 @@ file evrDevTrig.db {
 
 #EVR:IN20:RF02
 { ACCL:IN20:300:L0A_D_,  "L0A/B PAD"
-		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -495    , LCLS_ACC   , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0 , OT0P, OT0W, OT0D, 1}
 { TCAV:IN20:490:TC0_D_,  "L0 Tcav PAD"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
@@ -68,7 +68,7 @@ file evrDevTrig.db {
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP2 , OT2P, OT2W, OT2D, 1}
 { ACCL:LI21:1:L1S_D_  ,  "L1S PAD"
-		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -495    , LCLS_ACC   , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP3 , OT3P, OT3W, OT3D, 1}
 { ACCL:LI21:180:L1X_D_,  "L1X PAD"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
@@ -107,58 +107,58 @@ file evrDevTrig.db {
 
 #EVR:IN20:RF03
 { TCAV:IN20:490:TC0_C_1_,"L0 Tcav PAC"
-		                              , 0    ,  100   , -31605  , LCLSTBD1   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -31605  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0 , OT0P, OT0W, OT0D, 1}
 { TCAV:IN20:490:TC0_C_2_,"L0 Tcav PAC"
 		                              , 0    ,  100   , 3820    , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP1 , OT1P, OT1W, OT1D, 1}
 { GUN:IN20:1:GUN_C_1_ ,  "RF Gun PAC"
-		                              , 0    ,  100   ,  -31605 , LCLSTBD1  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   ,  -31605 , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP2 , OT2P, OT2W, OT2D, 1}
 { GUN:IN20:1:GUN_C_2_ ,  "RF Gun PAC"
 		                              , 0    ,  100   , 3820    , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP3 , OT3P, OT3W, OT3D, 1}
 
 { ACCL:IN20:300:L0A_C_1_ ,"L0A PAC"
-		                              , 0    ,  100   , -31605  , LCLSTBD1  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -31605  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP4 , OT4P, OT4W, OT4D, 1}
 
 { ACCL:IN20:300:L0A_C_2_ ,"L0A PAC"
-		                              , 0    ,  100   , 3820    , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   ,  55920  , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP5 , OT5P, OT5W, OT5D, 1}
 { ACCL:IN20:300:L0B_C_1_ ,"L0B PAC"
-		                              , 0    ,  100   , -31605  , LCLSTBD1  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -31605  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP6 , OT6P, OT6W, OT6D, 1}
 
 { ACCL:IN20:300:L0B_C_2_ ,"L0B PAC"
-		                              , 0    ,  100   , 3820    , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   ,  55920  , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP7 , OT7P, OT7W, OT7D, 1}
 { ACCL:LI21:1:L1S_C_1_ ,"L1S PAC"
-		                              , 0    ,  100   , -31605  , LCLSTBD1  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -33270  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP8 , OT8P, OT8W, OT8D, 1}
 
 { ACCL:LI21:1:L1S_C_2_ ,"L1S PAC"
-		                              , 0    ,  100   , 3820    , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   ,  55080  , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP9 , OT9P, OT9W, OT9D, 1}
 { ACCL:LI21:180:L1X_C_1_ ,"L1X PAC"
-		                              , 0    ,  100   , -31605  , LCLSTBD1  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -31605  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPA , OTAP, OTAW, OTAD, 1}
 
 { ACCL:LI21:180:L1X_C_2_ ,"L1X PAC"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPB , OTBP, OTBW, OTBD, 1}
 #  spare triggers 21 -24, FP (VME)
-   { TRIG:IN20:RF21,  "Spare Trig 21" , 0    ,  100   , -31605  , LCLSTBD1   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+{ TRIG:IN20:RF21:  ,  "Spare Trig 21" , 0    ,  100   , -31605  , LCLS_ACC   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                    ,  0               ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG0E , DG0P, DG0W, DG0D, 1}
 { TRIG:IN20:RF22:  ,  "Spare Trig 22" , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG1E , DG1P, DG1W, DG1D, 1}
-{ TRIG:IN20:RF23:  ,  "Spare Trig 23" , 0    ,  100   , -31605  , LCLSTBD1   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+{ TRIG:IN20:RF23:  ,  "Spare Trig 23" , 0    ,  100   , -31605  , LCLS_ACC   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG2E , DG2P, DG2W, DG2D, 1}
 { TRIG:IN20:RF24:  ,  "Spare Trig 24" , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , DG3E , DG3P, DG3W, DG3D, 1}
 
 #  spare triggers 26-27, TTB 12-13
-{ TRIG:IN20:RF26:    , "Spare Trig 26", 0    ,  100   , -31605  , LCLSTBD1  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+{ TRIG:IN20:RF26:    , "Spare Trig 26", 0    ,  100   , -31605  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                      ,  0             ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPC , OTCP, OTCW, OTCD, 1}
 { TRIG:IN20:RF27:    , "Spare Trig 27", 0    ,  100   , 3820    , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                      ,  0             ,"nSec", -2.8E06, 2.8E06  , IN20:EV01 , OTPD , OTDP, OTDW, OTDD, 1}
@@ -166,4 +166,7 @@ file evrDevTrig.db {
 
 
 }
-
+file evrTref.db {
+  pattern { DEV         }
+          {IOC:IN20:RF01}
+}           

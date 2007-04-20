@@ -1,0 +1,13 @@
+record(ao, "IOC:IN20:RF01:TREF") {
+  field(DESC, "IOC Trig Ref")
+  field(DTYP, "Raw Soft Channel")
+  field(OMSL, "supervisory")
+  field(LINR, "SLOPE")
+  field(EGU,  "nsec")
+  field(HOPR, "2.8E06")
+  field(DRVH, "2.8E06")
+  field(PINI, "YES")
+  field(ESLO, "8.40336692324359")
+  field(VAL, "1.03E06")
+  field(PREC, "0")
+}
