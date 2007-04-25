@@ -16,7 +16,7 @@ file bsaEdefAvg.db
 {
 #	      Device   Name                                                                           IOC    IOC   mod5  Init 
 #                                                                                                     loc'n  unit  bit   Event Code
-  pattern {   DEV     ,SECN,            INP ,DESC   , MD,MDID, EGU ,HOPR  ,LOPR  ,PREC, ADEL, MDEL  , LOCA  , UNIT ,BIT, EC}
+  pattern {   DEV ,SECN,            INP ,DESC   , MD,MDID, EGU ,HOPR  ,LOPR  ,PREC, ADEL, MDEL  , LOCA  , UNIT ,BIT, EC}
 	  { $(DEVICE) ,TMIT,  $(DEVICE):TMIT,  1    , 1,  1  , ""  ,"3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), A, 101}
 	  { $(DEVICE) ,TMIT,  $(DEVICE):TMIT,  2    , 2,  2  , ""  ,"3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), B, 102}
 	  { $(DEVICE) ,TMIT,  $(DEVICE):TMIT,  3    , 3,  3  , ""  ,"3E10","1E10",  3 ,"1E8","1E7"  , $(LOC), $(UN), C, 103}
