@@ -11,6 +11,7 @@ file evrDevTrig.cwConfig {
 { LLRF:IN20:RH:RFR_C_    }
 { LLRF:IN20:RH:LCL_C_    }
 { LLRF:IN20:RH:CLK_C_    }
+{ TRIG:IN20:RF05:        }
 { LASR:IN20:1:LSR_C_     }
 { LASR:IN20:1:LSR_D_     }
 { GUN:IN20:1:GN1_D_      }
