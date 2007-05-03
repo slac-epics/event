@@ -43,6 +43,7 @@ int edefNumber;
 int maskMaxNumber;
 int maskCount;
 int maskNumber;
+int maskVal;
 
 int pnbnMaxNumber;
 int pnbnNumber;
@@ -406,10 +407,12 @@ ss edefMaskStateSet {
           pvGet (EXCLUSIONval);
           sprintf (INCMpv, "EDEF:%s:%d:INCM%d", SYS, edefNumber, maskNumber);
           pvAssign (INCMval, INCMpv);
+          pvGet (INCMval);
           sprintf (EXCMpv, "EDEF:%s:%d:EXCM%d", SYS, edefNumber, maskNumber);
           pvAssign (EXCMval, EXCMpv);
+          pvGet (EXCMval);
           if (INCLUSIONval & (1 << BITPval)) {
-            INCMval = 1;
+            maskVal = 1;
             if ((strlen(INCMSval) + strlen(PNBNval)) > 38) {
               pvPut (INCMSval);
               sprintf (INCMSpv, "EDEF:%s:%d:INCMS%d", SYS, edefNumber, ++iINCMS);
@@ -421,16 +424,20 @@ ss edefMaskStateSet {
                 sprintf (INCMSval, "%s", PNBNval);
                 }
               else {
-                sprintf (INCMSval, "%s %s", INCMSval, PNBNval); 
+                strcat (INCMSval, " "); 
+                strcat (INCMSval, PNBNval); 
                 };
               };
             } /* INCLUSION bit set */
           else {
-            INCMval = 0;
+            maskVal = 0;
             }; /* INCLUSION bit not set */
-          pvPut (INCMval);
+          if (maskVal != INCMval) {
+            INCMval = maskVal;
+            pvPut(INCMval);
+            };
           if (EXCLUSIONval & (1 << BITPval)) {
-            EXCMval = 1;
+            maskVal = 1;
             if ((strlen(EXCMSval) + strlen(PNBNval)) > 38) {
               pvPut (EXCMSval);
               sprintf (EXCMSpv, "EDEF:%s:%d:EXCMS%d", SYS, edefNumber, ++iEXCMS);
@@ -442,14 +449,18 @@ ss edefMaskStateSet {
                 sprintf (EXCMSval, "%s", PNBNval);
                 }
               else {
-                sprintf (EXCMSval, "%s %s", EXCMSval, PNBNval);
+                strcat (EXCMSval, " "); 
+                strcat (EXCMSval, PNBNval); 
                 };
               };
             } /* EXCLUSION bit set */
           else {
-            EXCMval = 0;
+            maskVal = 0;
             }; /* EXCLUSION bit not set */
-          pvPut (EXCMval);
+          if (maskVal != EXCMval) {
+            EXCMval = maskVal;
+            pvPut(EXCMval);
+            };
           }; /* for each Mask */
         while (iINCMS < 5) {
           pvPut (INCMSval);
