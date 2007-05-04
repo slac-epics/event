@@ -50,6 +50,7 @@ typedef struct
   evrMessage_tu       message_u;
   dbCommon           *record_ps;
   epicsTimeStamp      resetTime_s;
+  unsigned long       locked;
   unsigned long       messageNotRead;
   unsigned long       updateCount;
   unsigned long       updateCountRollover;
@@ -266,16 +267,11 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
 
 int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
 {
-  int locked = 1;
-  
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 
   /* Attempt to lock the message */
-  if ((!evrMessage_as[messageIdx].messageRWMutex_ps) ||
-      (epicsMutexTryLock(evrMessage_as[messageIdx].messageRWMutex_ps) !=
-       epicsMutexLockOK)) {
+  if (evrMessage_as[messageIdx].locked) {
     evrMessage_as[messageIdx].lockErrorCount++;
-    locked = 0;
   }
   if (evrMessage_as[messageIdx].messageNotRead) {
     evrMessage_as[messageIdx].overwriteCount++;
@@ -283,7 +279,6 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
   /* Update message in holding array */
   evrMessage_as[messageIdx].message_u      = *message_pu;
   evrMessage_as[messageIdx].messageNotRead = 1;
-  if (locked) epicsMutexUnlock(evrMessage_as[messageIdx].messageRWMutex_ps);
   return 0;
 }
 
@@ -347,6 +342,7 @@ int evrMessageRead(unsigned int  messageIdx, evrMessage_tu *message_pu)
   if ((!evrMessage_as[messageIdx].messageRWMutex_ps) ||
       (epicsMutexLock(evrMessage_as[messageIdx].messageRWMutex_ps) !=
        epicsMutexLockOK)) return -1;
+  evrMessage_as[messageIdx].locked = 1;
 
   /* Read the message only if its still available.  Retry once in case
      the ISR writes it again while we are reading */
@@ -369,6 +365,7 @@ int evrMessageRead(unsigned int  messageIdx, evrMessage_tu *message_pu)
     }
   }
   if (evrMessage_as[messageIdx].messageNotRead) status = -1;
+  evrMessage_as[messageIdx].locked = 0;
   epicsMutexUnlock(evrMessage_as[messageIdx].messageRWMutex_ps);
   return status;
 }
@@ -443,7 +440,10 @@ int evrMessageEnd(unsigned int messageIdx)
   evrMessage_ts *em_ps = evrMessage_as + messageIdx;
   
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
-  if (em_ps->procTimeEnd != 0) return -1;
+  /* Attempt to lock the message */
+  if ((!em_ps->messageRWMutex_ps) ||
+      (epicsMutexLock(em_ps->messageRWMutex_ps) != epicsMutexLockOK) ||
+      (em_ps->procTimeEnd != 0)) return -1;
 
   /* Get end of processing time */
   MFTB(em_ps->procTimeEnd);
@@ -481,6 +481,7 @@ int evrMessageEnd(unsigned int messageIdx)
       evrDiffTimeDeltaCount = MODULO720_COUNT-1;
     }
   }  
+  epicsMutexUnlock(em_ps->messageRWMutex_ps);
   return 0;
 }
 
