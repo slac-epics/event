@@ -19,6 +19,7 @@ DB += bsaTOROTest.db
 DB += bsaBLENTest.db
 DB += bsaWIRETest.db
 DB += bsaPMTTest.db
+DB += bsaFARCTest.db
 DB += bsaTestInput.db
 DB += bsaTestFanouts.db
 # Device edef records
