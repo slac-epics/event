@@ -15,6 +15,6 @@ file bsaTOROEdef.db {
 file bsaFARCEdef.db {
 #      Device        ,loc'n , IOC unit, timing system  
   pattern {DEVICE    , LOC  ,  UN , SLCLNK  }
-	  { FARC:IN20:212, IN20 , IM01, "" }
-	  { FARC:IN20:898, IN20 , IM01, "" }
+	  { FARC:IN20:212, IN20 , IM01, "FARC:IN20:212:FANOUTSLC" }
+	  { FARC:IN20:898, IN20 , IM01, "FARC:IN20:898:FANOUTSLC" }
 }
