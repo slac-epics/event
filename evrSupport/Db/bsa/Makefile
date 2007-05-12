@@ -31,6 +31,7 @@ DB += bsaPMTEdef.db
 DB += bsaWIREEdef.db
 DB += bsaAMPLEdef.db
 DB += bsaPHASEdef.db
+DB += bsaPWREdef.db
 DB += bsaEnergyEdef.db
 
 include $(TOP)/configure/RULES

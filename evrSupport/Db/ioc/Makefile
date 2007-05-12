@@ -85,6 +85,7 @@ CW += IOC-IN20-LS12trig.cwConfig
 CW += IOC-IN20-LS13trig.cwConfig
 CW += IOC-IN20-LS14trig.cwConfig
 CW += IOC-IN20-LS15trig.cwConfig
+DB += IOC-IN20-LS11bsa.db  
 
 # Profile Monitor - Injector and Linac
 DB += IOC-IN20-PM01evr.db
