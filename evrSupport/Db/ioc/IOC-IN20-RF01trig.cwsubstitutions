@@ -53,8 +53,8 @@ file evrDevTrig.cwConfig {
 { GUN:IN20:1:GUN_C_2_    }
 { ACCL:IN20:300:L0A_C_1_ }
 { ACCL:IN20:300:L0A_C_2_ }
-{ ACCL:IN20:300:L0B_C_1_ }
-{ ACCL:IN20:300:L0B_C_2_ }
+{ ACCL:IN20:400:L0B_C_1_ }
+{ ACCL:IN20:400:L0B_C_2_ }
 { ACCL:LI21:1:L1S_C_1_   }
 { ACCL:LI21:1:L1S_C_2_   }
 { ACCL:LI21:180:L1X_C_1_ }

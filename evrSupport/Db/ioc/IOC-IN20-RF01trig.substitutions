@@ -129,11 +129,11 @@ file evrDevTrig.db {
 { ACCL:IN20:300:L0A_C_2_ ,"L0A PAC"
 		                              , 0    ,  100   ,  55920  , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP5 , OT5P, OT5W, OT5D, 1}
-{ ACCL:IN20:300:L0B_C_1_ ,"L0B PAC"
+{ ACCL:IN20:400:L0B_C_1_ ,"L0B PAC"
 		                              , 0    ,  100   , -31605  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP6 , OT6P, OT6W, OT6D, 1}
 
-{ ACCL:IN20:300:L0B_C_2_ ,"L0B PAC"
+{ ACCL:IN20:400:L0B_C_2_ ,"L0B PAC"
 		                              , 0    ,  100   ,  55920  , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP7 , OT7P, OT7W, OT7D, 1}
 { ACCL:LI21:1:L1S_C_1_ ,"L1S PAC"
