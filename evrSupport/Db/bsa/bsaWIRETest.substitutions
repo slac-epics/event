@@ -15,10 +15,11 @@ file bsaTestInput.db
 #             Device          
   pattern {    DEV    ,SECN, CALC              , A , B ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, RES }
           { $(DEVICE) ,POSN,  "A"              , 2 , 0 , um, 10 ,  0 ,  3 , .01,.001,.002 }
+          { $(DEVICE) ,MASK,  "A"              , 1 , 0 , "", 1  ,  0 ,  0 , 0  ,  0 ,  0  }
 #         { $(DEVICE) ,POSN,  "C>=10?0:C+RNDM" , 0 , 0 , um, 10 ,  0 ,  3 , .01,.001,.002 }
 }
 file bsaTestFanouts.db
 {
   pattern {    DEV    ,  SECN  ,SCAN, LNK2                   ,LNK3                 , LNK4, LNK5}
-          { $(DEVICE) ,  POSN  ,$(S), "$(DEVICE):EFPOSN PP"  ,"", ""  , ""  }
+          { $(DEVICE) ,  POSN  ,$(S), "$(DEVICE):MASK PP"    ,"$(DEVICE):EFPOSN PP", ""  , ""  }
 }
