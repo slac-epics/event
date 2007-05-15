@@ -169,7 +169,3 @@ file evrDevTrig.db {
 
 
 }
-file evrTref.db {
-  pattern { DEV         }
-          {IOC:IN20:RF01}
-}           
