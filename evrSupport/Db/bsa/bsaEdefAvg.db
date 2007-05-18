@@ -18,8 +18,8 @@ record(sSub, "$(DEV):$(SECN)$(MDID)") {
   field(DISV, "0")
   field(SDIS, "IOC:$(LOCA):$(UNIT):MODIFIER5.$(BIT)")
   field(FLNK, "$(DEV):$(SECN)HST$(MDID)")
-  field(INPD, "$(DEV):$(SECN).STAT")
-  field(INPE, "$(DEV):$(SECN).SEVR")
+  field(INPD, "$(INP).STAT")
+  field(INPE, "$(INP).SEVR")
   field(INPC, "IOC:$(LOCA):$(UNIT):EDEFMEASSEVR.$(BIT)")
 }
 
