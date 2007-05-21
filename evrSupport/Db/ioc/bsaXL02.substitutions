@@ -47,8 +47,8 @@ file bsaWIREEdef.db {
 file evrPatternAll.db {
 #	    Device    ,  SLC Pattern Check LNK     ,  EVR/Trigger       
 #	                                                 Links          
-  pattern { DEVICE     ,        LINK4              , LINK5 ,   LINK6 , TREF }
-	  { IOC:XX02:1 , "IOC:XX02:1:FANOUTSLC PP" ,  ""   ,    ""   , 1E06 }
+  pattern { DEVICE     ,        LINK4              , LINK5 ,   LINK6 , TREF , TS1ST, TS2ND }
+	  { IOC:XX02:1 , "IOC:XX02:1:FANOUTSLC PP" ,  ""   ,    ""   , 1E06 ,   1  ,   4   }
 }
 file evrPatternProc.db {
   pattern { DEV }
