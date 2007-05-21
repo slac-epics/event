@@ -16,8 +16,8 @@ record(sub, "$(DEV):FIDUCIAL") {
   field(INPF, "$(DEV):PATTERNN-2.SEVR")
   field(INPG, "$(DEV):PATTERNN-1.SEVR")
   field(INPH, "$(DEV):PATTERNN-1.C")
-  field(INPI, "1")
-  field(INPJ, "4")
+  field(INPI, "$(TS1ST)")
+  field(INPJ, "$(TS2ND)")
   field(BRSV, "INVALID")
 }
 

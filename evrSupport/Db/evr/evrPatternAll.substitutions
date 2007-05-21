@@ -39,9 +39,9 @@ pattern { DEV    , N      , NINP    , SDIS }
 
 file evrFiducial.db
 {
-#     Location     ,         PATTERNFO links       
-pattern { DEV      ,    LNK4  ,    LNK5  ,    LNK6  ,   VAL   }
-	{ $(DEVICE), $(LINK4) , $(LINK5) , $(LINK6) , $(TREF) }
+#     Location     ,         PATTERNFO links            1st and 2nd time slots
+pattern { DEV      ,    LNK4 ,    LNK5 ,    LNK6 ,   VAL  ,   TS1   ,   TS2   }
+	{ $(DEVICE), $(LINK4), $(LINK5), $(LINK6), $(TREF), $(TS1ST), $(TS2ND)}
 }
 
 file generalTimeNonVx.template
