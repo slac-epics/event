@@ -6,14 +6,14 @@
 
 record(mbboDirect, "EDEF:$(SYS):$(MD):$(SECN)A") {
   field(DESC, "16 Bit Timing Mask A")
-  field(VAL, "$(A)")
+  field(DOL, "$(A)")
   field(PINI, "YES")
   field(FLNK, "EDEF:$(SYS):$(MD):$(SECN) PP")
 }
 
 record(mbboDirect, "EDEF:$(SYS):$(MD):$(SECN)B") {
   field(DESC, "16 Bit Timing Mask B")
-  field(VAL, "$(B)")
+  field(DOL, "$(B)")
   field(PINI, "YES")
   field(FLNK, "EDEF:$(SYS):$(MD):$(SECN) PP")
 }
