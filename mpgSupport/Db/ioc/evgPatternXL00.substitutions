@@ -11,6 +11,6 @@ file bsaEdefAll.db {
 }
 file evrPatternAll.db {
 #	    Device        ,     Send Seq Ram         
-  pattern { DEVICE        ,         LINK4            , LINK5 , LINK6 , TREF }
-	  { IOC:IN20:EV01 , IOC:IN20:EV01:SEQRAMSEND ,   ""  ,   ""  , 1E06 }
+  pattern { DEVICE        ,         LINK4            , LINK5 , LINK6 , TREF , TS1ST, TS2ND }
+	  { IOC:IN20:EV01 , IOC:IN20:EV01:SEQRAMSEND ,   ""  ,   ""  , 1E06 ,   1  ,   4   }
 }
