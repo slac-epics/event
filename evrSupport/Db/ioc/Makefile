@@ -12,21 +12,23 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #
 # Test stands
+DB += evrEV02.db
 DB += evrXL04.db
 DB += evrXL05.db
 DB += evrXL09.db
 DB += evrXL16.db
 DB += evrBP21.db
 DB += evrTO20.db
+DB += evrPatternEV02.db
 DB += evrPatternXL04.db
 DB += evrPatternXL05.db
 DB += evrPatternXL09.db
 DB += evrPatternXL16.db
 DB += evrPatternBP21.db
 DB += evrPatternTO20.db
-DB += trigXL09.db
-DB += trigXL05.db
 DB += trigXL04.db
+DB += trigXL05.db
+DB += trigXL09.db
 
 DB += evrDevTrig.db
 
@@ -47,6 +49,9 @@ DB += bsaBP21.db
 DB += bsaSimBP21.db
 DB += bsaTO20.db
 DB += bsaSimTO20.db
+
+# for fbck simulator only
+#DB += bsaXL08Fbck.db
 
 # Laser Room and Injector Laser Steering
 DB += IOC-LR20-LS01evr.db
