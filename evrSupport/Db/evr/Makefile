@@ -16,6 +16,7 @@ DB += evrPatternProc.db
 DB += evrEventAll.db
 DB += evrPatternAll.db
 DB += evrPatternTest.db
+DB += evrPatternSaaAll.db
 DB += evrMod36.db
 # Type-Specific IOC support
 DB += evrPMXX.db
