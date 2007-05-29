@@ -10,8 +10,8 @@ file evrWithExtDelays.db
 {
 #                      Default Pulse <--------------------------- Extended Delays -------------------------------------->
 #	 Device     Card Delay Width State    Clock PreScaler   Pulse Widths       Delays             Polarities     
-pattern { DEV      ,CARD,DELAY,WIDTH,STATE   , DG0C,DG1C,DG2C, DG0W,DG1W,DG2W, DG0D ,DG1D , DG2D ,  DG0P ,  DG1P  ,  DG2P  }
-	{EVR:LI21:BL01,0,110671, 12 ,Enabled ,  1  ,100 , 1  ,  10 ,2500, 10 ,110671,10000,110671, Normal,Inverted, Normal }
+pattern { DEV      ,CARD,DELAY,WIDTH,STATE   , DG0C,DG1C,DG2C, DG0W,DG1W,DG2W, DG0D , DG1D , DG2D ,  DG0P ,  DG1P  ,  DG2P  }
+	{EVR:LI21:BL01,0,110671, 12 ,Enabled ,  1  , 1  , 1  ,  10 , 10 , 10 ,110671,110671,110671, Normal, Normal , Normal }
 }
 #Note - there is a dependency on event code assignments and triggers.
 #     When changing event code assignments below, also change the appropriate
