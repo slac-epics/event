@@ -19,79 +19,81 @@ pattern { DEV       , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11
 }
 file evrEvent.db
 {
-#                            Event 
-#	 Location            Code   Priority    Forward Link
-pattern { DEV      , NAME    , ID , PRIO , FLNK               }
-	{$(DEVICE) , FIDUCIAL, 1  , LOW  , ""                 }
-	{$(DEVICE) , LCLSBEAM, 140, LOW  , ""                 }
-	{$(DEVICE) , LCLS_60_, 141, LOW  , ""                 }
-	{$(DEVICE) , LCLS_30_, 142, LOW  , ""                 }
-	{$(DEVICE) , LCLS_10_, 143, LOW  , ""                 }
-	{$(DEVICE) , LCLS_5_ , 144, LOW  , ""                 }
-	{$(DEVICE) , LCLS_1_ , 145, LOW  , ""                 }
-	{$(DEVICE) , LCLSHALF, 146, LOW  , ""                 }
-	{$(DEVICE) , LCLS_N-1, 147, LOW  , ""                 }
-	{$(DEVICE) , LCLS_N-2, 148, LOW  , ""                 }
+#                            Event  Delay in    
+#	 Location            Code   Clock Ticks Priority    Forward Link
+pattern { DEV      , NAME    , ID , DELY      , PRIO , FLNK               }
+	{$(DEVICE) , FIDUCIAL, 1  ,0          , LOW  , ""                 }
+	{$(DEVICE) , LCLSBEAM, 140,11900      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_60_, 141,11901      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_30_, 142,11902      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_10_, 143,11903      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_5_ , 144,11904      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_1_ , 145,11905      , LOW  , ""                 }
+	{$(DEVICE) , LCLSHALF, 146,11906      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_N-1, 147,11907      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_N-2, 148,11908      , LOW  , ""                 }
 # LCLS Specialized Event Codes
-	{$(DEVICE) , LCLSTBD1, 149, LOW  , ""                 }
-	{$(DEVICE) , LCLSBURS, 150, LOW  , ""                 }
-	{$(DEVICE) , LCLS_ACC, 151, LOW  , ""                 }
-	{$(DEVICE) , LCLSTBD2, 152, LOW  , ""                 }
-	{$(DEVICE) , LCRFONLY, 153, LOW  , ""                 }
-	{$(DEVICE) , LCLSTBD4, 154, LOW  , ""                 }
-	{$(DEVICE) , STRAIGHT, 155, LOW  , ""                 }
-	{$(DEVICE) , LCLSTBD6, 156, LOW  , ""                 }
-	{$(DEVICE) , LCLSTBD7, 157, LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD1, 149,11909      , LOW  , ""                 }
+	{$(DEVICE) , LCLSBURS, 150,11910      , LOW  , ""                 }
+	{$(DEVICE) , LCLS_ACC, 151,11911      , LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD2, 152,11912      , LOW  , ""                 }
+	{$(DEVICE) , LCRFONLY, 153,11913      , LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD4, 154,11914      , LOW  , ""                 }
+	{$(DEVICE) , STRAIGHT, 155,11915      , LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD6, 156,11916      , LOW  , ""                 }
+	{$(DEVICE) , LCLSTBD7, 157,11917      , LOW  , ""                 }
 # Beam-Independent Time Slot Triggers
 #   360Hz
-	{$(DEVICE) , TSX_360_ , 9 , LOW  , ""                 }
+	{$(DEVICE) , TSX_360_ , 9 ,12950      , LOW  , ""                 }
+#   Modulo36 base event code
+	{$(DEVICE) , TSXMOD36 ,201,13000      , LOW  , ""                 }
 #   120Hz
-	{$(DEVICE) , TS1_120_, 10 , LOW  , ""                 }
-	{$(DEVICE) , TS2_120_, 20 , LOW  , ""                 }
-	{$(DEVICE) , TS3_120_, 30 , LOW  , ""                 }
-	{$(DEVICE) , TS4_120_, 40 , LOW  , ""                 }
-	{$(DEVICE) , TS5_120_, 50 , LOW  , ""                 }
-	{$(DEVICE) , TS6_120_, 60 , LOW  , ""                 }
+	{$(DEVICE) , TS1_120_, 10 ,13001      , LOW  , ""                 }
+	{$(DEVICE) , TS2_120_, 20 ,13002      , LOW  , ""                 }
+	{$(DEVICE) , TS3_120_, 30 ,13003      , LOW  , ""                 }
+	{$(DEVICE) , TS4_120_, 40 ,13004      , LOW  , ""                 }
+	{$(DEVICE) , TS5_120_, 50 ,13005      , LOW  , ""                 }
+	{$(DEVICE) , TS6_120_, 60 ,13006      , LOW  , ""                 }
 #    60Hz
-	{$(DEVICE) , TS1_60_ , 11 , LOW  , ""                 }
-	{$(DEVICE) , TS2_60_ , 21 , LOW  , ""                 }
-	{$(DEVICE) , TS3_60_ , 31 , LOW  , ""                 }
-	{$(DEVICE) , TS4_60_ , 41 , LOW  , ""                 }
-	{$(DEVICE) , TS5_60_ , 51 , LOW  , ""                 }
-	{$(DEVICE) , TS6_60_ , 61 , LOW  , ""                 }
+	{$(DEVICE) , TS1_60_ , 11 ,13011      , LOW  , ""                 }
+	{$(DEVICE) , TS2_60_ , 21 ,13012      , LOW  , ""                 }
+	{$(DEVICE) , TS3_60_ , 31 ,13013      , LOW  , ""                 }
+	{$(DEVICE) , TS4_60_ , 41 ,13014      , LOW  , ""                 }
+	{$(DEVICE) , TS5_60_ , 51 ,13015      , LOW  , ""                 }
+	{$(DEVICE) , TS6_60_ , 61 ,13016      , LOW  , ""                 }
 #    30Hz
-	{$(DEVICE) , TS1_30_ , 12 , LOW  , ""                 }
-	{$(DEVICE) , TS2_30_ , 22 , LOW  , ""                 }
-	{$(DEVICE) , TS3_30_ , 32 , LOW  , ""                 }
-	{$(DEVICE) , TS4_30_ , 42 , LOW  , ""                 }
-	{$(DEVICE) , TS5_30_ , 52 , LOW  , ""                 }
-	{$(DEVICE) , TS6_30_ , 62 , LOW  , ""                 }
+	{$(DEVICE) , TS1_30_ , 12 ,13021      , LOW  , ""                 }
+	{$(DEVICE) , TS2_30_ , 22 ,13022      , LOW  , ""                 }
+	{$(DEVICE) , TS3_30_ , 32 ,13023      , LOW  , ""                 }
+	{$(DEVICE) , TS4_30_ , 42 ,13024      , LOW  , ""                 }
+	{$(DEVICE) , TS5_30_ , 52 ,13025      , LOW  , ""                 }
+	{$(DEVICE) , TS6_30_ , 62 ,13026      , LOW  , ""                 }
 #    10Hz
-	{$(DEVICE) , TS1_10_ , 13 , LOW  , ""                 }
-	{$(DEVICE) , TS2_10_ , 23 , LOW  , ""                 }
-	{$(DEVICE) , TS3_10_ , 33 , LOW  , ""                 }
-	{$(DEVICE) , TS4_10_ , 43 , LOW  , ""                 }
-	{$(DEVICE) , TS5_10_ , 53 , LOW  , ""                 }
-	{$(DEVICE) , TS6_10_ , 63 , LOW  , ""                 }
+	{$(DEVICE) , TS1_10_ , 13 ,13031      , LOW  , ""                 }
+	{$(DEVICE) , TS2_10_ , 23 ,13032      , LOW  , ""                 }
+	{$(DEVICE) , TS3_10_ , 33 ,13033      , LOW  , ""                 }
+	{$(DEVICE) , TS4_10_ , 43 ,13034      , LOW  , ""                 }
+	{$(DEVICE) , TS5_10_ , 53 ,13035      , LOW  , ""                 }
+	{$(DEVICE) , TS6_10_ , 63 ,13036      , LOW  , ""                 }
 #     5Hz
-	{$(DEVICE) , TS1_5_  , 14 , LOW  , ""                 }
-	{$(DEVICE) , TS2_5_  , 24 , LOW  , ""                 }
-	{$(DEVICE) , TS3_5_  , 34 , LOW  , ""                 }
-	{$(DEVICE) , TS4_5_  , 44 , LOW  , ""                 }
-	{$(DEVICE) , TS5_5_  , 54 , LOW  , ""                 }
-	{$(DEVICE) , TS6_5_  , 64 , LOW  , ""                 }
+	{$(DEVICE) , TS1_5_  , 14 ,13041      , LOW  , ""                 }
+	{$(DEVICE) , TS2_5_  , 24 ,13042      , LOW  , ""                 }
+	{$(DEVICE) , TS3_5_  , 34 ,13043      , LOW  , ""                 }
+	{$(DEVICE) , TS4_5_  , 44 ,13044      , LOW  , ""                 }
+	{$(DEVICE) , TS5_5_  , 54 ,13045      , LOW  , ""                 }
+	{$(DEVICE) , TS6_5_  , 64 ,13046      , LOW  , ""                 }
 #     1Hz
-	{$(DEVICE) , TS1_1_  , 15 , LOW  , ""                 }
-	{$(DEVICE) , TS2_1_  , 25 , LOW  , ""                 }
-	{$(DEVICE) , TS3_1_  , 35 , LOW  , ""                 }
-	{$(DEVICE) , TS4_1_  , 45 , LOW  , ""                 }
-	{$(DEVICE) , TS5_1_  , 55 , LOW  , ""                 }
-	{$(DEVICE) , TS6_1_  , 65 , LOW  , ""                 }
+	{$(DEVICE) , TS1_1_  , 15 ,13051      , LOW  , ""                 }
+	{$(DEVICE) , TS2_1_  , 25 ,13052      , LOW  , ""                 }
+	{$(DEVICE) , TS3_1_  , 35 ,13053      , LOW  , ""                 }
+	{$(DEVICE) , TS4_1_  , 45 ,13054      , LOW  , ""                 }
+	{$(DEVICE) , TS5_1_  , 55 ,13055      , LOW  , ""                 }
+	{$(DEVICE) , TS6_1_  , 65 ,13056      , LOW  , ""                 }
 #   0.5Hz
-	{$(DEVICE) , TS1_HALF, 16 , LOW  , ""                 }
-	{$(DEVICE) , TS2_HALF, 26 , LOW  , ""                 }
-	{$(DEVICE) , TS3_HALF, 36 , LOW  , ""                 }
-	{$(DEVICE) , TS4_HALF, 46 , LOW  , ""                 }
-	{$(DEVICE) , TS5_HALF, 56 , LOW  , ""                 }
-	{$(DEVICE) , TS6_HALF, 66 , LOW  , ""                 }
+	{$(DEVICE) , TS1_HALF, 16 ,13061      , LOW  , ""                 }
+	{$(DEVICE) , TS2_HALF, 26 ,13062      , LOW  , ""                 }
+	{$(DEVICE) , TS3_HALF, 36 ,13063      , LOW  , ""                 }
+	{$(DEVICE) , TS4_HALF, 46 ,13064      , LOW  , ""                 }
+	{$(DEVICE) , TS5_HALF, 56 ,13065      , LOW  , ""                 }
+	{$(DEVICE) , TS6_HALF, 66 ,13066      , LOW  , ""                 }
 }

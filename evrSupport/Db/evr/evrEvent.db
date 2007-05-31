@@ -23,6 +23,7 @@ record(sub, "$(DEV):$(NAME)RATE") {
   field(SCAN, "Event")
   field(EVNT, "121")
   field(INPA, "$(DEV):$(NAME)CNT")
+  field(INPD, "$(DELY)")
   field(INPE, "$(ID)")
   field(EGU,  "Hz")
   field(PREC, "1")
