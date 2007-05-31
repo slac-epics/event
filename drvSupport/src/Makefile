@@ -14,6 +14,8 @@ USR_CFLAGS += -DDEBUG_PRINT
 
 SRC_DIRS += $(TOP)/mrfApp/src
 
+INC+=evrMessage.h
+
 DBD += devWFevrMessage.dbd
 DBD += drvPnet.dbd
 DBD += drvEvr.dbd
