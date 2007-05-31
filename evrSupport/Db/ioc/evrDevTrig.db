@@ -62,10 +62,11 @@ record(ao, "$(DEV)TDES") {
 record(calc, "$(DEV)TDLYCALC") {
   field(DESC, "$(DESC) Delay")
   field(FLNK, "$(DEV)TDLY")
-  field(CALC, "A+B-C")
+  field(CALC, "A+B-(C*D)")
   field(INPA, "$(DEV)TDES")
   field(INPB, "$(IOC):TREF CPP")
-  field(INPC, "IOC:$(EVG):$(TEC)EVNT.I CPP")
+  field(INPC, "$(IOC):$(TEC)RATE.D")
+  field(INPD, "8.40336692324359")
   field(EGU,  "nsec")
   field(HOPR, "1000000000")
 }
