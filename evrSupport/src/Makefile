@@ -14,6 +14,7 @@ USR_CFLAGS += -DDEBUG_PRINT
 SRC_DIRS += $(TOP)/drvSupport/src
 
 INC+=evrTime.h
+INC+=evrPattern.h
 
 DBD += evrSupport.dbd
 DBD += evrPattern.dbd
