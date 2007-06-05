@@ -6,6 +6,5 @@ DIRS += configure
 DIRS += mrfApp
 DIRS += drvSupport
 DIRS += evrSupport
-DIRS += mpgSupport
 
 include $(TOP)/configure/RULES_TOP
