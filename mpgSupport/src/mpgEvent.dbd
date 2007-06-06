@@ -1,6 +1,0 @@
-function(mpgEventSeqInit)
-function(mpgEventSeq)
-function(mpgEventSeqSwitch)
-function(mpgEventSeqSend)
-function(mpgEventCode)
-function(mpgEventBeamCode)
