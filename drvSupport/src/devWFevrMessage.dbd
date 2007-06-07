@@ -1,1 +1,0 @@
-device (waveform, INST_IO, devWFevrMessage, "EVR/PNET Receiver")
