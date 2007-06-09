@@ -133,6 +133,8 @@ CW += IOC-LI25-PM01trig.cwConfig
 # Injector - MPS, Alignment Mirror, Event
 DB += IOC-IN20-MP01evr.db
 DB += IOC-IN20-MP01pattern.db
+DB += IOC-IN20-MP01trig.db
+DB += IOC-IN20-MP01trig.cwConfig
 DB += IOC-IN20-AM01evr.db  
 DB += IOC-IN20-AM01pattern.db 
 DB += IOC-IN20-AM01trig.db
