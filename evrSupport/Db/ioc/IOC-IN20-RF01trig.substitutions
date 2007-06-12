@@ -57,7 +57,7 @@ file evrDevTrig.db {
                      ,  0             ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPB , OTBP, OTBW, OTBD, 1}
 { TRIG:IN20:RF08:    ,  "Spare Trig 8", 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                      ,  0             ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPC , OTCP, OTCW, OTCD, 1}
-{ TRIG:IN20:RF09:    ,  "Spare Trig 9", 0    ,  100   , 3820    , TS4_30_    , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
+{ TRIG:IN20:RF09:    ,  "Spare Trig 9", 0    ,  100   , 3820    , LCLSBEAM   , IN20 , RF01, IOC:IN20:RF01, 8.40336692324359
                      ,  0             ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTPD , OTDP, OTDW, OTDD, 1}
 
 #EVR:IN20:RF02
@@ -65,7 +65,7 @@ file evrDevTrig.db {
 		                              , 0    ,  100   , -495    , LCLS_ACC   , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0 , OT0P, OT0W, OT0D, 1}
 { TCAV:IN20:490:TC0_D_,  "L0 Tcav PAD"
-		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , 3820    , LCRFONLY   , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP1 , OT1P, OT1W, OT1D, 1}
 { PCAV:IN20:365:PH1_D_,  "PH1 PAD"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
@@ -110,7 +110,7 @@ file evrDevTrig.db {
 
 #EVR:IN20:RF03
 { TCAV:IN20:490:TC0_C_1_,"L0 Tcav PAC"
-		                              , 0    ,  100   , -31605  , LCLS_ACC  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , -31605  , LCLSTCAV  , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP0 , OT0P, OT0W, OT0D, 1}
 { TCAV:IN20:490:TC0_C_2_,"L0 Tcav PAC"
 		                              , 0    ,  100   , 3820    , TS4_30_   , IN20 , RF03, IOC:IN20:RF01, 8.40336692324359
