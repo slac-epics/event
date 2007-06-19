@@ -33,10 +33,10 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO , FLNK               }
 	{$(DEVICE) , LCLS_N-1, 147,11907      , LOW  , ""                 }
 	{$(DEVICE) , LCLS_N-2, 148,11908      , LOW  , ""                 }
 # LCLS Specialized Event Codes
-	{$(DEVICE) , LCLSTBD1, 149,11909      , LOW  , ""                 }
+	{$(DEVICE) , LCLSTCAV, 149,11909      , LOW  , ""                 }
 	{$(DEVICE) , LCLSBURS, 150,11910      , LOW  , ""                 }
 	{$(DEVICE) , LCLS_ACC, 151,11911      , LOW  , ""                 }
-	{$(DEVICE) , LCLSTBD2, 152,11912      , LOW  , ""                 }
+	{$(DEVICE) , LCLSSHUT, 152,11912      , LOW  , ""                 }
 	{$(DEVICE) , LCRFONLY, 153,11913      , LOW  , ""                 }
 	{$(DEVICE) , LCLSTBD4, 154,11914      , LOW  , ""                 }
 	{$(DEVICE) , STRAIGHT, 155,11915      , LOW  , ""                 }
