@@ -16,13 +16,11 @@ SRC_DIRS += $(TOP)/mrfApp/src
 
 INC+=evrMessage.h
 
-DBD += devWFevrMessage.dbd
 DBD += drvPnet.dbd
 DBD += drvEvr.dbd
 
 LIBRARY_IOC = drvSupport
 
-drvSupport_SRCS += devWFevrMessage.c
 drvSupport_SRCS += drvPnet.c
 drvSupport_SRCS += drvEvr.c
 drvSupport_SRCS += evrMessage.c
