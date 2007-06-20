@@ -68,13 +68,13 @@ file evrDevTrig.db {
 		                              , 0    ,  100   , 3820    , LCRFONLY   , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP1 , OT1P, OT1W, OT1D, 1}
 { PCAV:IN20:365:PH1_D_,  "PH1 PAD"
-		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , 3820    , LCLS_ACC  , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP2 , OT2P, OT2W, OT2D, 1}
 { ACCL:LI21:1:L1S_D_  ,  "L1S PAD"
 		                              , 0    ,  100   , -495    , LCLS_ACC   , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP3 , OT3P, OT3W, OT3D, 1}
 { ACCL:LI21:180:L1X_D_,  "L1X PAD"
-		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
+		                              , 0    ,  100   , 3820    , LCLS_ACC  , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
                       ,  0            ,"nSec", -2.8E06, 2.8E06  , IN20:EV01  , OTP4 , OT4P, OT4W, OT4D, 1}
 { PCAV:LI21:300:PH2_D_,  "PH2 PAD"
 		                              , 0    ,  100   , 3820    , TS4_30_    , IN20 , RF02, IOC:IN20:RF01, 8.40336692324359
