@@ -16,6 +16,3 @@ STD=$(TOP)/../..
 # Libraries used by EVR IOCs
 EVR_IOC_LIBS=evrSupport drvSupport sSubRecord generalTime
 
-# Libraries used by MPG IOCs
-MPG_IOC_LIBS=mpgSupport evrSupport drvSupport sSubRecord std generalTime seq pv
-
