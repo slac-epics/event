@@ -11,7 +11,7 @@ file evrWithExtDelays.db
 #                      Default Pulse <--------------------------- Extended Delays -------------------------------------->
 #	 Device     Card Delay Width State    Clock PreScaler   Pulse Widths       Delays             Polarities     
 pattern { DEV      ,CARD,DELAY,WIDTH,STATE   , DG0C,DG1C,DG2C, DG0W,DG1W,DG2W, DG0D,DG1D,DG2D,   DG0P  ,  DG1P  ,  DG2P  }
-	{ $(DEVICE), 0  ,  0  , 12  ,Enabled , 119 ,119 ,119 , 1000,1000,1000, 500 ,500 ,500 , Inverted,Inverted,Inverted}
+	{ $(DEVICE), 0  ,  0  , 12  ,Enabled , 119 ,119 ,119 , 1000,1000, 5, 500 ,900 ,7200 , Inverted,Normal,Inverted}
 }
 #Note - there is a dependency on event code assignments and triggers.
 #     When changing event code assignments below, also change the appropriate
@@ -23,7 +23,7 @@ pattern { DEV       , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11
 	{ $(DEVICE) ,   0  , EVENT1  ,140 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 }
 	{ $(DEVICE) ,   0  , EVENT2  ,141 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 }
 	{ $(DEVICE) ,   0  , EVENT3  ,142 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 }
-	{ $(DEVICE) ,   0  , EVENT4  ,143 , 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1 , 1 , 1 , 0 }
+	{ $(DEVICE) ,   0  , EVENT4  , 43 , 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1 , 1 , 1 , 0 }
 	{ $(DEVICE) ,   0  , EVENT5  ,144 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 }
 	{ $(DEVICE) ,   0  , EVENT6  ,145 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 }
 	{ $(DEVICE) ,   0  , EVENT7  ,146 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 0 }
