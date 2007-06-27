@@ -21,7 +21,7 @@ file bsaEdefAvg.db
   pattern {   DEV ,SECN    ,INP  , MDID , MD, DESC , EGU , HOPR,LOPR,PREC,ADEL, MDEL, LOCA  , UNIT , BIT,  EC }
 	  { $(DEVICE) ,$(ATRB) ,$(IN),  1   , 1 ,   1  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), A  ,  101}
 	  { $(DEVICE) ,$(ATRB) ,$(IN),  2   , 2 ,   2  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), B  ,  102}
-	  { $(DEVICE) ,$(ATRB  ,$(IN),  3   , 3 ,   3  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,$(ATRB) ,$(IN),  3   , 3 ,   3  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), C  ,  103}
 	  { $(DEVICE) ,$(ATRB) ,$(IN),  4   , 4 ,   4  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), D  ,  104}
 	  { $(DEVICE) ,$(ATRB) ,$(IN),  5   , 5 ,   5  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), E  ,  105}
 	  { $(DEVICE) ,$(ATRB) ,$(IN),  6   , 6 ,   6  , deg , 360 , 0  ,  3 , .01, .001, $(LOC), $(UN), F  ,  106}
