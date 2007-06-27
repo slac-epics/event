@@ -9,8 +9,8 @@ file evrDevTrig.db {
 #           Device	   , Description    ,polarity,width,delay,event , EVR  , EVR,  IOC 
 #			                                         code   ,location,unit
   pattern { DEV            ,  DESC          ,POL, WID, DES , TEC        , LOCA , UNIT, IOC          ,  DRVL  ,  DRVH   , TCTL , TPOL, TWID, TDES, CTL}
-	  { BLEN:LI21:280: , "BL12"         ,0 , 100 , 10  , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, -2.8E06, 2.8E06  , DG0E , DG0P, DG0W, DG0D, 1  }
-	  { TRIG:LI21:BL01:, "RF Hut"       ,0 , 100 , 10  , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, -2.8E06, 2.8E06  , DG1E , DG1P, DG1W, DG1D, 1  }
-	  { BLEN:LI21:265:,  "BL11"         ,0 , 100 , 10  , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, -2.8E06, 2.8E06  , DG2E , DG2P, DG2W, DG2D, 1  }
+	  { BLEN:LI21:265:,  "BL11"         ,0 , 100 , 10  , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, -2.8E06, 2.8E06  , DG0E , DG0P, DG0W, DG0D, 1  }
+	  { BLEN:LI21:280: , "BL12"         ,0 , 100 , 10  , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, -2.8E06, 2.8E06  , DG1E , DG1P, DG1W, DG1D, 1  }
+	  { TRIG:LI21:BL01:, "Spare"        ,0 , 100 , 10  , LCLSBEAM   , LI21 , BL01, IOC:LI21:BL01, -2.8E06, 2.8E06  , DG2E , DG2P, DG2W, DG2D, 1  }
 }
 
