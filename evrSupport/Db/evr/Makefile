@@ -11,6 +11,11 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 #
+# EVR databases
+DB += evr.db
+DB += evrWithDelays.db
+DB += evrWithExtDelays.db
+DB += evrEventCtrl.db
 # evrPattern support
 DB += evrPatternProc.db
 DB += evrEventAll.db
