@@ -7,18 +7,8 @@ all evr support (pattern pipelineing, etc).
 It creates libevrSupport and installs dbd and db files.
 
 evrSupport library (<INSTALL_LOCATION>/lib/<arch>/libevrSupport.a) contents:
-libsrc: functions for subroutine records
-
-Also in this directory:
-Db:     bsa databases - 
-        bsa<*>Test.db and .templates are for device simulators. Load for 
-	      test data.
-TBD  edm:    bsa low-level displays
- 
-micro/saIoc is an application which currently assembles all libraries needed
-for the slc-aware BSAC IOC and EVR support, creates a database 
-definition file with all components (saIoc.dbd), and builds a test slc-aware 
-IOC application.  Rebuild that area after any change to evrSupport/src.
-
-
+src:    functions for subroutine records and evr driver support.
+Db/bsa: low-level beam-synchronous-acquisition (BSA) databases.
+Db/evr: low-level event receiver (EVR) databases
+Db/ioc: EVR IOC substitution files.
 
