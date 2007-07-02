@@ -4,7 +4,7 @@ include $(TOP)/configure/CONFIG
 
 DIRS += configure
 DIRS += mrfApp
-DIRS += drvSupport
 DIRS += evrSupport
+#DIRS += evrIoc
 
 include $(TOP)/configure/RULES_TOP
