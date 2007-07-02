@@ -40,8 +40,9 @@ epicsExportAddress(drvet, drvEvr);
 
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
-volatile int            patternAvailable  = 0; /* pattern  available flag */
-volatile int            fiducialAvailable = 0; /* fiducial available flag */
+static volatile int     patternAvailable  = 0; /* pattern  available flag */
+static volatile int     fiducialAvailable = 0; /* fiducial available flag */
+static volatile int     patternFirst      = 0; /* process pattern first flag */
 
 /*=============================================================================
 
@@ -83,6 +84,7 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
   evrMessageStart(messageType);
   evrMessageWrite(messageType, (evrMessage_tu *)message);
   patternAvailable = 1;
+  patternFirst     = 0;
   epicsEventSignal(evrTaskEventSem);
 }
 
@@ -101,6 +103,7 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
   if (eventNum == EVENT_FIDUCIAL) {
     evrMessageStart(EVR_MESSAGE_FIDUCIAL);
     fiducialAvailable = 1;
+    patternFirst      = 1;
     epicsEventSignal(evrTaskEventSem);
   }
 }
@@ -119,13 +122,18 @@ static int evrTask()
   for (;;)
   {
     epicsEventMustWait(evrTaskEventSem);
-    while (fiducialAvailable || patternAvailable) {
+    while (patternAvailable || fiducialAvailable) {
+      if (patternAvailable && patternFirst) {
+        evrMessageProcess(EVR_MESSAGE_PATTERN);
+        patternAvailable = 0;
+      }
       if (fiducialAvailable) {
         fiducialAvailable = 0;
         evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
-      } else if (patternAvailable) {
-        patternAvailable = 0;
+      }
+      if (patternAvailable) {
         evrMessageProcess(EVR_MESSAGE_PATTERN);
+        patternAvailable = 0;
       }
     }
   }
