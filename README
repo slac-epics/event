@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 04/17/2007
+Instructions for RTEMS EVR users                    Last Updated 07/02/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -7,29 +7,18 @@ I - Adding the event package to your IOC application:
 (1) Add EVENT, GENERALTIME, SSUBRECORD, and RESTORE to configure/RELEASE and 
 clean/rebuild configure:
 
-EVENT=/afs/slac/g/lcls/epics/site/src/event
-GENERALTIME=/afs/slac/g/lcls/epics/site/src/generalTime
-SSUBRECORD=/afs/slac/g/lcls/epics/site
-RESTORE=/afs/slac/g/lcls/epics/site/src/restore
- OR 
-include $(TOP)/../site/configure/RELEASE-event
-include $(TOP)/../site/configure/RELEASE-generalTime
-include $(TOP)/../site/configure/RELEASE-restore
-SSUBRECORD=$(TOP)/../site
+EVENT=/afs/slac/g/lcls/build/epics/modules/event/<version>
+GENERALTIME=/afs/slac/g/lcls/build/epics/modules/generalTime/<version>
+SSUBRECORD=/afs/slac/g/lcls/build/epics/modules/sSubRecord/<version>
+RESTORE=/afs/slac/g/lcls/build/epics/modules/restore/<version>
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
 
    xxx_LIBS += evrSupport
-   xxx_LIBS += drvSupport
    xxx_LIBS += sSubRecord
    xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
    xxx_LIBS += mrfVme64x
-   xxx_LIBS += restore
- OR (if including /afs/slac/g/lcls/epics/site/configure/RELEASE-event in
-     your xxxApp/configure/RELEASE):
-   xxx_LIBS += $(EVR_IOC_LIBS)
-   xxx_LIBS += $(EVR_RTEMS_IOC_LIBS)
    xxx_LIBS += restore
 
 Note that the order of the above libraries is important.
