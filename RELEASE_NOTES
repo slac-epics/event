@@ -1,0 +1,39 @@
+Release Notes for the event package
+-----------------------------------
+
+Note: The file called "CHANGES" has only changes in mrfApp.  This file 
+(RELEASE_NOTES) lists changes for ALL directories.
+
+event-R2-4-0: July 02, 2007
+	* Moved drvSupport files to evrSupport and MpgApp and removed
+	  drvSupport from Makefile.  libdrvSupport no longer exists.
+	  Correct README file.
+	* Moved test evr images and databases from evrSupport to new
+	  directory, evrIoc.  evrIoc created but left commented out of
+	  production event/Makefile - it is only built for development
+	  purposes.
+	* Correct configure/RELEASE for newest versions of miscUtils and
+	  sSubRecord.
+	* evrSupport/Db/bsa/bsaPHASEdef.substitutions - fix typo.
+	* evrSupport/Db/bsa/bsaBLENEdef.substitutions - changed WIDTH to 
+	  (ATB)_ZRAW, where ATB can be A-E
+	* evrSupport/Db/ioc/IOC-LI21-BL01trig.substitutions - correct trigger
+	  order.
+	* evrSupport/Db/ioc/IOC-LI21-BL01bsa.substitutions - added ATB macro 
+	  for use with new bsaBLENEdef pv names.
+	* Add this file.
+	* mrfApp/src/mrfVme64x.* - add check for VME EVR 230 if EVR 200 is not 
+	  found.
+	* mrfApp/src/erRecord.c - dorrect monitor logic for the taxi field 
+	  (loss of receiver).
+	* mrfApp/src/devMrfEr.c - remove rxvc field support.  It is replaced 
+	  by the taxi field.  Remove ERROR_LOST_PLL logic - this bit no longer 
+	  exists in the CSR (for EVR 200 and up).
+	* mrfApp/src/drvMrfEr.* - remove EVR_CSR_PLL_LOST bit - it's no longer 
+	  supported in the CSR.  Remove ErCheckPhaseLock.
+	  Correct logic to allow VME and PMC EVRs on the same IOC.
+	  And new registers to the register map for the VME EVR 230.  
+	  Support for these registers will come in another release.
+
+event-R2-3-8: June 21, 2007
+	See CVS log for this release and all prior releases.	
