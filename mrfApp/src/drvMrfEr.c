@@ -199,18 +199,18 @@ typedef struct MrfErRegs
     epicsUInt16  Resvd7;                /* 038: Reserved                                          */
     epicsUInt16  Resvd8;                /* 03A: Reserved                                          */
     epicsUInt16  Resvd9;                /* 03C: Reserved                                          */
-    epicsUInt16  Resvd10;               /* 03E: Reserved                                          */
+    epicsUInt16  FP7Map;                /* 03E: Front Panel TTL 7/CML 3 Output Mapping Register   */
 
    /*---------------------
-    * Front Pannel Output Mapping Registers
+    * Front Panel Output Mapping Registers
     */
     epicsUInt16  FP0Map;                /* 040: Front Panel TTL 0 Output Mapping Register         */
     epicsUInt16  FP1Map;                /* 042: Front Panel TTL 1 Output Mapping Register         */
     epicsUInt16  FP2Map;                /* 044: Front Panel TTL 2 Output Mapping Register         */
     epicsUInt16  FP3Map;                /* 046: Front Panel TTL 3 Output Mapping Register         */
-    epicsUInt16  FP4Map;                /* 048: Front Panel TTL 4 Output Mapping Register         */
-    epicsUInt16  FP5Map;                /* 04A: Front Panel LVPECL 0 Output Mapping Register      */
-    epicsUInt16  FP6Map;                /* 04C: Front Panel LVPECL 1 Output Mapping Register      */
+    epicsUInt16  FP4Map;                /* 048: Front Panel TTL 4/CML 0 Output Mapping Register   */
+    epicsUInt16  FP5Map;                /* 04A: Front Panel TTL 5/CML 1 Output Mapping Register   */
+    epicsUInt16  FP6Map;                /* 04C: Front Panel TTL 6/CML 2 Output Mapping Register   */
 
    /*---------------------
     * Timing and Timestamping Registers
@@ -251,10 +251,16 @@ typedef struct MrfErRegs
     epicsUInt32  RfDelay;               /* 084: RF Delay Chip Setting                             */
     epicsUInt32  RxDelay;               /* 088: Recovered Event Clock Delay Chip Setting          */
     epicsUInt32  Resvd15;               /* 08C: Reserved                                          */
-    epicsUInt32  FbRFFrac;              /* 090: Feedback Fraction for RF Delay                    */
-    epicsUInt32  FbRxFrac;              /* 094: Feedback Fraction for Rx Delay                    */
-    epicsUInt32  RFDelayInit;           /* 098: Initial value for RF Recovery Delay Chip          */
-    epicsUInt32  RxDelayInit;           /* 09C: Initial value for Receiver Delay Chip             */
+  
+   /*---------------------
+    * Universal I/O Output Mapping Registers
+    */
+    epicsUInt16  UN0Map;                /* 090: Front Panel TTL 0 Output Mapping Register         */
+    epicsUInt16  UN1Map;                /* 092: Front Panel TTL 1 Output Mapping Register         */
+    epicsUInt16  UN2Map;                /* 094: Front Panel TTL 2 Output Mapping Register         */
+    epicsUInt16  UN3Map;                /* 096: Front Panel TTL 3 Output Mapping Register         */
+    epicsUInt32  Resvd13;               /* 098: Reserved                                          */
+    epicsUInt32  Resvd14;               /* 09C: Reserved                                          */
 
    /*---------------------
     * Data Buffer Area
@@ -310,7 +316,7 @@ Descriptor */
 #define EVR_CSR_RSRXVIO   0x0001        /* Write 1 to Reset Receive Violation Flag                */
 #define EVR_CSR_RSDIRQ    0x0002        /* Write 1 to Reset the Delayed Interrupt Flag            */
 #define EVR_CSR_RSFF      0x0004        /* Write 1 to Reset the FIFO Full Flag                    */
-#define EVR_CSR_RSPLL     0x0008        /* Write 1 to Reset the PLL Lost Flag                     */
+#define EVR_CSR_RSFIFO    0x0008        /* Write 1 to Reset the FIFO - not used                   */
 #define EVR_CSR_RSADR     0x0010        /* Write 1 to Reset the Mapping RAM Address Register      */
 #define EVR_CSR_AUTOI     0x0020        /* Write 1 to Enable Mapping RAM Auto-Increment Mode      */
 #define EVR_CSR_VMERS     0x0040        /* Mapping RAM Select Bit for Program Access              */
@@ -341,7 +347,6 @@ Descriptor */
 #define EVR_CSR_RXVIO     0x0001        /* Receive Violation Flag                                 */
 #define EVR_CSR_FNE       0x0002        /* Event FIFO Not Empty Flag                              */
 #define EVR_CSR_FF        0x0004        /* Event FIFO Full Flag                                   */
-#define EVR_CSR_PLL_LOST  0x0008        /* Lost Receive Link Phase-Lock Loop Flag                 */
 #define EVR_CSR_DIRQ      0x0010        /* Delayed Interrupt Flag                                 */
 #define EVR_CSR_IRQFL     0x0800        /* Event FIFO Interrupt Flag                              */
 #define EVR_CSR_HRTBT     0x1000        /* Lost Heartbeat Flag                                    */
@@ -355,8 +360,8 @@ Descriptor */
 #define EVR_CSR_RESET_FIELDS (                                                                     \
     EVR_CSR_RSRXVIO   |                 /* Reset Recieve Violation Flag                          */\
     EVR_CSR_RSDIRQ    |                 /* Reset Delayed Interrupt Flag                          */\
+    EVR_CSR_RSFIFO    |                 /* Clear FIFO - not used                                 */\
     EVR_CSR_RSFF      |                 /* Reset FIFO Full Flag                                  */\
-    EVR_CSR_RSPLL     |                 /* Reset Lost PLL Flag                                   */\
     EVR_CSR_RSADR     |                 /* Reset Mapping RAM Address Register                    */\
     EVR_CSR_NFRAM     |                 /* Clear Mapping RAM                                     */\
     EVR_CSR_LTS       |                 /* Latch Timestamp Event Counter                         */\
@@ -384,8 +389,8 @@ Descriptor */
 #define EVR_CSR_CONFIG_SET_FIELDS (                                                                \
     EVR_CSR_RSRXVIO   |                 /* Reset the Receive Violation Flag                      */\
     EVR_CSR_RSDIRQ    |                 /* Reset the Delayed Interrupt Flag                      */\
+    EVR_CSR_RSFIFO    |                 /* Clear FIFO - not used                                 */\
     EVR_CSR_RSFF      |                 /* Reset the FIFO Full Flag                              */\
-    EVR_CSR_RSPLL     |                 /* Reset the PLL Lost Flag                               */\
     EVR_CSR_RSIRQFL   |                 /* Reset Event FIFO Interrupt Flag                       */\
     EVR_CSR_RSHRTBT )                   /* Reset Lost Heartbeat Flag                             */
 
@@ -395,16 +400,16 @@ Descriptor */
 #define EVR_CSR_RESET_1 (                                                                          \
     EVR_CSR_RSRXVIO   |                 /* Reset the Receive Violation Flag                      */\
     EVR_CSR_RSDIRQ    |                 /* Reset the Delayed Interrupt Flag                      */\
+    EVR_CSR_RSFIFO    |                 /* Clear FIFO - not used                                 */\
     EVR_CSR_RSFF      |                 /* Reset the FIFO Full Flag                              */\
-    EVR_CSR_RSPLL     |                 /* Reset the PLL Lost Flag                               */\
     EVR_CSR_RSADR     |                 /* Reset Mapping RAM Address Register                    */\
     EVR_CSR_RSTS )                      /* Reset Timestamp Event Counter & Latch                 */
 
 #define EVR_CSR_RESET_2 (                                                                          \
     EVR_CSR_RSRXVIO   |                 /* Reset the Receive Violation Flag                      */\
     EVR_CSR_RSDIRQ    |                 /* Reset the Delayed Interrupt Flag                      */\
+    EVR_CSR_RSFIFO    |                 /* Clear FIFO - not used                                 */\
     EVR_CSR_RSFF      |                 /* Reset the FIFO Full Flag                              */\
-    EVR_CSR_RSPLL     |                 /* Reset the PLL Lost Flag                               */\
     EVR_CSR_NFRAM     |                 /* Clear Mapping RAM                                     */\
     EVR_CSR_RSTS )                      /* Reset Timestamp Event Counter & Latch                 */
 
@@ -608,6 +613,8 @@ LOCAL epicsBoolean   ErCardListInit = epicsFalse;       /* Init flag for ER card
 
 LOCAL epicsBoolean   ConfigureLock  = epicsFalse;       /* Enable/disable ER card configuration   */
 LOCAL epicsBoolean   DevInitLock    = epicsFalse;       /* Enable/disable final device init.      */
+LOCAL int            ErVMECount     = 0;                /* Total # VME EVRs */
+LOCAL int            ErPMCCount     = 0;                /* Total # PMC EVRs */
 
 volatile int     ErTotalIrqCount = 0;
 volatile int     ErRxvioIrqCount = 0;
@@ -839,7 +846,8 @@ int ErConfigure (
 	            free (pCard);
 				return ERROR;
 			}
-		} while ( i < Card );
+		} while ( i < ErVMECount );
+                ErVMECount++;
 
        /*---------------------
         * Try to register this card at the requested A24 address space
@@ -950,7 +958,9 @@ int ErConfigure (
 			  (unsigned char) pciBusNo, (unsigned char) pciDevNo, (unsigned char) pciFuncNo,
 			  PCI_SUBSYSTEM_VENDOR_ID, &subId); 
 			plx++;
-		  } while ( (subId != ((DeviceId << 16) | VendorId)) || unit++ < Card );
+		  } while ( (subId != ((DeviceId << 16) | VendorId)) ||
+                            (unit++ < ErPMCCount) );
+                  ErPMCCount++;
         }
 
         unsigned int configRegAddr;
@@ -1112,7 +1122,7 @@ int ErConfigure (
       MRF_VME_REG32_WRITE(&pEr->FracDiv, FR_SYNTH_WORD);
       epicsThreadSleep (epicsThreadSleepQuantum());
       MRF_VME_REG16_WRITE(&pEr->Control, (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) |
-                          EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT | EVR_CSR_RSPLL); 
+                          EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT); 
     } else if (pCard->FormFactor == PMC_EVR) {
       MRF_VME_REG32_WRITE(&pEr->FracDiv, FR_SYNTH_WORD);
         /* Jukka says pEr->Control needs to be set to 0x9081 at this point 12/1/2006 */
@@ -1122,7 +1132,7 @@ int ErConfigure (
       epicsThreadSleep (epicsThreadSleepQuantum()*10); /* NEW 12/14/2006. needed. to be able to actually
                                   clear the taxi violation */
       MRF_VME_REG16_WRITE(&pEr->Control, (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) |
-                          EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT | EVR_CSR_RSPLL); 
+                          EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT); 
     }
    
     /* add the card structure to the list of known event receiver cards.  */
@@ -1455,13 +1465,8 @@ epicsStatus ErDrvReport (int level)
 |*    o Receiver Link Error:
 |*      Also known as a "TAXI" error (for historical reasons).
 |*      Reset the RXVIO bit the the Control/Status register, increment the the count of receive
-|*      errors in the Event Receiver Card Structure, report the error to the device-support layer's
-|*      interrupt error reporting routine, and check to see if there is a... 
-|*
-|*    o Phase-Lock Loop Error:
-|*      Indicates that the receive link has been disconnected.
-|*      Reset the PLL_LOST bit in the Control/Status register, disable further RXVIO interrupts,
-|*      and report the error to the device-support layer's interrupt error reporting routine.
+|*      errors in the Event Receiver Card Structure, and report the error to the device-support layer's
+|*      interrupt error reporting routine.
 |*
 |*    o Lost Heartbeat Error:
 |*      Reset the HRTBT bit in the Control/Status register and report the error to the
@@ -1542,22 +1547,6 @@ void ErIrqHandler (ErCardStruct *pCard)
 
         if (pCard->DevErrorFunc != NULL)
             (*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
-
-       /*---------------------
-        * Check for loss of phase lock (PLL).
-        * Lost PLL means that the fiber optic link has probably been disconnected.
-        * Reset the error bit, disable receiver link interrupts, and invoke the
-        * device support error callback routine.
-        */
-        if (csr & EVR_CSR_PLL_LOST) {
-            MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSPLL);
-            MRF_VME_REG16_WRITE(&pEr->IrqEnables,
-                                MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_RXVIO)); 
-
-            if (pCard->DevErrorFunc != NULL)
-                (*pCard->DevErrorFunc)(pCard, ERROR_LOST_PLL);
-
-        }/*end if receive link PLL lost (link disconnected)*/
 
     }/*end if receive link error detected*/
   
@@ -1958,62 +1947,6 @@ void ErEventIrq (ErCardStruct *pCard, epicsBoolean Enable)
 /*                                                                                                */
 
 
-/**************************************************************************************************
-|* ErCheckPhaseLock () -- Check to See if We Have Phase Lock on the Receive Link
-|*-------------------------------------------------------------------------------------------------
-|*
-|* This routine checks the Receive Link "phase lock lost" bit in the Control/Status
-|* register.  If the error bit is set, it will return "False" (no phase lock) and reset the
-|* error bit.  If the error bit is not set, it will return "True" (phase lock established).
-|*
-|*-------------------------------------------------------------------------------------------------
-|* CALLING SEQUENCE:
-|*      status = ErCheckPhaseLock (pCard);
-|*
-|*-------------------------------------------------------------------------------------------------
-|* INPUT PARAMETERS:
-|*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|* 
-|*-------------------------------------------------------------------------------------------------
-|* RETURNS:
-|*      status    = (epicsBoolean)   True if we have phase lock on the Receive Link.
-|*                                   False if we lost phase lock on the Receive Link.
-|*
-\**************************************************************************************************/
-
-GLOBAL_RTN
-epicsBoolean ErCheckPhaseLock (ErCardStruct *pCard)
-{
-   /*---------------------
-    * Local variables
-    */
-    int                           Key;          /* Used to restore interrupt level after locking  */
-    volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
-
-   /*---------------------
-    * Get the address of the hardware registers.
-    * Lock out interrupts while we manipulate the hardware.
-    */
-    pEr = (MrfErRegs *)pCard->pEr;
-    Key = epicsInterruptLock();
-
-   /*---------------------
-    * If we have a "Lost Phase Lock" error, return "False" and reset the error bit.
-    */
-    if (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_PLL_LOST) {
-        MRF_VME_REG16_WRITE(&pEr->Control,
-                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_RSPLL);
-        epicsInterruptUnlock (Key);
-        return (epicsFalse);
-    }/*end if receive link framing error detected*/
-
-   /*---------------------
-    * Return "True" if we have phase lock.
-    */
-    epicsInterruptUnlock (Key);
-    return (epicsTrue);
-
-}/*end ErCheckPhaseLock()*/
 
 /**************************************************************************************************
 |* ErCheckTaxi () -- Check to See if We Have A Receive Link Framing Error (TAXI)
@@ -3985,11 +3918,6 @@ void DiagDumpRegs (ErCardStruct *pCard)
         printf (" 04 is set: *Delayed Interrupt arrived \n") ;
     else
         printf (" 04  unset: *No delayed interrupt \n");
-
-    if (Csr & EVR_CSR_PLL_LOST)
-        printf (" 03 is set: *Event Link Phase Lock (was) lost \n") ;
-    else
-        printf (" 03  unset: *Event Link Phase Lock OK \n");
 
     if (Csr & EVR_CSR_FF)
         printf (" 02 is set: *Event FIFO (was) full \n") ;

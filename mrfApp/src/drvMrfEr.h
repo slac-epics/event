@@ -133,7 +133,6 @@
 #define ERROR_TAXI                    1        /* Taxi (receive link) violation                   */
 #define ERROR_HEART                   2        /* Lost the system heart beat                      */
 #define ERROR_LOST                    3        /* Events were lost                                */
-#define ERROR_LOST_PLL                4        /* Lost receiver link PLL (Link Disconnected)      */
 #define ERROR_DBUF_CHECKSUM           5        /* Data stream checksum error                      */
 
 /**************************************************************************************************/
@@ -228,7 +227,6 @@ typedef void (*DEV_DBUFF_FUNC)  (ErCardStruct *pCard, epicsInt16 Size, void *Buf
 /**************************************************************************************************/
 
 epicsBoolean   ErCheckTaxi (ErCardStruct*);
-epicsBoolean   ErCheckPhaseLock (ErCardStruct*);
 void           ErDebugLevel (epicsInt32);
 epicsUInt16    ErEnableIrq (ErCardStruct*, epicsUInt16);
 void           ErEnableDBuff (ErCardStruct*, epicsBoolean);
