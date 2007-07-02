@@ -12,8 +12,10 @@ event-R2-4-0: July 02, 2007
 	  directory, evrIoc.  evrIoc created but left commented out of
 	  production event/Makefile - it is only built for development
 	  purposes.
-	* Correct configure/RELEASE for newest versions of miscUtils and
+	* Correct configure/RELEASE for R1-0-0 of miscUtils and
 	  sSubRecord.
+	* evrSupport/src/drvEvr.c - make sure pattern and fiducial are 
+	  processed in the correct order if both are ready at the same time.
 	* evrSupport/Db/bsa/bsaPHASEdef.substitutions - fix typo.
 	* evrSupport/Db/bsa/bsaBLENEdef.substitutions - changed WIDTH to 
 	  (ATB)_ZRAW, where ATB can be A-E
