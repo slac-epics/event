@@ -249,9 +249,8 @@ epicsStatus ErInitRecord (erRecord *pRec)
 |*     - Delayed interrupt (DVME) enable, delay, and prescaler.
 |*     - Front panel output configuration registers.
 |*     - Receiver frame error interrupt enable/disable.
-|*     - Receiver frame error status (TAXI)
-|*     - Receiver phase lock status (PLOK)
-|*     - Receiver frame error count (RXVC)
+|*     - Receiver frame error count (TAXI)
+|*     - Receiver frame error status (PLOK)
 |*     - Event Receiver firmware version (FPGV)
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -378,12 +377,11 @@ epicsStatus ErProcess (erRecord  *pRec)
     ErTaxiIrq (pCard, pRec->rxve);
 
    /*---------------------
-    * Set various record fields with the status of the receive link frame and phase lock errors,
+    * Set various record fields with the status of the receive link frame error,
     * the frame error count, and the current FPGA version.
     */
-    pRec->taxi = ErCheckTaxi (pCard);
-    pRec->plok = ErCheckPhaseLock (pCard);
-    pRec->rxvc = pCard->RxvioCount & 0x0000ffff;
+    pRec->plok = ErCheckTaxi (pCard)?0:1;
+    pRec->taxi = pCard->RxvioCount;
     pRec->fpgv = ErGetFpgaVersion (pCard);
  
    /*---------------------
@@ -897,13 +895,6 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
 |*      Logs an error message if the debug flag is set.
 |*      Invokes the user-defined error function (if one has been attached).
 |*
-|*    o Phase-Lock Loop Error:
-|*      Indicates that the receive link has been disconnected.
-|*      Clears the RXVE field in the ER record to indicate that receive link errors have
-|*      been disabled.
-|*      Logs an error message if the debug flag is set.
-|*      Invokes the user-defined error function (if one has been attached).
-|*
 |*    o Lost Heartbeat Error:
 |*      Logs an error message if the debug flag is set.
 |*      Invokes the user-defined error function (if one has been attached).
@@ -946,6 +937,7 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Receiver Link Frame (Taxi) Error
     */
     case ERROR_TAXI:
+        pRec->rxve = 0;
         pRec->taxi = pCard->RxvioCount;
         if(ErDebug) {
             epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
@@ -953,16 +945,6 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
                            Card, pCard->RxvioCount);
             epicsInterruptContextMessage (pCard->intMsg);
         }/*end if debug flag is set*/
-        break;
-
-   /*---------------------
-    * Phase-Lock Loop (Link Disconnect) Error
-    */
-    case ERROR_LOST_PLL:
-        pRec->rxve = 0;
-        epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                       "ER Card %d Lost Receive Link.\n", Card);
-        epicsInterruptContextMessage (pCard->intMsg);
         break;
 
    /*---------------------
@@ -1002,9 +984,11 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Invalid Error Code
     */
     default:
-        epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                       "ER Card %d Invalid Error Code = %d.\n", Card, ErrorNum);
-        epicsInterruptContextMessage (pCard->intMsg);
+        if(ErDebug) {
+          epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
+                         "ER Card %d Invalid Error Code = %d.\n", Card, ErrorNum);
+          epicsInterruptContextMessage (pCard->intMsg);
+        }
         return;
 
     }/*end switch on error number*/
