@@ -234,6 +234,11 @@ int mrfFindNextEVR (int lastSlot)
     */
     if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVR200RF_BID, &slot))
         return slot;
+   /*---------------------
+    * If we couldn't find the EVR200 try the EVR230.
+    */
+    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVR230_BID, &slot))
+        return slot;
 
    /*---------------------
     * Return 0 if no more Event Receiver cards were found.
