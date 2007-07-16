@@ -4,6 +4,8 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-4-1: July 16, 2007
+	* Use generalTime-R1-2-0.
 event-R2-4-0: July 02, 2007
 	* Moved drvSupport files to evrSupport and MpgApp and removed
 	  drvSupport from Makefile.  libdrvSupport no longer exists.
