@@ -8,7 +8,7 @@
 # EPICS_BASE usually appears last so other apps can override stuff:
 #
 EPICS_MODULES=/afs/slac/g/lcls/build/epics/modules
-GENERALTIME=$(EPICS_MODULES)/generalTime/Devl
+GENERALTIME=$(EPICS_MODULES)/generalTime/generalTime-R1-2-0
 SSUBRECORD=$(EPICS_MODULES)/sSubRecord/sSubRecord-R1-0-0
 MISCUTILS=$(EPICS_MODULES)/miscUtils/miscUtils-R1-0-0
 
