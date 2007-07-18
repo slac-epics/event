@@ -7,10 +7,12 @@
 #---------------------
 # EPICS_BASE usually appears last so other apps can override stuff:
 #
-include $(TOP)/../../configure/RELEASE-base
-include $(TOP)/../../configure/RELEASE-generalTime
-SSUBRECORD=$(TOP)/../..
-MISCUTILS=$(TOP)/../..
+EPICSTP=/afs/slac/g/lcls/users/strauman/epics/new
+EPICS_MODULES=$(EPICSTP)/modules
+GENERALTIME=$(EPICS_MODULES)/generalTime-R1-2-0
+SSUBRECORD=$(EPICS_MODULES)/sSubRecord-R1-0-0
+MISCUTILS=$(EPICS_MODULES)/miscUtils-R1-0-0
+EPICS_BASE=$(EPICSTP)/base
 
 # Libraries used by EVR IOCs
 EVR_IOC_LIBS=evrSupport drvSupport sSubRecord generalTime
