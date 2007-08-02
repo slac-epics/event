@@ -14,10 +14,10 @@ file bsaTestInput.db
 #                             
 #             Device          
   pattern {    DEV    ,SECN , CALC,  A , B ,EGU,HOPR,LOPR,PREC,ADEL,MDEL, RES }
-          { $(DEVICE) ,WIDTH, "A" , 299, 0 ,fsec,300, 100,  3 , .01,.001,.002 }
+          { $(DEVICE) ,$(ATB)RAW,"A",299,0,"", 300, 100,  3 , .01,.001,.002 }
 }
 file bsaTestFanouts.db
 {
-  pattern {    DEV    ,  SECN  ,SCAN, LNK2                   ,LNK3                  , LNK4, LNK5}
-          { $(DEVICE) , WIDTH  ,$(S), "$(DEVICE):EFWIDTH PP" ,"", ""  , ""  }
+  pattern {    DEV    ,  SECN     ,SCAN, LNK2                         , LNK3, LNK4, LNK5}
+          { $(DEVICE) ,$(ATB)RAW,$(S), "$(DEVICE):EF$(ATB)RAW PP" , ""  , ""  , ""  }
 }
