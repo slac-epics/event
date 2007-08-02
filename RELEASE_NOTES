@@ -4,6 +4,14 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-4-2: Aug 2, 2007
+	* evrSupport/Db/ioc/IOC-IN20-RF01bsa.substitutions - correct typo
+	  ACCL:IN20:400:L0B_P* BSA pvs.
+	* evrSupport/Db/bsa/bsaBLENEdef.substitutions to correct the name 
+	  of the BLEN BSA pv attributes.
+	* evrSupport/Db/ioc/IOC-IN20-RF01evr.substitutions - use 10hz
+	  event codes (43 and 154) for most LLRF PADs since the LLRF system
+	  cannot handle 30hz triggers.
 event-R2-4-1: July 16, 2007
 	* Use generalTime-R1-2-0.
 event-R2-4-0: July 02, 2007
