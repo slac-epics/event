@@ -19,32 +19,32 @@ file bsaEdefAvg.db
 #	      Device   Name                                                                     IOC    IOC   mod5  Init 
 #                                                                                               loc'n  unit  bit   Event Code
   pattern {   DEV , SECN,         INP                ,MDID , MD,DESC,EGU ,HOPR ,LOPR,PREC,ADEL, MDEL, LOCA  , UNIT , BIT,   EC }
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 1   , 1 , 1  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), A  ,   101}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 2   , 2 , 2  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), B  ,   102}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 3   , 3 , 3  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), C  ,   103}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 4   , 4 , 4  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), D  ,   104}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 5   , 5 , 5  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), E  ,   105}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 6   , 6 , 6  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), F  ,   106}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 7   , 7 , 7  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), G  ,   107}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 8   , 8 , 8  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), H  ,   108}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 9   , 9 , 9  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), I  ,   109}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 10  ,10 ,10  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), J  ,   110}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 11  ,11 ,11  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), K  ,   111}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 12  ,12 ,12  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), L  ,   112}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 13  ,13 ,13  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), M  ,   113}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 14  ,14 ,14  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), N  ,   114}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 15  ,15 ,15  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), O  ,   115}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, 1H  ,16 ,1HZ ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), P  ,   116}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, TH  ,17 ,10HZ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), Q  ,   117}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, BR  ,18 ,FULL,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), R  ,   118}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, F1  ,19 ,FBCK1, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), S  ,   119}
-	  { $(DEVICE) ,$(ATB)_ZRAW, $(DEVICE):$(ATB)_ZRAW, F2  ,20 ,FBCK2, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), T  ,   120}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 1   , 1 , 1  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), A  ,   101}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 2   , 2 , 2  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), B  ,   102}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 3   , 3 , 3  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), C  ,   103}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 4   , 4 , 4  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), D  ,   104}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 5   , 5 , 5  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), E  ,   105}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 6   , 6 , 6  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), F  ,   106}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 7   , 7 , 7  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), G  ,   107}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 8   , 8 , 8  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), H  ,   108}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 9   , 9 , 9  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), I  ,   109}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 10  ,10 ,10  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), J  ,   110}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 11  ,11 ,11  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), K  ,   111}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 12  ,12 ,12  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), L  ,   112}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 13  ,13 ,13  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), M  ,   113}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 14  ,14 ,14  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), N  ,   114}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 15  ,15 ,15  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), O  ,   115}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, 1H  ,16 ,1HZ ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), P  ,   116}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, TH  ,17 ,10HZ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), Q  ,   117}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, BR  ,18 ,FULL,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), R  ,   118}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, F1  ,19 ,FBCK1, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), S  ,   119}
+	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, F2  ,20 ,FBCK2, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), T  ,   120}
 }
 
 file bsaEdefFanouts.db
 {
 #	      Device   Name
   pattern {   DEV ,SECN        ,  LOCA  , UNIT  ,   FLNK    }
-	  { $(DEVICE) ,$(ATB)_ZRAW , $(LOC) , $(UN) , $(SLCLNK) }
+	  { $(DEVICE) ,$(ATB)RAW , $(LOC) , $(UN) , $(SLCLNK) }
 }
 
