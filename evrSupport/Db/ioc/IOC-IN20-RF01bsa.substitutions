@@ -26,5 +26,5 @@ file bsaAMPLEdef.db {
 	  { ACCL:IN20:300       , IN20 , RF01 , L0A_A , ACCL:IN20:300:L0A_AAVG, ""}
 	  { ACCL:IN20:400       , IN20 , RF01 , L0B_A , ACCL:IN20:400:L0B_AAVG, ""}
 	  { TCAV:IN20:490       , IN20 , RF01 , A     , TCAV:IN20:490:TC0_AAVG, ""}
-#	  { PCAV:IN20:365       , IN20 , RF01 , A     , PCAV:IN20:365:PH1_AAVG, ""}
+	  { PCAV:IN20:365       , IN20 , RF01 , A     , PCAV:IN20:365:PH1_AAVG, ""}
 }
