@@ -4,6 +4,21 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-4-3: Aug 8, 2007
+	* evrSupport/Db/ioc/IOC-IN20-RF01evr.substitutions - use
+	  beam/10hz for PH1 (PCAV) instead of klys accelerate.
+	* evrSupport/Db/ioc/IOC-IN20-RF01trig.substitutions - correct
+	  event code name for each trigger.
+	* evrSupport/Db/ioc/IOC-IN20-MP01evr.substitutions - add trigger
+	  for shutter.
+	* evrSupport/Db/evr/evrPMXX.substitutions - trigger profile monitors
+	  using 10hz-all-the-time event code (43).
+	* evrSupport/Db/evr/evrEventAll.substitutions - change LCLSTBD4 to
+	  LCACC_10 (klystron accel at 10hz max).
+	* evrSupport/Db/ioc/IOC-IN20-RF01bsa.substitutions - correct GUN
+	  and PCAV inputs.
+	* evrSupport/Db/ioc/IOC-LI21-RF01bsa.substitutions - correct PCAV
+	  input.
 event-R2-4-2: Aug 2, 2007
 	* evrSupport/Db/ioc/IOC-IN20-RF01bsa.substitutions - correct typo
 	  ACCL:IN20:400:L0B_P* BSA pvs.
