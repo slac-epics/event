@@ -11,12 +11,10 @@ event-R2-4-3: Aug 8, 2007
 	  event code name for each trigger.
 	* evrSupport/Db/ioc/IOC-IN20-MP01evr.substitutions - add trigger
 	  for shutter.
-	* evrSupport/Db/evr/evrPMXX.substitutions - trigger profile monitors
-	  using 10hz-all-the-time event code (43).
 	* evrSupport/Db/evr/evrEventAll.substitutions - change LCLSTBD4 to
 	  LCACC_10 (klystron accel at 10hz max).
 	* evrSupport/Db/ioc/IOC-IN20-RF01bsa.substitutions - correct GUN
-	  and PCAV inputs.
+	  inputs.
 	* evrSupport/Db/ioc/IOC-LI21-RF01bsa.substitutions - correct PCAV
 	  input.
 event-R2-4-2: Aug 2, 2007
