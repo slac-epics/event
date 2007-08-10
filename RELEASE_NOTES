@@ -3,7 +3,9 @@ Release Notes for the event package
 
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
-
+event-R2-4-4: Aug 10, 2007
+    * evrSupport/Db/ioc/IOC-LI21-BL01pattern.substitution - change
+      TS1ST = 0 from 1 to give BLEN more time after trigger
 event-R2-4-3: Aug 8, 2007
 	* evrSupport/Db/ioc/IOC-IN20-RF01evr.substitutions - use
 	  beam/10hz for PH1 (PCAV) instead of klys accelerate.
