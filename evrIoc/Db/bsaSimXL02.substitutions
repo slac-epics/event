@@ -23,10 +23,10 @@ file bsaPMTTest.db {
 	  { PMT:XX02:6   , ".1 second" }
 }
 file bsaBLENTest.db {
-  pattern { DEVICE       , S           }
-	  { BLEN:XX02:1  , ".1 second" }
-	  { BLEN:XX02:2  , ".1 second" }
-	  { BLEN:XX02:3  , ".1 second" }
+  pattern { DEVICE       , S           , ATB }
+	  { BLEN:XX02:1  , ".1 second" , A   }
+	  { BLEN:XX02:2  , ".1 second" , B   }
+	  { BLEN:XX02:3  , ".1 second" , C   }
 }
 file bsaWIRETest.db {
   pattern { DEVICE       , S           }

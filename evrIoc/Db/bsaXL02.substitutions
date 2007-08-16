@@ -30,10 +30,10 @@ file bsaPMTEdef.db {
 	  { PMT:XX02:6 , XX02 ,  1, SYS0, ""}
 }
 file bsaBLENEdef.db {
-  pattern {DEVICE   , LOC  , UN, SYS, SLCLNK}
-	  { BLEN:XX02:1 , XX02,  1, SYS0, "" }
-	  { BLEN:XX02:2 , XX02,  1, SYS0, "" }
-	  { BLEN:XX02:3 , XX02,  1, SYS0, "" }
+  pattern {DEVICE   , LOC  , UN, SYS, SLCLNK , ATB}
+	  { BLEN:XX02:1 , XX02,  1, SYS0, ""     , A }
+	  { BLEN:XX02:2 , XX02,  1, SYS0, ""     , B }
+	  { BLEN:XX02:3 , XX02,  1, SYS0, ""     , C }
 }
 file bsaWIREEdef.db {
   pattern {DEVICE   , LOC  , UN, SYS, SLCLNK}
