@@ -6,7 +6,7 @@ file bsaPHASEdef.db {
 #      Device               ,loc'n , IOC  , Attribute
   pattern {DEVICE           , LOC  ,  UN  , ATRB  , IN                    , SLCLNK}
 #	  { LLRF:IN20:1         , IN20 , RF01 , REF_P , LLRF:IN20:RH:REF_PAVG , ""}
-	  { LASR:IN20:1         , IN20 , RF01 , P     , PCAV:IN20:365:PH1_PAVG, ""}
+	  { LASR:IN20:1         , IN20 , RF01 , P     , LASR:IN20:1:LSR_0_PACT, ""}
 	  { GUN:IN20:1          , IN20 , RF01 , P     , GUN:IN20:1:GN1_PAVG   , ""}
 	  { GUN:IN20:2          , IN20 , RF01 , P     , GUN:IN20:1:GN2_0_PACT , ""}
 	  { ACCL:IN20:300       , IN20 , RF01 , L0A_P , ACCL:IN20:300:L0A_PAVG, ""}
@@ -20,7 +20,7 @@ file bsaAMPLEdef.db {
 #      Device               ,loc'n , IOC  , Attribute
   pattern {DEVICE           , LOC  ,  UN  , ATRB  , IN                    , SLCLNK}
 #	  { LLRF:IN20:1         , IN20 , RF01 , REF_A , LLRF:IN20:RH:REF_AAVG , ""}
-#	  { LASR:IN20:1         , IN20 , RF01 , A     , LASR:IN20:1:LSR_PAVG  , ""}
+	  { LASR:IN20:1         , IN20 , RF01 , A     , LASR:IN20:1:LSR_0_AACT, ""}
 	  { GUN:IN20:1          , IN20 , RF01 , A     , GUN:IN20:1:GN1_AAVG   , ""}
 	  { GUN:IN20:2          , IN20 , RF01 , A     , GUN:IN20:1:GN2_0_AACT , ""}
 	  { ACCL:IN20:300       , IN20 , RF01 , L0A_A , ACCL:IN20:300:L0A_AAVG, ""}
