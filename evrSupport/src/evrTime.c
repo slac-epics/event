@@ -50,7 +50,8 @@
 #include <epicsMutex.h>       /* epicsMutexId and protos   */
 #include <alarm.h>            /* INVALID_ALARM             */
 
-#include "evrMessage.h"       /* EVR_MAX_INT */    
+#include "mrfCommon.h"        /* MRF_NUM_EVENTS */    
+#include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
 
 #define  EVR_TIME_OK 0
@@ -66,6 +67,7 @@ typedef struct {
   int                 status; /* 0=OK; -1=invalid                        */
 }evrTime_ts;
 static evrTime_ts evrTime_as[MAX_EVR_TIME];
+static evrTime_ts eventCodeTime_as[MRF_NUM_EVENTS];
 
 /* EVR Time Timestamp RWMutex */
 static epicsMutexId evrTimeRWMutex_ps = 0;
@@ -95,24 +97,22 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 
   return epicsTimeOK;
 }
-
+
 /*=============================================================================
 
-  Name: evrTimeGet
+  Name: evrTimeGetFromPipeline
 
-  Abs:  Get the evr epics timestamp, defined as:
+  Abs:  Get the evr epics timestamp from the pipeline, defined as:
         1st integer = number of seconds since 1990  
         2nd integer = number of nsecs since last sec, except lower 17 bits=pulsid
-        3rd integer = status, where 0=OK; -1=invalid   
 		
   Args: Type     Name           Access	   Description
         -------  -------	---------- ----------------------------
   epicsTimeStamp * epicsTime_ps write  ptr to epics timestamp to be returned
+  unsigned int   * pulseID_p    write  ptr to pulse ID to be returned
   evrTimeId_te   id             read   timestamp pipeline index;
 	                                  0=time associated w this pulse
-                                       Future:
-                                          1 to 255 = time associated with
-                                          event codes 1 to 255.
+                                          1,2,3 = time associated w next pulses
 
   Rem:  Routine to get the epics timestamp from the evr timestamp table
         that is populated from incoming broadcast from EVG
@@ -122,11 +122,11 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
   Return:   -1=Failed; 0 = Success
 ==============================================================================*/
 
-int evrTimeGet (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
+int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 {
   int status;
   
-  if ((id != evrTimeCurrent) || (!evrTimeRWMutex_ps)) {
+  if ((id >= evrTimeNext3) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
   }
@@ -140,7 +140,85 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 
 /*=============================================================================
 
+  Name: evrTimeGet
+
+  Abs:  Get the epics timestamp associated with an event code, defined as:
+        1st integer = number of seconds since 1990  
+        2nd integer = number of nsecs since last sec, except lower 17 bits=pulsid
+		
+  Args: Type     Name           Access	   Description
+        -------  -------	---------- ----------------------------
+  epicsTimeStamp * epicsTime_ps write  ptr to epics timestamp to be returned
+  unsigned int   eventCode      read   Event code 0 to 255.
+	                                  0,1=time associated w this pulse
+                                          (event code 1 = fiducial)
+                                          1 to 255 = EVR event codes
+
+  Rem:  Routine to get the epics timestamp from the event code timestamp table
+        that is populated by the EVR event IRQ handler.  If the IRQ is off or
+        the event code has not been sent for a while, the timestamp will be
+        very old.
+
+  Side: 
+
+  Return:   -1=Failed; 0 = Success
+==============================================================================*/
+
+int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
+{
+  int status;
+  
+  if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
+    return epicsTimeERROR;
+  /* if the r/w mutex is valid, and we can lock with it, read requested time index */
+  }
+  if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
+  *epicsTime_ps = eventCodeTime_as[eventCode].time;
+  status = eventCodeTime_as[eventCode].status;
+  epicsMutexUnlock(evrTimeRWMutex_ps);
+  
+  return status; 
+}
+
+/*=============================================================================
+
   Name: evrTimePut
+
+  Abs:  Set the event code timestamp to the current time.
+		
+  Args: Type     Name           Access	   Description
+        -------  -------	---------- ----------------------------
+  unsigned int   eventCode         read    Event code 1 to 255.
+        int      status            read    status
+
+  Rem:  Routine to update the epics timestamp in the event code timestamp table
+        based on the current time in the evr timestamp table.
+
+  Side: 
+
+  Return:  -1=Failed; 0 = Success
+==============================================================================*/
+
+int evrTimePut (unsigned int eventCode, int status)
+{
+  if ((eventCode <= 0) || (eventCode > MRF_NUM_EVENTS))
+    return epicsTimeERROR;
+  if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
+    eventCodeTime_as[eventCode] = evrTime_as[evrTimeCurrent];
+    if (status) eventCodeTime_as[eventCode].status = status;
+    epicsMutexUnlock(evrTimeRWMutex_ps);
+  }
+  /* invalid mutex id or lock error - must set status to invalid for the caller */
+  else {
+    eventCodeTime_as[eventCode].status = epicsTimeERROR;
+    return epicsTimeERROR;
+  }
+  return epicsTimeOK;
+}
+
+/*=============================================================================
+
+  Name: evrTimePutIntoPipeline
 
   Abs:  Set the evr timestamp, defined as:
         1st int = number of seconds since 1990  
@@ -160,7 +238,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
   Return:  -1=Failed; 0 = Success
 ==============================================================================*/
 
-int evrTimePut (epicsTimeStamp  *epicsTime_ps, int status)
+int evrTimePutIntoPipeline(epicsTimeStamp  *epicsTime_ps, int status)
 {
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     evrTime_as[evrTimeNext3].status = status;
@@ -174,7 +252,7 @@ int evrTimePut (epicsTimeStamp  *epicsTime_ps, int status)
   }
   return epicsTimeOK;
 }
-
+
 /*=============================================================================
 
   Name: evrTimePutPulseID
@@ -279,7 +357,7 @@ static long evrTimeDiag (sSubRecord *psub)
   Name: evrTimeInit
 
   Abs:  Creates the evrTimeRWMutex_ps read/write mutex 
-        and initializes the evrTime_as array.
+        and initializes the timestamp arrays.
 	The evr timestamp table is initialized to system time
 	and invalid status. During processing, if a timestamp status goes
 	invalid, the time is overwritten to the last good evr timestamp.
@@ -315,10 +393,14 @@ static int evrTimeInit(subRecord *psub)
 	  return epicsTimeERROR;
 	}
 	else {
-	  /* init structure to invalid status & system time*/
+	  /* init timestamp structures to invalid status & system time*/
 	  for (i=0;i<MAX_EVR_TIME;i++) {
 		evrTime_as[i].time   = sys_time;
 		evrTime_as[i].status = epicsTimeERROR;
+	  }
+	  for (i=0;i<MRF_NUM_EVENTS;i++) {
+		eventCodeTime_as[i].time   = sys_time;
+		eventCodeTime_as[i].status = epicsTimeERROR;
 	  }
 	}
 	evrTimeRWMutex_ps = epicsMutexCreate();
@@ -419,7 +501,7 @@ static int evrTimeProc (subRecord *psub)
   int errFlag = EVR_TIME_OK;
   int n;
   int diff;
-  int startidx;
+  int updateFlag;
 
   /* Keep a count of messages and reset before overflow */
   if (msgCount < EVR_MAX_INT) {
@@ -449,26 +531,30 @@ static int evrTimeProc (subRecord *psub)
     }
   }
   if ((psub->h == 0) ||
-      (psub->h == psub->i) || (psub->h == psub->j)) startidx = 0;
-  else                                              startidx = 1;
+      (psub->h == psub->i) || (psub->h == psub->j)) updateFlag = 1;
+  else                                              updateFlag = 0;
   /* advance the evr timestamps in the pipeline */
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-    for (n=startidx;n<evrTimeNext3;n++) {
+    for (n=0;n<evrTimeNext3;n++) {
       evrTime_as[n] = evrTime_as[n+1];
     }
     /* determine if next is the same as last pulse */
     /* Same pulses means the EVG is not sending timestamps and this forces
        record timestamps to revert to system time */
-    if ((!startidx) && (psub->d==psub->c)) {
+    if (psub->d==psub->c) {
       evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
+    }
+    if (updateFlag) {
+      eventCodeTime_as[0] = evrTime_as[evrTimeCurrent];
     }
     epicsMutexUnlock(evrTimeRWMutex_ps);
   /* If we cannot lock - bad problem somewhere. */
   } else {
     errFlag = EVR_TIME_INVALID;
     evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
+    eventCodeTime_as[0].status        = epicsTimeERROR;
   }
-  psub->l   = startidx;
+  psub->l   = updateFlag?0:1;
   psub->val = (double) errFlag;
   if (errFlag) return epicsTimeERROR;
   return epicsTimeOK;

@@ -46,9 +46,11 @@ typedef enum {
 } evrTimeId_te;
 #define  MAX_EVR_TIME  4
 
-int evrTimeGet       (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id);
-int evrTimePut       (epicsTimeStamp  *epicsTime_ps, int status);
-int evrTimePutPulseID(epicsTimeStamp  *epicsTime_ps, unsigned int pulseID);
+int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps, evrTimeId_te id);
+int evrTimeGet            (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode);
+int evrTimePutIntoPipeline(epicsTimeStamp  *epicsTime_ps, int status);
+int evrTimePut            (unsigned int eventCode,        int status);
+int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID);
 
 #ifdef __cplusplus
 }
