@@ -3,17 +3,16 @@ record(event, "$(DEV):$(NAME)EV") {
   field(DTYP, "MRF Event Receiver")
   field(INP, "#C0 S$(ID) @")
   field(SCAN, "I/O Intr")
-  field(PRIO, "$(PRIO)")
+  field(PRIO, "HIGH")
   field(VAL, "$(ID)")
-  field(FLNK, "$(FLNK)")
+  field(FLNK, "$(DEV):$(NAME)CNT")
 }
 
 record(sub, "$(DEV):$(NAME)CNT") {
   field(DESC, "$(NAME) Event Counter")
-  field(SCAN, "Event")
-  field(EVNT, "$(ID)")
   field(SNAM, "evrPatternCount")
   field(BRSV, "INVALID")
+  field(FLNK, "$(FLNK)")
 }
 
 record(sub, "$(DEV):$(NAME)RATE") {
