@@ -169,7 +169,7 @@ static long evrPatternProc(subRecord *psub)
     psub->l = PULSEID_INVALID;
     errFlag = PATTERN_INVALID_WF;
     psub->d = MPG_IPLING;
-    evrTimePut(0, epicsTimeERROR);
+    evrTimePutIntoPipeline(0, epicsTimeERROR);
   } else {
     /* error if the message has an invalid type or version */
     if ((evrPatternWF_s.header_s.type    != EVR_MESSAGE_PATTERN  ) ||
@@ -181,7 +181,7 @@ static long evrPatternProc(subRecord *psub)
       psub->l = PULSEID_INVALID;
       errFlag = PATTERN_INVALID_WF_HDR;
       psub->d = MPG_IPLING;
-      evrTimePut(0, epicsTimeERROR);
+      evrTimePutIntoPipeline(0, epicsTimeERROR);
     } else {
       
       /* set outputs to the modifiers */
@@ -212,7 +212,7 @@ static long evrPatternProc(subRecord *psub)
       /* decode pulseid field to output j (keep lower 17 bits) */
       psub->l = (double)(evrPatternWF_s.time.nsec & LOWER_17_BIT_MASK);
       /* write to evr timestamp table and error check */
-      if (evrTimePut (&evrPatternWF_s.time, epicsTimeOK)) {
+      if (evrTimePutIntoPipeline (&evrPatternWF_s.time, epicsTimeOK)) {
         errFlag = PATTERN_INVALID_TIMESTAMP;
       /* Check if EVG reporting a problem  */
       } else if (evrPatternWF_s.pnet_s.modifier_a[0] & MPG_IPLING) {
@@ -269,7 +269,8 @@ static long evrPatternRate(subRecord *psub)
 
   Name: evrPatternCount
 
-  Abs:  Increment a counter for an event code
+  Abs:  Increment a counter for an event code.  Also, update the event code
+        timestamp.
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
@@ -289,6 +290,7 @@ static long evrPatternRate(subRecord *psub)
 static long evrPatternCount(subRecord *psub)
 {
   psub->val++;
+  evrTimePut(psub->evnt, epicsTimeOK);
   return 0;
 }
 
@@ -397,7 +399,7 @@ static long evrPatternSim(subRecord *psub)
   /* The timestamp must ALWAYS be increasing.  Check if this time
      is less than the previous time (due to rollover) and adjust up
      slightly using bit 17 (the lower-most bit of the top 15 bits). */
-  if (!evrTimeGet(&prev_time, evrTimeNext3)) {
+  if (!evrTimeGetFromPipeline(&prev_time, evrTimeNext3)) {
     delta_time = epicsTimeDiffInSeconds(&evrMessage_u.pattern_s.time,
                                         &prev_time);
     if (delta_time < 0.0) {
