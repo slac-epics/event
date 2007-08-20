@@ -23,11 +23,13 @@ record(sub, "$(DEV):PATTERN$(N)") {
 # Initialize to the invalid pulse ID (0x1FFFF)
   field(L, "131071")
   field(SDIS, "$(SDIS)")
+  field(FLNK, "$(FLNK)")
+  field(TSE, "$(TSE)")
 }
 
 #! Further lines contain data used by VisualDCT
 #! View(0,0,1.0)
-#! Record("$(DEV):PATTERN$(N)",65,24,0,0,"$(DEV):PATTERN$(N)")
+#! Record("$(DEV):PATTERN$(N)",65,20,0,0,"$(DEV):PATTERN$(N)")
 #! Field("$(DEV):PATTERN$(N).INPA",16777215,1,"$(DEV):PATTERN$(N).INPA")
 #! Field("$(DEV):PATTERN$(N).INPC",16777215,1,"$(DEV):PATTERN$(N).INPC")
 #! Field("$(DEV):PATTERN$(N).INPD",16777215,1,"$(DEV):PATTERN$(N).INPD")
@@ -39,3 +41,5 @@ record(sub, "$(DEV):PATTERN$(N)") {
 #! Field("$(DEV):PATTERN$(N).INPJ",16777215,1,"$(DEV):PATTERN$(N).INPJ")
 #! Field("$(DEV):PATTERN$(N).INPK",16777215,1,"$(DEV):PATTERN$(N).INPK")
 #! Field("$(DEV):PATTERN$(N).INPL",16777215,1,"$(DEV):PATTERN$(N).INPL")
+#! Field("$(DEV):PATTERN$(N).SDIS",16777215,1,"$(DEV):PATTERN$(N).SDIS")
+#! Field("$(DEV):PATTERN$(N).FLNK",16777215,1,"$(DEV):PATTERN$(N).FLNK")
