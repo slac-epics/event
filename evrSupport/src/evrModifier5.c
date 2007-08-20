@@ -47,6 +47,7 @@
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "evrPattern.h"       /* for EDEF_MAX              */
+#include "evrTime.h"          /* for evrTimeGetFromPipeline*/
 
 #define NOEDEF_MASK 0xFFF00000
 
@@ -168,6 +169,10 @@ static long evrModifier5Bits(sSubRecord *psub)
 static long evrPattern(subRecord *psub)
 {
   psub->val = psub->a;
+  if (psub->tse == epicsTimeEventDeviceTime) {
+    if (evrTimeGetFromPipeline(&psub->time, evrTimeCurrent))
+      epicsTimeGetEvent(&psub->time, epicsTimeEventCurrentTime);
+  }
   if (psub->val) return -1;
   return 0;
 }
