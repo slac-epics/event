@@ -3,6 +3,39 @@ Release Notes for the event package
 
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
+
+event-R2-4-5: Aug 21, 2007
+	* README - Add instructions for channel watcher and archiver.
+	  Add instructions for setting the TSE fields for trigger devices 
+	  that take time to process.  Correct checkout instructions.
+	* evrSupport/Db/ioc/IOC-IN20-RF01bsa.substitutions - correct laser 
+	  inputs, uncomment PCAV:IN20:365 amplitude. 
+	* evrIoc/Db - Corrections for test stands.
+	* evrSupport/src/evrTime.*, evrPattern.c - support timestamp per 
+	  event code.  The TSE field of records can now be set to an
+	  event code so that the record's timestamp is now the time of the 
+	  event code instead of the time of the last fiducial.
+	* evrSupport/src/evrModifier.c - evrPattern subroutine now gets
+	  current time from the pipeline table when TSE is -2.  This time
+	  updates at 360hz and is needed by MPS.  
+	* evrSupport/Db/evr/evrEvent.db - the priority and processing order
+	  of the event code records, which process every time an event code 
+	  IRQ goes off, are set to high so that these records processes ASAP
+	  after the IRQ.  These records now update the event code timestamp 
+	  which needs to be done before records that use TSE are processed.
+	* evrSupport/Db/evr/evrPattern.db, evrPatternAll.substitutions,
+	  evrFiducial.db - add PATTERN360HZ for 360hz pattern update needed 
+	  by MPS (PATTERN only updates at 120hz).  Make PATTERN records 
+	  forward link to the next one to avoid having another fanout.
+	  Set TSE to -2 for PATTERN360HZ to get the current pipeline time.
+	  Get rid of MOD720 fanout in place of FLNKs.
+	* mrfApp/src/drvMrfEr.c - add kluge in interrupt handler for VME EVR.
+          When the event FIFO is read at interrupt level, the first event
+	  has to be thrown away (it's the same as the last event read the
+	  last time the fifo was processed) and an extra read has to be done
+	  after the FIFO is "empty".  Hopefully, this kluge can be removed
+	  when the event FIFO is read at task level - otherwise, this is a
+	  firmware bug and the kluge remains until the firmware is fixed.
 event-R2-4-4: Aug 10, 2007
     * evrSupport/Db/ioc/IOC-LI21-BL01pattern.substitution - change
       TS1ST = 0 from 1 to give BLEN more time after trigger
