@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 07/02/2007
+Instructions for RTEMS EVR users                    Last Updated 08/17/2007
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -44,6 +44,26 @@ Note that the order of the above libraries is important.
    where area = LR20, IN20, LI21, etc
    and   xx = subsystem ID (AM, BL, BP, IM, LS, MG, MP, PM, RF, WS)
          yy = unique number per area and subSystem ID (01, 02, 03, etc)
+
+(5) For IOCs with triggered devices, add the trigger setpoints to the IOC's
+    ChannelWatcher configuration file.  Copy IOC-<area>-<xxyy>trig.cwConfig
+    from <event>/db to $TOOLS/ChannelWatcher/config and commit it.  Add
+    the file to $TOOLS/ChannelWatcher/Master.<xx> and commit it.  Restart
+    ChannelWatcher using that master file.
+
+(6) For IOCs with triggered devices, add the trigger delays to the Channel
+    Archiver.
+
+(7) For IOCs with triggered devices which use event codes that are generated 
+    at a "slow" rate (rate slower than beam full rate like a 10Hz event code), 
+    if records for your devices process or finish processing 8.3 msec beyond
+    the time of the trigger (ie, profile monitors), set the TSE field of those 
+    records to the event code.  The records will then be timestamped at the
+    time that the event code was received instead of the time of the last 
+    fiducial.  The records can then be correlated with other records on other
+    IOCs (ie, BPMs) that were acquired on the same pulse.  Make sure that
+    the event code IRQ for all possible TSE values is enabled in 
+    IOC-<area>-<xxyy>evr.db.
 
 II - Adding event databases and EVR configuration to your IOC startup file:
 --------------------------------------------------------------------------
@@ -189,15 +209,30 @@ your EVR.
 Cexp prompt and make sure there are no disconnected channels.  Contact drogind
 if there are.
 (6) From the home LCLS EDM display (lclshome) on a production machine, select 
-"Event".  Then select your IOC name.  In the "Event IOC Diagnostics" section, 
-select each box and examine the display (all channels must be connected):
+"Event".  Under "EVR IOCs", select the button containing your IOC.  Select 
+each display next to your IOC name (all channels must be connected):
   * EVR display - look for non-zero FPGA, and "YES" for Phase Lock and 0 for 
-    "Rx Fail".  From the EVR display, select "Events".  Check that the rate 
-    for event code 1 is exactly 360Hz.
-  * Pattern display - check that data is changing every 2 seconds.  From the 
-    main Event display, select "IOC:IN20:EV01...", then select "Pattern".  
+    "Rx Fail".  
+  * "Triggers..." display - check that all the event codes that you expect
+    to use on your IOC are set.  Check that the proper channels are enabled
+    for the proper event code(s).  If any records on your IOC use a non-zero
+    TSE, check that the event codes used by your TSEs have the IRQ enabled.
+  * "Events..." display - check that the rate for event code 1 is exactly 
+    360Hz.  For event codes that have the IRQ set, check that their rates
+    are as expected.
+  * "Pattern..." display - check that data is changing every 2 seconds.  From 
+    the main Event display, select "EVG Diags...".  
     The data on your EVR pattern display and the EVG pattern display must 
     match.  If the pattern data is all magenta, the fiber to your EVR is 
-    probably not connectedproperly.
-  * Gen Time display - check that the "Best Time Event Provider" is evrTimeGet.
-(7) Check that the timestamp of a few of your updating records are reasonable.
+    probably not connected properly.  Select "General Time" and check that
+    the "Best Time Event Provider" is evrTimeGet.
+  * "Devices..." display - check that all your triggered devices are 
+    available and the polarity, pulse width, delay (TDES), and control (TCTL)
+    are properly set.
+  * Contact saa and drogind if any problem.
+(7) If the timestamps of your records are not reasonable, contact saa.
+(8) Check that the polarity, pulse width, delay, and control of your devices
+    are being monitored and updated by your IOC's ChannelWatcher and are 
+    properly restored on reboot.  Contact drogind if problems.
+(9) Check that the Channel Archiver is recording all your trigger delays and
+    that there are no disconnected channels.
