@@ -10,6 +10,9 @@ event-R2-4-5: Aug 21, 2007
 	  that take time to process.  Correct checkout instructions.
 	* evrSupport/Db/ioc/IOC-IN20-RF01bsa.substitutions - correct laser 
 	  inputs, uncomment PCAV:IN20:365 amplitude. 
+	* evrSupport/Db/ioc/IOC-IN20-RF01evr.substitutions,
+	  IOC-IN20-RF01trig.substitutions - Move scope 1 trigger to 
+	  TS 3, 30Hz (event code 32). 
 	* evrIoc/Db - Corrections for test stands.
 	* evrSupport/src/evrTime.*, evrPattern.c - support timestamp per 
 	  event code.  The TSE field of records can now be set to an
