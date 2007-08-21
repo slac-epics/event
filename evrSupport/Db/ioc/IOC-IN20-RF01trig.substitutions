@@ -39,7 +39,7 @@ file evrDevTrig.db {
 { ACCL:LI21:1:L1S_D_  ,  "L1S PAD"          , 0, 100  , -495 , LCACC_10  , IN20 , RF02, IOC:IN20:RF01, -2.8E06, 2.8E06  , OTP3 , OT3P, OT3W, OT3D, 1   , 3 }
 { ACCL:LI21:180:L1X_D_,  "L1X PAD"          , 0, 100  , 3820 , LCACC_10  , IN20 , RF02, IOC:IN20:RF01, -2.8E06, 2.8E06  , OTP4 , OT4P, OT4W, OT4D, 1   , 4 }
 { PCAV:LI21:300:PH2_D_,  "PH2 PAD"          , 0, 100  , 3820 , TS4_10_   , IN20 , RF02, IOC:IN20:RF01, -2.8E06, 2.8E06  , OTP5 , OT5P, OT5W, OT5D, 1   , 5 }
-{ SCOP:IN20:RH:SC1_   ,  "oscope 1"         , 0, 100  , 3820 , TS4_30_   , IN20 , RF02, IOC:IN20:RF01, -2.8E06, 2.8E06  , OTP6 , OT6P, OT6W, OT6D, 1   , 6 }
+{ SCOP:IN20:RH:SC1_   ,  "oscope 1"         , 0, 100  , 3820 , TS3_30_   , IN20 , RF02, IOC:IN20:RF01, -2.8E06, 2.8E06  , OTP6 , OT6P, OT6W, OT6D, 1   , 6 }
 { SCOP:IN20:RH:SC2_   ,  "oscope 2"         , 0, 100  , 3820 , TS4_30_   , IN20 , RF02, IOC:IN20:RF01, -2.8E06, 2.8E06  , OTP7 , OT7P, OT7W, OT7D, 1   , 7 }
 #  spare triggers 10- 13 FP (VME)
 { TRIG:IN20:RF10:     ,  "Spare Trig 10"    , 0, 100  , 3820 , LCACC_10  , IN20 , RF02, IOC:IN20:RF01, -2.8E06, 2.8E06  , DG0E , DG0P, DG0W, DG0D, 1   , 0 }
