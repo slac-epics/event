@@ -625,6 +625,37 @@ volatile int     ErFifoOverIrqCount = 0;
 volatile int     ErDelayedIntIrqCount = 0;
 volatile int     ErDBufIrqCount = 0;
 volatile unsigned short controlRegister = 0;
+
+#ifdef DEBUG_ACTIVITY
+#ifdef __rtems__
+/*
+ * From Till Straumann:
+ * Macro for "Move From Time Base" to get current time in ticks.
+ * The PowerPC Time Base is a 64-bit register incrementing usually
+ * at 1/4 of the PPC bus frequency (which is CPU/Board dependent.
+ * Even the 1/4 divisor is not fixed by the architecture).
+ *
+ * 'MFTB' just reads the lower 32-bit of the time base.
+ */
+#ifdef __PPC__
+#define MFTB(var) asm volatile("mftb %0":"=r"(var))
+#else
+#define MFTB(var) do { var=0xdeadbeef; } while (0)
+#endif
+#endif
+#define MAX_ACTIVITY_CNT 120
+typedef struct 
+{
+    epicsUInt16                   csr;          /* Initial value of the Control/Status register   */
+    epicsUInt16                   DBuffCsr;     /* Value of Data Buffer Control/Status register   */
+    epicsInt16                    EventNum[MAX_ACTIVITY_CNT]; /* Event number from FIFO           */
+    epicsInt16                    numEvents;
+    unsigned long                 time;
+} activity_ts;
+volatile int activityCnt = 0;
+volatile int activityGo  = 1;
+volatile activity_ts activity[MAX_ACTIVITY_CNT];
+#endif
 
 /**************************************************************************************************/
 /*                           Global Routines Available to the IOC Shell                           */
@@ -1439,7 +1470,40 @@ epicsStatus ErDrvReport (int level)
     */
     if (!NumCards)
         printf ("  No Event Receiver cards were configured\n");
-
+    
+#ifdef DEBUG_ACTIVITY
+    if (level > 0) {
+      int activityIdx, activityOldIdx, activityOlderIdx, eventIdx;
+#ifdef __rtems__
+      double evrTicksPerUsec = ((double)BSP_bus_frequency/
+                                (double)BSP_time_base_divisor)/1000;
+#endif
+      activityGo = 0;
+      activityOldIdx   = activityCnt;
+      activityOlderIdx = MAX_ACTIVITY_CNT; 
+      for (activityIdx=0;activityIdx<MAX_ACTIVITY_CNT; activityIdx++) {
+        printf ("Idx = %d, delta time = %lf, CSR = %8.8x,  DBuffCSR = %8.8x, #events = %d, event = %d\n",
+                activityOldIdx,
+                activityOlderIdx >= MAX_ACTIVITY_CNT?0:
+                (activity[activityOldIdx].time - activity[activityOlderIdx].time)/
+                evrTicksPerUsec,
+                activity[activityOldIdx].csr,
+                activity[activityOldIdx].DBuffCsr,
+                activity[activityOldIdx].numEvents,
+                activity[activityOldIdx].EventNum[0]);
+        for (eventIdx=1; (eventIdx<activity[activityOldIdx].numEvents) &&
+               (eventIdx<MAX_ACTIVITY_CNT); eventIdx++) {
+          printf ("   Event Idx = %d, event = %d\n",
+                  eventIdx, activity[activityOldIdx].EventNum[eventIdx]);
+        } 
+        activityOlderIdx = activityOldIdx;
+        activityOldIdx++;
+        if (activityOldIdx >= MAX_ACTIVITY_CNT) activityOldIdx = 0;
+      }
+      activityGo = 1;
+    }
+#endif
+        
    /*---------------------
     * Always return success
     */
@@ -1518,7 +1582,10 @@ void ErIrqHandler (ErCardStruct *pCard)
     epicsUInt16                   csr;          /* Initial value of the Control/Status register   */
     epicsUInt16                   DBuffCsr;     /* Value of Data Buffer Control/Status register   */
     epicsInt16                    EventNum;     /* Event number from FIFO                         */
+    epicsInt16                    prevEventNum; /* Previous Event number from FIFO                */
     int                           i;            /* Loop counter                                   */
+    int                           extraRead;    /* Read an  extra event on the FIFO               */
+    int                           firstRead;    /* Read the first event on the FIFO               */
     epicsUInt16                   HiWord;       /* High-order word from event FIFO                */
     epicsUInt16                   LoWord;       /* Low-order word from event FIFO                 */
     epicsUInt32                   Time;         /* Event timestamp (24-bits)                      */
@@ -1538,6 +1605,15 @@ void ErIrqHandler (ErCardStruct *pCard)
 
     DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl);
 
+#ifdef DEBUG_ACTIVITY
+    if (activityGo) {
+      activity[activityCnt].csr      = csr;
+      activity[activityCnt].DBuffCsr = DBuffCsr;
+      activity[activityCnt].numEvents= 0;
+      activity[activityCnt].EventNum[0] = 0;
+      MFTB(activity[activityCnt].time);
+    }
+#endif
    /*===============================================================================================
     * Check for receiver link errors
     */
@@ -1565,32 +1641,61 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for events in the Event FIFO
     */
     if (csr & EVR_CSR_IRQFL) {
-        MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSIRQFL);
-
+      MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSIRQFL);
+      if (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) {
+        
+       /*---------------------
+        * Kluge for VME EVR.  Ignore the first event from the FIFO and always
+        * read an extra event after the FIFO-not-empty flag is 0 (read until the
+        * event code doesn't change).  It's possible this problem will go away
+        * once this code is moved to task level.
+        */
+        if (pCard->FormFactor == PMC_EVR) {
+          extraRead = 1;
+          firstRead = 1;
+        } else {
+          extraRead = 0;
+          firstRead = 0;
+        }
        /*---------------------
         * Loop to extract events from the Event FIFO.
         * We limit the number of events that can be extracted per interrupt
         * in order to avoid getting into a long spin-loop at interrupt level.
         */
-        for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
-                  (i < EVR_FIFO_EVENT_LIMIT);  i++) {
-
-           /* Get the event number and timestamp */
-            if (pCard->FormFactor == VME_EVR) {
-              LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
-              HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
-            } else {
-              HiWord = MRF_VME_REG16_READ(&pEr->EventFifo);
-              LoWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
+        prevEventNum = 0;
+        for (i=0; i < EVR_FIFO_EVENT_LIMIT;  i++) {
+         /* Get the event number and timestamp */
+          if (pCard->FormFactor == VME_EVR) {
+            LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
+            HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
+          } else {
+            HiWord = MRF_VME_REG16_READ(&pEr->EventFifo);
+            LoWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
+          }
+          EventNum = LoWord & 0x00ff;
+          if (EventNum == prevEventNum) {
+            extraRead = 1;
+          } else if (firstRead) {
+            prevEventNum = EventNum;
+#ifdef DEBUG_ACTIVITY
+            if (activityGo) {
+              if (activity[activityCnt].numEvents < MAX_ACTIVITY_CNT) {
+                activity[activityCnt].EventNum[activity[activityCnt].numEvents] =
+                  EventNum;
+              }
+              activity[activityCnt].numEvents++;
             }
-            EventNum = LoWord & 0x00ff;
+#endif
             Time = (HiWord<<8) | (LoWord>>8);
 
            /* Invoke the device-support layer event handler (if one is defined) */
             if (pCard->DevEventFunc != NULL)
-                (*pCard->DevEventFunc)(pCard, EventNum, Time);
-
+              (*pCard->DevEventFunc)(pCard, EventNum, Time);
+          }
+          if (!(MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) && extraRead) break;
+          firstRead = 1;
         }/*end for each event in the FIFO (up to the max events per interrupt)*/
+      }
     }/*end if there are events in the event FIFO*/
 
    /*===============================================================================================
@@ -1669,8 +1774,13 @@ void ErIrqHandler (ErCardStruct *pCard)
     */
     MRF_VME_REG16_WRITE(&pEr->Control,
                         (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
-    DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl); 
-
+    DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl);
+#ifdef DEBUG_ACTIVITY
+    if (activityGo) {
+      activityCnt++;
+      if (activityCnt >= MAX_ACTIVITY_CNT) activityCnt=0;
+    }
+#endif
 }/*end ErIrqHandler()*/
 
 
