@@ -4,6 +4,19 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-4-6: Aug 31, 2007
+	* evrSupport/Db/evr/evrEvent.db, evrEventAll.substitutions:
+	  - Use PRIO macro to set the priority of the event RATE record so 
+	    that FIDUCIALRATE can be processed at a higher priority and won't 
+	    have to wait for other high priority tasks (like on the prof mon 
+	    iocs).  FIDUCIALRATE uses a counter which updates at 360Hz and 
+	    needs to process within 2.7msec of the updating event.  
+	  - Add alarm limits to RATE so that FIDUCIALRATE can be alarmed when 
+	    it isn't exactly 360Hz.
+	  - Add NAME record for a longer, more descriptive name associated
+	    with the event.
+	* mrfApp/src/drvMrfEr.c - remove kluge added in previous version.
+	  Correct the order of the FIFO register reads instead.
 event-R2-4-5: Aug 21, 2007
 	* README - Add instructions for channel watcher and archiver.
 	  Add instructions for setting the TSE fields for trigger devices 
