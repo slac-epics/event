@@ -1582,10 +1582,7 @@ void ErIrqHandler (ErCardStruct *pCard)
     epicsUInt16                   csr;          /* Initial value of the Control/Status register   */
     epicsUInt16                   DBuffCsr;     /* Value of Data Buffer Control/Status register   */
     epicsInt16                    EventNum;     /* Event number from FIFO                         */
-    epicsInt16                    prevEventNum; /* Previous Event number from FIFO                */
     int                           i;            /* Loop counter                                   */
-    int                           extraRead;    /* Read an  extra event on the FIFO               */
-    int                           firstRead;    /* Read the first event on the FIFO               */
     epicsUInt16                   HiWord;       /* High-order word from event FIFO                */
     epicsUInt16                   LoWord;       /* Low-order word from event FIFO                 */
     epicsUInt32                   Time;         /* Event timestamp (24-bits)                      */
@@ -1641,42 +1638,31 @@ void ErIrqHandler (ErCardStruct *pCard)
     * Check for events in the Event FIFO
     */
     if (csr & EVR_CSR_IRQFL) {
-      MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSIRQFL);
-      if (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) {
-        
-       /*---------------------
-        * Kluge for VME EVR.  Ignore the first event from the FIFO and always
-        * read an extra event after the FIFO-not-empty flag is 0 (read until the
-        * event code doesn't change).  It's possible this problem will go away
-        * once this code is moved to task level.
-        */
-        if (pCard->FormFactor == PMC_EVR) {
-          extraRead = 1;
-          firstRead = 1;
-        } else {
-          extraRead = 0;
-          firstRead = 0;
-        }
+        MRF_VME_REG16_WRITE(&pEr->Control, (csr & EVR_CSR_WRITE_MASK) | EVR_CSR_RSIRQFL);
+
        /*---------------------
         * Loop to extract events from the Event FIFO.
         * We limit the number of events that can be extracted per interrupt
         * in order to avoid getting into a long spin-loop at interrupt level.
         */
-        prevEventNum = 0;
-        for (i=0; i < EVR_FIFO_EVENT_LIMIT;  i++) {
-         /* Get the event number and timestamp */
-          if (pCard->FormFactor == VME_EVR) {
-            LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
-            HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
-          } else {
-            HiWord = MRF_VME_REG16_READ(&pEr->EventFifo);
-            LoWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
-          }
-          EventNum = LoWord & 0x00ff;
-          if (EventNum == prevEventNum) {
-            extraRead = 1;
-          } else if (firstRead) {
-            prevEventNum = EventNum;
+        for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
+                  (i < EVR_FIFO_EVENT_LIMIT);  i++) {
+
+           /* Get the event number and timestamp */
+            if (pCard->FormFactor == VME_EVR) {
+              HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
+              LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
+            } else {
+              LoWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
+              HiWord = MRF_VME_REG16_READ(&pEr->EventFifo);
+            }
+            EventNum = LoWord & 0x00ff;
+            Time = (HiWord<<8) | (LoWord>>8);
+
+           /* Invoke the device-support layer event handler (if one is defined) */
+            if (pCard->DevEventFunc != NULL)
+                (*pCard->DevEventFunc)(pCard, EventNum, Time);
+
 #ifdef DEBUG_ACTIVITY
             if (activityGo) {
               if (activity[activityCnt].numEvents < MAX_ACTIVITY_CNT) {
@@ -1686,16 +1672,7 @@ void ErIrqHandler (ErCardStruct *pCard)
               activity[activityCnt].numEvents++;
             }
 #endif
-            Time = (HiWord<<8) | (LoWord>>8);
-
-           /* Invoke the device-support layer event handler (if one is defined) */
-            if (pCard->DevEventFunc != NULL)
-              (*pCard->DevEventFunc)(pCard, EventNum, Time);
-          }
-          if (!(MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) && extraRead) break;
-          firstRead = 1;
         }/*end for each event in the FIFO (up to the max events per interrupt)*/
-      }
     }/*end if there are events in the event FIFO*/
 
    /*===============================================================================================
