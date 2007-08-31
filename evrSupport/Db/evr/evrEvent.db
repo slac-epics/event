@@ -21,10 +21,17 @@ record(sub, "$(DEV):$(NAME)RATE") {
   field(BRSV, "INVALID")
   field(SCAN, "Event")
   field(EVNT, "121")
+  field(PRIO, "$(PRIO)")
   field(INPA, "$(DEV):$(NAME)CNT")
   field(INPD, "$(DELY)")
   field(INPE, "$(ID)")
   field(EGU,  "Hz")
   field(PREC, "1")
   field(HOPR, "360")
+}
+
+record (stringout, "$(DEV):$(NAME)NAME") {
+  field(DESC, "$(NAME) Name")
+  field(PINI, "YES")
+  field(VAL,  "$(LNAME)")
 }
