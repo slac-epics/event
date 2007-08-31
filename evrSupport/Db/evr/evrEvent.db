@@ -12,7 +12,6 @@ record(sub, "$(DEV):$(NAME)CNT") {
   field(DESC, "$(NAME) Event Counter")
   field(SNAM, "evrPatternCount")
   field(BRSV, "INVALID")
-  field(FLNK, "$(FLNK)")
 }
 
 record(sub, "$(DEV):$(NAME)RATE") {
@@ -27,7 +26,11 @@ record(sub, "$(DEV):$(NAME)RATE") {
   field(INPE, "$(ID)")
   field(EGU,  "Hz")
   field(PREC, "1")
-  field(HOPR, "360")
+  field(HIHI, "$(HIHI)")
+  field(HHSV, "MAJOR")
+  field(LOLO, "$(LOLO)")
+  field(LLSV, "MAJOR")
+  field(HOPR, "$(HIHI)")
 }
 
 record (stringout, "$(DEV):$(NAME)NAME") {
