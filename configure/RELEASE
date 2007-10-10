@@ -26,15 +26,15 @@ EPICS_MODULES=$(EPICS_SITE_TOP)/modules
 # ==============================================================
 # Define the version of EPICS BASE that you will use
 # =============================================================
-BASE_MODULE_VERSION=base-R3-14-8-2-lcls1
+BASE_MODULE_VERSION=base-R3-14-8-2-lcls2
 
 # =============================================================
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # =============================================================
-GENERALTIME_MODULE_VERSION=generalTime-R1-2-0
-SSUBRECORD_MODULE_VERSION=sSubRecord-R1-0-0
-MISCUTILS_MODULE_VERSION=miscUtils-R1-0-0
+GENERALTIME_MODULE_VERSION=generalTime-R1-2-1
+SSUBRECORD_MODULE_VERSION=sSubRecord-R1-0-1
+MISCUTILS_MODULE_VERSION=miscUtils-R1-0-1
 
 # ============================================================
 # External Support

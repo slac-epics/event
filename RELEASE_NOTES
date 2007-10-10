@@ -4,6 +4,10 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-4-7:
+Built against EPICS R3.14.8.2 and RTEMS 4.7.1
+
+
 event-R2-4-6: Aug 31, 2007
 	* evrSupport/Db/evr/evrEvent.db, evrEventAll.substitutions:
 	  - Use PRIO macro to set the priority of the event RATE record so 
