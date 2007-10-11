@@ -150,7 +150,7 @@ epicsStatus vmeCSRMemProbe (
    /*---------------------
     * Translate the CR/CSR address into its equivalent memory bus address
     */
-    status = BSP_vme2local_adrs (VME_AM_CSR, (char *)csrAddress, (char **)(void *)&localAddress);
+    status = BSP_vme2local_adrs (VME_AM_CSR, csrAddress, (void *)&localAddress);
 
     if (OK != status) {
         DEBUGPRINT (DP_ERROR, vme64_crFlag,
@@ -165,20 +165,20 @@ epicsStatus vmeCSRMemProbe (
    /*---------------------
     * Select the appropriate read or write code
     */
-    if (mode == CSR_WRITE) mode = VX_WRITE;
-    else mode = VX_READ;
+    if (mode == CSR_WRITE) mode = 1;
+    else mode = 0;
 
    /*---------------------
     * Probe the first 2 bytes to make sure they can be read or written
     */
-    status = bspExtMemProbe ((char *)localAddress, mode, 2, pVal);
-    if (OK != status)
+    status = bspExtMemProbe ((void *)localAddress, mode, 2, pVal);
+    if (RTEMS_SUCCESSFUL != status)
         return status;
 
    /*---------------------
     * If the first 2 bytes were OK, transfer the rest of the data
     */
-    if (mode == CSR_WRITE) {
+    if (mode == 1) {
         for (i=1;  i < (length >> 1);  i++) 
             localAddress[i] = ((epicsUInt16 *)pVal)[i];
     }/*end if write access*/
