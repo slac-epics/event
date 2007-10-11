@@ -4,9 +4,12 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
-event-R2-4-8:
-Built against EPICS R3.14.9 and RTEMS 4.7.1
-
+event-R2-4-8: Oct 11, 2007
+	* configure/RELEASE - change to EPICS R3.14.9 and RTEMS 4.7.1
+	* README - change afs to nfs.
+	* evrIoc/src/Makefile - replace EVR_IOC_LIBS macro with library names
+	* mrfApp/src/MRF_CONFIG_SITE - R3.14.9 does not support CR/CSR addressing.
+	* mrfApp/src/os/RTEMS/vmeCSRMemProbeB.c - corrections.
 event-R2-4-7:
 Built against EPICS R3.14.8.2 and RTEMS 4.7.1
 
