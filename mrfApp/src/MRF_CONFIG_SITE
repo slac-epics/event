@@ -56,8 +56,8 @@
 # set EPICS_SUPPORTS_CRCSR = NO
 #
 
-EPICS_SUPPORTS_CRCSR = YES
-#EPICS_SUPPORTS_CRCSR = NO
+#EPICS_SUPPORTS_CRCSR = YES
+EPICS_SUPPORTS_CRCSR = NO
 
 #------------------------------------------------------------------------------
 # Question 2:  Does your Board Support Package support CR/CSR Addressing
