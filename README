@@ -7,10 +7,10 @@ I - Adding the event package to your IOC application:
 (1) Add EVENT, GENERALTIME, SSUBRECORD, and RESTORE to configure/RELEASE and 
 clean/rebuild configure:
 
-EVENT=/afs/slac/g/lcls/build/epics/modules/event/<version>
-GENERALTIME=/afs/slac/g/lcls/build/epics/modules/generalTime/<version>
-SSUBRECORD=/afs/slac/g/lcls/build/epics/modules/sSubRecord/<version>
-RESTORE=/afs/slac/g/lcls/build/epics/modules/restore/<version>
+EVENT=/nfs/slac/g/lcls/build/epics/modules/event/<version>
+GENERALTIME=/nfs/slac/g/lcls/build/epics/modules/generalTime/<version>
+SSUBRECORD=/nfs/slac/g/lcls/build/epics/modules/sSubRecord/<version>
+RESTORE=/nfs/slac/g/lcls/build/epics/modules/restore/<version>
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
 
@@ -71,7 +71,7 @@ These instructions assume that your IOC has already been set up using
 instructions in /afs/slac/g/lcls/epics/ioc/iocBoot/README.
 
 (1) If you have one or more VME EVRs and your IOC is using an early version 
-    of RTEMS (ie, version "4.7" instead of "4.7.0"), then add these 
+    of RTEMS (ie, version "4.7" instead of "4.7.1"), then add these 
     instructions early in the startup file, before any EPICS commands:
 
     # Carve a slice out of A32 space for the CR/CSR
