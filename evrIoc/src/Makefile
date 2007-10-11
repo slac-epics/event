@@ -27,9 +27,9 @@ evrTest_SRCS += evrTest_registerRecordDeviceDriver.cpp
 evrTest_SRCS += evrTestMain.cpp
 evr_SRCS += evr_registerRecordDeviceDriver.cpp
 
-evrTest_LIBS += $(EVR_IOC_LIBS)
+evrTest_LIBS += evrSupport sSubRecord generalTime
 evrTest_LIBS += $(EPICS_BASE_IOC_LIBS)
-evr_LIBS += $(EVR_IOC_LIBS) 
+evr_LIBS += evrSupport sSubRecord generalTime
 evr_LIBS += devMrfEr mrfVme64x
 evr_LIBS += $(EPICS_BASE_IOC_LIBS)
 
