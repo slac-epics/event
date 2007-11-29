@@ -16,6 +16,7 @@ DB += evr.db
 DB += evrWithDelays.db
 DB += evrWithExtDelays.db
 DB += evrEventCtrl.db
+DB += evrDevTrig.db
 # evrPattern support
 DB += evrPatternProc.db
 DB += evrEventAll.db
@@ -35,6 +36,4 @@ DB += evrAMXX.db
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
-include $(TOP)/configure/RULES.Db
-
 
