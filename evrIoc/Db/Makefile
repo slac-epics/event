@@ -51,5 +51,4 @@ DB += bsaSimTO20.db
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
-include $(TOP)/configure/RULES.Db
 
