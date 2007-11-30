@@ -24,14 +24,6 @@ DB += evrPatternAll.db
 DB += evrPatternTest.db
 DB += evrPatternSaaAll.db
 DB += evrMod36.db
-# Type-Specific IOC support
-DB += evrPMXX.db
-DB += evrLSXX.db
-DB += evrBPXX.db
-DB += evrMGXX.db
-DB += evrIMXX.db
-DB += evrMCXX.db
-DB += evrAMXX.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
