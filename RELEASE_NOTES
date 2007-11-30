@@ -4,6 +4,28 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-5-0: Nov 30, 2007
+	* configure/RELEASE - change to EPICS R3-14-8-2-lcls2 (base, modules)
+	* configure:
+	  - remove RULES.Db - not needed when substitution files are 
+            corrected to put "{" and "}" on their own lines.
+	  - remove RULES.Cw - replaced by RULES.Restore in epics base.
+	  - remove unused rules files - RULES_JAVA, RULES.Opi, RULES.Cfg, 
+	    RULES.iocBoot, RULES.PLC.
+	* README - Removed obsolete instructions and changed instructions for
+	  creating databases.
+	* evrSupport/srcRestore - added srcRestore for .cwConfig template files
+	  moved from evrSupport/Db/ioc
+	* evrSupport/Db/bsa/Makefile - remove inclusion of RULES.Db.
+	* evrSupport/Db/evr:
+	  - move evrDevTrig.db from evrSupport/Db/ioc.
+	  - change Makefile to install evrDevTrig.db and to remove RULES.Db.
+	* evrSupport/Db/ioc - Remove all files.  All files moved to individual
+	  ioc applications.
+	* evrSupport/Db/Makefile - Remove build of the ioc directory.
+	* evrIoc/Db - corrected files so that local RULES.Db is not required.
+	* evrIoc/srcRestore - added example trigXL05.cwsubstitutions file.
+
 event-R2-4-8: Oct 11, 2007
 	* configure/RELEASE - change to EPICS R3.14.9 and RTEMS 4.7.1
 	* README - change afs to nfs.
