@@ -72,11 +72,9 @@ III - EVG Diagnostics Display:
     EVR diagnostics display.  Use this display to enter event codes and 
     delays that are output by the EVG.  The delay is from the beginning 
     of the sequence that the EVG sends out when triggered.  The EVG 
-    maintains two sequences and the sequence must be chosen per event code 
-    except when the EVG is in the alternate sequence mode in which case, 
-    the event code is added to both sequences.  Note that the sequence RAM 
-    must be Off before any change on this display is actually used by the 
-    sequence (when it is reactivated).
+    maintains two sequences and the sequence must be chosen per event code. 
+    Note that the sequence RAM must be Off before any change on this display 
+    is actually used by the sequence (when it is reactivated).
 
 (3) To manually trigger a sequence when no external trigger is available,
     set one of the sequence RAMs (sequence RAM 1 if all event codes are 
