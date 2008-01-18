@@ -33,15 +33,15 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,LOLO , LNAME        
 	{$(DEVICE) , LCLS_N-1, 147,11907      , LOW  ,120.5,  -1 , "Full N-1"     }
 	{$(DEVICE) , LCLS_N-2, 148,11908      , LOW  ,120.5,  -1 , "Full N-2"     }
 # LCLS Specialized Event Codes
-	{$(DEVICE) , LCLSTCAV, 149,11909      , LOW  ,120.5,  -1 , "TCAV"         }
+	{$(DEVICE) , LCLSTCAV, 149,11909      , LOW  ,120.5,  -1 , "TCAV0"        }
 	{$(DEVICE) , LCLSBURS, 150,11910      , LOW  ,120.5,  -1 , "Burst"        }
 	{$(DEVICE) , LCLS_ACC, 151,11911      , LOW  ,120.5,  -1 , "Klys Accel"   }
 	{$(DEVICE) , LCLSSHUT, 152,11912      , LOW  ,120.5,  -1 , "Shutter"      }
-	{$(DEVICE) , LCRFONLY, 153,11913      , LOW  ,120.5,  -1 , "Klys StdBy No TCAV"}
-	{$(DEVICE) , LCACC_10, 154,11914      , LOW  , 10.5,  -1 , "Klys Accel at 10Hz"}
-	{$(DEVICE) , STRAIGHT, 155,11915      , LOW  ,120.5,  -1 , "Straight Ahead" }
-	{$(DEVICE) , LCLSTBD6, 156,11916      , LOW  ,120.5,  -1 , "Beam TBD6"    }
-	{$(DEVICE) , LCLSTBD7, 157,11917      , LOW  ,120.5,  -1 , "Beam TBD7"    }
+	{$(DEVICE) , LCRFONLY, 153,11913      , LOW  ,120.5,  -1 , "Klys StdBy No TCAV0"}
+	{$(DEVICE) , LCACC_10, 154,11914      , LOW  , 10.5,  -1 , "Klys Accel at 10Hz" }
+	{$(DEVICE) , STRAIGHT, 155,11915      , LOW  ,120.5,  -1 , "Straight Ahead"     }
+	{$(DEVICE) , LCLSTCV3, 156,11916      , LOW  ,120.5,  -1 , "TCAV3"        }
+	{$(DEVICE) , LCNOTCV3, 157,11917      , LOW  ,120.5,  -1 , "Klys StdBy No TCAV3"}
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 ,12950      , LOW  ,360.5,359.5, "360Hz"        }

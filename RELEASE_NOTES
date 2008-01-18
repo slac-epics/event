@@ -4,6 +4,12 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-5-1: Jan 18, 2008
+	* configure/RELEASE - change to use /usr/local instead of /nfs/slac/g.
+	* testIoc directory - added for testing - is not built for production.
+	* evrSupport/Db/evr/evrEventAll.substitutions - Change LCLSTBD6 event 
+          to LCLSTCV3 and LCLSTBD7 to LCNOTCV3.
+
 event-R2-5-0: Nov 30, 2007
 	* configure/RELEASE - change to EPICS R3-14-8-2-lcls2 (base, modules)
 	* configure:
