@@ -35,7 +35,7 @@ BASE_MODULE_VERSION=base-R3-14-8-2-lcls2
 #GENERALTIME_MODULE_VERSION=generalTime-R1-2-1
 #SSUBRECORD_MODULE_VERSION=sSubRecord-R1-0-1
 #MISCUTILS_MODULE_VERSION=miscUtils-R1-0-1
-EVENT_MODULE_VERSION=event-R2-5-0
+EVENT_MODULE_VERSION=work
 
 # ============================================================
 # External Support
