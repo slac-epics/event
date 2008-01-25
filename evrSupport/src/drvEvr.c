@@ -42,7 +42,7 @@ static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static volatile int     patternAvailable  = 0; /* pattern  available flag */
 static volatile int     fiducialAvailable = 0; /* fiducial available flag */
-static volatile int     patternFirst      = 0; /* process pattern first flag */
+static volatile int     prevInterruptType = 0; /* previous interrupt      */ 
 
 /*=============================================================================
 
@@ -84,7 +84,14 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
   evrMessageStart(messageType);
   evrMessageWrite(messageType, (evrMessage_tu *)message);
   patternAvailable = 1;
-  patternFirst     = 0;
+  /* Check if a fiducial was missed - update the pattern pipeline first
+     if it was missed before writing in the newest pattern. */
+  if ((prevInterruptType == EVR_MESSAGE_PATTERN) && (!fiducialAvailable)) {
+    evrMessageStart(EVR_MESSAGE_FIDUCIAL);
+    fiducialAvailable = 1;
+  } else {
+    prevInterruptType = EVR_MESSAGE_PATTERN;
+  }
   epicsEventSignal(evrTaskEventSem);
 }
 
@@ -100,10 +107,11 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 =============================================================================*/
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
-  if (eventNum == EVENT_FIDUCIAL) {
+  /* Skip this fiducial if the newest pattern hasn't yet been processed. */
+  if ((eventNum == EVENT_FIDUCIAL) && (!patternAvailable)) {
     evrMessageStart(EVR_MESSAGE_FIDUCIAL);
     fiducialAvailable = 1;
-    patternFirst      = 1;
+    prevInterruptType = EVR_MESSAGE_FIDUCIAL;
     epicsEventSignal(evrTaskEventSem);
   }
 }
@@ -123,10 +131,6 @@ static int evrTask()
   {
     epicsEventMustWait(evrTaskEventSem);
     while (patternAvailable || fiducialAvailable) {
-      if (patternAvailable && patternFirst) {
-        evrMessageProcess(EVR_MESSAGE_PATTERN);
-        patternAvailable = 0;
-      }
       if (fiducialAvailable) {
         fiducialAvailable = 0;
         evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
@@ -160,7 +164,7 @@ static int evrInitialise()
   }
   
   /* Create the task to process records */
-  if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh,
+  if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh+1,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
                          (EPICSTHREADFUNC)evrTask, 0)) {
     errlogPrintf("evrInitialise: unable to create the EVR task\n");
