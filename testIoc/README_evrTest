@@ -130,7 +130,7 @@ V - EVR Diagnostics Display:
 
 (1) Once the IOC has booted successfully, bring up the EVR diagnostics display:
 
-    cd testApp/evrTestApp/edm
+    cd xxxxApp/eventTestApp/edm
     edm -x -m "LOCA=TEST,UNIT=EV01" evrDiags.edl
 
     Check that the "Module Description" and "FPGA Version" are correct
