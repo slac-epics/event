@@ -159,6 +159,12 @@ int mrfFindNextEVG (int lastSlot)
     */
     if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVG200_BID, &slot))
         return slot;
+   /*---------------------
+    * If we couldn't find the EVG200 try the EVG230.
+    */
+    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVG230_BID, &slot))
+        return slot;
+
 
    /*---------------------
     * Return 0 if no more Event Generator cards were found.

@@ -149,6 +149,7 @@ typedef struct mrfUserCSRStruct
 /**************************************************************************************************/
 
 #define MRF_EVG200_BID   0x454700C8     /* Event Generator                                        */
+#define MRF_EVG230_BID   0x454700E6     /* Event Generator 230                                    */
 #define MRF_EVR200_BID   0x455200C8     /* Event Receiver                                         */
 #define MRF_EVR200RF_BID 0x455246C8     /* Event Receiver with RF Recovery                        */
 #define MRF_EVR230_BID   0x455246E6     /* Event Receiver 230                                     */
