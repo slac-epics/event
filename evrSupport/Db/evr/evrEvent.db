@@ -12,6 +12,7 @@ record(sub, "$(DEV):$(NAME)CNT") {
   field(DESC, "$(NAME) Event Counter")
   field(SNAM, "evrPatternCount")
   field(BRSV, "INVALID")
+  field(INPA, "$(ID)")
 }
 
 record(sub, "$(DEV):$(NAME)RATE") {
