@@ -260,8 +260,11 @@ static long evrPatternProc(subRecord *psub)
 ==============================================================================*/
 static long evrPatternRate(subRecord *psub)
 {
-  psub->val = (psub->a - psub->l)/MODULO720_SECS;
-  psub->l   = psub->a;
+  psub->val = psub->a - psub->l;
+  /* Check for rollover */
+  if (psub->val < 0) psub->val += EVR_MAX_INT;
+  psub->val /= MODULO720_SECS;
+  psub->l = psub->a;
   return 0;
 }
 
@@ -279,6 +282,7 @@ static long evrPatternRate(subRecord *psub)
   Rem:  Subroutine for IOC:LOCA:UNIT:NAMECNT
 
   Inputs:
+       A - Event code
        VAL - Counter that is updated every time the event is received
      
   Outputs:
@@ -289,8 +293,10 @@ static long evrPatternRate(subRecord *psub)
 ==============================================================================*/
 static long evrPatternCount(subRecord *psub)
 {
-  psub->val++;
-  evrTimePut(psub->evnt, epicsTimeOK);
+  /* Rollover if value gets too big */
+  if (psub->val < EVR_MAX_INT) psub->val++;
+  else                         psub->val = 1;
+  evrTimePut((int)psub->a, epicsTimeOK);
   return 0;
 }
 
