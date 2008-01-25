@@ -4,6 +4,15 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-5-2: Jan 25, 2008
+	* evrSupport/Db/evr/evrEvent.db - add event code as INPA in CNT record.
+	* evrSupport/src/evrPattern.c - CNT subroutine now uses A as event 
+          code instead of EVNT field.  Rollover logic added to RATE and CNT
+	  routines.
+	* evrSupport/src/evrTime.c - bug fix - set status unconditionally 
+	  in evrTimePut.CNT subroutine now uses A as event 
+	* mrfApp/mrfVme64x.* - add check for EVG 230.
+
 event-R2-5-1: Jan 18, 2008
 	* configure/RELEASE - change to use /usr/local instead of /nfs/slac/g.
 	* testIoc directory - added for testing - is not built for production.
