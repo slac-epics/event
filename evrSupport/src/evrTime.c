@@ -205,7 +205,7 @@ int evrTimePut (unsigned int eventCode, int status)
     return epicsTimeERROR;
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     eventCodeTime_as[eventCode] = evrTime_as[evrTimeCurrent];
-    if (status) eventCodeTime_as[eventCode].status = status;
+    eventCodeTime_as[eventCode].status = status;
     epicsMutexUnlock(evrTimeRWMutex_ps);
   }
   /* invalid mutex id or lock error - must set status to invalid for the caller */
