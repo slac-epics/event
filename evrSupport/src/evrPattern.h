@@ -73,6 +73,7 @@ extern "C" {
 #define PATTERN_SEQ_CHECK3_ERR    7
 #define PATTERN_PULSEID_NO_SYNC   8
 #define PATTERN_MODULO720_NO_SYNC 9
+#define PATTERN_TIMEOUT           10
 
 #ifdef __cplusplus
 }
