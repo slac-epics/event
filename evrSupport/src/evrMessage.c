@@ -328,28 +328,33 @@ int evrMessageProcess(unsigned int messageIdx)
 
   Side: Mutex lock and unlock.
 
-  Return: 0 = OK, -1 = Failed
+  Return: 0 = OK, 1 = Input Error, 2 = Lock Error, 3 = No Data Available,
+          4 = Data Overwritten
 ==============================================================================*/
 
-int evrMessageRead(unsigned int  messageIdx, evrMessage_tu *message_pu)
+evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
+                                       evrMessage_tu *message_pu)
 {
-  int status = 0;
+  evrMessageReadStatus_te status;
   int retry;
   
-  if (messageIdx >= EVR_MESSAGE_MAX) return -1;
+  if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
 
   /* Attempt to lock the message */
   if ((!evrMessage_as[messageIdx].messageRWMutex_ps) ||
       (epicsMutexLock(evrMessage_as[messageIdx].messageRWMutex_ps) !=
-       epicsMutexLockOK)) return -1;
+       epicsMutexLockOK)) return evrMessageLockError;
   evrMessage_as[messageIdx].locked = 1;
-
-  /* Read the message only if its still available.  Retry once in case
-     the ISR writes it again while we are reading */
-  for (retry = 0; (retry < 2) && evrMessage_as[messageIdx].messageNotRead;
-       retry++) {
-    evrMessage_as[messageIdx].messageNotRead = 0;
-    switch (messageIdx) {
+  if (!evrMessage_as[messageIdx].messageNotRead) {
+    status = evrMessageDataNotAvail;
+  } else {
+    status = evrMessageOK;
+     /* Read the message only if its still available.  Retry once in case
+        the ISR writes it again while we are reading */
+    for (retry = 0; (retry < 2) && evrMessage_as[messageIdx].messageNotRead;
+         retry++) {
+      evrMessage_as[messageIdx].messageNotRead = 0;
+      switch (messageIdx) {
       case EVR_MESSAGE_PNET:
         message_pu->pnet_s    = evrMessage_as[messageIdx].message_u.pnet_s;
         break;
@@ -360,11 +365,13 @@ int evrMessageRead(unsigned int  messageIdx, evrMessage_tu *message_pu)
         break;
       case EVR_MESSAGE_DATA:
       default:
-        status = -1;
+        status = evrMessageInpError;
         break;
+      }
     }
+    if (evrMessage_as[messageIdx].messageNotRead)
+      status = evrMessageDataOverwrite;
   }
-  if (evrMessage_as[messageIdx].messageNotRead) status = -1;
   evrMessage_as[messageIdx].locked = 0;
   epicsMutexUnlock(evrMessage_as[messageIdx].messageRWMutex_ps);
   return status;

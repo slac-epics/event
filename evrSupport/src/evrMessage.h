@@ -87,11 +87,21 @@ typedef union
   epicsUInt32          data_a[EVR_DATA_MAX];
 } evrMessage_tu;
 
+typedef enum
+{
+    evrMessageOK,
+    evrMessageInpError,
+    evrMessageLockError,
+    evrMessageDataNotAvail,
+    evrMessageDataOverwrite
+    
+} evrMessageReadStatus_te;
 
 int evrMessageCreate    (char         *messageName_a, size_t  messageSize);
 int evrMessageRegister  (char         *messageName_a, size_t  messageSize,
                          dbCommon     *record_ps);
-int evrMessageRead      (unsigned int  messageIdx, evrMessage_tu *message_pu);
+evrMessageReadStatus_te
+    evrMessageRead      (unsigned int  messageIdx, evrMessage_tu *message_pu);
 int evrMessageWrite     (unsigned int  messageIdx, evrMessage_tu *message_pu);
 int evrMessageProcess   (unsigned int  messageIdx);
 int evrMessageStart     (unsigned int  messageIdx);
