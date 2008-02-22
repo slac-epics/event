@@ -4,6 +4,14 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-5-3-1: Feb 21, 2008
+        * build with base R3.14.9
+        * build with generalTime-R1-2-2-2
+        * build with sSubRecord-R1-0-2-1
+        * build with miscUtils-R1-0-2-1
+        * Replace CONFIG_APP with CONFIG_SITE
+        * Add RELEASE_SITE
+
 event-R2-5-3: Feb 20, 2008
 	* evrSupport/Db/evr/evrEventAll.substitutions - add TBD1 to 6.
 	* evrSupport/Db/evr/evrFiducial.db - add TIMEOUT state to PATTERNSTATE.
