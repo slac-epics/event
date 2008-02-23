@@ -53,6 +53,7 @@ static unsigned int msgCount         = 0; /* # waveforms processed since boot/re
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
 static unsigned int patternErrCount  = 0; /* # bad PATTERN waveforms */
 static unsigned int syncErrCount     = 0; /* # out-of-sync patterns  */
+static epicsTimeStamp mod720time;
 
 /*=============================================================================
 
@@ -89,6 +90,8 @@ static int evrPatternProcInit(subRecord *psub)
   /* Enable the data stream on the EVR */
   ErEnableDBuff(psub->dpvt, 1);
 #endif
+  /* Initialize MOD720 timestamp */
+  epicsTimeGetCurrent(&mod720time);
   return 0;
 }
 
@@ -113,14 +116,10 @@ static int evrPatternProcInit(subRecord *psub)
 		1 EVR 32 bit unsigned integer (MODIFIER 5)
 		2 EVR timestamp 32 bit unsigned integers 
 		1 bunchcharge 32 bit integer (picoCoulombs)
-  Error checking:
-Waveform record is invalid or has invalid size or type set record invalid, pulse ID to 0, 
-and EVR timestamp/status to last-good-time/invalid
-Error writing EVR timestamp set record invalid and pulse ID to 0
 
   Sub Inputs/ Outputs:
    Inputs:
-    None
+    VAL = Previous error flag.
    Outputs:
     A - edefMinorMask
     B - edefMajorMask
@@ -147,6 +146,8 @@ Error writing EVR timestamp set record invalid and pulse ID to 0
 static long evrPatternProc(subRecord *psub)
 {
   evrMessagePattern_ts   evrPatternWF_s;
+  evrMessageReadStatus_te evrMessageStatus;
+  epicsTimeStamp         currentTime;
   int                    errFlag = PATTERN_OK;
   int                    modulo720Flag;
   int                    edefIdx;
@@ -158,31 +159,40 @@ static long evrPatternProc(subRecord *psub)
     msgRolloverCount++;
     msgCount = 0;
   }
-  /* if we cannot read the message                                */
-  /*   set record invalid; pulse id =0, and                       */
-  /*   evr timestamp/status to last good time with invalid status */
-  if (evrMessageRead(EVR_MESSAGE_PATTERN, (evrMessage_tu *)&evrPatternWF_s)) {
-    patternErrCount++;
+  /* if we cannot read the message or the message has an invalid header */
+  /*   set record invalid; pulse id to invalid, and                     */
+  /*   evr timestamp status to invalid                                  */
+  evrMessageStatus = evrMessageRead(EVR_MESSAGE_PATTERN,
+                                    (evrMessage_tu *)&evrPatternWF_s);
+  if (evrMessageStatus                                         ||
+      (evrPatternWF_s.header_s.type    != EVR_MESSAGE_PATTERN) ||
+      (evrPatternWF_s.header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
     psub->c = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
-    if (psub->val) modulo720Flag = 0;
-    else           modulo720Flag = 1;
     psub->l = PULSEID_INVALID;
-    errFlag = PATTERN_INVALID_WF;
-    psub->d = MPG_IPLING;
-    evrTimePutIntoPipeline(0, epicsTimeERROR);
-  } else {
-    /* error if the message has an invalid type or version */
-    if ((evrPatternWF_s.header_s.type    != EVR_MESSAGE_PATTERN  ) ||
-        (evrPatternWF_s.header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
+    if (evrMessageStatus == evrMessageDataNotAvail) {
+      errFlag = PATTERN_TIMEOUT;
+    } else if (evrMessageStatus == evrMessageDataOverwrite) {
+      errFlag = PATTERN_INVALID_WF;
+    } else if (evrMessageStatus) {
+      errFlag = PATTERN_INVALID_WF;
       patternErrCount++;
-      psub->c = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
-      if (psub->val) modulo720Flag = 0;
-      else           modulo720Flag = 1;
-      psub->l = PULSEID_INVALID;
-      errFlag = PATTERN_INVALID_WF_HDR;
-      psub->d = MPG_IPLING;
-      evrTimePutIntoPipeline(0, epicsTimeERROR);
     } else {
+      errFlag = PATTERN_INVALID_WF_HDR;
+      patternErrCount++;
+    }
+    psub->d = MPG_IPLING;
+    /* Set timestamp invalid if the last pulse had an error too -
+       allow one glitch before messing with time */
+    epicsTimeGetCurrent(&currentTime);
+    if ((psub->val == PATTERN_TIMEOUT)    ||        
+        (psub->val == PATTERN_INVALID_WF) ||
+        (psub->val == PATTERN_INVALID_WF_HDR))
+      evrTimePutIntoPipeline(&currentTime, epicsTimeERROR);
+    if (epicsTimeDiffInSeconds(&currentTime, &mod720time) > MODULO720_SECS)
+      modulo720Flag = 1;
+    else
+      modulo720Flag = 0;
+  } else {
       
       /* set outputs to the modifiers */
       psub->d = (double)(evrPatternWF_s.pnet_s.modifier_a[0]);
@@ -226,10 +236,12 @@ static long evrPatternProc(subRecord *psub)
             post_event(edefIdx + EVENT_EDEFINIT_MIN);
         }
       }
-    }
   }  
   /* Post the modulo-720 sync event if the pattern has that bit set */
-  if (modulo720Flag) post_event(EVENT_MODULO720);
+  if (modulo720Flag) {
+    post_event(EVENT_MODULO720);
+    epicsTimeGetCurrent(&mod720time);
+  }
   psub->val = (double)errFlag;
   if (errFlag) return -1;
   return 0;
@@ -316,23 +328,25 @@ static long evrPatternCount(subRecord *psub)
   Inputs:
        A - Error Flag from evrPatternProc
        B - Counter Reset Flag
-       C - Spare
      
   Outputs:
+       C - ISR update rate
        D - Number of waveforms processed by this subroutine
        E - Number of times D has rolled over
        F - Number of bad waveforms
-           The following G-J outputs are pop'ed by a call to evrMessageCounts()
+           The following G-L outputs are pop'ed by a call to evrMessageCounts()
        G - Number of times ISR wrote a message
        H - Number of times G has rolled over
        I - Number of times ISR overwrote a message
        J - Number of times ISR had a mutex lock error
-       K - Number of unsynchronized patterns
-       L to U - Spares
+       K - Number of timeouts
+       L - Number of read retry errors
+       M - Number of unsynchronized patterns
+       N to U - Spares
        V - Minimum Pattern Delta Start Time (us)
        W - Maximum Pattern Delta Start Time (us)
        X - Average Data Processing Time     (us)
-       Y - Standard Deviation of above      (us)
+       Y - Spare
        Z - Maximum Data Processing Time     (us)
        VAL = Last Error flag (see evrPatternProc for values)
 
@@ -343,20 +357,30 @@ static long evrPatternCount(subRecord *psub)
 ==============================================================================*/
 static long evrPatternState(sSubRecord *psub)
 {
+  static double prevISRupdate = 0;
+
   psub->val = psub->a;
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
   psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->f = patternErrCount;
-  psub->k = syncErrCount;
-  evrMessageCounts(EVR_MESSAGE_PATTERN ,&psub->g,&psub->h,&psub->i,&psub->j, 
-                   &psub->v,&psub->w,&psub->x,&psub->y,&psub->z);
+  psub->m = syncErrCount;
+  evrMessageCounts(EVR_MESSAGE_PATTERN,
+                   &psub->g,&psub->h,&psub->i,&psub->j,&psub->k,&psub->l,
+                   &psub->v,&psub->w,&psub->x,&psub->z);
+  /* Calculate ISR update rate. */
+  psub->c = psub->g;
+  if (psub->g < prevISRupdate) psub->c += EVR_MAX_INT;
+  psub->c = (psub->c - prevISRupdate)/MODULO720_SECS;
   if (psub->b > 0.5) {
     psub->b               = 0.0;
+    prevISRupdate         = 0;
     msgCount              = 0;
     msgRolloverCount      = 0;
     patternErrCount       = 0;
     syncErrCount          = 0;
     evrMessageCountReset(EVR_MESSAGE_PATTERN);
+  } else {
+    prevISRupdate = psub->g;
   }
   return 0;
 }
