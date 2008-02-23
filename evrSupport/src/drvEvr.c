@@ -29,6 +29,8 @@
 #include <drvMrfEr.h>		/* for ErRegisterDevDBuffHandler */
 #include <devMrfEr.h>		/* for ErRegisterEventHandler    */
 
+#define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
+
 static int evrReport();
 static int evrInitialise();
 struct drvet drvEvr = {
@@ -127,18 +129,31 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 =============================================================================*/
 static int evrTask()
 {  
+  epicsEventWaitStatus status;
   for (;;)
   {
-    epicsEventMustWait(evrTaskEventSem);
-    while (patternAvailable || fiducialAvailable) {
-      if (fiducialAvailable) {
-        fiducialAvailable = 0;
-        evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
-      }
-      if (patternAvailable) {
-        evrMessageProcess(EVR_MESSAGE_PATTERN);
-        patternAvailable = 0;
-      }
+    if ((!patternAvailable) && (!fiducialAvailable))
+      status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
+    else
+      status = epicsEventWaitOK;
+    if (fiducialAvailable) {
+      fiducialAvailable = 0;
+      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
+      status = epicsEventWaitOK;
+    }
+    if (patternAvailable) {
+      evrMessageProcess(EVR_MESSAGE_PATTERN);
+      patternAvailable = 0;
+      status = epicsEventWaitOK;
+    }
+    /* If timeout, process the data which will result in bad status since
+       there is nothing to do.  Then advance the pipeline so that the bad
+       status makes it from N-3 to N-2 then to N-2 and then to N. */
+    if (status == epicsEventWaitTimeout) {
+      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-3 */
+      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-2 */
+      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-1 */
+      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N   */
     }
   }
   return 0;
