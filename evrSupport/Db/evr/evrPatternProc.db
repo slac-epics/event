@@ -16,6 +16,19 @@ record(sSub, "$(DEV):PATTERNDIAG") {
   field(SNAM, "evrPatternState")
   field(INPA, "$(DEV):PATTERNN-3")
   field(BRSV, "INVALID")
+  field(FLNK, "$(DEV):FIDUCIALRATE")
+}
+
+record(ai, "$(DEV):FIDUCIALRATE") {
+  field(DESC, "FIDUCIAL Event Rate")
+  field(INP, "$(DEV):PATTERNDIAG.C")
+  field(EGU, "Hz")
+  field(PREC, "1")
+  field(HIHI, "360.5")
+  field(HHSV, "MAJOR")
+  field(LOLO, "359.5")
+  field(LLSV, "MAJOR")
+  field(HOPR, "360")
 }
 
 record(sSub, "$(DEV):EDEFMEASSEVR") {
