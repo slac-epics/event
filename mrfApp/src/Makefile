@@ -58,6 +58,7 @@ DBD += devMrfEgLib.dbd
 DBD += devMrfErLib.dbd
 devMrfEgLib_DBD += devMrfEg.dbd
 devMrfEgLib_DBD += devMrfEgEvent.dbd
+devMrfErLib_DBD += base.dbd
 devMrfErLib_DBD += devMrfEr.dbd
 
 #---------------------
