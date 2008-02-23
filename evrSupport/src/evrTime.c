@@ -303,13 +303,11 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   N  Number of times M has rolled over
   O  Number of same pulses
   P  Number of skipped pulses
-  S  Average Pattern-Fiducial Time    (us)
-  T  Maximum Pattern-Fiducial Time    (us)
-  U  Minimum Pattern-Fiducial Time    (us)
+  Q to U - Spares
   V  Minimum Fiducial Delta Start Time (us)
   W  Maximum Fiducial Delta Start Time (us)
   X  Average Fiducial Processing Time  (us)
-  Y  Standard Deviation of above       (us)
+  Y  Spare
   Z  Maximum Fiducial Processing Time  (us)
   VAL = Last Error flag from evrTimeProc
 ==============================================================================*/ 
@@ -325,9 +323,9 @@ static long evrTimeDiag (sSubRecord *psub)
   psub->n = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->o = samePulseCount;
   psub->p = skipPulseCount;
-  evrMessageCounts(EVR_MESSAGE_FIDUCIAL,&dummy,&dummy,&dummy,&dummy, 
-                   &psub->v,&psub->w,&psub->x,&psub->y,&psub->z);
-  evrMessageDiffTimes(&psub->s,&dummy,&psub->t,&psub->u);
+  evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
+                   &dummy,&dummy,&dummy,&dummy,&dummy,&dummy, 
+                   &psub->v,&psub->w,&psub->x,&psub->z);
   if (psub->r > 0.5) {
     psub->r           = 0.0;
     msgCount          = 0;
@@ -537,12 +535,6 @@ static int evrTimeProc (subRecord *psub)
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     for (n=0;n<evrTimeNext3;n++) {
       evrTime_as[n] = evrTime_as[n+1];
-    }
-    /* determine if next is the same as last pulse */
-    /* Same pulses means the EVG is not sending timestamps and this forces
-       record timestamps to revert to system time */
-    if (psub->d==psub->c) {
-      evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
     }
     if (updateFlag) {
       eventCodeTime_as[0] = evrTime_as[evrTimeCurrent];
