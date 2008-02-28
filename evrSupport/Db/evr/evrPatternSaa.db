@@ -14,10 +14,10 @@ record(sub, "$(DEV):PATTERNSIM") {
 record(fanout, "$(DEV):FANOUTSIM") {
   field(DESC, "Sim Fanout")
   field(SCAN, ".1 second")
-  field(LNK1, "$(DEV):FIDUCIAL")
-  field(LNK2, "$(DEV):FIDUCIALCNT")
-  field(LNK3, "$(DEV):PATTERNSIM")
-  field(LNK4, "$(DEV):PATTERNN-3")
+  field(LNK1, "$(DEV):PATTERNSIM")
+  field(LNK2, "$(DEV):PATTERNN-3")
+  field(LNK3, "$(DEV):FIDUCIAL")
+  field(LNK4, "$(DEV):FIDUCIALCNT")
 }
 record(sub, "$(DEV):FIDUCIALCNT") {
   field(DESC, "FIDUCIAL Event Counter")

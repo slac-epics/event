@@ -21,9 +21,9 @@ record(fanout, "$(DEV):FANOUTSIM") {
   field(SCAN, ".1 second")
   field(LNK1, "$(SIM):FANOUT")
   field(LNK2, "$(SIM):MODIFIER5")
-  field(LNK3, "$(DEV):FIDUCIAL")
-  field(LNK4, "$(DEV):PATTERNSIM")
-  field(LNK5, "$(DEV):PATTERNN-3")
+  field(LNK3, "$(DEV):PATTERNSIM")
+  field(LNK4, "$(DEV):PATTERNN-3")
+  field(LNK5, "$(DEV):FIDUCIAL")
 }
 
 record(sSub, "$(SIM):MODIFIER5") {
