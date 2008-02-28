@@ -47,7 +47,6 @@
 #include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*  */
 #include "evrTime.h"          /* evrTime* prototypes       */
 #include "evrPattern.h"       /* for PATTERN* defines      */
-#include "drvMrfEr.h"         /* for ErEnableDBuff proto   */
 
 static unsigned int msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
@@ -74,7 +73,7 @@ static epicsTimeStamp mod720time;
    Inputs:
     None
    Outputs:
-    DPVT - pointer to EVR card
+    None
 
   Ret:  0 = OK, -1 = Error.
   
@@ -85,11 +84,6 @@ static int evrPatternProcInit(subRecord *psub)
   if (evrMessageRegister(EVR_MESSAGE_PATTERN_NAME, sizeof(evrMessagePattern_ts),
                          (dbCommon *)psub) < 0)
     return -1;
-#ifdef __rtems__
-  if (!(psub->dpvt = (ErCardStruct *)ErGetCardStruct(0))) return -1;
-  /* Enable the data stream on the EVR */
-  ErEnableDBuff(psub->dpvt, 1);
-#endif
   /* Initialize MOD720 timestamp */
   epicsTimeGetCurrent(&mod720time);
   return 0;
@@ -328,9 +322,9 @@ static long evrPatternCount(subRecord *psub)
   Inputs:
        A - Error Flag from evrPatternProc
        B - Counter Reset Flag
+       C - Spare
      
   Outputs:
-       C - ISR update rate
        D - Number of waveforms processed by this subroutine
        E - Number of times D has rolled over
        F - Number of bad waveforms
@@ -357,8 +351,6 @@ static long evrPatternCount(subRecord *psub)
 ==============================================================================*/
 static long evrPatternState(sSubRecord *psub)
 {
-  static double prevISRupdate = 0;
-
   psub->val = psub->a;
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
   psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
@@ -367,20 +359,13 @@ static long evrPatternState(sSubRecord *psub)
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->j,&psub->k,&psub->l,
                    &psub->v,&psub->w,&psub->x,&psub->z);
-  /* Calculate ISR update rate. */
-  psub->c = psub->g;
-  if (psub->g < prevISRupdate) psub->c += EVR_MAX_INT;
-  psub->c = (psub->c - prevISRupdate)/MODULO720_SECS;
   if (psub->b > 0.5) {
     psub->b               = 0.0;
-    prevISRupdate         = 0;
     msgCount              = 0;
     msgRolloverCount      = 0;
     patternErrCount       = 0;
     syncErrCount          = 0;
     evrMessageCountReset(EVR_MESSAGE_PATTERN);
-  } else {
-    prevISRupdate = psub->g;
   }
   return 0;
 }
