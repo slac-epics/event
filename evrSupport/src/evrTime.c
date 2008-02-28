@@ -538,6 +538,12 @@ static int evrTimeProc (subRecord *psub)
     for (n=0;n<evrTimeNext3;n++) {
       evrTime_as[n] = evrTime_as[n+1];
     }
+    /* determine if next is the same as last pulse */
+    /* Same pulses means the EVG is not sending timestamps and this forces   
+       record timestamps to revert to system time */
+    if (psub->d==psub->c) {
+      evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
+    }   
     if (updateFlag) {
       eventCodeTime_as[0] = evrTime_as[evrTimeCurrent];
     }
