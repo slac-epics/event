@@ -346,7 +346,7 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
     status = evrMessageOK;
      /* Read the message only if its still available.  Retry in case
         the ISR writes it again while we are reading */
-    for (retry = 0; (retry < 5) && evrMessage_as[messageIdx].messageNotRead;
+    for (retry = 0; (retry < 2) && evrMessage_as[messageIdx].messageNotRead;
          retry++) {
       evrMessage_as[messageIdx].messageNotRead = 0;
       switch (messageIdx) {
