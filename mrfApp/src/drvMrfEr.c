@@ -1557,8 +1557,6 @@ epicsStatus ErDrvReport (int level)
 |*      reporting routine.
 |*      If device support has registered a data buffer listener, copy the data buffer into
 |*      the card structure and invoke the device-support data listener.
-|*      If devics support has not registered a data buffer listener, disable the data stream
-|*      receiver and the data buffer ready interrupt.
 |*
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
@@ -1722,7 +1720,7 @@ void ErIrqHandler (ErCardStruct *pCard)
         * into the card structure, call the device support listener function, and
         * re-enable the data stream receiver.
         */
-        if (pCard->DevDBuffFunc != NULL) {
+        else if (pCard->DevDBuffFunc != NULL) {
             pCard->DBuffSize = (DBuffCsr & EVR_DBUF_SIZEMASK);
 
             bufferSize = pCard->DBuffSize / 4;
@@ -1730,20 +1728,17 @@ void ErIrqHandler (ErCardStruct *pCard)
                 pCard->DataBuffer[i] = MRF_VME_REG32_READ(&pEr->DataBuffer[i]);
 
             (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
-            MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
-                                (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
-                                EVR_DBUF_DBENA);
+
         }/*end if device support wants to know about Data Buffer Ready interrupts*/
-
-       /*---------------------
-        * If device support does not care about the data stream, then neither do we.
-        * Turn off data buffer receives and disable the data buffer interrupt.
-        */
-        else {
-            MRF_VME_REG16_WRITE(&pEr->IrqEnables, MRF_VME_REG16_READ(&pEr->IrqEnables) &
-                                ~(EVR_IRQ_DATABUF));
-        }/*end if don't want data buffer ready interrupts*/
-
+        
+        /*---------------------
+         * Enable the data buffer only if device support cares about the data stream.
+         */
+        if (pCard->DevDBuffFunc != NULL) {
+          MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
+                              (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
+                              EVR_DBUF_DBENA);
+        }
     }/*end if data buffer ready interrupt*/
 
    /*===============================================================================================
@@ -2134,27 +2129,10 @@ void ErEnableDBuff (ErCardStruct *pCard, epicsBoolean Enable)
     Key = epicsInterruptLock();
 
    /*---------------------
-    * Enable the data stream.
-    * Enable the data buffer ready interrupt.
-    * Also enable interrupts in general, in case they were turned off.
+    * Enable or disable the data stream.
     */
-    if (Enable) {
-        MRF_VME_REG16_WRITE(&pEr->DataBuffControl,  EVR_DBUF_DBMODE_EN | EVR_DBUF_DBENA);
-        MRF_VME_REG16_WRITE(&pEr->IrqEnables,
-                            MRF_VME_REG16_READ(&pEr->IrqEnables) | EVR_IRQ_DATABUF);
-        MRF_VME_REG16_WRITE(&pEr->Control,
-                            (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
-    }/*end if we should enable the interrupt*/
-
-   /*---------------------
-    * Stop data stream receipt, disable the data stream
-    * and disable the data buffer ready interrupt.
-    */
-    else {
-        MRF_VME_REG16_WRITE(&pEr->IrqEnables,
-                            MRF_VME_REG16_READ(&pEr->IrqEnables) & ~(EVR_IRQ_DATABUF));
-        MRF_VME_REG16_WRITE(&pEr->DataBuffControl, EVR_DBUF_DBDIS);
-    }/*end if we should disable the interrupt*/
+    if (Enable) MRF_VME_REG16_WRITE(&pEr->DataBuffControl,  EVR_DBUF_DBMODE_EN | EVR_DBUF_DBENA);
+    else        MRF_VME_REG16_WRITE(&pEr->DataBuffControl,  EVR_DBUF_DBDIS);
 
    /*---------------------
     * Re-enable interrupts and return
