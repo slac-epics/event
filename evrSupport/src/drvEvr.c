@@ -44,7 +44,6 @@ static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static volatile int     patternAvailable  = 0; /* pattern  available flag */
 static volatile int     fiducialAvailable = 0; /* fiducial available flag */
-static volatile int     prevInterruptType = 0; /* previous interrupt      */ 
 
 /*=============================================================================
 
@@ -86,15 +85,6 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
   evrMessageStart(messageType);
   evrMessageWrite(messageType, (evrMessage_tu *)message);
   patternAvailable = 1;
-  /* Check if a fiducial was missed - update the pattern pipeline first
-     if it was missed before writing in the newest pattern. */
-  if ((prevInterruptType == EVR_MESSAGE_PATTERN) && (!fiducialAvailable)) {
-    evrMessageStart(EVR_MESSAGE_FIDUCIAL);
-    fiducialAvailable = 1;
-  } else {
-    prevInterruptType = EVR_MESSAGE_PATTERN;
-  }
-  epicsEventSignal(evrTaskEventSem);
 }
 
 /*=============================================================================
@@ -110,10 +100,9 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
   /* Skip this fiducial if the newest pattern hasn't yet been processed. */
-  if ((eventNum == EVENT_FIDUCIAL) && (!patternAvailable)) {
+  if (eventNum == EVENT_FIDUCIAL) {
     evrMessageStart(EVR_MESSAGE_FIDUCIAL);
     fiducialAvailable = 1;
-    prevInterruptType = EVR_MESSAGE_FIDUCIAL;
     epicsEventSignal(evrTaskEventSem);
   }
 }
@@ -132,25 +121,24 @@ static int evrTask()
   epicsEventWaitStatus status;
   for (;;)
   {
-    if ((!patternAvailable) && (!fiducialAvailable))
+    if (!fiducialAvailable)
       status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     else
       status = epicsEventWaitOK;
     if (fiducialAvailable) {
+      if (patternAvailable) {
+        evrMessageProcess(EVR_MESSAGE_PATTERN);
+        patternAvailable = 0;
+      }
       fiducialAvailable = 0;
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
-      status = epicsEventWaitOK;
-    }
-    if (patternAvailable) {
-      evrMessageProcess(EVR_MESSAGE_PATTERN);
-      patternAvailable = 0;
-      status = epicsEventWaitOK;
-    }
     /* If timeout, process the data which will result in bad status since
        there is nothing to do.  Then advance the pipeline so that the bad
        status makes it from N-3 to N-2 then to N-2 and then to N. */
-    if (status == epicsEventWaitTimeout) {
+    } else if (status == epicsEventWaitTimeout) {
+      evrMessageStart(EVR_MESSAGE_PATTERN);
       evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-3 */
+      evrMessageStart(EVR_MESSAGE_FIDUCIAL);
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-2 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-1 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N   */
@@ -194,6 +182,7 @@ static int evrInitialise()
   /* Register the ISR functions in this file with the EVR */
   } else {
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
+    ErEnableDBuff            (pCard, 1);
     ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
   }
 #endif
