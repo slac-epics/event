@@ -303,7 +303,9 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   N  Number of times M has rolled over
   O  Number of same pulses
   P  Number of skipped pulses
-  Q to U - Spares
+  Q to S - Spares
+  T  Number of fiducial interrupts
+  U  Number of times T has rolled over
   V  Minimum Fiducial Delta Start Time (us)
   W  Maximum Fiducial Delta Start Time (us)
   X  Average Fiducial Processing Time  (us)
@@ -324,7 +326,7 @@ static long evrTimeDiag (sSubRecord *psub)
   psub->o = samePulseCount;
   psub->p = skipPulseCount;
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
-                   &dummy,&dummy,&dummy,&dummy,&dummy,&dummy, 
+                   &psub->t,&psub->u,&dummy,&dummy,&dummy,&dummy, 
                    &psub->v,&psub->w,&psub->x,&psub->z);
   if (psub->r > 0.5) {
     psub->r           = 0.0;
