@@ -41,7 +41,7 @@ extern "C" {
 #define TIMESLOT4_MASK          (0x00000008)  /* timeslot 4 mask       */
 #define TIMESLOT5_MASK          (0x00000010)  /* timeslot 5 mask       */
 #define TIMESLOT6_MASK          (0x00000020)  /* timeslot 6 mask       */
-/* Mask used to get timeslot valuefrom modifier4   */
+/* Mask used to get timeslot value from modifier4   */
 #define TIMESLOT_VAL_MASK       (0x00000007)  /* Time slot value mask  */
                                               /* Left shift 29 first   */
   
@@ -53,7 +53,21 @@ extern "C" {
 #define TIMESLOT_MAX              6           /* Maximum time slot     */
 #define TIMESLOT_RATE_MAX         5           /* # limited rates       */
                                               /* 30, 10, 5, 1, 0.5hz   */
+  
+/* Masks used to get information from modifier5 */
+#define MOD5_EDEF_MASK          (0x000FFFFF)  /* EDEF bits             */
+#define MOD5_BEAM1HZ_MASK       (0x00008000)  /* Beam & 1hz            */
+#define MOD5_BEAM10HZ_MASK      (0x00010000)  /* Beam & 10hz           */
+#define MOD5_BEAMFULL_MASK      (0x00020000)  /* Beam & full rate      */
+#define MOD5_30HZ_MASK          (0x00100000)  /* 30hz base rate        */
+#define MOD5_10HZ_MASK          (0x00200000)  /* 10hz base rate        */
+#define MOD5_5HZ_MASK           (0x00400000)  /* 5hz  base rate        */
+#define MOD5_1HZ_MASK           (0x00800000)  /* 1hz  base rate        */
+#define MOD5_HALFHZ_MASK        (0x01000000)  /* .5hz base rate        */
 
+
+/* Event codes - see mrfCommon.h for reserved internal event codes */
+/*#define EVENT_FIDUCIAL        1  */         /* Fiducial event code (see evrMessage.h) */
 #define EVENT_EXTERNAL_TRIG     100           /* External trigger event code */
 #define EVENT_EDEFINIT_MIN      101           /* Minimum event code for EDEF Init */
 #define EVENT_EDEFINIT_MAX      120           /* Maximum event code for EDEF Init */
