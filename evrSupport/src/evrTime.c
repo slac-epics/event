@@ -303,7 +303,8 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   N  Number of times M has rolled over
   O  Number of same pulses
   P  Number of skipped pulses
-  Q to S - Spares
+  Q  Fiducial Rate
+  S  Spare
   T  Number of fiducial interrupts
   U  Number of times T has rolled over
   V  Minimum Fiducial Delta Start Time (us)
@@ -319,6 +320,7 @@ static long evrTimeDiag (sSubRecord *psub)
   int     idx;
   double  dummy;
   double  *output_p = &psub->a;
+  static double prevISRupdate = 0;
   
   psub->val = psub->q;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */
@@ -328,13 +330,20 @@ static long evrTimeDiag (sSubRecord *psub)
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
                    &psub->t,&psub->u,&dummy,&dummy,&dummy,&dummy, 
                    &psub->v,&psub->w,&psub->x,&psub->z);
+  /* Calculate ISR update rate. */
+  psub->q = psub->t;
+  if (psub->t < prevISRupdate) psub->q += EVR_MAX_INT;
+  psub->q = (psub->q - prevISRupdate)/MODULO720_SECS;
   if (psub->r > 0.5) {
     psub->r           = 0.0;
+    prevISRupdate     = 0;
     msgCount          = 0;
     msgRolloverCount  = 0;
     samePulseCount    = 0;
     skipPulseCount    = 0;
     evrMessageCountReset(EVR_MESSAGE_FIDUCIAL);
+  } else {
+    prevISRupdate     = psub->t;
   }
 
   /* read evr timestamps in the pipeline*/
@@ -538,10 +547,10 @@ static int evrTimeProc (subRecord *psub)
     for (n=0;n<evrTimeNext3;n++) {
       evrTime_as[n] = evrTime_as[n+1];
     }
-    /* determine if next is the same as last pulse */
+    /* determine if the next 3 pulses are all the same. */
     /* Same pulses means the EVG is not sending timestamps and this forces   
        record timestamps to revert to system time */
-    if (psub->d==psub->c) {
+    if ((psub->a==psub->b) && (psub->a==psub->c)) {
       evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
     }   
     if (updateFlag) {
