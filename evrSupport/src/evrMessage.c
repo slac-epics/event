@@ -267,8 +267,15 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
   if (evrMessage_as[messageIdx].locked) {
     evrMessage_as[messageIdx].lockErrorCount++;
   }
+  /* If the last message hasn't been read yet, only update the
+     overwrite counter if this message is different. */
   if (evrMessage_as[messageIdx].messageNotRead) {
-    evrMessage_as[messageIdx].overwriteCount++;
+    if ((messageIdx != EVR_MESSAGE_PATTERN) ||
+        (evrMessage_as[messageIdx].message_u.pattern_s.time.nsec !=
+         message_pu->pattern_s.time.nsec) ||
+        (evrMessage_as[messageIdx].message_u.pattern_s.time.secPastEpoch !=
+         message_pu->pattern_s.time.secPastEpoch))
+      evrMessage_as[messageIdx].overwriteCount++;
   }
   /* Update message in holding array */
   evrMessage_as[messageIdx].message_u      = *message_pu;
@@ -303,7 +310,6 @@ int evrMessageProcess(unsigned int messageIdx)
     dbScanLock(evrMessage_as[messageIdx].record_ps);
     dbProcess(evrMessage_as[messageIdx].record_ps);
     dbScanUnlock(evrMessage_as[messageIdx].record_ps);
-    evrMessageEnd(messageIdx);
   }
   return 0;
 }

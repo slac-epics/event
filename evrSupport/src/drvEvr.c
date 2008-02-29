@@ -43,7 +43,6 @@ epicsExportAddress(drvet, drvEvr);
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static volatile int     patternAvailable  = 0; /* pattern  available flag */
-static volatile int     fiducialAvailable = 0; /* fiducial available flag */
 
 /*=============================================================================
 
@@ -102,7 +101,6 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
   /* Skip this fiducial if the newest pattern hasn't yet been processed. */
   if (eventNum == EVENT_FIDUCIAL) {
     evrMessageStart(EVR_MESSAGE_FIDUCIAL);
-    fiducialAvailable = 1;
     epicsEventSignal(evrTaskEventSem);
   }
 }
@@ -121,27 +119,28 @@ static int evrTask()
   epicsEventWaitStatus status;
   for (;;)
   {
-    if (!fiducialAvailable)
-      status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
-    else
-      status = epicsEventWaitOK;
-    if (fiducialAvailable) {
+    status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
+    if (status == epicsEventWaitOK) {
       if (patternAvailable) {
-        evrMessageProcess(EVR_MESSAGE_PATTERN);
         patternAvailable = 0;
+        evrMessageProcess(EVR_MESSAGE_PATTERN);
+        evrMessageEnd(EVR_MESSAGE_PATTERN);
       }
-      fiducialAvailable = 0;
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
-    /* If timeout, process the data which will result in bad status since
-       there is nothing to do.  Then advance the pipeline so that the bad
-       status makes it from N-3 to N-2 then to N-2 and then to N. */
-    } else if (status == epicsEventWaitTimeout) {
-      evrMessageStart(EVR_MESSAGE_PATTERN);
+      evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
+    /* If timeout or other error, process the data which will result in bad
+       status since there is nothing to do.  Then advance the pipeline so
+       that the bad status makes it from N-3 to N-2 then to N-2 and
+       then to N. */
+    } else {
       evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-3 */
-      evrMessageStart(EVR_MESSAGE_FIDUCIAL);
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-2 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-1 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N   */
+      if (status != epicsEventWaitTimeout) {
+        errlogPrintf("evrTask: Exit due to bad status from epicsEventWaitWithTimeout\n");
+        return -1;
+      }
     }
   }
   return 0;
@@ -183,6 +182,7 @@ static int evrInitialise()
   } else {
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
     ErEnableDBuff            (pCard, 1);
+    ErDBuffIrq               (pCard, 1);
     ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
   }
 #endif
