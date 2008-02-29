@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 98
-y 26
+x 102
+y 49
 w 711
 h 631
 font "helvetica-medium-r-18.0"
@@ -24,45 +24,6 @@ showGrid
 snapToGrid
 gridSize 5
 endScreenProperties
-
-# (Textupdate)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 15
-y 245
-w 50
-h 20
-controlPv "EVR:$(LOCA):$(UNIT):CTRL.TAXI"
-fgColor index 14
-fgAlarm
-bgColor index 4
-fill
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 5
-y 230
-w 88
-h 14
-font "helvetica-bold-r-12.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Rx Error Count"
-}
-autoSize
-endObjectProperties
 
 # (Exit Button)
 object activeExitButtonClass
@@ -91,7 +52,7 @@ minor 1
 release 0
 x 5
 y 0
-w 361
+w 426
 h 27
 font "helvetica-bold-r-24.0"
 fgColor index 76
@@ -321,45 +282,6 @@ bgColor index 4
 fill
 font "helvetica-bold-r-14.0"
 fontAlign "center"
-endObjectProperties
-
-# (Textupdate)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 15
-y 290
-w 50
-h 20
-controlPv "EVR:$(LOCA):$(UNIT):CTRL.PLOK"
-fgColor index 14
-fgAlarm
-bgColor index 4
-fill
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 15
-y 275
-w 49
-h 14
-font "helvetica-bold-r-12.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Rx Avail"
-}
-autoSize
 endObjectProperties
 
 # (Static Text)
@@ -3845,5 +3767,44 @@ menuLabel {
 setPosition {
   0 "parentWindow"
 }
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 15
+y 245
+w 50
+h 20
+controlPv "EVR:$(LOCA):$(UNIT):LINK"
+fgColor index 14
+fgAlarm
+bgColor index 4
+fill
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 15
+y 230
+w 44
+h 14
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Rx Link"
+}
+autoSize
 endObjectProperties
 
