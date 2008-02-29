@@ -1720,14 +1720,14 @@ void ErIrqHandler (ErCardStruct *pCard)
         * into the card structure, call the device support listener function, and
         * re-enable the data stream receiver.
         */
-        else if (pCard->DevDBuffFunc != NULL) {
+        if (pCard->DevDBuffFunc != NULL) {
             pCard->DBuffSize = (DBuffCsr & EVR_DBUF_SIZEMASK);
 
             bufferSize = pCard->DBuffSize / 4;
             for (i=0;  i < bufferSize;  i++)
                 pCard->DataBuffer[i] = MRF_VME_REG32_READ(&pEr->DataBuffer[i]);
-
-            (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
+            if (!(DBuffCsr & EVR_DBUF_CHECKSUM))
+              (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
 
         }/*end if device support wants to know about Data Buffer Ready interrupts*/
         
