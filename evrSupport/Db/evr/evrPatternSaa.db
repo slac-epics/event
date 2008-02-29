@@ -17,22 +17,4 @@ record(fanout, "$(DEV):FANOUTSIM") {
   field(LNK1, "$(DEV):PATTERNSIM")
   field(LNK2, "$(DEV):PATTERNN-3")
   field(LNK3, "$(DEV):FIDUCIAL")
-  field(LNK4, "$(DEV):FIDUCIALCNT")
-}
-record(sub, "$(DEV):FIDUCIALCNT") {
-  field(DESC, "FIDUCIAL Event Counter")
-  field(SNAM, "evrPatternCount")
-  field(BRSV, "INVALID")
-}
-record(sub, "$(DEV):FIDUCIALRATE") {
-  field(DESC, "FIDUCIAL Event Rate")
-  field(SNAM, "evrPatternRate")
-  field(BRSV, "INVALID")
-  field(SCAN, "Event")
-  field(EVNT, "121")
-  field(INPA, "$(DEV):FIDUCIALCNT")
-  field(INPE, "1")
-  field(EGU,  "Hz")
-  field(PREC, "1")
-  field(HOPR, "360")
 }
