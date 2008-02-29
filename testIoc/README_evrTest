@@ -144,10 +144,10 @@ V - EVR Diagnostics Display:
 (3) Use the "Trigger Output" part of the display to set the transition 
     module trigger state, polarity, pulse width, and delay. 
 
-(4) The "Rx Avail" and "Rx Error Count" provide the status of the connection
-    with the EVG.  Note that the RX failure interrupt is turned off since it
+(4) The "Rx Link" box provides the status of the connection with the EVG.  
+    Note that the RX failure interrupt is turned off since it
     may produce a runaway IRQ on the CPU which will require a CPU reboot to
-    clear.  Changes to the software are required to poll this status (to-do).
+    clear.  The IOC polls the link status every 2 seconds instead.
 
 (5) Bring up the EVR trigger diagnostics display by pushing the "Triggers" 
     button on the EVR diagnostics display.  Use this display to enter the
