@@ -65,11 +65,11 @@ III - EVG Diagnostics Display:
     Check that the "FPGA Version" is correct and the board is enabled.
 
     Most of the fields on this display do not apply to EVG usage at SLAC.
-    The EVG reference manual (see section I) describes on the different 
+    The EVG reference manual (see section I) describes the different 
     concepts referred to on this display.  
 
 (2) Bring up the EVG event display by pushing the "Events" button on the 
-    EVR diagnostics display.  Use this display to enter event codes and 
+    EVG diagnostics display.  Use this display to enter event codes and 
     delays that are output by the EVG.  The delay is from the beginning 
     of the sequence that the EVG sends out when triggered.  The EVG 
     maintains two sequences and the sequence must be chosen per event code. 
