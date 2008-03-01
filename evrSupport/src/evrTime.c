@@ -328,7 +328,7 @@ static long evrTimeDiag (sSubRecord *psub)
   psub->o = samePulseCount;
   psub->p = skipPulseCount;
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
-                   &psub->t,&psub->u,&dummy,&dummy,&dummy,&dummy, 
+                   &psub->t,&psub->u,&dummy,&dummy,&dummy,&dummy,&dummy, 
                    &psub->v,&psub->w,&psub->x,&psub->z);
   /* Calculate ISR update rate. */
   psub->q = psub->t;
@@ -552,16 +552,18 @@ static int evrTimeProc (subRecord *psub)
        record timestamps to revert to system time */
     if ((psub->a==psub->b) && (psub->a==psub->c)) {
       evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
-    }   
-    if (updateFlag) {
+      eventCodeTime_as[0].status        = epicsTimeERROR;
+    } else if (updateFlag) {
       eventCodeTime_as[0] = evrTime_as[evrTimeCurrent];
     }
+    eventCodeTime_as[EVENT_FIDUCIAL] = eventCodeTime_as[0];
     epicsMutexUnlock(evrTimeRWMutex_ps);
   /* If we cannot lock - bad problem somewhere. */
   } else {
     errFlag = EVR_TIME_INVALID;
-    evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
-    eventCodeTime_as[0].status        = epicsTimeERROR;
+    evrTime_as[evrTimeCurrent].status       = epicsTimeERROR;
+    eventCodeTime_as[0].status              = epicsTimeERROR;
+    eventCodeTime_as[EVENT_FIDUCIAL].status = epicsTimeERROR;
   }
   psub->l   = updateFlag?0:1;
   psub->val = (double) errFlag;
