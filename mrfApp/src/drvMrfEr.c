@@ -1726,8 +1726,7 @@ void ErIrqHandler (ErCardStruct *pCard)
             bufferSize = pCard->DBuffSize / 4;
             for (i=0;  i < bufferSize;  i++)
                 pCard->DataBuffer[i] = MRF_VME_REG32_READ(&pEr->DataBuffer[i]);
-            if (!(DBuffCsr & EVR_DBUF_CHECKSUM))
-              (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
+            (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
 
         }/*end if device support wants to know about Data Buffer Ready interrupts*/
         
