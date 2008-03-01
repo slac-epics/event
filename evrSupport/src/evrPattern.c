@@ -322,9 +322,9 @@ static long evrPatternCount(subRecord *psub)
   Inputs:
        A - Error Flag from evrPatternProc
        B - Counter Reset Flag
-       C - Spare
      
   Outputs:
+       C - Number of unsynchronized patterns
        D - Number of waveforms processed by this subroutine
        E - Number of times D has rolled over
        F - Number of bad waveforms
@@ -335,7 +335,7 @@ static long evrPatternCount(subRecord *psub)
        J - Number of times ISR had a mutex lock error
        K - Number of timeouts
        L - Number of read retry errors
-       M - Number of unsynchronized patterns
+       M - Number of check sum errors
        N to U - Spares
        V - Minimum Pattern Delta Start Time (us)
        W - Maximum Pattern Delta Start Time (us)
@@ -355,10 +355,10 @@ static long evrPatternState(sSubRecord *psub)
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
   psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->f = patternErrCount;
-  psub->m = syncErrCount;
+  psub->c = syncErrCount;
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->j,&psub->k,&psub->l,
-                   &psub->v,&psub->w,&psub->x,&psub->z);
+                   &psub->m,&psub->v,&psub->w,&psub->x,&psub->z);
   if (psub->b > 0.5) {
     psub->b               = 0.0;
     msgCount              = 0;
