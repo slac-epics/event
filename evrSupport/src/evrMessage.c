@@ -10,6 +10,7 @@
            evrMessageReport    - Report Information about the Message
            evrMessageCounts    - Get   Message Diagnostic Counts
            evrMessageCountReset- Reset Message Diagnostic Counts
+           evrMessageCheckSumError - Increment Check Sum Error Counter
            evrMessageIndex     - Get Index of the Message Array
 
   Abs:  EVR and PNET message space creation and registration.
@@ -56,6 +57,7 @@ typedef struct
   unsigned long       lockErrorCount;
   unsigned long       noDataCount;
   unsigned long       retryErrorCount;
+  unsigned long       checkSumErrorCount;
   unsigned long       procTimeStart;
   unsigned long       procTimeEnd;
   unsigned long       procTimeDeltaStartMax;
@@ -267,15 +269,8 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
   if (evrMessage_as[messageIdx].locked) {
     evrMessage_as[messageIdx].lockErrorCount++;
   }
-  /* If the last message hasn't been read yet, only update the
-     overwrite counter if this message is different. */
   if (evrMessage_as[messageIdx].messageNotRead) {
-    if ((messageIdx != EVR_MESSAGE_PATTERN) ||
-        (evrMessage_as[messageIdx].message_u.pattern_s.time.nsec !=
-         message_pu->pattern_s.time.nsec) ||
-        (evrMessage_as[messageIdx].message_u.pattern_s.time.secPastEpoch !=
-         message_pu->pattern_s.time.secPastEpoch))
-      evrMessage_as[messageIdx].overwriteCount++;
+    evrMessage_as[messageIdx].overwriteCount++;
   }
   /* Update message in holding array */
   evrMessage_as[messageIdx].message_u      = *message_pu;
@@ -517,6 +512,8 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
          evrMessage_as[messageIdx].noDataCount);
   printf("Number of read retry errors: %ld\n",
          evrMessage_as[messageIdx].retryErrorCount);
+  printf("Number of check sum errors: %ld\n",
+         evrMessage_as[messageIdx].checkSumErrorCount);
   printf("Maximum proc time delta (us) = %lf\n",
          (double)evrMessage_as[messageIdx].procTimeDeltaMax/evrTicksPerUsec);
   printf("Max/Min proc start time deltas (us) = %lf/%lf\n",
@@ -572,6 +569,7 @@ int evrMessageCounts(unsigned int  messageIdx,
                      double       *lockErrorCount_p,
                      double       *noDataCount_p,
                      double       *retryErrorCount_p,
+                     double       *checkSumErrorCount_p,
                      double       *procTimeStartMin_p,
                      double       *procTimeStartMax_p,
                      double       *procTimeDeltaAvg_p,
@@ -587,6 +585,7 @@ int evrMessageCounts(unsigned int  messageIdx,
   *lockErrorCount_p      = (double)em_ps->lockErrorCount;
   *noDataCount_p         = (double)em_ps->noDataCount;
   *retryErrorCount_p     = (double)em_ps->retryErrorCount;
+  *checkSumErrorCount_p  = (double)em_ps->checkSumErrorCount;
   *procTimeStartMin_p    = (double)em_ps->procTimeDeltaStartMin/
                            evrTicksPerUsec;
   *procTimeStartMax_p    = (double)em_ps->procTimeDeltaStartMax/
@@ -630,10 +629,35 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].lockErrorCount        = 0;
   evrMessage_as[messageIdx].noDataCount           = 0;
   evrMessage_as[messageIdx].retryErrorCount       = 0;
+  evrMessage_as[messageIdx].checkSumErrorCount    = 0;
   evrMessage_as[messageIdx].procTimeDeltaMax      = 0;
   evrMessage_as[messageIdx].procTimeDeltaStartMax = 0;
   evrMessage_as[messageIdx].procTimeDeltaStartMin = MAX_DELTA_TIME;
   /* Save counter reset time for reporting purposes */
   epicsTimeGetCurrent(&evrMessage_as[messageIdx].resetTime_s);
+  return 0;
+}
+
+/*=============================================================================
+
+  Name: evrMessageCheckSumError
+
+  Abs:  Increment check sum error count
+
+  Args: Type     Name           Access     Description
+        -------  -------        ---------- ----------------------------
+  unsigned int    messageIdx     Read       Index into Message Array
+
+  Rem:  None.
+
+  Side: None.
+
+  Return: 0 = OK, -1 = Failed
+==============================================================================*/
+
+int evrMessageCheckSumError(unsigned int messageIdx)
+{  
+  if (messageIdx >= EVR_MESSAGE_MAX) return -1;
+  evrMessage_as[messageIdx].checkSumErrorCount++;
   return 0;
 }

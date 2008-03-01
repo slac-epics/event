@@ -115,11 +115,13 @@ int evrMessageCounts    (unsigned int  messageIdx,
                          double       *lockErrorCount_p,
                          double       *noDataCount_p,
                          double       *retryErrorCount_p,
+                         double       *checkSumErrorCount_p,
                          double       *procTimeStartMin_p,
                          double       *procTimeStartMax_p,
                          double       *procTimeDeltaAvg_p,
                          double       *procTimeDeltaMax_p);
 int evrMessageCountReset(unsigned int messageIdx);
+int evrMessageCheckSumError(unsigned int messageIdx);
   
 #ifdef __cplusplus
 }
