@@ -81,9 +81,13 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 {
   unsigned int messageType = ((evrMessageHeader_ts *)message)->type;
 
-  evrMessageStart(messageType);
-  evrMessageWrite(messageType, (evrMessage_tu *)message);
-  patternAvailable = 1;
+  if (pCard && ((ErCardStruct *)pCard)->DBuffError) {
+    evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
+  } else {
+    evrMessageStart(messageType);
+    evrMessageWrite(messageType, (evrMessage_tu *)message);
+    patternAvailable = 1;
+  }
 }
 
 /*=============================================================================
