@@ -4,7 +4,7 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
-event-R2-6-1: Mar 3, 2008
+event-R2-6-0: Mar 3, 2008
         * configure/RELEASE - revert back to 3.14.8.2.
         * mrfApp/src/devMrfEr.c,.dbd,Makefile - add device support for bi 
 	  that polls the link status.
