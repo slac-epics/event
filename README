@@ -176,8 +176,7 @@ if there are.
 (6) From the home LCLS EDM display (lclshome) on a production machine, select 
 "Event".  Under "EVR IOCs", select the button containing your IOC.  Select 
 each display next to your IOC name (all channels must be connected):
-  * EVR display - look for non-zero FPGA, and "YES" for Phase Lock and 0 for 
-    "Rx Fail".  
+  * EVR display - look for non-zero FPGA and "ON" for "Rx Link".
   * "Triggers..." display - check that all the event codes that you expect
     to use on your IOC are set.  Check that the proper channels are enabled
     for the proper event code(s).  If any records on your IOC use a non-zero
