@@ -38,7 +38,9 @@ record(sSub, "$(DEV):MODIFIER5") {
 }
 
 record(sSub, "$(DEV):FIDUCIALDIAG") {
+  field(DESC, "FIDUCIAL Diagnostics")
   field(EVNT, "121")
+  field(PINI, "YES")
   field(SCAN, "Event")
   field(SNAM, "evrTimeDiag")
   field(BRSV, "INVALID")
