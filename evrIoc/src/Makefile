@@ -20,6 +20,12 @@ evr_DBD += base.dbd
 evr_DBD += evrSupport.dbd
 evr_DBD += devMrfEr.dbd
 
+DBD += mps.dbd
+mps_DBD += base.dbd
+mps_DBD += evrSupport.dbd
+mps_DBD += devMrfEr.dbd
+mps_DBD += mpsEvrProc.dbd
+
 PROD_IOC = evrTest
 PROD_IOC_RTEMS = evr
 # <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
@@ -32,6 +38,14 @@ evrTest_LIBS += $(EPICS_BASE_IOC_LIBS)
 evr_LIBS += evrSupport sSubRecord generalTime
 evr_LIBS += devMrfEr mrfVme64x
 evr_LIBS += $(EPICS_BASE_IOC_LIBS)
+
+PROD_IOC_RTEMS = mps
+mps_SRCS += mps_registerRecordDeviceDriver.cpp
+mps_SRCS += mpsEvrProc.c
+
+mps_LIBS += evrSupport sSubRecord generalTime
+mps_LIBS += devMrfEr mrfVme64x
+mps_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
 
