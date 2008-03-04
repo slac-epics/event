@@ -24,6 +24,10 @@ event-R2-6-0: Mar 3, 2008
 	  pattern data only when fiducial event is received.  Add calls to
 	  evrMessageEnd.  Add data buffer enable and interrupt calls.
 	  Add check sum error processing.
+	* evrSupport/Db/evrEventAll.substitutions - remove fiducial event.
+	  FIDUCIALRATE moved to evrFiducial.db.
+	* evrSupport/Db/evrFiducial.db - add FIDUCIALRATE.  Process diags
+	  at init. 
         * testIoc/eventTestApp/edm/evrDiags.edl - change link status.
 
 event-R2-5-3-1: Feb 21, 2008
