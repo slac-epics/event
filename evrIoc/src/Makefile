@@ -39,7 +39,7 @@ evr_LIBS += evrSupport sSubRecord generalTime
 evr_LIBS += devMrfEr mrfVme64x
 evr_LIBS += $(EPICS_BASE_IOC_LIBS)
 
-PROD_IOC_RTEMS = mps
+PROD_IOC_RTEMS += mps
 mps_SRCS += mps_registerRecordDeviceDriver.cpp
 mps_SRCS += mpsEvrProc.c
 
