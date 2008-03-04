@@ -29,6 +29,9 @@ DB += evrPatternTO20.db
 DB += trigXL04.db
 DB += trigXL05.db
 DB += trigXL09.db
+# MPS Test
+DB += mpsEvr.db
+DB += mpsEvrPattern.db
 
 # BSA Test Stands
 DB += bsaXL01.db
