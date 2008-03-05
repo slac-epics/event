@@ -42,16 +42,19 @@ record(sSub, "$(DEV):FIDUCIALDIAG") {
   field(EVNT, "121")
   field(PINI, "YES")
   field(SCAN, "Event")
+  field(PRIO, "HIGH")
   field(SNAM, "evrTimeDiag")
   field(BRSV, "INVALID")
   field(INPQ, "$(DEV):FIDUCIAL")
   field(FLNK, "$(DEV):FIDUCIALRATE")
 }
 
-record(ai, "$(DEV):FIDUCIALRATE") {
+record(sub, "$(DEV):FIDUCIALRATE") {
   field(DESC, "FIDUCIAL Event Rate")
-  field(INP, "$(DEV):FIDUCIALDIAG.Q")
-  field(EGU, "Hz")
+  field(SNAM, "evrTimeRate")
+  field(BRSV, "INVALID")
+  field(INPE, "1")
+  field(EGU,  "Hz")
   field(PREC, "1")
   field(HIHI, "360.5")
   field(HHSV, "MAJOR")
