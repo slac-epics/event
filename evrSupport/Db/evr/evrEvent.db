@@ -17,12 +17,11 @@ record(sub, "$(DEV):$(NAME)CNT") {
 
 record(sub, "$(DEV):$(NAME)RATE") {
   field(DESC, "$(NAME) Event Rate")
-  field(SNAM, "evrPatternRate")
+  field(SNAM, "evrTimeRate")
   field(BRSV, "INVALID")
   field(SCAN, "Event")
   field(EVNT, "121")
   field(PRIO, "$(PRIO)")
-  field(INPA, "$(DEV):$(NAME)CNT")
   field(INPD, "$(DELY)")
   field(INPE, "$(ID)")
   field(EGU,  "Hz")
