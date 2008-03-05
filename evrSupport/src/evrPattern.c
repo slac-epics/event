@@ -4,7 +4,6 @@
            evrPatternProcInit  - Pattern Setup Initialization
            evrPatternProc      - 360Hz Pattern Setup
            evrPatternCount     - EVR Event Count Update
-           evrPatternRate      - EVR Event Rate Calculation
            evrPatternState     - Pattern Processing State and Diagnostics
 
   Abs: This file contains all subroutine support for evr Pattern processing
@@ -243,39 +242,6 @@ static long evrPatternProc(subRecord *psub)
 
 /*=============================================================================
 
-  Name: evrPatternRate
-
-  Abs:  Calculate rate that an event code is received by the EVR ISR.
-        It is assumed this subroutine processes at 0.5hz.
-
-  Args: Type                Name        Access     Description
-        ------------------- ----------- ---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
-
-  Rem:  Subroutine for IOC:LOCA:UNIT:NAMERATE
-
-  Inputs:
-       A - Counter that is updated every time the event is received
-     
-  Outputs:
-       L - Previous Counter Value
-       VAL = Rate in Hz
-  
-  Ret:  0 = OK
-
-==============================================================================*/
-static long evrPatternRate(subRecord *psub)
-{
-  psub->val = psub->a - psub->l;
-  /* Check for rollover */
-  if (psub->val < 0) psub->val += EVR_MAX_INT;
-  psub->val /= MODULO720_SECS;
-  psub->l = psub->a;
-  return 0;
-}
-
-/*=============================================================================
-
   Name: evrPatternCount
 
   Abs:  Increment a counter for an event code.  Also, update the event code
@@ -440,7 +406,6 @@ static long evrPatternSim(subRecord *psub)
 }
 epicsRegisterFunction(evrPatternProcInit);
 epicsRegisterFunction(evrPatternProc);
-epicsRegisterFunction(evrPatternRate);
 epicsRegisterFunction(evrPatternCount);
 epicsRegisterFunction(evrPatternState);
 epicsRegisterFunction(evrPatternSim);

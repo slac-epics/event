@@ -51,6 +51,7 @@ int evrTimeGet            (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode
 int evrTimePutIntoPipeline(epicsTimeStamp  *epicsTime_ps, int status);
 int evrTimePut            (unsigned int eventCode,        int status);
 int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID);
+int evrTimeCount          (unsigned int eventCode);
 
 #ifdef __cplusplus
 }

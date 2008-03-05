@@ -26,6 +26,7 @@
 #include <epicsEvent.h> 	/* for epicsEvent*        */
 #include <epicsThread.h> 	/* for epicsThreadCreate  */
 #include <evrMessage.h>		/* for evrMessageCreate   */
+#include <evrTime.h>		/* for evrTimeCount       */
 #include <drvMrfEr.h>		/* for ErRegisterDevDBuffHandler */
 #include <devMrfEr.h>		/* for ErRegisterEventHandler    */
 
@@ -107,6 +108,7 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
     evrMessageStart(EVR_MESSAGE_FIDUCIAL);
     epicsEventSignal(evrTaskEventSem);
   }
+  evrTimeCount((unsigned long)eventNum);
 }
 
 /*=============================================================================

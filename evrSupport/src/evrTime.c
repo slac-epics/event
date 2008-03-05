@@ -1,6 +1,17 @@
 /*=============================================================================
  
   Name: evrTime.c
+           evrTimeInit       - Fiducial Processing Initialization
+           evrTimeProc       - Fiducial Processing  (360Hz)
+           evrTimeDiag       - Fiducial Diagnostics (0.5Hz)
+           evrTimeRate       - Rate Calculation for an Event (0.5Hz)
+           evrTimeCount      - Update Rate Counter for an Event (ISR)
+           evrTimeGetFromPipeline - Get Timestamp from Pipeline
+           evrTimePutIntoPipeline - Put Timestamp at End of Pipeline (360Hz)
+           evrTimeGet        - Get Timestamp for an Event
+           evrTimePut        - Put Timestamp for an Event
+           evrTimePutPulseID - Encode Pulse ID into a Timestamp
+           evrTimeGetSystem  - Get System Time with Encoded Invalid Pulse ID
 
   Abs: This file contains all subroutine support for evr time processing
        records.
@@ -66,8 +77,9 @@ typedef struct {
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
 }evrTime_ts;
-static evrTime_ts evrTime_as[MAX_EVR_TIME];
-static evrTime_ts eventCodeTime_as[MRF_NUM_EVENTS];
+static evrTime_ts   evrTime_as[MAX_EVR_TIME];
+static evrTime_ts   eventCodeTime_as[MRF_NUM_EVENTS+1];
+static unsigned int eventCodeCount_a[MRF_NUM_EVENTS+1];
 
 /* EVR Time Timestamp RWMutex */
 static epicsMutexId evrTimeRWMutex_ps = 0;
@@ -82,6 +94,8 @@ static unsigned int skipPulseCount   = 0; /* # skipped pulses                   
   Name: evrTimeGetSystem
 
   Abs:  Returns system time and status of call
+  
+  Ret:  -1=Failed; 0 = Success
   
 ==============================================================================*/
 
@@ -119,7 +133,7 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 
   Side: 
 
-  Return:   -1=Failed; 0 = Success
+  Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
 
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
@@ -161,7 +175,7 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 
   Side: 
 
-  Return:   -1=Failed; 0 = Success
+  Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
 
 int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
@@ -196,7 +210,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 
   Side: 
 
-  Return:  -1=Failed; 0 = Success
+  Ret: -1=Failed; 0 = Success
 ==============================================================================*/
 
 int evrTimePut (unsigned int eventCode, int status)
@@ -235,7 +249,7 @@ int evrTimePut (unsigned int eventCode, int status)
 
   Side: 
 
-  Return:  -1=Failed; 0 = Success
+  Ret: -1=Failed; 0 = Success
 ==============================================================================*/
 
 int evrTimePutIntoPipeline(epicsTimeStamp  *epicsTime_ps, int status)
@@ -259,6 +273,8 @@ int evrTimePutIntoPipeline(epicsTimeStamp  *epicsTime_ps, int status)
 
   Abs:  Puts pulse ID in the lower 17 bits of the nsec field
         of the epics timestamp.
+        
+  Ret:  0 = Success
   
 ==============================================================================*/ 
 int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
@@ -303,7 +319,6 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   N  Number of times M has rolled over
   O  Number of same pulses
   P  Number of skipped pulses
-  Q  Fiducial Rate
   S  Spare
   T  Number of fiducial interrupts
   U  Number of times T has rolled over
@@ -313,6 +328,8 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   Y  Spare
   Z  Maximum Fiducial Processing Time  (us)
   VAL = Last Error flag from evrTimeProc
+  
+  Ret:  0 = Success
 ==============================================================================*/ 
 
 static long evrTimeDiag (sSubRecord *psub)
@@ -320,7 +337,6 @@ static long evrTimeDiag (sSubRecord *psub)
   int     idx;
   double  dummy;
   double  *output_p = &psub->a;
-  static double prevISRupdate = 0;
   
   psub->val = psub->q;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */
@@ -330,20 +346,13 @@ static long evrTimeDiag (sSubRecord *psub)
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
                    &psub->t,&psub->u,&dummy,&dummy,&dummy,&dummy,&dummy, 
                    &psub->v,&psub->w,&psub->x,&psub->z);
-  /* Calculate ISR update rate. */
-  psub->q = psub->t;
-  if (psub->t < prevISRupdate) psub->q += EVR_MAX_INT;
-  psub->q = (psub->q - prevISRupdate)/MODULO720_SECS;
   if (psub->r > 0.5) {
     psub->r           = 0.0;
-    prevISRupdate     = 0;
     msgCount          = 0;
     msgRolloverCount  = 0;
     samePulseCount    = 0;
     skipPulseCount    = 0;
     evrMessageCountReset(EVR_MESSAGE_FIDUCIAL);
-  } else {
-    prevISRupdate     = psub->t;
   }
 
   /* read evr timestamps in the pipeline*/
@@ -384,7 +393,9 @@ static long evrTimeDiag (sSubRecord *psub)
   Status is invalid when
   1) Bootup - System time is entered (as opposed to evr timestamp).
   2) the PULSEID of most recent index is is the same as the previous index.
-  3) pattern waveform record invalid - timestamp is last good time 
+  3) pattern waveform record invalid - timestamp is last good time
+  
+  Ret:  -1=Failed; 0 = Success
 ==============================================================================*/ 
 static int evrTimeInit(subRecord *psub)
 {
@@ -407,9 +418,10 @@ static int evrTimeInit(subRecord *psub)
 		evrTime_as[i].time   = sys_time;
 		evrTime_as[i].status = epicsTimeERROR;
 	  }
-	  for (i=0;i<MRF_NUM_EVENTS;i++) {
+	  for (i=0;i<=MRF_NUM_EVENTS;i++) {
 		eventCodeTime_as[i].time   = sys_time;
 		eventCodeTime_as[i].status = epicsTimeERROR;
+		eventCodeCount_a[i]        = 0;
 	  }
 	}
 	evrTimeRWMutex_ps = epicsMutexCreate();
@@ -502,7 +514,8 @@ pulse pipeline n  , status - 0=OK; 1=last good; 2=invalid
    Input/Outputs:
    L - Enable/Disable flag for current pattern and timestamp update
    VAL = Error Flag
-   Ret:  0
+
+  Ret:  -1=Failed; 0 = Success
    
 ==============================================================================*/
 static int evrTimeProc (subRecord *psub)
@@ -570,6 +583,70 @@ static int evrTimeProc (subRecord *psub)
   if (errFlag) return epicsTimeERROR;
   return epicsTimeOK;
 }
+
+/*=============================================================================
+
+  Name: evrTimeRate
+
+  Abs:  Calculate rate that an event code is received by the EVR ISR.
+        It is assumed this subroutine processes at 0.5hz.
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        subRecord *         psub        read       point to subroutine record
+
+  Rem:  Subroutine for IOC:LOCA:UNIT:NAMERATE
+
+  Inputs:
+       E - Event Code
+     
+  Outputs:
+       VAL = Rate in Hz
+  
+  Ret:  -1=Failed; 0 = Success
+
+==============================================================================*/
+static long evrTimeRate(subRecord *psub)
+{
+  int eventCode = psub->e + 0.5;
+
+  if ((eventCode > 0) && (eventCode <= MRF_NUM_EVENTS)) {
+    if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
+      psub->val = eventCodeCount_a[eventCode];
+      eventCodeCount_a[eventCode] = 0;
+      epicsMutexUnlock(evrTimeRWMutex_ps);
+      psub->val /= MODULO720_SECS;
+      return epicsTimeOK;
+    }
+  }
+  psub->val = 0.0;
+  return epicsTimeERROR;
+}
+
+/*=============================================================================
+
+  Name: evrTimeCount
+
+  Abs:  Increment a counter for an event code.
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        unsigned int        eventCode    read       Event Code
+
+  Rem:  This routine is called at interrupt level.
+  
+  Ret:  -1=Failed; 0 = Success
+
+==============================================================================*/
+int evrTimeCount(unsigned int eventCode)
+{
+  if ((eventCode >= 0) && (eventCode <= MRF_NUM_EVENTS)) {
+    eventCodeCount_a[eventCode]++;
+    return epicsTimeOK;
+  }
+  return epicsTimeERROR;
+}
 epicsRegisterFunction(evrTimeInit);
 epicsRegisterFunction(evrTimeProc);
+epicsRegisterFunction(evrTimeRate);
 epicsRegisterFunction(evrTimeDiag);
