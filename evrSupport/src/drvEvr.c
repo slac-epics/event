@@ -128,8 +128,8 @@ static int evrTask()
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     if (status == epicsEventWaitOK) {
       if (patternAvailable) {
-        patternAvailable = 0;
         evrMessageProcess(EVR_MESSAGE_PATTERN);
+        patternAvailable = 0;
         evrMessageEnd(EVR_MESSAGE_PATTERN);
       }
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
