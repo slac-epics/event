@@ -86,8 +86,10 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
     evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
   } else {
     evrMessageStart(messageType);
-    evrMessageWrite(messageType, (evrMessage_tu *)message);
-    patternAvailable = 1;
+    if (evrMessageWrite(messageType, (evrMessage_tu *)message))
+      evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
+    else
+      patternAvailable = 1;
   }
 }
 
@@ -123,15 +125,22 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 static int evrTask()
 {  
   epicsEventWaitStatus status;
+  int noPatternCount = 0;
+  
   for (;;)
   {
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     if (status == epicsEventWaitOK) {
-      if (patternAvailable) {
+      if (patternAvailable || (noPatternCount > MODULO720_COUNT) ) {
         evrMessageProcess(EVR_MESSAGE_PATTERN);
-        patternAvailable = 0;
-        evrMessageEnd(EVR_MESSAGE_PATTERN);
-      }
+        if (patternAvailable) {
+          patternAvailable = 0;
+          evrMessageEnd(EVR_MESSAGE_PATTERN);
+        }        
+        noPatternCount = 0;
+      } else {
+        noPatternCount++;
+      }    
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
     /* If timeout or other error, process the data which will result in bad
