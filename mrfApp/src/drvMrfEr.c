@@ -901,8 +901,26 @@ int ErConfigure (
        /*---------------------
         * Set the card's A24 address to the requested base
         */
-        vmeCSRWriteADER (Slot, 0, (CardAddress&0xffff00)|0xf4);
-        vmeCSRSetIrqLevel (Slot, IrqLevel);
+        status = vmeCSRWriteADER (Slot, 0, (CardAddress&0xffff00)|0xf4);
+        if (status) {
+            errlogPrintf (
+              "ErConfigure: Unable to set Event Receiver Card %d at A24 address to 0x%08X\n",
+              Card, (CardAddress&0xffff00)|0xf4);
+            devUnregisterAddress (atVMEA24, CardAddress, CardName);
+            epicsMutexDestroy (pCard->CardLock);
+            free (pCard);
+            return ERROR;
+        }
+        status = vmeCSRSetIrqLevel (Slot, IrqLevel);
+        if (status) {
+            errlogPrintf (
+              "ErConfigure: Unable to set Event Receiver Card %d Irq Level 0x%08X\n",
+              Card, IrqLevel);
+            devUnregisterAddress (atVMEA24, CardAddress, CardName);
+            epicsMutexDestroy (pCard->CardLock);
+            free (pCard);
+            return ERROR;
+        }
 
         DEBUGPRINT (DP_INFO, drvMrfErFlag, 
                    ("ErConfigure: Board is now accessible at local address 0x%08x.\n",
