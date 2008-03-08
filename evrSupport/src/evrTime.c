@@ -88,6 +88,7 @@ static unsigned int msgCount         = 0; /* # fiducials processed since boot/re
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
 static unsigned int samePulseCount   = 0; /* # same pulses                          */
 static unsigned int skipPulseCount   = 0; /* # skipped pulses                       */
+static unsigned int pulseErrCount    = 0; /* # invalid pulses                       */
 
 /*=============================================================================
 
@@ -319,7 +320,7 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   N  Number of times M has rolled over
   O  Number of same pulses
   P  Number of skipped pulses
-  S  Spare
+  S  Number of invalid pulses
   T  Number of fiducial interrupts
   U  Number of times T has rolled over
   V  Minimum Fiducial Delta Start Time (us)
@@ -343,6 +344,7 @@ static long evrTimeDiag (sSubRecord *psub)
   psub->n = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->o = samePulseCount;
   psub->p = skipPulseCount;
+  psub->s = pulseErrCount;
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
                    &psub->t,&psub->u,&dummy,&dummy,&dummy,&dummy,&dummy, 
                    &psub->v,&psub->w,&psub->x,&psub->z);
@@ -352,6 +354,7 @@ static long evrTimeDiag (sSubRecord *psub)
     msgRolloverCount  = 0;
     samePulseCount    = 0;
     skipPulseCount    = 0;
+    pulseErrCount     = 0;
     evrMessageCountReset(EVR_MESSAGE_FIDUCIAL);
   }
 
@@ -536,6 +539,7 @@ static int evrTimeProc (subRecord *psub)
   if ((psub->e == INVALID_ALARM) || (psub->f == INVALID_ALARM) ||
       (psub->g == INVALID_ALARM)) {
     errFlag = EVR_TIME_INVALID;
+    pulseErrCount++;
     
   /* Diff between first and second and second and third must be 1 */
   /* pulse ID may have rolled over */
