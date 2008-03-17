@@ -46,6 +46,7 @@ record(sSub, "$(DEV):FIDUCIALDIAG") {
   field(SNAM, "evrTimeDiag")
   field(BRSV, "INVALID")
   field(INPQ, "$(DEV):FIDUCIAL")
+  field(R,    "1")
   field(FLNK, "$(DEV):FIDUCIALRATE")
 }
 
