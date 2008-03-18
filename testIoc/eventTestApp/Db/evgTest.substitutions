@@ -48,3 +48,10 @@ pattern { DEV          , CARD , NAME    , ID , DELY   }
 	{ EVG:TEST:EV01,  0   , EVENT15 , 15 , 210000 }
 	{ EVG:TEST:EV01,  0   , EVENT16 , 16 , 250000 }
 }
+file evgData.db
+{
+#                               
+#	  Device
+pattern { DEV          }
+	{ EVG:TEST:EV01}
+}

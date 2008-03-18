@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 74
-y 36
+x 78
+y 59
 w 710
 h 510
 font "helvetica-medium-r-18.0"
@@ -112,7 +112,7 @@ minor 1
 release 0
 x 5
 y 0
-w 226
+w 262
 h 27
 font "helvetica-bold-r-24.0"
 fgColor index 76
@@ -2570,5 +2570,34 @@ value {
   "Sends"
 }
 autoSize
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 20
+y 60
+w 60
+h 25
+fgColor index 1
+bgColor index 44
+topShadowColor index 1
+botShadowColor index 14
+font "helvetica-bold-r-14.0"
+buttonLabel "Data"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evgDataDiags"
+}
+menuLabel {
+  0 "$(LOCA) EVG Data"
+}
+setPosition {
+  0 "parentWindow"
+}
 endObjectProperties
 

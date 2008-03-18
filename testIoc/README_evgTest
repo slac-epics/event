@@ -68,7 +68,16 @@ III - EVG Diagnostics Display:
     The EVG reference manual (see section I) describes the different 
     concepts referred to on this display.  
 
-(2) Bring up the EVG event display by pushing the "Events" button on the 
+(2) Bring up the EVG data display by pushing the "Data" button on the 
+    EVG diagnostics display.  Use this display to enter 12 integer values
+    to be sent out as data to the EVRs.  Note that entering any value will
+    immediately send out the data (this can be fixed if it's a hassle).
+    Once values are entered, the data can be sent by  pushing the "Send" 
+    button under the "One-Shot" heading.  To periodically send the data,
+    select the time interval using the menu button under the "Periodic Sends" 
+    heading.  To stop the sending, set the menu button back to "Passive".
+
+(3) Bring up the EVG event display by pushing the "Events" button on the 
     EVG diagnostics display.  Use this display to enter event codes and 
     delays that are output by the EVG.  The delay is from the beginning 
     of the sequence that the EVG sends out when triggered.  The EVG 
@@ -76,7 +85,7 @@ III - EVG Diagnostics Display:
     Note that the sequence RAM must be Off before any change on this display 
     is actually used by the sequence (when it is reactivated).
 
-(3) To manually trigger a sequence when no external trigger is available,
+(4) To manually trigger a sequence when no external trigger is available,
     set one of the sequence RAMs (sequence RAM 1 if all event codes are 
     set up in sequence RAM 1) into a non-OFF state and push the "Send" 
     button under the "One-Shot" heading in the Sequence RAM block of the EVG 
@@ -94,14 +103,14 @@ III - EVG Diagnostics Display:
         Both sequences will be sent out on every sequence RAM 1 "Send" 
         button push.
 
-(4) To periodically trigger a sequence when no external trigger is available,
+(5) To periodically trigger a sequence when no external trigger is available,
     set one of the sequence RAMs (sequence RAM 1 if all event codes are 
     set up in sequence RAM 1) into a non-OFF state (except "Single") and  
     select the time interval to send the sequence using the menu button under 
     the  "Periodic Sends" heading in the Sequence RAM block of the EVG 
     display.  To stop the sending, set the menu button back to "Passive".
 
-(5) To externally trigger a sequence using a pulse generator connected to 
+(6) To externally trigger a sequence using a pulse generator connected to 
     the AC line input, talk to John Dusatko about the cabling and other
     hardware requirements.  From the EVG diagnostic display, set 
     "AC Line Input" to "YES" for each sequence you want triggered.   Make 
