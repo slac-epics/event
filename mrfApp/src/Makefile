@@ -133,7 +133,7 @@ INC += drvMrfEg.h
 INC += drvMrfEr.h
 INC += devMrfEr.h
 
-#INC += debugPrint.h
+INC += debugPrint.h
 
 #=======================================================================#
 #                               RULES                                   #
