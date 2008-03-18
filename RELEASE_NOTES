@@ -4,8 +4,27 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-6-1: Mar 19, 2008
+        * configure/RELEASE - revert back to 3.14.8.2.
+        * mrfApp/src/drvMrfEr.c - add error messages for when VME EVR A24 
+	  space cannot be set up or the IRQ level cannot be set.  Process
+	  data before events in the ISR.
+	* mrfApp/src/os/RTEMS/vmeCSRMemProbeB.c - probe 2 or 4 bytes depending
+	  on input - required to set interrupt level on the VME EVR 230.
+        * mrfApp/src/Makefile - install debugPrint.h.
+	* evrSupport/Db/evr/evrFiducial.db,evrPatternProc.db - reset counters
+	  during iocInit record initial processing.
+	* evrSupport/Db/evr/evrWithDelays.db,evrWithExtDelays.db - add bi to
+	  poll the link status.
+	* evrSupport/src/drvEvr.c - add logic for when the fiducial is
+	  happening but data isn't.
+	* evrSupport/src/evrTime.c - count invalid pulses.
+	* evrSupport/src/evrMessage.c - double-buffer incoming pattern data.
+	  Remove retry logic.  Fiducial sets which pattern data to use.
+	* testIoc - various changes for testing EVG data sending.
+
 event-R2-6-0-1: Mar 4, 2008
-        * configure/RELEASE - revert back to 3.14.9..
+        * configure/RELEASE - revert back to 3.14.9.
 
 event-R2-6-0: Mar 3, 2008
         * configure/RELEASE - revert back to 3.14.8.2.
@@ -29,8 +48,10 @@ event-R2-6-0: Mar 3, 2008
 	  Add check sum error processing.
 	* evrSupport/Db/evrEventAll.substitutions - remove fiducial event.
 	  FIDUCIALRATE moved to evrFiducial.db.
+	* evrSupport/Db/evrEvent.db - use rate subroutine from evrTime.
 	* evrSupport/Db/evrFiducial.db - add FIDUCIALRATE.  Process diags
 	  at init. 
+	* evrSupport/Db/evr/evr.db - add bi to poll the link status.
         * testIoc/eventTestApp/edm/evrDiags.edl - change link status.
 
 event-R2-5-3-1: Feb 21, 2008
