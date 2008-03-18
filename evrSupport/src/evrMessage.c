@@ -46,17 +46,19 @@
 typedef struct 
 {
   epicsMutexId        messageRWMutex_ps;
-  evrMessage_tu       message_u;
+  evrMessage_tu       message_au[2];
   dbCommon           *record_ps;
   epicsTimeStamp      resetTime_s;
+  unsigned long       notRead_a[2];
+  unsigned long       newestIdx;
+  unsigned long       fiducialIdx;
   unsigned long       locked;
-  unsigned long       messageNotRead;
   unsigned long       updateCount;
   unsigned long       updateCountRollover;
   unsigned long       overwriteCount;
   unsigned long       lockErrorCount;
   unsigned long       noDataCount;
-  unsigned long       retryErrorCount;
+  unsigned long       readErrorCount;
   unsigned long       checkSumErrorCount;
   unsigned long       procTimeStart;
   unsigned long       procTimeEnd;
@@ -189,7 +191,10 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
     return -1;
   }
   evrMessage_as[messageIdx].record_ps          = 0;
-  evrMessage_as[messageIdx].messageNotRead     = 0;
+  evrMessage_as[messageIdx].notRead_a[0]       = 0;
+  evrMessage_as[messageIdx].notRead_a[1]       = 0;
+  evrMessage_as[messageIdx].newestIdx          = 0;
+  evrMessage_as[messageIdx].fiducialIdx        = 0;
   evrMessage_as[messageIdx].procTimeDeltaCount = 0;
   evrMessageCountReset(messageIdx);
   return messageIdx;
@@ -263,18 +268,29 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
 
 int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
 {
+  int idx;
+  
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 
   /* Attempt to lock the message */
   if (evrMessage_as[messageIdx].locked) {
     evrMessage_as[messageIdx].lockErrorCount++;
   }
-  if (evrMessage_as[messageIdx].messageNotRead) {
-    evrMessage_as[messageIdx].overwriteCount++;
+  /* Double buffer message if not PNET */
+  idx = 0;
+  if (evrMessage_as[messageIdx].notRead_a[idx]) {
+    if (messageIdx == EVR_MESSAGE_PNET) {
+      evrMessage_as[messageIdx].overwriteCount++;
+    } else {
+      idx = 1;
+      if (evrMessage_as[messageIdx].notRead_a[idx])
+        evrMessage_as[messageIdx].overwriteCount++;
+    }
   }
   /* Update message in holding array */
-  evrMessage_as[messageIdx].message_u      = *message_pu;
-  evrMessage_as[messageIdx].messageNotRead = 1;
+  evrMessage_as[messageIdx].message_au[idx] = *message_pu;
+  evrMessage_as[messageIdx].notRead_a[idx]  = 1;
+  evrMessage_as[messageIdx].newestIdx       = idx;
   return 0;
 }
 
@@ -331,7 +347,7 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
                                        evrMessage_tu *message_pu)
 {
   evrMessageReadStatus_te status;
-  int retry;
+  int idx;
   
   if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
 
@@ -340,22 +356,19 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
       (epicsMutexLock(evrMessage_as[messageIdx].messageRWMutex_ps) !=
        epicsMutexLockOK)) return evrMessageLockError;
   evrMessage_as[messageIdx].locked = 1;
-  if (!evrMessage_as[messageIdx].messageNotRead) {
+  idx = evrMessage_as[messageIdx].fiducialIdx;
+  if (!evrMessage_as[messageIdx].notRead_a[idx]) {
     status = evrMessageDataNotAvail;
     evrMessage_as[messageIdx].noDataCount++;
   } else {
     status = evrMessageOK;
-     /* Read the message only if its still available.  Retry in case
-        the ISR writes it again while we are reading */
-    for (retry = 0; (retry < 2) && evrMessage_as[messageIdx].messageNotRead;
-         retry++) {
-      evrMessage_as[messageIdx].messageNotRead = 0;
-      switch (messageIdx) {
+    evrMessage_as[messageIdx].notRead_a[idx] = 0;
+    switch (messageIdx) {
       case EVR_MESSAGE_PNET:
-        message_pu->pnet_s    = evrMessage_as[messageIdx].message_u.pnet_s;
+        message_pu->pnet_s    = evrMessage_as[messageIdx].message_au[idx].pnet_s;
         break;
       case EVR_MESSAGE_PATTERN:
-        message_pu->pattern_s = evrMessage_as[messageIdx].message_u.pattern_s;
+        message_pu->pattern_s = evrMessage_as[messageIdx].message_au[idx].pattern_s;
         break;
       case EVR_MESSAGE_FIDUCIAL:
         break;
@@ -363,11 +376,10 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
       default:
         status = evrMessageInpError;
         break;
-      }
     }
-    if (evrMessage_as[messageIdx].messageNotRead) {
+    if (evrMessage_as[messageIdx].notRead_a[idx]) {
       status = evrMessageDataOverwrite;
-      evrMessage_as[messageIdx].retryErrorCount++;
+      evrMessage_as[messageIdx].readErrorCount++;
     }
   }
   evrMessage_as[messageIdx].locked = 0;
@@ -395,6 +407,7 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
 int evrMessageStart(unsigned int messageIdx)
 {
   unsigned long prevTimeStart, deltaTimeStart;
+  int idx;
   
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 
@@ -418,6 +431,15 @@ int evrMessageStart(unsigned int messageIdx)
   } else {
     evrMessage_as[messageIdx].updateCountRollover++;
     evrMessage_as[messageIdx].updateCount = 0;
+  }
+  
+  /* Special processing for the fiducial - set PATTERN message to read
+     and throw away any old PATTERN messages */
+  if (messageIdx == EVR_MESSAGE_FIDUCIAL) {
+    idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx;
+    evrMessage_as[EVR_MESSAGE_PATTERN].fiducialIdx = idx;
+    idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx?0:1;
+    evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[idx] = 0;
   }
   return 0;
 }
@@ -510,8 +532,8 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
          evrMessage_as[messageIdx].lockErrorCount);
   printf("Number of no data available errors: %ld\n",
          evrMessage_as[messageIdx].noDataCount);
-  printf("Number of read retry errors: %ld\n",
-         evrMessage_as[messageIdx].retryErrorCount);
+  printf("Number of read errors: %ld\n",
+         evrMessage_as[messageIdx].readErrorCount);
   printf("Number of check sum errors: %ld\n",
          evrMessage_as[messageIdx].checkSumErrorCount);
   printf("Maximum proc time delta (us) = %lf\n",
@@ -549,7 +571,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
   double *       overwriteCount_p Write    # times ISR overwrote a message
   double *       lockErrorCount_p Write    # times ISR had a mutex lock problem
   double *       noDataCount_p    Write    # times no data was available for a read
-  double *       retryErrorCount_p  Write  # times ran out of retries for a read
+  double *       readErrorCount_p Write    # times data overwritten during read
   double *       procTimeStartMin_p Write  Min start time delta (us)
   double *       procTimeStartMax_p Write  Max start time delta (us)
   double *       procTimeDeltaAvg_p Write  Avg time for message processing (us)
@@ -568,7 +590,7 @@ int evrMessageCounts(unsigned int  messageIdx,
                      double       *overwriteCount_p,
                      double       *lockErrorCount_p,
                      double       *noDataCount_p,
-                     double       *retryErrorCount_p,
+                     double       *readErrorCount_p,
                      double       *checkSumErrorCount_p,
                      double       *procTimeStartMin_p,
                      double       *procTimeStartMax_p,
@@ -584,7 +606,7 @@ int evrMessageCounts(unsigned int  messageIdx,
   *overwriteCount_p      = (double)em_ps->overwriteCount;
   *lockErrorCount_p      = (double)em_ps->lockErrorCount;
   *noDataCount_p         = (double)em_ps->noDataCount;
-  *retryErrorCount_p     = (double)em_ps->retryErrorCount;
+  *readErrorCount_p      = (double)em_ps->readErrorCount;
   *checkSumErrorCount_p  = (double)em_ps->checkSumErrorCount;
   *procTimeStartMin_p    = (double)em_ps->procTimeDeltaStartMin/
                            evrTicksPerUsec;
@@ -628,7 +650,7 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].overwriteCount        = 0;
   evrMessage_as[messageIdx].lockErrorCount        = 0;
   evrMessage_as[messageIdx].noDataCount           = 0;
-  evrMessage_as[messageIdx].retryErrorCount       = 0;
+  evrMessage_as[messageIdx].readErrorCount        = 0;
   evrMessage_as[messageIdx].checkSumErrorCount    = 0;
   evrMessage_as[messageIdx].procTimeDeltaMax      = 0;
   evrMessage_as[messageIdx].procTimeDeltaStartMax = 0;
