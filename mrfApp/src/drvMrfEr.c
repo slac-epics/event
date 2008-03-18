@@ -1651,6 +1651,50 @@ void ErIrqHandler (ErCardStruct *pCard)
     }/*end if lost heartbeat error detected*/
 
    /*===============================================================================================
+    * Check for Data Buffer Ready interrupts
+    */
+    if (DBuffCsr & EVR_DBUF_READY) {
+        MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
+                            (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
+                            EVR_DBUF_DBDIS);
+
+       /*---------------------
+        * Report data stream checksum errors to the device support error listener
+        */
+        pCard->DBuffError = epicsFalse;
+        if (DBuffCsr & EVR_DBUF_CHECKSUM) {
+            pCard->DBuffError = epicsTrue;
+            if (pCard->DevErrorFunc != NULL) {
+                (*pCard->DevErrorFunc)(pCard, ERROR_DBUF_CHECKSUM);
+            }/*end if device support error function is defined*/
+        }/*end if checksum error in data buffer*/
+
+       /*---------------------
+        * If device support has a data buffer listener registered, copy the data buffer
+        * into the card structure, call the device support listener function, and
+        * re-enable the data stream receiver.
+        */
+        if (pCard->DevDBuffFunc != NULL) {
+            pCard->DBuffSize = (DBuffCsr & EVR_DBUF_SIZEMASK);
+
+            bufferSize = pCard->DBuffSize / 4;
+            for (i=0;  i < bufferSize;  i++)
+                pCard->DataBuffer[i] = MRF_VME_REG32_READ(&pEr->DataBuffer[i]);
+            (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
+
+        }/*end if device support wants to know about Data Buffer Ready interrupts*/
+        
+        /*---------------------
+         * Enable the data buffer only if device support cares about the data stream.
+         */
+        if (pCard->DevDBuffFunc != NULL) {
+          MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
+                              (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
+                              EVR_DBUF_DBENA);
+        }
+    }/*end if data buffer ready interrupt*/
+
+   /*===============================================================================================
     * Check for events in the Event FIFO
     */
     if (csr & EVR_CSR_IRQFL) {
@@ -1713,50 +1757,6 @@ void ErIrqHandler (ErCardStruct *pCard)
             (*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
 
     }/*end if delayed interrupt detected*/
-
-   /*===============================================================================================
-    * Check for Data Buffer Ready interrupts
-    */
-    if (DBuffCsr & EVR_DBUF_READY) {
-        MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
-                            (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
-                            EVR_DBUF_DBDIS);
-
-       /*---------------------
-        * Report data stream checksum errors to the device support error listener
-        */
-        pCard->DBuffError = epicsFalse;
-        if (DBuffCsr & EVR_DBUF_CHECKSUM) {
-            pCard->DBuffError = epicsTrue;
-            if (pCard->DevErrorFunc != NULL) {
-                (*pCard->DevErrorFunc)(pCard, ERROR_DBUF_CHECKSUM);
-            }/*end if device support error function is defined*/
-        }/*end if checksum error in data buffer*/
-
-       /*---------------------
-        * If device support has a data buffer listener registered, copy the data buffer
-        * into the card structure, call the device support listener function, and
-        * re-enable the data stream receiver.
-        */
-        if (pCard->DevDBuffFunc != NULL) {
-            pCard->DBuffSize = (DBuffCsr & EVR_DBUF_SIZEMASK);
-
-            bufferSize = pCard->DBuffSize / 4;
-            for (i=0;  i < bufferSize;  i++)
-                pCard->DataBuffer[i] = MRF_VME_REG32_READ(&pEr->DataBuffer[i]);
-            (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
-
-        }/*end if device support wants to know about Data Buffer Ready interrupts*/
-        
-        /*---------------------
-         * Enable the data buffer only if device support cares about the data stream.
-         */
-        if (pCard->DevDBuffFunc != NULL) {
-          MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
-                              (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
-                              EVR_DBUF_DBENA);
-        }
-    }/*end if data buffer ready interrupt*/
 
    /*===============================================================================================
     * Re-enable Board interrupts and return.
