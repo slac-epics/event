@@ -15,7 +15,6 @@ record(sSub, "$(DEV):PATTERNDIAG") {
   field(DESC, "Pattern Processing State")
   field(SNAM, "evrPatternState")
   field(INPA, "$(DEV):PATTERNN-3")
-  field(B,    "1")
   field(BRSV, "INVALID")
 }
 
