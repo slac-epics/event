@@ -40,13 +40,11 @@ record(sSub, "$(DEV):MODIFIER5") {
 record(sSub, "$(DEV):FIDUCIALDIAG") {
   field(DESC, "FIDUCIAL Diagnostics")
   field(EVNT, "121")
-  field(PINI, "YES")
   field(SCAN, "Event")
   field(PRIO, "HIGH")
   field(SNAM, "evrTimeDiag")
   field(BRSV, "INVALID")
   field(INPQ, "$(DEV):FIDUCIAL")
-  field(R,    "1")
   field(FLNK, "$(DEV):FIDUCIALRATE")
 }
 
@@ -67,10 +65,13 @@ record(sub, "$(DEV):FIDUCIALRATE") {
 
 record(seq, "$(DEV):RESETCNT") {
   field(DESC, "Counter Reset")
+  field(PINI, "YES")
+  field(DLY1, "1")
   field(DOL1, "1")
   field(LNK1, "$(DEV):FIDUCIALDIAG.R")
   field(DOL2, "1")
   field(LNK2, "$(DEV):PATTERNDIAG.B")
+  field(LNK3, "$(DEV):RESETCNT.DLY1")
 }
 
 record(mbbo, "$(DEV):PATTERNSTATE") {
