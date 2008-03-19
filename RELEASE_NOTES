@@ -12,8 +12,8 @@ event-R2-6-1: Mar 19, 2008
 	* mrfApp/src/os/RTEMS/vmeCSRMemProbeB.c - probe 2 or 4 bytes depending
 	  on input - required to set interrupt level on the VME EVR 230.
         * mrfApp/src/Makefile - install debugPrint.h.
-	* evrSupport/Db/evr/evrFiducial.db,evrPatternProc.db - reset counters
-	  during iocInit record initial processing.
+	* evrSupport/Db/evr/evrFiducial.db - reset counters during iocInit 
+          record initial processing.
 	* evrSupport/Db/evr/evrWithDelays.db,evrWithExtDelays.db - add bi to
 	  poll the link status.
 	* evrSupport/src/drvEvr.c - add logic for when the fiducial is
