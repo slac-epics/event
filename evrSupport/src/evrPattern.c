@@ -49,8 +49,9 @@
 
 static unsigned int msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
-static unsigned int patternErrCount  = 0; /* # bad PATTERN waveforms */
-static unsigned int syncErrCount     = 0; /* # out-of-sync patterns  */
+static unsigned int patternErrCount  = 0; /* # PATTERN errors in-a-row */
+static unsigned int invalidErrCount  = 0; /* # bad PATTERN waveforms   */
+static unsigned int syncErrCount     = 0; /* # out-of-sync patterns    */
 static epicsTimeStamp mod720time;
 
 /*=============================================================================
@@ -160,6 +161,7 @@ static long evrPatternProc(subRecord *psub)
   if (evrMessageStatus                                         ||
       (evrPatternWF_s.header_s.type    != EVR_MESSAGE_PATTERN) ||
       (evrPatternWF_s.header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
+    patternErrCount++;
     psub->c = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
     psub->l = PULSEID_INVALID;
     if (evrMessageStatus == evrMessageDataNotAvail) {
@@ -168,25 +170,23 @@ static long evrPatternProc(subRecord *psub)
       errFlag = PATTERN_INVALID_WF;
     } else if (evrMessageStatus) {
       errFlag = PATTERN_INVALID_WF;
-      patternErrCount++;
+      invalidErrCount++;
     } else {
       errFlag = PATTERN_INVALID_WF_HDR;
-      patternErrCount++;
+      invalidErrCount++;
     }
     psub->d = MPG_IPLING;
-    /* Set timestamp invalid if the last pulse had an error too -
-       allow one glitch before messing with time */
+    /* Set timestamp invalid if the last 3 pulses had an error too -
+       allow a few glitches before messing with time */
     epicsTimeGetCurrent(&currentTime);
-    if ((psub->val == PATTERN_TIMEOUT)    ||        
-        (psub->val == PATTERN_INVALID_WF) ||
-        (psub->val == PATTERN_INVALID_WF_HDR))
+    if (patternErrCount >= 3)
       evrTimePutIntoPipeline(&currentTime, epicsTimeERROR);
     if (epicsTimeDiffInSeconds(&currentTime, &mod720time) > MODULO720_SECS)
       modulo720Flag = 1;
     else
       modulo720Flag = 0;
   } else {
-      
+    patternErrCount = 0;
       /* set outputs to the modifiers */
       psub->d = (double)(evrPatternWF_s.pnet_s.modifier_a[0]);
       psub->e = (double)(evrPatternWF_s.pnet_s.modifier_a[1]);
@@ -320,7 +320,7 @@ static long evrPatternState(sSubRecord *psub)
   psub->val = psub->a;
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
   psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
-  psub->f = patternErrCount;
+  psub->f = invalidErrCount;
   psub->c = syncErrCount;
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->j,&psub->k,&psub->l,
@@ -329,7 +329,7 @@ static long evrPatternState(sSubRecord *psub)
     psub->b               = 0.0;
     msgCount              = 0;
     msgRolloverCount      = 0;
-    patternErrCount       = 0;
+    invalidErrCount       = 0;
     syncErrCount          = 0;
     evrMessageCountReset(EVR_MESSAGE_PATTERN);
   }
