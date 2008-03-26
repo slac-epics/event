@@ -32,11 +32,9 @@
 #include <stdio.h>              /* printf                      */
 #ifdef __rtems__
 #include <bsp.h>                /* BSP*                        */
-#include <basicIoOps.h>         /* for in_be32                 */
 #endif
 
 #include "dbAccess.h"           /* dbProcess,dbScan* protos    */
-#include "epicsMutex.h"         /* epicsMutexId and protos     */
 #include "epicsTime.h"          /* epicsTimeStamp              */
 #include "errlog.h"             /* errlogPrintf                */
 #include "evrMessage.h"         /* prototypes in this file     */
@@ -45,7 +43,6 @@
 
 typedef struct 
 {
-  epicsMutexId        messageRWMutex_ps;
   evrMessage_tu       message_au[2];
   dbCommon           *record_ps;
   epicsTimeStamp      resetTime_s;
@@ -71,7 +68,7 @@ typedef struct
 } evrMessage_ts;
 
 /* Maintain 4 messages - PNET, PATTERN, DATA (future), FIDUCIAL */
-static evrMessage_ts evrMessage_as[EVR_MESSAGE_MAX] = {{0}, {0}, {0}, {0}};
+static evrMessage_ts evrMessage_as[EVR_MESSAGE_MAX];
 
 /* Divisor to go from ticks to microseconds - initialize to no-op for linux */
 static double        evrTicksPerUsec = 1;
@@ -149,19 +146,17 @@ static int evrMessageIndex(char *messageName_a, int messageSizeIn)
 
   Name: evrMessageCreate
 
-  Abs:  Initialize Message Space and Init Scan I/O
+  Abs:  Initialize Message Space
 
   Args: Type     Name           Access     Description
         -------  -------        ---------- ----------------------------
         char *   messageName_a  Read       Message Name ("PNET", "PATTERN", "DATA")
         size_t   messageSize    Read       Size of a message
 
-  Rem:  The message index is found and then a check is done that
-        the message space hasn't already been initialized.  A mutex is then
-        created and scan I/O for this message is initialized.  The message
-        index is returned if all is OK.
+  Rem:  The message index is found and the message is initialized.
+        The message index is returned if all is OK.
 
-  Side: EPICS mutex is created and scan I/O is initialized.
+  Side: None.
 
   Return: -1 = Failed, 0,1,2 = message index
 ==============================================================================*/
@@ -178,18 +173,7 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
 #endif
   if (messageIdx < 0) return -1;
 
-  if (evrMessage_as[messageIdx].messageRWMutex_ps) {
-    errlogPrintf("evrMessageCreate - Message %s already intialized\n",
-                 messageName_a);
-    return -1;
-  }
-  /* set up the epics message mutex */
-  evrMessage_as[messageIdx].messageRWMutex_ps = epicsMutexCreate();
-  if (!evrMessage_as[messageIdx].messageRWMutex_ps) {
-    errlogPrintf("evrMessageCreate - Message %s mutex creation error\n",
-                 messageName_a);
-    return -1;
-  }
+  memset(&evrMessage_as[messageIdx], sizeof(evrMessage_ts), 0);
   evrMessage_as[messageIdx].record_ps          = 0;
   evrMessage_as[messageIdx].notRead_a[0]       = 0;
   evrMessage_as[messageIdx].notRead_a[1]       = 0;
@@ -228,11 +212,6 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
   int messageIdx = evrMessageIndex(messageName_a, messageSize);
   
   if (messageIdx < 0) return -1;
-  if (!evrMessage_as[messageIdx].messageRWMutex_ps) {
-    errlogPrintf("evrMessageRegister - Message %s not yet created\n",
-                 messageName_a);
-    return -1;
-  }
   
   if (evrMessage_as[messageIdx].record_ps) {
     errlogPrintf("evrMessageRegister - Message %s already has a reader\n",
@@ -255,13 +234,12 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
   unsigned int    messageIdx     Read       Index into Message Array
   evrMessage_tu * message_pu     Read       Message to Update
 
-  Rem:  Write a message.  Wake up listener via I/O scan mechanism.
+  Rem:  Write a message.
 
         THIS ROUTINE IS CALLED AT INTERRUPT LEVEL!!!!!!!!!!!!!!!!!!!
         It can also be called at task level by a simulator.
 
-  Side: Add callback request for I/O scan waveform record.
-        Mutex lock and unlock.
+  Side: None.
 
   Return: 0 = OK, -1 = Failed
 ==============================================================================*/
@@ -291,6 +269,7 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
   evrMessage_as[messageIdx].message_au[idx] = *message_pu;
   evrMessage_as[messageIdx].notRead_a[idx]  = 1;
   evrMessage_as[messageIdx].newestIdx       = idx;
+
   return 0;
 }
 
@@ -337,9 +316,9 @@ int evrMessageProcess(unsigned int messageIdx)
 
   Rem:  Read a message.  
 
-  Side: Mutex lock and unlock.
+  Side: None
 
-  Return: 0 = OK, 1 = Input Error, 2 = Lock Error, 3 = No Data Available,
+  Return: 0 = OK, 1 = Input Error, 3 = No Data Available,
           4 = Data Overwritten
 ==============================================================================*/
 
@@ -347,16 +326,15 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
                                        evrMessage_tu *message_pu)
 {
   evrMessageReadStatus_te status;
-  int idx;
+  volatile int idx;
   
   if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
 
-  /* Attempt to lock the message */
-  if ((!evrMessage_as[messageIdx].messageRWMutex_ps) ||
-      (epicsMutexLock(evrMessage_as[messageIdx].messageRWMutex_ps) !=
-       epicsMutexLockOK)) return evrMessageLockError;
   evrMessage_as[messageIdx].locked = 1;
   idx = evrMessage_as[messageIdx].fiducialIdx;
+  if (!evrMessage_as[messageIdx].notRead_a[idx]) {
+    idx = idx?0:1;
+  }
   if (!evrMessage_as[messageIdx].notRead_a[idx]) {
     status = evrMessageDataNotAvail;
     evrMessage_as[messageIdx].noDataCount++;
@@ -383,7 +361,6 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
     }
   }
   evrMessage_as[messageIdx].locked = 0;
-  epicsMutexUnlock(evrMessage_as[messageIdx].messageRWMutex_ps);
   return status;
 }
 
@@ -407,7 +384,7 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
 int evrMessageStart(unsigned int messageIdx)
 {
   unsigned long prevTimeStart, deltaTimeStart;
-  int idx;
+  int idx, oldidx;
   
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 
@@ -438,8 +415,11 @@ int evrMessageStart(unsigned int messageIdx)
   if (messageIdx == EVR_MESSAGE_FIDUCIAL) {
     idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx;
     evrMessage_as[EVR_MESSAGE_PATTERN].fiducialIdx = idx;
-    idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx?0:1;
-    evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[idx] = 0;
+    oldidx = idx?0:1;
+    if (evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[idx] &&
+        evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[oldidx]) {
+      evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[oldidx] = 0;
+    }
   }
   return 0;
 }
@@ -466,10 +446,6 @@ int evrMessageEnd(unsigned int messageIdx)
   evrMessage_ts *em_ps = evrMessage_as + messageIdx;
   
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
-  /* Attempt to lock the message */
-  if ((!em_ps->messageRWMutex_ps) ||
-      (epicsMutexLock(em_ps->messageRWMutex_ps) != epicsMutexLockOK) ||
-      (em_ps->procTimeEnd != 0)) return -1;
 
   /* Get end of processing time */
   MFTB(em_ps->procTimeEnd);
@@ -487,7 +463,6 @@ int evrMessageEnd(unsigned int messageIdx)
   if (em_ps->procTimeDeltaCount >= MODULO720_COUNT) {
     em_ps->procTimeDeltaCount = MODULO720_COUNT-1;
   }  
-  epicsMutexUnlock(em_ps->messageRWMutex_ps);
   return 0;
 }
 
@@ -528,7 +503,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
          evrMessage_as[messageIdx].updateCountRollover);
   printf("Number of overwritten messages: %ld\n",
          evrMessage_as[messageIdx].overwriteCount);
-  printf("Number of mutex lock errors: %ld\n",
+  printf("Number of lock errors: %ld\n",
          evrMessage_as[messageIdx].lockErrorCount);
   printf("Number of no data available errors: %ld\n",
          evrMessage_as[messageIdx].noDataCount);
@@ -569,7 +544,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
   double *       updateCount_p    Write    # times ISR wrote a message
   double * updateCountRollover_p  Write    # times above rolled over
   double *       overwriteCount_p Write    # times ISR overwrote a message
-  double *       lockErrorCount_p Write    # times ISR had a mutex lock problem
+  double *       lockErrorCount_p Write    # times ISR had a lock error
   double *       noDataCount_p    Write    # times no data was available for a read
   double *       readErrorCount_p Write    # times data overwritten during read
   double *       procTimeStartMin_p Write  Min start time delta (us)
