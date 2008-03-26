@@ -1,11 +1,13 @@
 /*=============================================================================
  
   Name: drvEvr.c
-        evrInitialise  - EVR data queue initialisation
-        evrReport      - driver report
-        evrSend        - Send to EVR data queue
+        evrInitialise  - EVR Data and Event Initialisation
+        evrReport      - Driver Report
+        evrSend        - Send EVR data to Message Queue
+        evrEvent       - Process Event Codes
+        evrTask        - High Priority task to process 360Hz Fiducial and Data
 
-  Abs:  Driver data support for EVR Receiver module or EVR simulator.   
+  Abs:  Driver data and event support for EVR Receiver module or EVR simulator.   
 
   Auth: 22-dec-2006, S. Allison:
   Rev:  
@@ -43,7 +45,6 @@ epicsExportAddress(drvet, drvEvr);
 
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
-static volatile int     patternAvailable  = 0; /* pattern  available flag */
 
 /*=============================================================================
 
@@ -88,8 +89,6 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
     evrMessageStart(messageType);
     if (evrMessageWrite(messageType, (evrMessage_tu *)message))
       evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
-    else
-      patternAvailable = 1;
   }
 }
 
@@ -105,7 +104,6 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 =============================================================================*/
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
-  /* Skip this fiducial if the newest pattern hasn't yet been processed. */
   if (eventNum == EVENT_FIDUCIAL) {
     evrMessageStart(EVR_MESSAGE_FIDUCIAL);
     epicsEventSignal(evrTaskEventSem);
@@ -114,33 +112,23 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 }
 
 /*=============================================================================
-                                                                                
+                                                         
   Name: evrTask
-                                                                                
-  Abs:  This task performs record processing and monitors the EVR module.
+
+  Abs:  This task performs record processing for the fiducial and data.
   
   Rem:  It's started by evrInitialise after the EVR module is configured. 
     
 =============================================================================*/
 static int evrTask()
 {  
-  epicsEventWaitStatus status;
-  int noPatternCount = 0;
-  
+  epicsEventWaitStatus status;  
   for (;;)
   {
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     if (status == epicsEventWaitOK) {
-      if (patternAvailable || (noPatternCount > MODULO720_COUNT) ) {
-        evrMessageProcess(EVR_MESSAGE_PATTERN);
-        if (patternAvailable) {
-          patternAvailable = 0;
-          evrMessageEnd(EVR_MESSAGE_PATTERN);
-        }        
-        noPatternCount = 0;
-      } else {
-        noPatternCount++;
-      }    
+      evrMessageProcess(EVR_MESSAGE_PATTERN);
+      evrMessageEnd(EVR_MESSAGE_PATTERN);
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
     /* If timeout or other error, process the data which will result in bad
@@ -150,7 +138,9 @@ static int evrTask()
     } else {
       evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-3 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-2 */
+      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-2 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-1 */
+      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-1 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N   */
       if (status != epicsEventWaitTimeout) {
         errlogPrintf("evrTask: Exit due to bad status from epicsEventWaitWithTimeout\n");
