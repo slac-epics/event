@@ -265,11 +265,13 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
         evrMessage_as[messageIdx].overwriteCount++;
     }
   }
-  /* Update message in holding array */
-  evrMessage_as[messageIdx].message_au[idx] = *message_pu;
-  evrMessage_as[messageIdx].notRead_a[idx]  = 1;
-  evrMessage_as[messageIdx].newestIdx       = idx;
-
+  if ((!evrMessage_as[messageIdx].notRead_a[idx]) || 
+      (idx != evrMessage_as[messageIdx].fiducialIdx)) {
+     /* Update message in holding array */
+     evrMessage_as[messageIdx].message_au[idx] = *message_pu;
+     evrMessage_as[messageIdx].notRead_a[idx]  = 1;
+     evrMessage_as[messageIdx].newestIdx       = idx;
+  }
   return 0;
 }
 
@@ -340,7 +342,6 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
     evrMessage_as[messageIdx].noDataCount++;
   } else {
     status = evrMessageOK;
-    evrMessage_as[messageIdx].notRead_a[idx] = 0;
     switch (messageIdx) {
       case EVR_MESSAGE_PNET:
         message_pu->pnet_s    = evrMessage_as[messageIdx].message_au[idx].pnet_s;
@@ -355,10 +356,13 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
         status = evrMessageInpError;
         break;
     }
+    evrMessage_as[messageIdx].notRead_a[idx] = 0;
+    /*
     if (evrMessage_as[messageIdx].notRead_a[idx]) {
       status = evrMessageDataOverwrite;
       evrMessage_as[messageIdx].readErrorCount++;
     }
+    */
   }
   evrMessage_as[messageIdx].locked = 0;
   return status;
