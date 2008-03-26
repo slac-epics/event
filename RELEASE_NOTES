@@ -4,7 +4,7 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
-event-R2-6-1: Mar 19, 2008
+event-R2-6-1: Mar 26, 2008
         * configure/RELEASE - revert back to 3.14.8.2.
         * mrfApp/src/drvMrfEr.c - add error messages for when VME EVR A24 
 	  space cannot be set up or the IRQ level cannot be set.  Process
@@ -16,9 +16,11 @@ event-R2-6-1: Mar 19, 2008
           record initial processing.
 	* evrSupport/Db/evr/evrWithDelays.db,evrWithExtDelays.db - add bi to
 	  poll the link status.
-	* evrSupport/src/drvEvr.c - add logic for when the fiducial is
-	  happening but data isn't.
+	* evrSupport/src/drvEvr.c - process data on fiducial even if data
+	  doesn't exist.
 	* evrSupport/src/evrTime.c - count invalid pulses.
+	* evrSupport/src/evrPattern.c - set timestamp bad only when 3 bad
+	  patterns in-a-row.
 	* evrSupport/src/evrMessage.c - double-buffer incoming pattern data.
 	  Remove retry logic.  Fiducial sets which pattern data to use.
 	* testIoc - various changes for testing EVG data sending.
