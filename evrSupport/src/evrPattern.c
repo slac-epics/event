@@ -130,7 +130,7 @@ static int evrPatternProcInit(subRecord *psub)
     VAL = Error flag:
              OK
              Invalid Waveform
-             Invalid Waveform Header
+             Timeout
              Invalid Timestamp
              MPG IPLing
    Output to evr timestamp table
@@ -166,13 +166,8 @@ static long evrPatternProc(subRecord *psub)
     psub->l = PULSEID_INVALID;
     if (evrMessageStatus == evrMessageDataNotAvail) {
       errFlag = PATTERN_TIMEOUT;
-    } else if (evrMessageStatus == evrMessageDataOverwrite) {
-      errFlag = PATTERN_INVALID_WF;
-    } else if (evrMessageStatus) {
-      errFlag = PATTERN_INVALID_WF;
-      invalidErrCount++;
     } else {
-      errFlag = PATTERN_INVALID_WF_HDR;
+      errFlag = PATTERN_INVALID_WF;
       invalidErrCount++;
     }
     psub->d = MPG_IPLING;
@@ -298,9 +293,9 @@ static long evrPatternCount(subRecord *psub)
        G - Number of times ISR wrote a message
        H - Number of times G has rolled over
        I - Number of times ISR overwrote a message
-       J - Number of times ISR had a mutex lock error
+       J - Spare
        K - Number of timeouts
-       L - Number of read retry errors
+       L - Number of message write errors
        M - Number of check sum errors
        N to U - Spares
        V - Minimum Pattern Delta Start Time (us)
@@ -323,7 +318,7 @@ static long evrPatternState(sSubRecord *psub)
   psub->f = invalidErrCount;
   psub->c = syncErrCount;
   evrMessageCounts(EVR_MESSAGE_PATTERN,
-                   &psub->g,&psub->h,&psub->i,&psub->j,&psub->k,&psub->l,
+                   &psub->g,&psub->h,&psub->i,&psub->k,&psub->l,
                    &psub->m,&psub->v,&psub->w,&psub->x,&psub->z);
   if (psub->b > 0.5) {
     psub->b               = 0.0;

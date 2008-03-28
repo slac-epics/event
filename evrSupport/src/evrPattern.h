@@ -79,7 +79,7 @@ extern "C" {
 /* VAL values set by pattern subroutines */
 #define PATTERN_OK                0
 #define PATTERN_INVALID_WF        1
-#define PATTERN_INVALID_WF_HDR    2
+#define PATTERN_SPARE             2
 #define PATTERN_INVALID_TIMESTAMP 3
 #define PATTERN_MPG_IPLING        4
 #define PATTERN_SEQ_CHECK1_ERR    5
