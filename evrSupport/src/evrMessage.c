@@ -43,19 +43,18 @@
 
 typedef struct 
 {
-  evrMessage_tu       message_au[2];
-  dbCommon           *record_ps;
-  epicsTimeStamp      resetTime_s;
-  unsigned long       notRead_a[2];
-  unsigned long       newestIdx;
-  unsigned long       fiducialIdx;
-  unsigned long       locked;
-  unsigned long       updateCount;
+  evrMessage_tu       message_au[2]; /* Message, double-buffered          */
+  dbCommon           *record_ps;     /* Record that processes the message */
+  epicsTimeStamp      resetTime_s;   /* Time when counters reset          */
+  unsigned long       notRead_a[2];  /* Message not-yet read flag         */
+  long                readingIdx; /* Message currently being read, -1 = none */ 
+  unsigned long       newestIdx;     /* Index in double buffer of newest msg */
+  unsigned long       fiducialIdx;   /* Index at the time of the fiducial */
+  unsigned long       updateCount;   
   unsigned long       updateCountRollover;
   unsigned long       overwriteCount;
-  unsigned long       lockErrorCount;
+  unsigned long       writeErrorCount;
   unsigned long       noDataCount;
-  unsigned long       readErrorCount;
   unsigned long       checkSumErrorCount;
   unsigned long       procTimeStart;
   unsigned long       procTimeEnd;
@@ -177,6 +176,7 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
   evrMessage_as[messageIdx].record_ps          = 0;
   evrMessage_as[messageIdx].notRead_a[0]       = 0;
   evrMessage_as[messageIdx].notRead_a[1]       = 0;
+  evrMessage_as[messageIdx].readingIdx         = -1;
   evrMessage_as[messageIdx].newestIdx          = 0;
   evrMessage_as[messageIdx].fiducialIdx        = 0;
   evrMessage_as[messageIdx].procTimeDeltaCount = 0;
@@ -247,30 +247,35 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
 int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
 {
   int idx;
-  
+
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 
-  /* Attempt to lock the message */
-  if (evrMessage_as[messageIdx].locked) {
-    evrMessage_as[messageIdx].lockErrorCount++;
-  }
-  /* Double buffer message if not PNET */
+  /* Double buffer message if not PNET - first find a free message */
   idx = 0;
-  if (evrMessage_as[messageIdx].notRead_a[idx]) {
-    if (messageIdx == EVR_MESSAGE_PNET) {
+  if (evrMessage_as[messageIdx].notRead_a[idx] &&
+      (messageIdx != EVR_MESSAGE_PNET)) {
+    idx = 1;
+    if (evrMessage_as[messageIdx].notRead_a[idx]) {
+      /* No message is free.  If a message is being read, overwrite the
+         other one.  Otherwise, overwrite the message after the fiducial. */
+      if (evrMessage_as[messageIdx].readingIdx >= 0)
+        idx = evrMessage_as[messageIdx].readingIdx?0:1;
+      else
+        idx = evrMessage_as[messageIdx].fiducialIdx?0:1;
+    } /* end both messages not free */
+  }   /* end message 0 is not free  */
+  
+  /* Update a message only if it's not currently being read. */
+  if (idx != evrMessage_as[messageIdx].readingIdx) {
+    /* Update message in holding array */
+    evrMessage_as[messageIdx].message_au[idx] = *message_pu;
+    evrMessage_as[messageIdx].newestIdx       = idx;
+    if (evrMessage_as[messageIdx].notRead_a[idx])
       evrMessage_as[messageIdx].overwriteCount++;
-    } else {
-      idx = 1;
-      if (evrMessage_as[messageIdx].notRead_a[idx])
-        evrMessage_as[messageIdx].overwriteCount++;
-    }
-  }
-  if ((!evrMessage_as[messageIdx].notRead_a[idx]) || 
-      (idx != evrMessage_as[messageIdx].fiducialIdx)) {
-     /* Update message in holding array */
-     evrMessage_as[messageIdx].message_au[idx] = *message_pu;
-     evrMessage_as[messageIdx].notRead_a[idx]  = 1;
-     evrMessage_as[messageIdx].newestIdx       = idx;
+    else
+      evrMessage_as[messageIdx].notRead_a[idx] = 1;
+  } else {
+    evrMessage_as[messageIdx].writeErrorCount++;
   }
   return 0;
 }
@@ -320,8 +325,8 @@ int evrMessageProcess(unsigned int messageIdx)
 
   Side: None
 
-  Return: 0 = OK, 1 = Input Error, 3 = No Data Available,
-          4 = Data Overwritten
+  Return: 0 = OK, 1 = Input Error, 2 = No Data Available
+  
 ==============================================================================*/
 
 evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
@@ -332,16 +337,14 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
   
   if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
 
-  evrMessage_as[messageIdx].locked = 1;
+  /* Read the message marked by the fiducial. */
   idx = evrMessage_as[messageIdx].fiducialIdx;
-  if (!evrMessage_as[messageIdx].notRead_a[idx]) {
-    idx = idx?0:1;
-  }
   if (!evrMessage_as[messageIdx].notRead_a[idx]) {
     status = evrMessageDataNotAvail;
     evrMessage_as[messageIdx].noDataCount++;
   } else {
     status = evrMessageOK;
+    evrMessage_as[messageIdx].readingIdx = idx;
     switch (messageIdx) {
       case EVR_MESSAGE_PNET:
         message_pu->pnet_s    = evrMessage_as[messageIdx].message_au[idx].pnet_s;
@@ -356,15 +359,9 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
         status = evrMessageInpError;
         break;
     }
+    evrMessage_as[messageIdx].readingIdx = -1;
     evrMessage_as[messageIdx].notRead_a[idx] = 0;
-    /*
-    if (evrMessage_as[messageIdx].notRead_a[idx]) {
-      status = evrMessageDataOverwrite;
-      evrMessage_as[messageIdx].readErrorCount++;
-    }
-    */
   }
-  evrMessage_as[messageIdx].locked = 0;
   return status;
 }
 
@@ -388,8 +385,8 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
 int evrMessageStart(unsigned int messageIdx)
 {
   unsigned long prevTimeStart, deltaTimeStart;
-  int idx, oldidx;
-  
+  int idx, oldidx;  
+
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 
   /* Get time when processing starts */
@@ -420,8 +417,7 @@ int evrMessageStart(unsigned int messageIdx)
     idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx;
     evrMessage_as[EVR_MESSAGE_PATTERN].fiducialIdx = idx;
     oldidx = idx?0:1;
-    if (evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[idx] &&
-        evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[oldidx]) {
+    if (evrMessage_as[EVR_MESSAGE_PATTERN].readingIdx != oldidx) {
       evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[oldidx] = 0;
     }
   }
@@ -507,12 +503,10 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
          evrMessage_as[messageIdx].updateCountRollover);
   printf("Number of overwritten messages: %ld\n",
          evrMessage_as[messageIdx].overwriteCount);
-  printf("Number of lock errors: %ld\n",
-         evrMessage_as[messageIdx].lockErrorCount);
   printf("Number of no data available errors: %ld\n",
          evrMessage_as[messageIdx].noDataCount);
-  printf("Number of read errors: %ld\n",
-         evrMessage_as[messageIdx].readErrorCount);
+  printf("Number of write errors: %ld\n",
+         evrMessage_as[messageIdx].writeErrorCount);
   printf("Number of check sum errors: %ld\n",
          evrMessage_as[messageIdx].checkSumErrorCount);
   printf("Maximum proc time delta (us) = %lf\n",
@@ -548,9 +542,9 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
   double *       updateCount_p    Write    # times ISR wrote a message
   double * updateCountRollover_p  Write    # times above rolled over
   double *       overwriteCount_p Write    # times ISR overwrote a message
-  double *       lockErrorCount_p Write    # times ISR had a lock error
   double *       noDataCount_p    Write    # times no data was available for a read
-  double *       readErrorCount_p Write    # times data overwritten during read
+  double *       writeErrorCount_p Write   # times data not written during read
+  double *       checkSumErrorCount_p Write # times message check sum error
   double *       procTimeStartMin_p Write  Min start time delta (us)
   double *       procTimeStartMax_p Write  Max start time delta (us)
   double *       procTimeDeltaAvg_p Write  Avg time for message processing (us)
@@ -567,9 +561,8 @@ int evrMessageCounts(unsigned int  messageIdx,
                      double       *updateCount_p,
                      double       *updateCountRollover_p,
                      double       *overwriteCount_p,
-                     double       *lockErrorCount_p,
                      double       *noDataCount_p,
-                     double       *readErrorCount_p,
+                     double       *writeErrorCount_p,
                      double       *checkSumErrorCount_p,
                      double       *procTimeStartMin_p,
                      double       *procTimeStartMax_p,
@@ -583,9 +576,8 @@ int evrMessageCounts(unsigned int  messageIdx,
   *updateCount_p         = (double)em_ps->updateCount;
   *updateCountRollover_p = (double)em_ps->updateCountRollover;
   *overwriteCount_p      = (double)em_ps->overwriteCount;
-  *lockErrorCount_p      = (double)em_ps->lockErrorCount;
   *noDataCount_p         = (double)em_ps->noDataCount;
-  *readErrorCount_p      = (double)em_ps->readErrorCount;
+  *writeErrorCount_p     = (double)em_ps->writeErrorCount;
   *checkSumErrorCount_p  = (double)em_ps->checkSumErrorCount;
   *procTimeStartMin_p    = (double)em_ps->procTimeDeltaStartMin/
                            evrTicksPerUsec;
@@ -627,9 +619,8 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].updateCount           = 0;
   evrMessage_as[messageIdx].updateCountRollover   = 0;
   evrMessage_as[messageIdx].overwriteCount        = 0;
-  evrMessage_as[messageIdx].lockErrorCount        = 0;
   evrMessage_as[messageIdx].noDataCount           = 0;
-  evrMessage_as[messageIdx].readErrorCount        = 0;
+  evrMessage_as[messageIdx].writeErrorCount       = 0;
   evrMessage_as[messageIdx].checkSumErrorCount    = 0;
   evrMessage_as[messageIdx].procTimeDeltaMax      = 0;
   evrMessage_as[messageIdx].procTimeDeltaStartMax = 0;
@@ -660,5 +651,29 @@ int evrMessageCheckSumError(unsigned int messageIdx)
 {  
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
   evrMessage_as[messageIdx].checkSumErrorCount++;
+  return 0;
+}
+
+/*=============================================================================
+
+  Name: evrMessageNoDataError
+
+  Abs:  Increment missed fiducial error count
+
+  Args: Type     Name           Access     Description
+        -------  -------        ---------- ----------------------------
+  unsigned int    messageIdx     Read       Index into Message Array
+
+  Rem:  None.
+
+  Side: None.
+
+  Return: 0 = OK, -1 = Failed
+==============================================================================*/
+
+int evrMessageNoDataError(unsigned int messageIdx)
+{  
+  if (messageIdx >= EVR_MESSAGE_MAX) return -1;
+  evrMessage_as[messageIdx].noDataCount++;
   return 0;
 }
