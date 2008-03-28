@@ -326,7 +326,7 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   V  Minimum Fiducial Delta Start Time (us)
   W  Maximum Fiducial Delta Start Time (us)
   X  Average Fiducial Processing Time  (us)
-  Y  Spare
+  Y  Number of missed fiducials
   Z  Maximum Fiducial Processing Time  (us)
   VAL = Last Error flag from evrTimeProc
   
@@ -346,7 +346,7 @@ static long evrTimeDiag (sSubRecord *psub)
   psub->p = skipPulseCount;
   psub->s = pulseErrCount;
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
-                   &psub->t,&psub->u,&dummy,&dummy,&dummy,&dummy,&dummy, 
+                   &psub->t,&psub->u,&dummy,&psub->y,&dummy,&dummy, 
                    &psub->v,&psub->w,&psub->x,&psub->z);
   if (psub->r > 0.5) {
     psub->r           = 0.0;
