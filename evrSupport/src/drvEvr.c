@@ -45,6 +45,7 @@ epicsExportAddress(drvet, drvEvr);
 
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
+static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
 
 /*=============================================================================
 
@@ -83,7 +84,9 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 {
   unsigned int messageType = ((evrMessageHeader_ts *)message)->type;
 
-  if (pCard && ((ErCardStruct *)pCard)->DBuffError) {
+  /* Look for error from the driver or the wrong message size */
+  if ((pCard && ((ErCardStruct *)pCard)->DBuffError) ||
+      (messageSize != sizeof(evrMessagePattern_ts))) {
     evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
   } else {
     evrMessageStart(messageType);
@@ -105,8 +108,13 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
   if (eventNum == EVENT_FIDUCIAL) {
-    evrMessageStart(EVR_MESSAGE_FIDUCIAL);
-    epicsEventSignal(evrTaskEventSem);
+    if (readyForFiducial) {
+      readyForFiducial = 0;
+      evrMessageStart(EVR_MESSAGE_FIDUCIAL);
+      epicsEventSignal(evrTaskEventSem);
+    } else {
+      evrMessageNoDataError(EVR_MESSAGE_FIDUCIAL);
+    }
   }
   evrTimeCount((unsigned long)eventNum);
 }
@@ -122,9 +130,11 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 =============================================================================*/
 static int evrTask()
 {  
-  epicsEventWaitStatus status;  
+  epicsEventWaitStatus status;
+
   for (;;)
   {
+    readyForFiducial = 1;
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     if (status == epicsEventWaitOK) {
       evrMessageProcess(EVR_MESSAGE_PATTERN);
@@ -136,11 +146,10 @@ static int evrTask()
        that the bad status makes it from N-3 to N-2 then to N-2 and
        then to N. */
     } else {
+      readyForFiducial = 0;
       evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-3 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-2 */
-      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-2 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-1 */
-      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-1 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N   */
       if (status != epicsEventWaitTimeout) {
         errlogPrintf("evrTask: Exit due to bad status from epicsEventWaitWithTimeout\n");
