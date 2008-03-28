@@ -80,7 +80,7 @@ record(mbbo, "$(DEV):PATTERNSTATE") {
   field(ZRST, "OK")
   field(ONST, "INVALID_DATA")
   field(ONSV, "INVALID")
-  field(TWST, "INVALID_HEADER")
+  field(TWST, "SPARE")
   field(TWSV, "INVALID")
   field(THST, "INVALID_TIME")
   field(THSV, "INVALID")
