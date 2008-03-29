@@ -343,6 +343,7 @@ EgCardStruct *EgGetCardStruct (int Card)
 int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
   int rc;
   epicsUInt16          Junk;          /* Dummy variable for card read probe function            */
+  epicsUInt32          DeviceId;      /* Board ID                                               */
   volatile MrfEVGRegs *pEvg = NULL;
   EgCardStruct *pCard;
   int                  Slot,i;
@@ -397,7 +398,7 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
 	i    = -1;
 	do {
 		i++;
-		if ( 0 == (Slot = mrfFindNextEVG(Slot)) ) {
+		if ( 0 == (Slot = mrfFindNextEVG(Slot, &DeviceId)) ) {
 			errlogPrintf("ErConfigure: VME64x scan found no EVG instance %u\n",i);
 			epicsMutexDestroy (pCard->EgLock);
 			free (pCard);

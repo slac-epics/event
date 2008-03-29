@@ -340,7 +340,7 @@ Descriptor */
 #ifndef PCI_DEVICE_ID_MRF_EVR200
 #define PCI_DEVICE_ID_MRF_EVR200 (0x10c8) /* as per email Jukka Pietarinen to TSS, 2/7/7 */
 #endif
-
+#define VME_ADDRESS_MODIFIER   0x3D       /* Use default (A24 Supervisor Data)      */
 /*---------------------
  * Status Fields
  */
@@ -779,11 +779,14 @@ int ErConfigure (
    /***********************************************************************************************/
 
     epicsUInt16            Junk;            /* Dummy variable for card read probe function        */
+    epicsUInt32            DeviceId;        /* Board ID                                           */
+    epicsUInt32            ader;            /* address decoder compare register value             */
     ErCardStruct          *pCard;           /* Pointer to card structure                          */
     volatile MrfErRegs    *pEr = NULL;      /* Local address for accessing card's register space  */
     epicsStatus            status;          /* Status return variable                             */
 	int                    Slot;            /* VME slot number                                    */
 	int                    i;               /* Scratch variable                                   */
+	int                    aderFuncNo;      /* Function for address decoder compare register      */
 
     #ifdef PCI
     /* PMC-EVR only */
@@ -797,7 +800,6 @@ int ErConfigure (
     char* pLC;*/
     unsigned char pciilr; 
     epicsUInt32 VendorId = PCI_VENDOR_ID_MRF;
-    epicsUInt32 DeviceId = PCI_DEVICE_ID_MRF_EVR200;
     #endif
 
    /***********************************************************************************************/
@@ -871,7 +873,7 @@ int ErConfigure (
 		i    = -1;
 		do {
 			i++;
-			if ( 0 == (Slot = mrfFindNextEVR(Slot)) ) {
+			if ( 0 == (Slot = mrfFindNextEVR(Slot,&DeviceId)) ) {
 				errlogPrintf("ErConfigure: VME64x scan found no EVR instance %u\n",i);
             	epicsMutexDestroy (pCard->CardLock);
 	            free (pCard);
@@ -901,11 +903,14 @@ int ErConfigure (
        /*---------------------
         * Set the card's A24 address to the requested base
         */
-        status = vmeCSRWriteADER (Slot, 0, (CardAddress&0xffff00)|0xf4);
+        if (DeviceId == MRF_EVR200RF_BID) aderFuncNo = 0;
+        else                              aderFuncNo = 1;
+        ader = (CardAddress&0xffffff00)|((VME_ADDRESS_MODIFIER & 0xff) << 2);
+        status = vmeCSRWriteADER (Slot, aderFuncNo, ader);
         if (status) {
             errlogPrintf (
               "ErConfigure: Unable to set Event Receiver Card %d at A24 address to 0x%08X\n",
-              Card, (CardAddress&0xffff00)|0xf4);
+              Card, ader);
             devUnregisterAddress (atVMEA24, CardAddress, CardName);
             epicsMutexDestroy (pCard->CardLock);
             free (pCard);
@@ -993,6 +998,7 @@ int ErConfigure (
 		
 		  plx  = 0;
 		  unit = 0;
+                  DeviceId = PCI_DEVICE_ID_MRF_EVR200;
 		  do {
 			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, plx, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
 			/* no more plx chips */

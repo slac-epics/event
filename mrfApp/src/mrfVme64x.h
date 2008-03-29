@@ -167,8 +167,8 @@ typedef struct mrfUserCSRStruct
 /*  Function Prototypes for CR/CSR Utility Routines                                               */
 /**************************************************************************************************/
 
-int          mrfFindNextEVG (int lastSlot);
-int          mrfFindNextEVR (int lastSlot);
+int          mrfFindNextEVG (int lastSlot, epicsUInt32 *pboard_id);
+int          mrfFindNextEVR (int lastSlot, epicsUInt32 *pboard_id);
 
 epicsStatus  vmeCSRMemProbe (epicsUInt32, int, int, void *);
 void         vmeCRShow (int slot);
