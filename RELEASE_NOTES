@@ -15,16 +15,19 @@ event-R2-6-2: Apr 01, 2008
 	  buffer interrupts.
 	* evrSupport/Db/evr/evrFiducial.db - Change state 2 in PATTERNSTATE to 
 	  indicate that it's a spare.
-	* evrSupport/Db/evr/evrWithDelays.db,evrWithExtDelays.db - add bi to
-	  poll the link status.
-	* evrSupport/src/drvEvr.c - process data on fiducial even if data
-	  doesn't exist.
-	* evrSupport/src/evrTime.c - count invalid pulses.
-	* evrSupport/src/evrPattern.c - set timestamp bad only when 3 bad
-	  patterns in-a-row.
-	* evrSupport/src/evrMessage.c - double-buffer incoming pattern data.
-	  Remove retry logic.  Fiducial sets which pattern data to use.
-	* testIoc - various changes for testing EVG data sending.
+	* evrSupport/src/drvEvr.c - check for invalid message size in data
+	  interrupt.  Don't set evrTask event in the fiducial interrupt until 
+	  task is ready.  Set timeout flag in evrTask timeout logic.
+	* evrSupport/src/evrMessage.c,.h - don't write a buffer if it's being
+	  read (throw it away).  Timeout logic added to read routine.  Remove
+	  unnecessary mutex locking (everything done in same task). Changes
+	  to diagnostic counters.  Add routines to set timeout flag and
+	  update missing fiducial counter.
+	* evrSupport/src/evrTime.c - set all timestamps in pipeline to bad
+	  when 3 same pulses.  Changes to diagnostic counters.
+	* evrSupport/src/evrPattern.c,.h - add timeout error processing.  
+	  Changes to diagnostic counters.  Don't set timestamp to bad until
+	  3 bad pulses in a row unless there is a timeout error. 
 
 event-R2-6-1: Mar 26, 2008
         * configure/RELEASE - revert back to 3.14.8.2.
