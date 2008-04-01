@@ -28,6 +28,9 @@ event-R2-6-2: Apr 01, 2008
 	* evrSupport/src/evrPattern.c,.h - add timeout error processing.  
 	  Changes to diagnostic counters.  Don't set timestamp to bad until
 	  3 bad pulses in a row unless there is a timeout error. 
+	* evrSupport/src/bsa.c - use INPD instead of SDIS for timestamp check.
+	* evrSupport/Db/bsa/bsaEdefAvg.db, bsaEdefFanouts.db - add GO bi
+	  record upstream of device EDEF records and move disabling to GO.
 
 event-R2-6-1: Mar 26, 2008
         * configure/RELEASE - revert back to 3.14.8.2.
