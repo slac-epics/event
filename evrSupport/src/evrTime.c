@@ -561,14 +561,12 @@ static int evrTimeProc (subRecord *psub)
   else                                              updateFlag = 0;
   /* advance the evr timestamps in the pipeline */
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-    for (n=0;n<evrTimeNext3;n++) {
-      evrTime_as[n] = evrTime_as[n+1];
-    }
+    for (n=0;n<evrTimeNext3;n++) evrTime_as[n] = evrTime_as[n+1];
     /* determine if the next 3 pulses are all the same. */
     /* Same pulses means the EVG is not sending timestamps and this forces   
        record timestamps to revert to system time */
     if ((psub->a==psub->b) && (psub->a==psub->c)) {
-      evrTime_as[evrTimeCurrent].status = epicsTimeERROR;
+      for (n=0;n<=evrTimeNext3;n++) evrTime_as[n].status = epicsTimeERROR;
       eventCodeTime_as[0].status        = epicsTimeERROR;
     } else if (updateFlag) {
       eventCodeTime_as[0] = evrTime_as[evrTimeCurrent];
