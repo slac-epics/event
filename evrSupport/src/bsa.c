@@ -68,11 +68,10 @@
   Rem:  Subroutine for PRIM:LOCA:UNIT:MEASCNT$MDID
 
   Side: INPA - PRIM:LOCA:UNIT:SECN.VAL
-        INPB - EDEF:LOCA:UNIT:EDEFAVGDONE.$(BIT)
-		INPC - EDEF:LOCA:UNIT:EDEFMEASSEVR.$(BIT) 
-        SDIS - EVR:IOC:1:MODIFIER5 BIT for this MDID 1=  match
-		INPD - PRIM:LOCA:UNIT:SECN.STAT (was cum EPICS STAT for device, STATUS)
-        INPE - PRIM:LOCA:UNIT:SECN.SEVR (was cum EPICS SEVR for device, STATUS.L)
+        INPB - IOC:LOCA:UNIT:EDEFAVGDONE.$(BIT)
+	INPC - IOC:LOCA:UNIT:EDEFMEASSEVR.$(BIT) 
+        INPD - IOC:LOCA:UNIT:MODIFIER5.$(BIT) for this MDID 1=  match
+        INPE - PRIM:LOCA:UNIT:SECN.SEVR
         INPG - Init flag - set upon init
 		OUT 
            H = Variance value used in RMS calc
@@ -135,7 +134,7 @@ static long bsaSecnAvg(sSubRecord *psub)
 
 
   /*EVR timestamp:*/
-  if (dbGetTimeStamp(&psub->sdis, &timeEVR)){
+  if (dbGetTimeStamp(&psub->inpd, &timeEVR)){
 	DEBUGPRINT(DP_ERROR, bsaSubFlag, ("bsaSecnAvg for %s: Unable to determine EVR timestamp.\n",psub->name));
 	psub->w++;
 	return -1;
