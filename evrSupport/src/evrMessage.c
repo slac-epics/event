@@ -327,7 +327,7 @@ int evrMessageProcess(unsigned int messageIdx)
 
   Side: None
 
-  Return: 0 = OK, 1 = Input Error, 2 = No Data Available
+  Return: 0 = OK, 1 = Input Error, 2 = Timeout Error, 3 = No Data Available
   
 ==============================================================================*/
 
