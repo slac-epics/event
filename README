@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 11/30/2007
+Instructions for RTEMS EVR users                    Last Updated 03/31/2008
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -100,7 +100,11 @@ III - Hardware Setup:
 (1) Installation instructions for the PMC EVR are here:
     http://www.slac.stanford.edu/grp/lcls/controls/global/subsystems/timing/PMC-EVR_install_inst_v1d0.pdf
 
-(2) Connect fiber from a nearby timing fiber fanout module to each EVR.  These 
+(2) For VME EVRs, at times, the white tab in the IEEE handle does not pop out
+    all the way and the module blue light remains on and the module will not 
+    configure.  Make sure the tab is out when seating the module.
+
+(3) Connect fiber from a nearby timing fiber fanout module to each EVR.  These 
     fanout modules are identified in the timing system block diagram by 
     Mike Browne:
     https://sharepoint.slac.stanford.edu/sites/LCLS%20Document%20Storage/
