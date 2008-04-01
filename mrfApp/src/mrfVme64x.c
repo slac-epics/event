@@ -93,6 +93,10 @@ LOCAL const char hexChar [16] = {
     '0', '1', '2', '3', '4', '5', '6', '7',
     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
+#define MRF_EVG_BIDS 2
+LOCAL const epicsUInt32 evg_board_ids[MRF_EVG_BIDS] = {MRF_EVG200_BID  , MRF_EVG230_BID};
+#define MRF_EVR_BIDS 2
+LOCAL const epicsUInt32 evr_board_ids[MRF_EVR_BIDS] = {MRF_EVR200RF_BID, MRF_EVR230_BID};
 
 
 /**************************************************************************************************
@@ -151,7 +155,7 @@ GLOBAL_RTN
 int mrfFindNextEVG (int lastSlot, epicsUInt32 *pboard_id)
 {
     int   slot;			/* VME slot number of next Event Generator Card                   */
-
+        
    /*---------------------
     * Make sure the input parameter is in the appropriate range
     */
@@ -162,18 +166,9 @@ int mrfFindNextEVG (int lastSlot, epicsUInt32 *pboard_id)
    /*---------------------
     * Locate the next Event Generator Card
     */
-    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVG200_BID, &slot)) {
-        *pboard_id = MRF_EVG200_BID;
-        return slot;
-    }
-    
-   /*---------------------
-    * If we couldn't find the EVG200 try the EVG230.
-    */
-    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVG230_BID, &slot)) {
-        *pboard_id = MRF_EVG230_BID;
-        return slot;
-    }
+    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI,
+                              evg_board_ids, MRF_EVG_BIDS, pboard_id, &slot))
+        return slot;    
 
    /*---------------------
     * Return 0 if no more Event Generator cards were found.
@@ -252,18 +247,10 @@ int mrfFindNextEVR (int lastSlot, epicsUInt32 *pboard_id)
     * and the Event Receiver with RF recovery have
     * the same Board ID code.
     */
-    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVR200RF_BID, &slot)) {
-        *pboard_id = MRF_EVR200RF_BID;
+    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI,
+                              evr_board_ids, MRF_EVR_BIDS, pboard_id, &slot))
         return slot;
-    }
     
-   /*---------------------
-    * If we couldn't find the EVR200 try the EVR230.
-    */
-    if (OK == vmeCRFindBoard (lastSlot+1, MRF_IEEE_OUI, MRF_EVR230_BID, &slot)) {
-        *pboard_id = MRF_EVR230_BID;
-        return slot;
-    }
 
    /*---------------------
     * Return 0 if no more Event Receiver cards were found.
@@ -515,18 +502,20 @@ epicsStatus vmeCRSlotProbe(int slot, vme64xCRStruct *p_cr)
 			(char *) p_cr);
 }
 
-epicsStatus vmeCRFindBoard(int slot, epicsUInt32 ieee_oui, epicsUInt32 board_id,
-		      int *p_slot)
+epicsStatus vmeCRFindBoard(int slot, epicsUInt32 ieee_oui,
+                           const epicsUInt32 *pboard_ids, int num_board_id,
+                           epicsUInt32 *pboard_id, int *p_slot)
 {
   epicsUInt32 offsetGA;
   vme64xCRStruct *p_cr;
   epicsUInt32 slot_ieee_oui;
   epicsUInt32 slot_board_id;
+  int         idx;
   epicsStatus stat = ERROR;
 
   p_cr = malloc(sizeof(vme64xCRStruct));
 
-  for (; slot <= 21; slot++)
+  for (; (slot <= 21) && (stat == ERROR); slot++)
     {
       /* Make CR/CSR address out of slot number */
       offsetGA = (slot << 19);
@@ -542,14 +531,17 @@ epicsStatus vmeCRFindBoard(int slot, epicsUInt32 ieee_oui, epicsUInt32 board_id,
 	  convCRtoLong(&p_cr->ieee_oui[0], 3, &slot_ieee_oui);
 	  convCRtoLong(&p_cr->board_id[0], 4, &slot_board_id);
 
-	  if (slot_ieee_oui == ieee_oui &&
-	      slot_board_id == board_id)
-	    {
-	      /* Found match */
-	      *p_slot = slot;
-	      stat = OK;
-	      break;
+	  if (slot_ieee_oui == ieee_oui) {
+            for (idx = 0; idx < num_board_id; idx++) {
+              if (slot_board_id == pboard_ids[idx]) {
+	        /* Found match */
+	        *p_slot = slot;
+                *pboard_id = pboard_ids[idx];
+	        stat = OK;
+	        break;
+              }
 	    }
+          }
 	}
     }
 

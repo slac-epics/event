@@ -174,7 +174,9 @@ epicsStatus  vmeCSRMemProbe (epicsUInt32, int, int, void *);
 void         vmeCRShow (int slot);
 void         vmeCSRShow (int slot);
 void         vmeUserCSRShow (int slot);
-epicsStatus  vmeCRFindBoard (int slot, epicsUInt32 ieee_oui, epicsUInt32 board_id, int *p_slot);
+epicsStatus  vmeCRFindBoard(int slot, epicsUInt32 ieee_oui,
+                            const epicsUInt32 *pboard_ids, int num_board_id,
+                            epicsUInt32 *pboard_id, int *p_slot);
 epicsStatus  vmeCSRWriteADER (int slot, int func, epicsUInt32 ader);
 epicsStatus  vmeCSRSetIrqLevel (int slot, int level);
 
