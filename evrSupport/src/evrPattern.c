@@ -164,7 +164,9 @@ static long evrPatternProc(subRecord *psub)
     patternErrCount++;
     psub->c = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
     psub->l = PULSEID_INVALID;
-    if (evrMessageStatus == evrMessageDataNotAvail) {
+    if        (evrMessageStatus == evrMessageDataNotAvail) {
+      errFlag = PATTERN_TIMEOUT;
+    } else if (evrMessageStatus == evrMessageTimeoutError) {
       errFlag = PATTERN_TIMEOUT;
     } else {
       errFlag = PATTERN_INVALID_WF;
@@ -174,7 +176,8 @@ static long evrPatternProc(subRecord *psub)
     /* Set timestamp invalid if the last 3 pulses had an error too -
        allow a few glitches before messing with time */
     epicsTimeGetCurrent(&currentTime);
-    if (patternErrCount >= 3)
+    if ((patternErrCount >= 3) ||
+        (evrMessageStatus == evrMessageTimeoutError))
       evrTimePutIntoPipeline(&currentTime, epicsTimeERROR);
     if (epicsTimeDiffInSeconds(&currentTime, &mod720time) > MODULO720_SECS)
       modulo720Flag = 1;

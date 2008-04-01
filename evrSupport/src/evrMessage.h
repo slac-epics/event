@@ -91,6 +91,7 @@ typedef enum
 {
     evrMessageOK,
     evrMessageInpError,
+    evrMessageTimeoutError,
     evrMessageDataNotAvail
     
 } evrMessageReadStatus_te;
@@ -120,6 +121,7 @@ int evrMessageCounts    (unsigned int  messageIdx,
 int evrMessageCountReset   (unsigned int messageIdx);
 int evrMessageCheckSumError(unsigned int messageIdx);
 int evrMessageNoDataError  (unsigned int messageIdx);
+int evrMessageTimeout      (unsigned int messageIdx);
   
 #ifdef __cplusplus
 }

@@ -147,13 +147,10 @@ static int evrTask()
        then to N. */
     } else {
       readyForFiducial = 0;
-      /* Just in case the data was coming without the fiducial */
-      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* Get rid of old data */
+      evrMessageTimeout(EVR_MESSAGE_PATTERN);
       evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-3 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-2 */
-      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-2 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-1 */
-      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-1 */
       evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N   */
       if (status != epicsEventWaitTimeout) {
         errlogPrintf("evrTask: Exit due to bad status from epicsEventWaitWithTimeout\n");
