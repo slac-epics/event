@@ -4,16 +4,17 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
-event-R2-6-1: Mar 26, 2008
-        * configure/RELEASE - revert back to 3.14.8.2.
-        * mrfApp/src/drvMrfEr.c - add error messages for when VME EVR A24 
-	  space cannot be set up or the IRQ level cannot be set.  Process
-	  data before events in the ISR.
-	* mrfApp/src/os/RTEMS/vmeCSRMemProbeB.c - probe 2 or 4 bytes depending
-	  on input - required to set interrupt level on the VME EVR 230.
-        * mrfApp/src/Makefile - install debugPrint.h.
-	* evrSupport/Db/evr/evrFiducial.db - reset counters during iocInit 
-          record initial processing.
+event-R2-6-2: Apr 01, 2008
+        * mrfApp/src/mrfVme64x.c,.h - return board ID from the "Find" routines.
+	  Correct find logic so that 200 and 230 boards can be any order in 
+	  the crate.
+        * mrfApp/src/drvMrfEg.c - add argument for board ID in the "Find" call.
+        * mrfApp/src/drvMrfEr.c - add argument for board ID in the "Find" call.
+	  For ADER set either function 0 (200) or function 1 (230).
+	  Write DBuff control register twice in ISR to get rid of extra data
+	  buffer interrupts.
+	* evrSupport/Db/evr/evrFiducial.db - Change state 2 in PATTERNSTATE to 
+	  indicate that it's a spare.
 	* evrSupport/Db/evr/evrWithDelays.db,evrWithExtDelays.db - add bi to
 	  poll the link status.
 	* evrSupport/src/drvEvr.c - process data on fiducial even if data
@@ -24,6 +25,34 @@ event-R2-6-1: Mar 26, 2008
 	* evrSupport/src/evrMessage.c - double-buffer incoming pattern data.
 	  Remove retry logic.  Fiducial sets which pattern data to use.
 	* testIoc - various changes for testing EVG data sending.
+
+event-R2-6-1: Mar 26, 2008
+        * configure/RELEASE - revert back to 3.14.8.2.
+        * mrfApp/src/drvMrfEr.c - add error messages for when VME EVR A24 
+	  space cannot be set up or the IRQ level cannot be set.  Process
+	  data before events in the ISR.
+	* mrfApp/src/os/RTEMS/vmeCSRMemProbeB.c - probe 2 or 4 bytes depending
+	  on input - required to set interrupt level on the VME EVR 230.
+        * mrfApp/src/Makefile - install debugPrint.h.
+	* evrSupport/Db/evr/evrFiducial.db - reset counters during iocInit 
+          record initial processing.
+	* evrSupport/src/drvEvr.c - don't set event in fiducial interrupt if 
+	  task is not yet done with the last fiducial - update missed fiducial
+	  counter and skip pulse instead.  Add check for invalid message size 
+	  in data interrupt.  Set timeout flag before processing data in 
+	  fiducial timeout logic of the evrTask (for the case where fiducials
+	  are missing but data is still being received - throw data away).
+	* evrSupport/src/evrMessage.c,.h - remove unnecessary mutex lock.
+	  Change logic so that the write routine at interrupt throws away data 
+	  if the buffer it wants to write to is being read by the evrTask.  
+	  Add routine for evrTask to set timeout flag and the read routine 
+	  to reset it and return timeout error.  Add routine for fiducial 
+	  interrupt to call to update the missing fiducial counter.
+	* evrSupport/src/evrTime.c - set all timestamps in the pipeline bad 
+	  when 3 same pulses.  Diagnostic counter change.
+	* evrSupport/src/evrPattern.c,.h - add timeout error logic.  Use
+	  invalid waveform status for invalid header.  Diagnostic counter 
+	  change.
 
 event-R2-6-0-1: Mar 4, 2008
         * configure/RELEASE - revert back to 3.14.9.
