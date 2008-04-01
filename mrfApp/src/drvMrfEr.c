@@ -1661,8 +1661,7 @@ void ErIrqHandler (ErCardStruct *pCard)
     */
     if (DBuffCsr & EVR_DBUF_READY) {
         MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
-                            (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
-                            EVR_DBUF_DBDIS);
+                            (DBuffCsr & EVR_DBUF_WRITE_MASK) | EVR_DBUF_DBDIS);
 
        /*---------------------
         * Report data stream checksum errors to the device support error listener
@@ -1694,9 +1693,9 @@ void ErIrqHandler (ErCardStruct *pCard)
          * Enable the data buffer only if device support cares about the data stream.
          */
         if (pCard->DevDBuffFunc != NULL) {
-          MRF_VME_REG16_WRITE(&pEr->DataBuffControl,
-                              (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) |
-                              EVR_DBUF_DBENA);
+          DBuffCsr = (MRF_VME_REG16_READ(&pEr->DataBuffControl) & EVR_DBUF_WRITE_MASK) | EVR_DBUF_DBENA;
+          MRF_VME_REG16_WRITE(&pEr->DataBuffControl, DBuffCsr);
+          MRF_VME_REG16_WRITE(&pEr->DataBuffControl, DBuffCsr);
         }
     }/*end if data buffer ready interrupt*/
 
@@ -1767,8 +1766,8 @@ void ErIrqHandler (ErCardStruct *pCard)
    /*===============================================================================================
     * Re-enable Board interrupts and return.
     */
-    MRF_VME_REG16_WRITE(&pEr->Control,
-                        (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN);
+    csr = (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) | EVR_CSR_IRQEN;
+    MRF_VME_REG16_WRITE(&pEr->Control, csr);
     DBuffCsr = MRF_VME_REG16_READ(&pEr->DataBuffControl);
 #ifdef DEBUG_ACTIVITY
     if (activityGo) {
