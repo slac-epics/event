@@ -23,6 +23,7 @@ record(sSub, "$(DEV):$(SECN)$(MDID)") {
   field(LOPR, "$(LOPR)")
   field(PREC, "$(PREC)")
   field(ADEL, "$(ADEL)")
+  field(MDEL, "-1")
   field(SNAM, "bsaSecnAvg")
   field(BRSV, "INVALID")
   field(FLNK, "$(DEV):$(SECN)HST$(MDID)")
