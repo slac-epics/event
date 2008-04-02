@@ -31,7 +31,7 @@ event-R2-6-2: Apr 01, 2008
 	* evrSupport/src/bsa.c - use INPD instead of SDIS for timestamp check.
 	* evrSupport/Db/bsa/bsaEdefAvg.db, bsaEdefFanouts.db - add GO bi
 	  record upstream of device EDEF records and move disabling to GO.
-	  Set MDEL to 0.0 for all BSA PVs.
+	  Set MDEL to -1 for all BSA PVs.
 
 event-R2-6-1: Mar 26, 2008
         * configure/RELEASE - revert back to 3.14.8.2.
