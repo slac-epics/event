@@ -60,7 +60,7 @@ III - EVG Diagnostics Display:
 (1) Once the IOC has booted successfully, bring up the EVG diagnostics display:
 
     cd xxxxApp/eventTestApp/edm
-    edm -x -m "LOCA=TEST,UNIT=EV01" evgDiags.edl
+    edm -x -m "LOCA=TEST,UNIT=EV01" evgTestDiags.edl
 
     Check that the "FPGA Version" is correct and the board is enabled.
 
