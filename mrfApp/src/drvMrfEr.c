@@ -100,13 +100,15 @@
 #include <registryFunction.h>   /* EPICS Registry support library                                 */
 #include <iocsh.h>              /* EPICS iocsh support library                                    */
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
+#ifdef PCI
 #ifdef __rtems__
 #include <rtems/pci.h>          /* for PCI_VENDOR_ID_PLX */
 #include <rtems/irq.h>          /* for rtems_irq_connect_data, rtems_irq_hdl_param */
 #endif
+#include "devLibPMC.h"          /* for epicsFindDevice */
+#endif
 #include <mrfVme64x.h>          /* VME-64X CR/CSR routines and definitions (with MRF extensions)  */
 #include <basicIoOps.h>         /* for out_le16, in_le16 */
-#include "devLibPMC.h"          /* for epicsFindDevice */
 #include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
 
 /**************************************************************************************************/
@@ -340,7 +342,9 @@ Descriptor */
 #ifndef PCI_DEVICE_ID_MRF_EVR200
 #define PCI_DEVICE_ID_MRF_EVR200 (0x10c8) /* as per email Jukka Pietarinen to TSS, 2/7/7 */
 #endif
-#define VME_ADDRESS_MODIFIER   0x3D       /* Use default (A24 Supervisor Data)      */
+#ifndef VME_AM_STD_SUP_DATA
+#define VME_AM_STD_SUP_DATA (0x3D)
+#endif
 /*---------------------
  * Status Fields
  */
@@ -780,13 +784,11 @@ int ErConfigure (
 
     epicsUInt16            Junk;            /* Dummy variable for card read probe function        */
     epicsUInt32            DeviceId;        /* Board ID                                           */
-    epicsUInt32            ader;            /* address decoder compare register value             */
     ErCardStruct          *pCard;           /* Pointer to card structure                          */
     volatile MrfErRegs    *pEr = NULL;      /* Local address for accessing card's register space  */
     epicsStatus            status;          /* Status return variable                             */
-	int                    Slot;            /* VME slot number                                    */
-	int                    i;               /* Scratch variable                                   */
-	int                    aderFuncNo;      /* Function for address decoder compare register      */
+    epicsAddressType       addressType;     /* Address type for devRegisterAddress                */
+    int                    Slot;            /* VME slot number                                    */
 
     #ifdef PCI
     /* PMC-EVR only */
@@ -868,26 +870,38 @@ int ErConfigure (
     /* Configuration is form-factor dependent */
     switch (FormFactor) {
       case VME_EVR:
+      case EMBEDDED_EVR:
 
-		Slot = 0;
-		i    = -1;
-		do {
-			i++;
-			if ( 0 == (Slot = mrfFindNextEVR(Slot,&DeviceId)) ) {
-				errlogPrintf("ErConfigure: VME64x scan found no EVR instance %u\n",i);
-            	epicsMutexDestroy (pCard->CardLock);
-	            free (pCard);
-				return ERROR;
-			}
-		} while ( i < ErVMECount );
-                ErVMECount++;
+        Slot = 0;
+        if (FormFactor == VME_EVR) {
+          addressType = atVMEA24;
+          int i    = -1;
+          do {
+            i++;
+            if ( 0 == (Slot = mrfFindNextEVR(Slot,&DeviceId)) ) {
+              errlogPrintf("ErConfigure: VME64x scan found no EVR instance %u\n",i);
+              epicsMutexDestroy (pCard->CardLock);
+              free (pCard);
+              return ERROR;
+            }
+          } while ( i < ErVMECount );
+        } else {
+          addressType = atVMEA16;
+          if (ErVMECount > 0) {
+            errlogPrintf("ErConfigure: Only one Embedded EVR instance allowed\n");
+            epicsMutexDestroy (pCard->CardLock);
+            free (pCard);
+            return ERROR;
+          }
+        }
+        ErVMECount++;
 
        /*---------------------
         * Try to register this card at the requested A24 address space
         */
         status = devRegisterAddress (
                    CardName,                        /* Event Receiver Card name               */
-                   atVMEA24,                        /* Address space                          */
+                   addressType,                     /* Address space                          */
                    CardAddress,                     /* Physical address of register space     */
                    sizeof (MrfErRegs),              /* Size of device register space          */
                    (volatile void **)(void *)&pEr); /* Local address of board register space  */
@@ -903,11 +917,14 @@ int ErConfigure (
        /*---------------------
         * Set the card's A24 address to the requested base
         */
-        if (DeviceId == MRF_EVR200RF_BID) aderFuncNo = 0;
-        else                              aderFuncNo = 1;
-        ader = (CardAddress&0xffffff00)|((VME_ADDRESS_MODIFIER & 0xff) << 2);
-        status = vmeCSRWriteADER (Slot, aderFuncNo, ader);
-        if (status) {
+        if (FormFactor == VME_EVR) {
+          int aderFuncNo;
+          int ader;
+          if (DeviceId == MRF_EVR200RF_BID) aderFuncNo = 0;
+          else                              aderFuncNo = 1;
+          ader = (CardAddress&0xffffff00)|((VME_AM_STD_SUP_DATA & 0xff) << 2);
+          status = vmeCSRWriteADER (Slot, aderFuncNo, ader);
+          if (status) {
             errlogPrintf (
               "ErConfigure: Unable to set Event Receiver Card %d at A24 address to 0x%08X\n",
               Card, ader);
@@ -915,9 +932,9 @@ int ErConfigure (
             epicsMutexDestroy (pCard->CardLock);
             free (pCard);
             return ERROR;
-        }
-        status = vmeCSRSetIrqLevel (Slot, IrqLevel);
-        if (status) {
+          }
+          status = vmeCSRSetIrqLevel (Slot, IrqLevel);
+          if (status) {
             errlogPrintf (
               "ErConfigure: Unable to set Event Receiver Card %d Irq Level 0x%08X\n",
               Card, IrqLevel);
@@ -925,8 +942,8 @@ int ErConfigure (
             epicsMutexDestroy (pCard->CardLock);
             free (pCard);
             return ERROR;
+          }
         }
-
         DEBUGPRINT (DP_INFO, drvMrfErFlag, 
                    ("ErConfigure: Board is now accessible at local address 0x%08x.\n",
                    (unsigned int) pEr));
@@ -961,7 +978,7 @@ int ErConfigure (
         pCard->ErrorFunc    = NULL;             /* No user-registered error function yet.         */
         pCard->DBuffFunc    = NULL;             /* No user-registered data buffer function yet.   */
         pCard->DBuffReady   = NULL;             /* No data buffer IOSCANPVT structure yet.        */
-        pCard->FormFactor   = VME_EVR;          /* This is a VME EVR card                         */
+        pCard->FormFactor   = FormFactor;       /* This is a VME or Embedded EVR card             */
 
        /*---------------------
         * Initialize the hardware by making sure all interrupts are turned off
@@ -1172,23 +1189,20 @@ int ErConfigure (
     * Add the card structure to the list of known Event Receiver cards,
     * and return.
     */
-    if (pCard->FormFactor == VME_EVR) {
+    MRF_VME_REG32_WRITE(&pEr->FracDiv, FR_SYNTH_WORD);
+    if (pCard->FormFactor != PMC_EVR) {
       MRF_VME_REG16_WRITE(&pEr->IrqVector, IrqVector);
-      MRF_VME_REG32_WRITE(&pEr->FracDiv, FR_SYNTH_WORD);
       epicsThreadSleep (epicsThreadSleepQuantum());
-      MRF_VME_REG16_WRITE(&pEr->Control, (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) |
-                          EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT); 
-    } else if (pCard->FormFactor == PMC_EVR) {
-      MRF_VME_REG32_WRITE(&pEr->FracDiv, FR_SYNTH_WORD);
+    } else {
         /* Jukka says pEr->Control needs to be set to 0x9081 at this point 12/1/2006 */
       epicsThreadSleep (epicsThreadSleepQuantum()*10);
       ErResetAll (pCard); /* NEW 12/14/2006. needed. even though it does
                                get called above */
       epicsThreadSleep (epicsThreadSleepQuantum()*10); /* NEW 12/14/2006. needed. to be able to actually
                                   clear the taxi violation */
-      MRF_VME_REG16_WRITE(&pEr->Control, (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) |
-                          EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT); 
     }
+    MRF_VME_REG16_WRITE(&pEr->Control, (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_WRITE_MASK) |
+                          EVR_CSR_RSRXVIO | EVR_CSR_RSHRTBT); 
    
     /* add the card structure to the list of known event receiver cards.  */
     ellAdd (&ErCardList, &pCard->Link); 
@@ -1394,7 +1408,7 @@ epicsStatus ErFinishDrvInit (int AfterRecordInit)
     * Anything we need to do before record initialization can be done in the driver
     * initialization routine (above).
     */
-    if (DevInitLock | !AfterRecordInit)
+    if (DevInitLock || (!AfterRecordInit))
         return OK;
 
    /*---------------------
@@ -1409,11 +1423,13 @@ epicsStatus ErFinishDrvInit (int AfterRecordInit)
          pCard != NULL;
          pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
 
-      if (VME_EVR == pCard->FormFactor) {
+      if (PMC_EVR != pCard->FormFactor) {
         devEnableInterruptLevelVME (pCard->IrqLevel);
-      } else if (PMC_EVR == pCard->FormFactor) {
+      } else {
+#ifdef PCI
         /* Enable interrupts */
         epicsPciIntEnable(pCard->IrqVector);
+#endif
       }
 
     }/*end for each configured Event Receiver card*/
@@ -1468,17 +1484,22 @@ epicsStatus ErDrvReport (int level)
 
         NumCards++;
 
-        if (pCard->FormFactor == VME_EVR) {
+        if (pCard->FormFactor != PMC_EVR) {
  			printf ("  Card %d in slot %d.  Firmware Version = %4.4X.\n",
         			pCard->Cardno, pCard->Slot, ErGetFpgaVersion(pCard));
-			printf ("       Form factor = VME\n");
-        } else { if (pCard->FormFactor == PMC_EVR)
+			if (pCard->FormFactor == VME_EVR)
+                          printf ("       Form factor = VME\n");
+                        else
+                          printf ("       Form factor = Embedded\n"); 
+        } else {
+#ifdef PCI
  			printf ("  Card %d in slot %d/%d/%d.  Firmware Version = %4.4X.\n",
         			pCard->Cardno,
 					pCard->Slot>>8, PCI_SLOT(pCard->Slot), PCI_FUNC(pCard->Slot),
 					ErGetFpgaVersion(pCard));
             printf ("       Form factor = PMC\n");
-		}
+#endif
+        }
 
         printf ("       Address = %8.8x,  Vector = %3.3X,  Level = %d\n",
                 (int)pCard->pEr, pCard->IrqVector, pCard->IrqLevel);
@@ -1498,9 +1519,12 @@ epicsStatus ErDrvReport (int level)
 #ifdef DEBUG_ACTIVITY
     if (level > 0) {
       int activityIdx, activityOldIdx, activityOlderIdx, eventIdx;
+      double evrTicksPerUsec = 1;
 #ifdef __rtems__
-      double evrTicksPerUsec = ((double)BSP_bus_frequency/
-                                (double)BSP_time_base_divisor)/1000;
+#ifdef __PPC__
+      evrTicksPerUsec = ((double)BSP_bus_frequency/
+                         (double)BSP_time_base_divisor)/1000;
+#endif
 #endif
       activityGo = 0;
       activityOldIdx   = activityCnt;
@@ -1714,7 +1738,7 @@ void ErIrqHandler (ErCardStruct *pCard)
                   (i < EVR_FIFO_EVENT_LIMIT);  i++) {
 
            /* Get the event number and timestamp */
-            if (pCard->FormFactor == VME_EVR) {
+            if (pCard->FormFactor != PMC_EVR) {
               HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
               LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
             } else {
@@ -3316,7 +3340,7 @@ void ErSetOtp (
     */
     if(ErDebug > 9) {
         printf (
-            "ErSetOtp(): Card %d, OTP Chan %d, Select Addr %x, Width = %d, Delay = %d\n", 
+            "ErSetOtp(): Card %d, OTP Chan %d, Select Addr %x, Width = %u, Delay = %u\n", 
              pCard->Cardno, Channel, MRF_VME_REG16_READ(&pEr->DelayPulseSelect),
             MRF_VME_REG32_READ(&pEr->ExtWidth), MRF_VME_REG32_READ(&pEr->ExtDelay));
     }/*end if debug level is 10 or higher*/
@@ -3513,9 +3537,9 @@ void ErRebootFunc (void)
 LOCAL_RTN int ErRestart (ErCardStruct *pCard)
 {
     volatile MrfErRegs  *pEr = pCard->pEr;
-    if (pCard->FormFactor == VME_EVR) {
+    if (pCard->FormFactor != PMC_EVR) {
       MRF_VME_REG16_WRITE(&pEr->IrqVector, pCard->IrqVector);
-    } else if (pCard->FormFactor == PMC_EVR) {
+    } else {
         /* WHAT TO DO? */
     } 
     ErEnableIrq(pCard->pEr, EVR_IRQ_EVENT);
@@ -3790,7 +3814,7 @@ void DiagDumpEventFifo (ErCardStruct *pCard)
     */
     for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
               (i < EVR_FIFO_EVENT_LIMIT); i++) {
-        if (pCard->FormFactor == VME_EVR) {
+        if (pCard->FormFactor != PMC_EVR) {
           LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
           HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
         } else {
@@ -3941,10 +3965,10 @@ void DiagDumpRegs (ErCardStruct *pCard)
             MRF_VME_REG16_READ(&pEr->PulseDelay), MRF_VME_REG16_READ(&pEr->PulseWidth));
     printf ("PDP prescaler:  %4.4X \n", MRF_VME_REG16_READ(&pEr->DelayPrescaler));
     printf ("EVT ctr presc:  %4.4X \n", MRF_VME_REG16_READ(&pEr->EventCounterPrescaler));
-    if (pCard->FormFactor == VME_EVR) {
+    if (pCard->FormFactor != PMC_EVR) {
       printf ("IRQ vec, enab:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->IrqVector),
               MRF_VME_REG16_READ(&pEr->IrqEnables));
-    } else if (pCard->FormFactor == PMC_EVR) {
+    } else {
       printf ("IRQ vec, enab:  %4.4X %4.4X \n", pCard->IrqVector,
               MRF_VME_REG16_READ(&pEr->IrqEnables));
     }

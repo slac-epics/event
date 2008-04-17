@@ -197,6 +197,9 @@ epicsStatus ErInitRecord (erRecord *pRec)
 	if ( VME_EVR == pCard->FormFactor ) {
 		epicsSnprintf(pRec->busd,sizeof(pRec->busd)-1,"VME Card %i, Slot %i, IRQ %i (Vect 0x%02x)",
 			pCard->Cardno, pCard->Slot, pCard->IrqLevel, pCard->IrqVector);
+	} else if ( EMBEDDED_EVR == pCard->FormFactor ) {
+		epicsSnprintf(pRec->busd,sizeof(pRec->busd)-1,"Embedded Card %i, IRQ %i (Vect 0x%02x)",
+			pCard->Cardno, pCard->IrqLevel, pCard->IrqVector);
 	} else {
 		epicsSnprintf(pRec->busd,sizeof(pRec->busd)-1,"PMC Card %i @%u/%u/%u, IRQ 0x%x",
 			pCard->Cardno,
