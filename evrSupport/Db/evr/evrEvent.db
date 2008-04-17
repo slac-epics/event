@@ -28,6 +28,8 @@ record(sub, "$(DEV):$(NAME)RATE") {
   field(PREC, "1")
   field(HIHI, "$(HIHI)")
   field(HHSV, "MAJOR")
+  field(HIGH, "$(HIGH)")
+  field(HSV,  "MINOR")
   field(LOLO, "$(LOLO)")
   field(LLSV, "MAJOR")
   field(HOPR, "$(HIHI)")
