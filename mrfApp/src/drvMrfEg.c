@@ -200,6 +200,9 @@ typedef struct MrfEVGRegs
 
 #define EG_MONITOR                      /* Include the EG monitor program */
 #define RAM_LOAD_SPIN_DELAY     1       /* taskDelay() for waiting on RAM */
+#ifndef VME_AM_STD_SUP_DATA
+#define VME_AM_STD_SUP_DATA (0x3D)
+#endif
 
 /* Only look at these bits when ORing on new bits in the control register */
 #define CTL_OR_MASK     (0x9660)
