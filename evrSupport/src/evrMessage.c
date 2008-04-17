@@ -168,8 +168,10 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
   /* Find divisor to go from ticks to microseconds
      (coarse resolution good enough). */
 #ifdef __rtems__
+#ifdef __PPC__
   evrTicksPerUsec = ((double)BSP_bus_frequency/
                      (double)BSP_time_base_divisor)/1000;
+#endif
 #endif
   if (messageIdx < 0) return -1;
 
