@@ -1,5 +1,5 @@
 #==============================================================================
-# MRF_CONFIG_SITE
+# MRF_CONFIG_SITE_RTEMS-uC5282
 #
 # Site-specific configuration parameters for building the MRF event system
 # software libraries.
@@ -77,8 +77,8 @@ EPICS_SUPPORTS_CRCSR = NO
 # questions in this section.
 #
 
-BSP_SUPPORTS_CRCSR = YES
-#BSP_SUPPORTS_CRCSR = NO
+#BSP_SUPPORTS_CRCSR = YES
+BSP_SUPPORTS_CRCSR = NO
 
 #------------------------------------------------------------------------------
 # Question 3:  What is the path to your board support package's source code?
@@ -173,7 +173,6 @@ EVENT_CLOCK_SELECT := CLOCK_SELECT_LVPECL_OSC  # LVPECL oscillator (alias SLAC 1
 # Question 1:  Does your Board Support Package support PCI
 #
 
-BSP_SUPPORTS_PCI = YES
-#BSP_SUPPORTS_PCI = NO
-
+#BSP_SUPPORTS_PCI = YES
+BSP_SUPPORTS_PCI = NO
 

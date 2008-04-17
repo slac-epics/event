@@ -27,7 +27,10 @@ include $(TOP)/configure/CONFIG
 include $(SOURCE_DIR)/MRF_CONFIG
 
 #USR_CFLAGS += -pedantic
-USR_CFLAGS += -DDEBUG_PRINT -DPCI
+USR_CFLAGS += -DDEBUG_PRINT
+ifeq ($(BSP_SUPPORTS_PCI), YES)
+    USR_CFLAGS += -DPCI
+endif
 
 #---------------------
 # Only build for "hardware" IOC's
@@ -85,9 +88,11 @@ LIBRARY_IOC      += devMrfEr
 
 devMrfEr_OBJS += drvMrfEr
 devMrfEr_OBJS += devMrfEr
-devMrfEr_OBJS_RTEMS += devLibPMC
+ifeq ($(BSP_SUPPORTS_PCI), YES)
+devMrfEr_OBJS += devLibPMC
+devMrfEr_OBJS += plx9080_eeprom.c
+endif
 devMrfEr_OBJS_RTEMS += evrEEPROMFixup
-devMrfEr_OBJS_RTEMS += plx9080_eeprom.c
 devMrfEr_OBJS += erRecord
 devMrfEr_OBJS += ereventRecord
 
