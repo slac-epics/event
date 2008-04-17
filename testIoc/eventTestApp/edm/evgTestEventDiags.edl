@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 129
-y 63
+x 144
+y 75
 w 350
 h 530
 font "helvetica-bold-r-18.0"
@@ -33,7 +33,7 @@ minor 1
 release 0
 x 5
 y 10
-w 245
+w 209
 h 27
 font "helvetica-bold-r-24.0"
 fgColor index 76
@@ -1734,7 +1734,7 @@ buttonLabel "EVG"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evgDiags"
+  0 "evgTestDiags"
 }
 menuLabel {
   0 "$(LOCA) EVG"

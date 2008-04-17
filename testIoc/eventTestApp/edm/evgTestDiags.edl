@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 78
-y 59
+x 144
+y 75
 w 710
 h 510
 font "helvetica-medium-r-18.0"
@@ -112,7 +112,7 @@ minor 1
 release 0
 x 5
 y 0
-w 262
+w 226
 h 27
 font "helvetica-bold-r-24.0"
 fgColor index 76
@@ -723,7 +723,7 @@ buttonLabel "Events"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evgEventDiags"
+  0 "evgTestEventDiags"
 }
 menuLabel {
   0 "$(LOCA) EVG Events"
@@ -2591,7 +2591,7 @@ buttonLabel "Data"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evgDataDiags"
+  0 "evgTestDataDiags"
 }
 menuLabel {
   0 "$(LOCA) EVG Data"

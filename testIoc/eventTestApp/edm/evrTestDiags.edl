@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 102
-y 49
+x 308
+y 32
 w 711
 h 631
 font "helvetica-medium-r-18.0"
@@ -3759,7 +3759,7 @@ buttonLabel "Events"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrEventDiags"
+  0 "evrTestEventDiags"
 }
 menuLabel {
   0 "Event Rates and Counters"
@@ -3804,6 +3804,46 @@ bgColor index 5
 useDisplayBg
 value {
   "Rx Link"
+}
+autoSize
+endObjectProperties
+
+# (Textupdate)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 15
+y 305
+w 50
+h 20
+controlPv "EVR:$(LOCA):$(UNIT):CTRL.TAXI"
+fgColor index 14
+fgAlarm
+bgColor index 4
+fill
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 15
+y 275
+w 68
+h 28
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Rx Link "
+  "Error Count"
 }
 autoSize
 endObjectProperties
