@@ -1,0 +1,38 @@
+## EVR RTEMS startup script
+
+## Set common environment variables. eg. EPICS_TS_NTP_INET and PORTs
+< all/pre_st.cmd
+
+# by building one obj with everything in it, no lib/... link to ioc/lib/<target> is needed
+ld("bin/evr.obj") 
+
+## For BSA:
+epicsEnvSet ("EPICS_CA_MAX_ARRAY_BYTES",   "30000")
+
+dbLoadDatabase("dbd/evr.dbd")
+
+evr_registerRecordDeviceDriver(pdbbase) 
+
+# Allows gdb to attach to this target
+#rtems_gdb_start(0,0)
+
+## Load record instances
+dbLoadRecords("db/evrXL04.db")
+dbLoadRecords("db/evrPatternXL04.db")
+#dbLoadRecords("db/bsaXL04.db")
+#dbLoadRecords("db/bsaSimXL04.db")
+#dbLoadRecords("db/IOC-IN20-LS13trig.db")
+#dbLoadRecords("db/IOC-LI21-BL01bsa.db")
+dbLoadRecords("db/trigXL04.db")
+
+bspExtVerbosity=0
+
+ErConfigure(0,0x000000,0x00,0,1)  # PMC type
+
+evrTimeFlag=0
+iocInit() # after h/w initialisations
+bspExtVerbosity=1
+
+#overload one bsa device to not be processed by 10Hz simulator
+# it is instead flnked by the PATTERNFO
+#dbpf ("BPMS:XX09:1:FANOUT.LNK4", "") 
