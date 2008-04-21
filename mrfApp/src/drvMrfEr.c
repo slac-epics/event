@@ -681,7 +681,7 @@ LOCAL volatile short         *csar1_actual = (short *) 0x80000000;
 LOCAL volatile unsigned short *cscr1 = (unsigned short *)CSCR1;
 LOCAL volatile unsigned long *csmr1  = (unsigned long *)CSMR1;*/
 
-#define DEBUG_ACTIVITY
+/*#define DEBUG_ACTIVITY*/
 #ifdef DEBUG_ACTIVITY
 #ifdef __rtems__
 /*
