@@ -630,6 +630,58 @@ volatile int     ErDelayedIntIrqCount = 0;
 volatile int     ErDBufIrqCount = 0;
 volatile unsigned short controlRegister = 0;
 
+/* Embedded EVR Interrupt/General-Purpose I/O Pin Descriptions
+
+  All pins default to general-purpose input pins at reset.  The pin value
+  is synchronized to the rising edge of CLKOUT when read from the EPORT
+  pin data register (EPPDR). The values used in the edge/level detect
+  logic are also synchronized to the rising edge of CLKOUT. These pins
+  use Schmitt triggered input buffers which have built in hysteresiss
+  designed to decrease the probability of generating false edge-triggered
+  interrrupts for slow rising and falling input signals.
+
+  When a pin is configured as an output, it is driven to a state whose level
+  is determined by the corresponding bit in the EPORT data register(EPDR).
+  All bits in the EPDR are high at reset. */
+
+#define IPSBAR (0x40000000) /* Default base address for the Edgeport and the Chip Select Module */
+/* Adding the base address here, defies the purpose of having the change base address routine */
+
+/* Interrupt controller module */
+#define ICR01 (IPSBAR+0xC41)      /* Address of interrupt control register #1. 1 byte */
+#define IMRL  (IPSBAR+0xC0C)      /* Address of interrupt mask register low. 4 bytes */
+
+#define EPPAR (IPSBAR+0x00130001) /* Two bytes. Big endian. 0=bits 15-8, 1=bits 7-0 */
+#define EPDDR (IPSBAR+0x00130002) /* EPORT Data Direction Register */
+#define EPIER (IPSBAR+0x00130003) /* EPORT Interrupt Enable Register */
+#define EPDR  (IPSBAR+0x00130004) /* EPORT Data Register */
+#define EPPDR (IPSBAR+0x00130005) /* EPORT Pin Data Register */
+#define EPFR  (IPSBAR+0x00130006) /* EPORT Flag Register */
+/* Note: 0x00130007 is reserved */
+
+/* Note about access:
+   EPPAR, EPDDR, and EPIER are Supervisor access
+   EPDR, EPPDR and EPRF are Supervisor/User access
+   Writing to reserved address has no effect, reading returns zeroes */
+#define CSAR1 (IPSBAR+0x00008C) /* 2 bytes */
+#define CSMR1 (IPSBAR+0x000090) /* 4 bytes */
+#define CSCR1 (IPSBAR+0x000096) /* 2 bytes */
+
+
+LOCAL volatile unsigned char *icr01 = (unsigned char *)ICR01;
+LOCAL volatile unsigned long *imrl  = (unsigned long *)IMRL;
+LOCAL volatile unsigned char *epddr = (unsigned char *)EPDDR;
+LOCAL volatile unsigned char *epier = (unsigned char *)EPIER;
+LOCAL volatile unsigned char *epdr  = (unsigned char *)EPDR;
+LOCAL volatile unsigned char *eppar = (unsigned char *)EPPAR;
+LOCAL volatile unsigned char *eppdr = (unsigned char *)EPPDR;
+LOCAL volatile unsigned char *epfr  = (unsigned char *)EPFR;
+/*LOCAL volatile short         *csar1 = (short *)CSAR1;
+LOCAL volatile short         *csar1_actual = (short *) 0x80000000;
+LOCAL volatile unsigned short *cscr1 = (unsigned short *)CSCR1;
+LOCAL volatile unsigned long *csmr1  = (unsigned long *)CSMR1;*/
+
+#define DEBUG_ACTIVITY
 #ifdef DEBUG_ACTIVITY
 #ifdef __rtems__
 /*
@@ -989,6 +1041,24 @@ int ErConfigure (
                             (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_CONFIG_PRESERVE_MASK) |
                             EVR_CSR_CONFIG_SET_FIELDS);
 
+        if (FormFactor == EMBEDDED_EVR) {
+          *icr01 = 0x30;        /* use interrupt level 6 */
+          *imrl &= 0xFFFD;      /* 1111 1111 1111 1101
+                                   clears the bit which enables the interrupt */
+          *eppar = 0x00;        /* set to use level edge trigger */
+
+          /* Clear epdr to start. This disables all interrupts. */
+          *epdr = 0;
+
+          /* Clear epddr to start. This means that all interrupts are inputs. */
+          *epddr = 0;
+
+          /* Make IRQ1 an output by turning on 1st bit 
+          *epddr = 2; JEFF SAYS NO*/
+
+          /* NOTE: leave IRQ2 at its default setting: input; this is the interrupt
+             we are using for the hardware interrupts to come */
+        }
        /*---------------------
         * Now that we know all interrupts are disabled,
         * try to connect the interrupt service routine.
@@ -1423,8 +1493,10 @@ epicsStatus ErFinishDrvInit (int AfterRecordInit)
          pCard != NULL;
          pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
 
-      if (PMC_EVR != pCard->FormFactor) {
+      if (VME_EVR == pCard->FormFactor) {
         devEnableInterruptLevelVME (pCard->IrqLevel);
+      } else if (EMBEDDED_EVR == pCard->FormFactor) {
+              /* *epier = 0x02; Enable IRQ1 */ 
       } else {
 #ifdef PCI
         /* Enable interrupts */
@@ -1444,6 +1516,21 @@ epicsStatus ErFinishDrvInit (int AfterRecordInit)
     return OK;
 
 }/*end ErFinishDrvInit()*/
+
+int cfEnableIntr() {
+/*  DEBUGPRINT(DP_INFO, drvMrfErFlag, ("cfEnableIntr: enabling interrupts.\n"));*/
+  /* Enable the interrupt. Don't do this UNTIL everything is set up */
+  *epier = 0x02; /* Enable IRQ1 */
+  return OK;
+}
+
+int cfDisableIntr() {
+  DEBUGPRINT(DP_INFO, drvMrfErFlag, ("cfDisableIntr: disabling interrupts.\n"));
+  /* Disable the interrupt. */
+  *epier = 0x00;
+  return OK;
+}
+
 
 /**************************************************************************************************
 |* ErDrvReport () -- Event Receiver Driver Report Routine
@@ -1738,7 +1825,7 @@ void ErIrqHandler (ErCardStruct *pCard)
                   (i < EVR_FIFO_EVENT_LIMIT);  i++) {
 
            /* Get the event number and timestamp */
-            if (pCard->FormFactor != PMC_EVR) {
+            if (pCard->FormFactor == VME_EVR) {
               HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
               LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
             } else {
@@ -1799,6 +1886,13 @@ void ErIrqHandler (ErCardStruct *pCard)
       if (activityCnt >= MAX_ACTIVITY_CNT) activityCnt=0;
     }
 #endif
+
+  if (pCard->FormFactor==EMBEDDED_EVR) {
+    /* Clear the interrupt by writing a "1" to "EPF2" */
+    /* Ref: p. 11-7 of EPORT manual. */
+    *epfr = 2;
+  }
+
 }/*end ErIrqHandler()*/
 
 
@@ -3814,7 +3908,7 @@ void DiagDumpEventFifo (ErCardStruct *pCard)
     */
     for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
               (i < EVR_FIFO_EVENT_LIMIT); i++) {
-        if (pCard->FormFactor != PMC_EVR) {
+        if (pCard->FormFactor == VME_EVR) {
           LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
           HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
         } else {
