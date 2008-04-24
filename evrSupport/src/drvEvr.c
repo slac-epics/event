@@ -59,7 +59,8 @@ static int evrReport( int interest )
   if (interest > 0) {
     if (pCard) 
       printf("Pattern data from %s card %d\n",
-             pCard->FormFactor?"PMC":"VME", pCard->Cardno);
+             (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":"VME",
+             pCard->Cardno);
     evrMessageReport(EVR_MESSAGE_FIDUCIAL, EVR_MESSAGE_FIDUCIAL_NAME,
                      interest);
     evrMessageReport(EVR_MESSAGE_PATTERN,  EVR_MESSAGE_PATTERN_NAME ,
