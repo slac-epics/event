@@ -1496,7 +1496,7 @@ epicsStatus ErFinishDrvInit (int AfterRecordInit)
       if (VME_EVR == pCard->FormFactor) {
         devEnableInterruptLevelVME (pCard->IrqLevel);
       } else if (EMBEDDED_EVR == pCard->FormFactor) {
-              /* *epier = 0x02; Enable IRQ1 */ 
+        *epier = 0x02; /* Enable IRQ1 */ 
       } else {
 #ifdef PCI
         /* Enable interrupts */
