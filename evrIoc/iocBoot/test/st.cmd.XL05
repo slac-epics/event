@@ -22,9 +22,5 @@ drvMrfErFlag=0
 ## 4/17/8: from page 223 of MCF5282UM.pdf, vector is 65 when IRQ1 is used, for INTC0
 ErConfigure(0,0x0000,65,6,2)  # Embedded type
 
-# Enable External Interrupt 1 (vector 65)
-# EPIER |= 0x01
-#*(char *)0x40130003 |= 0x01
-
 iocInit() # after h/w initialisations
 bspExtVerbosity=1
