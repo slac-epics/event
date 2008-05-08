@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 03/31/2008
+Instructions for RTEMS EVR users                    Last Updated 04/15/2008
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -74,22 +74,26 @@ II - Adding event databases and EVR configuration to your IOC startup file:
 
 (3) Add ErConfigure for each EVR before iocInit.
 
-    VME: ErConfigure(<instance>,<address>,<vector>,<level>,0)
-    PMC: ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
+    VME:      ErConfigure(<instance>,<address>,<vector>,<level>,0)
+    PMC:      ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
+    Embedded: ErConfigure(<instance>,    0    ,<vector>,<level>,2)
 
     where instance = EVR instance, starting from 0, incrementing by 1
-                     for each subsequent card
+                     for each subsequent card.  Only 1 EVR instance
+		     is allowed for Embedded EVRs.
     and   address  = VME card address, starting from 0x300000, 
                      incrementing by 0x100000 for each subsequent card
+                     (0 for PMC and Embedded)
+    and   vector   = VME or Embedded interrupt vector.  
+		     For VME, start from 0x60 and increment by 0x02 for 
+		     each subsequent card.
                      (0 for PMC)
-    and   vector   = VME interrupt vector, starting from 0x60, 
-                     incrementing by 0x02 for each subsequent card
-                     (0 for PMC)
-    and   level    = VME interrupt level (set to 4 - can be the same 
-                     for all EVRs)
+    and   level    = VME or Embedded interrupt level.
+		     For VME, set to 4.  Can be the same for all EVRs.
                      (0 for PMC)
     and   0        = VME
        or 1        = PMC
+       or 2	   = Embedded
 
 (4) For IOCs with triggers, add a line to restore the trigger setpoints 
     before iocInit.  See the ChannelWatcher README file.
