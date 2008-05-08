@@ -31,6 +31,8 @@
 #include <string.h>             /* strcmp                      */
 #include <stdio.h>              /* printf                      */
 #ifdef __rtems__
+#include <rtems.h>              /* timer routines              */
+#include <rtems/timerdrv.h>     /* timer routines              */
 #include <bsp.h>                /* BSP*                        */
 #endif
 
@@ -86,7 +88,7 @@ static double        evrTicksPerUsec = 1;
 #ifdef __PPC__
 #define MFTB(var) asm volatile("mftb %0":"=r"(var))
 #else
-#define MFTB(var) do { var=0xdeadbeef; } while (0)
+#define MFTB(var) (var)=Read_timer()
 #endif
 #endif
 #ifdef linux
@@ -171,6 +173,8 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
 #ifdef __PPC__
   evrTicksPerUsec = ((double)BSP_bus_frequency/
                      (double)BSP_time_base_divisor)/1000;
+#else
+  Timer_initialize();
 #endif
 #endif
   if (messageIdx < 0) return -1;
