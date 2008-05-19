@@ -48,8 +48,6 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "evrPattern.h"       /* for EDEF_MAX              */
 #include "evrTime.h"          /* for evrTimeGetFromPipeline*/
-
-#define NOEDEF_MASK 0xFFF00000
 
 /*=============================================================================
 
@@ -84,7 +82,7 @@ static long evrModifier5(sSubRecord *psub)
   double        *check_p = &psub->a;
   int            edefIdx;
 
-  mod5 = (unsigned long)psub->u & NOEDEF_MASK;
+  mod5 = (unsigned long)psub->u & MOD5_NOEDEF_MASK;
   for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++, check_p++) {
     mod5 |= ((unsigned long)(*check_p)) << edefIdx;
   }
@@ -123,7 +121,7 @@ static long evrModifier5Bits(sSubRecord *psub)
   double        *check_p = &psub->a;
   int            edefIdx;
 
-  psub->u = mod5 & NOEDEF_MASK;
+  psub->u = mod5 & MOD5_NOEDEF_MASK;
   for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++, check_p++) {
     if (mod5 & (1 << edefIdx)) *check_p = 1.0;
     else                       *check_p = 0.0;
