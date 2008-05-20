@@ -4,6 +4,30 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-6-3: May 20, 2008
+        * mrfApp/src - many changes to build for Embedded EVRs.
+	  Dayle added Coldfire register setup.
+	* evrSupport/src/evrMessage.c - add check for PPC on a diagnostic.
+	* evrSupport/src/evrPattern.h - add more modifier5 bit masks.
+	  Add defines for the pockels cell and shutter bits.
+	* evrSupport/src/evrModifier5.c - use bit mask now in evrPattern.h.
+	* configure/CONFIG_SITE - build for all platforms.
+	* evrSupport/Db/evr/evrEvent.db, evrEventAll.substitutions - add
+	  HIGH and LOW limit for event rates.  Set HIGH limit for TCAV0 
+          and TCAV3 so that these rates go yellow when greater than 0.
+          Set LOW limit for Pock and Shut so these rates go yellow when
+          less than 0.5.  Add new event codes for the pockels cell and 
+	  profile monitors.
+	* evrSupport/Db/evr/evr.db, evrWithDelays.db - remove trigger
+	  enables at initialization time (triggers attributes may not
+	  yet be set up).
+	* evrSupport/Db/evr/evrDevTrig.db - replace individual PINIs
+	  with fanout with PINI to set delay, width, polarity before 
+	  enabling the trigger.  Add TCON for use by SCORE.
+	* evrIoc/iocBoot - directory added for test startup files.
+        * evrSupport/Db/evr/evrEventAll.substitutions - add 
+          new event codes for the pockels cell and profile monitors.  
+
 event-R2-6-2: Apr 01, 2008
         * mrfApp/src/mrfVme64x.c,.h - return board ID from the "Find" routines.
 	  Correct find logic so that 200 and 230 boards can be any order in 
