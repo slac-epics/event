@@ -32,6 +32,8 @@ record(sub, "$(DEV):$(NAME)RATE") {
   field(HSV,  "MINOR")
   field(LOLO, "$(LOLO)")
   field(LLSV, "MAJOR")
+  field(LOW,  "$(LOW)")
+  field(LSV,  "MINOR")
   field(HOPR, "$(HIHI)")
 }
 
