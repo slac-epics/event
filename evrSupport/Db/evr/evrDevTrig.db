@@ -7,6 +7,15 @@ record(longout, "$(DEV)EVENTCTRL") {
   field(DESC, "$(DESC)")
 }
 
+record(fanout, "$(DEV)TINI") {
+  field(DESC, "$(DESC) Init")
+  field(PINI, "YES")
+  field(LNK1, "$(DEV)TDES PP")
+  field(LNK2, "$(DEV)TWID PP")
+  field(LNK3, "$(DEV)TPOL PP")
+  field(LNK4, "$(DEV)TCTL PP")
+}
+
 record(bo, "$(DEV)TCTL") {
   field(DESC, "$(DESC) Control")
   field(DTYP, "Soft Channel")
@@ -15,7 +24,6 @@ record(bo, "$(DEV)TCTL") {
   field(ONAM, "Enabled")
   field(OMSL, "supervisory")
   field(VAL, "$(CTL)")
-  field(PINI, "YES")
 }
 
 record(bo, "$(DEV)TPOL") {
@@ -26,7 +34,6 @@ record(bo, "$(DEV)TPOL") {
   field(ONAM, "Inverted")
   field(OMSL, "supervisory")
   field(VAL, "$(POL)")
-  field(PINI, "YES")
 }
 
 record(ao, "$(DEV)TWID") {
@@ -39,8 +46,8 @@ record(ao, "$(DEV)TWID") {
   field(HOPR, "1000000000")
   field(DRVH, "1000000000")
   field(ESLO, "8.40336692324359")
-  field(PINI, "YES")
   field(VAL,  "$(WID)")
+  field(MDEL, "-1")
 }
 
 record(ao, "$(DEV)TDES") {
@@ -54,9 +61,20 @@ record(ao, "$(DEV)TDES") {
   field(DRVH, "$(DRVH)")
   field(DRVL, "$(DRVL)")
   field(ESLO, "8.40336692324359")
-  field(PINI, "YES")
   field(FLNK, "$(DEV)TDLYCALC")
   field(VAL, "$(DES)")
+  field(MDEL, "-1")
+}
+
+record(ao, "$(DEV)TCON") {
+  field(DESC, "$(DESC) Delay")
+  field(EGU,  "nsec")
+  field(HOPR, "$(DRVH)")
+  field(LOPR, "$(DRVL)")
+  field(DRVH, "$(DRVH)")
+  field(DRVL, "$(DRVL)")
+  field(PINI, "YES")
+  field(MDEL, "-1")
 }
 
 record(calc, "$(DEV)TDLYCALC") {
