@@ -4,6 +4,10 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R?-?-?: ???
+        * evrSupport/Db/bsa/bsaBPMSEdef.substitutions - for all TMIT PVs,
+          change EGU field from "" to Nel
+
 event-R2-6-3: May 20, 2008
         * mrfApp/src - many changes to build for Embedded EVRs.
 	  Dayle added Coldfire register setup.
