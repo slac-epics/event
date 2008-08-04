@@ -39,7 +39,6 @@
   int bsaSubFlag = DP_FATAL;
 #endif
 
-#define bsadebug 1
 /* c includes */
 #include <string.h>        /* memcmp */
 #include <math.h>          /* sqrt   */
@@ -87,6 +86,9 @@
            O - reset counters, values (avcnt, goodmeas, stat, timestamp check)
                remembers B was set last time
 	       Q = local, inner, avgcnt
+	           S = Same timestamp
+	           T = 1st part of last-processed timestamp
+		   U = 2nd part of last-processed timestamp
 		   W = Timestamp mismatch
 		   X = history buff enable(1)/disable (0)
 		   Y = count (total pulses counted so far)
@@ -124,8 +126,11 @@ static long bsaSecnAvg(sSubRecord *psub)
   if (psub->g) {  /* set from reset seq at beg of acq */
 	psub->g = 0;
 	psub->n = 0;
+    psub->s = 0;  /* ts same     */
+    psub->t = 0;  /* timestamp 1 */
+    psub->u = 0;  /* timestamp 2 */
     psub->w = 0;  /* ts mismatch */
-    psub->z= 0;   /* outer loop count */
+    psub->z = 0;  /* outer loop count */
 	psub->y = 0;  /* total count */
     psub->l = 0;  /* RMS */
     psub->val = 0; /* Average */
@@ -139,6 +144,16 @@ static long bsaSecnAvg(sSubRecord *psub)
 	psub->w++;
 	return -1;
   }
+  timeSecn.secPastEpoch  = psub->t;
+  timeSecn.nsec          = psub->u;
+  /* if this timestamp and the previous timestamp are exactly the same, then processing is not synched */
+  if (memcmp(&timeEVR,&timeSecn,sizeof(epicsTimeStamp)) == 0) {
+	DEBUGPRINT(DP_ERROR, bsaSubFlag, ("basSecnAvg for %s: Timestamp SAME as previous.\n",psub->name));
+	psub->s++;
+	return -1;
+  }
+  psub->t = timeEVR.secPastEpoch;
+  psub->u = timeEVR.nsec;
   /*Secondary timestamp:*/
   if (dbGetTimeStamp(&psub->inpa, &timeSecn)){
 	DEBUGPRINT(DP_ERROR, bsaSubFlag, ("bsaSecnAvg for %s: Unable to determine device timestamp.\n",psub->name));
@@ -149,10 +164,7 @@ static long bsaSecnAvg(sSubRecord *psub)
   if (memcmp(&timeEVR,&timeSecn,sizeof(epicsTimeStamp))) {
 	DEBUGPRINT(DP_ERROR, bsaSubFlag, ("basSecnAvg for %s: Timestamp MISMATCH.\n",psub->name));
 	psub->w++;
-
-#ifndef bsadebug
 	return -1;
-#endif
   }
   
   /* Reinit for a new average (avg done was flagged last time through) */
