@@ -44,10 +44,12 @@ extern "C" {
 #define TIMESLOT4_MASK          (0x00000008)  /* timeslot 4 mask       */
 #define TIMESLOT5_MASK          (0x00000010)  /* timeslot 5 mask       */
 #define TIMESLOT6_MASK          (0x00000020)  /* timeslot 6 mask       */
-/* Shutter permitted bit in modifier 2                  */
+/* Bits in modifier 2                                                  */
 #define SHUTTER_PERM            (0x00800000)  /* Shutter permit        */
-/* Pockels cell permitted bit in modifier 3             */
+#define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
+/* Bits in modifier 3                                                  */
 #define POCKCEL_PERM            (0x00080000)  /* Pockels cell permit   */
+#define TCAV0_PERM              (0x80000000)  /* TCAV0                 */
 /* Mask used to get timeslot value from modifier4       */
 #define TIMESLOT_VAL_MASK       (0x00000007)  /* Time slot value mask  */
                                               /* Left shift 29 first   */
