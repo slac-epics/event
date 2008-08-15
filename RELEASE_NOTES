@@ -4,6 +4,9 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-6-5: Aug 15, 2008
+        * evrSupport/Db/bsa/bsaBLENEdef.substitutions - added IPK.
+
 event-R2-6-4: Aug 4, 2008
         * evrSupport/Db/bsa/bsaBPMSEdef.substitutions - for all TMIT PVs,
           change EGU field from "" to Nel
