@@ -39,6 +39,27 @@ file bsaEdefAvg.db
 	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, BR  ,18 ,FULL,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), R  ,   118}
 	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, F1  ,19 ,FBCK1, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), S  ,   119}
 	  { $(DEVICE) ,$(ATB)RAW, $(DEVICE):$(ATB)RAW, F2  ,20 ,FBCK2, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), T  ,   120}
+
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 1   , 1 , 1  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), A  ,   101}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 2   , 2 , 2  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), B  ,   102}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 3   , 3 , 3  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), C  ,   103}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 4   , 4 , 4  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), D  ,   104}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 5   , 5 , 5  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), E  ,   105}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 6   , 6 , 6  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), F  ,   106}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 7   , 7 , 7  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), G  ,   107}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 8   , 8 , 8  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), H  ,   108}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 9   , 9 , 9  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), I  ,   109}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 10  ,10 ,10  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), J  ,   110}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 11  ,11 ,11  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), K  ,   111}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 12  ,12 ,12  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), L  ,   112}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 13  ,13 ,13  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), M  ,   113}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 14  ,14 ,14  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), N  ,   114}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 15  ,15 ,15  ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), O  ,   115}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, 1H  ,16 ,1HZ ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), P  ,   116}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, TH  ,17 ,10HZ,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), Q  ,   117}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, BR  ,18 ,FULL,  "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), R  ,   118}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, F1  ,19 ,FBCK1, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), S  ,   119}
+	  { $(DEVICE) ,$(ATB)IPK, $(DEVICE):$(ATB)IPK, F2  ,20 ,FBCK2, "", 300 , 100,  3 , 1  ,   1 , $(LOC), $(UN), T  ,   120}
 }
 
 file bsaEdefFanouts.db
@@ -46,5 +67,6 @@ file bsaEdefFanouts.db
 #	      Device   Name
   pattern {   DEV ,SECN        ,  LOCA  , UNIT  ,   FLNK    }
 	  { $(DEVICE) ,$(ATB)RAW , $(LOC) , $(UN) , $(SLCLNK) }
+	  { $(DEVICE) ,$(ATB)IPK , $(LOC) , $(UN) , $(SLCLNK) }
 }
 
