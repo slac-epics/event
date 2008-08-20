@@ -11,8 +11,12 @@ include $(TOP)/configure/CONFIG
 # Create and install (or just install)
 # databases, templates, substitutions like this
 #
-# Device Simulation
+# Databases for apps that do their own Edef support.
+DB += bsaEdefAvg.db
+DB += bsaEdefFanouts.db
 DB += bsaTestInput.db
+DB += bsaTestFanouts.db
+# Device Simulation
 DB += bsaProcTestAll.db
 DB += bsaBPMSTest.db
 DB += bsaTOROTest.db
@@ -20,8 +24,6 @@ DB += bsaBLENTest.db
 DB += bsaWIRETest.db
 DB += bsaPMTTest.db
 DB += bsaFARCTest.db
-DB += bsaTestInput.db
-DB += bsaTestFanouts.db
 # Device edef records
 DB += bsaBPMSEdef.db
 DB += bsaTOROEdef.db
