@@ -4,13 +4,12 @@ Instructions for RTEMS EVR users                    Last Updated 04/15/2008
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
 
-(1) Add EVENT, GENERALTIME, SSUBRECORD, and RESTORE to configure/RELEASE and 
+(1) Add EVENT, GENERALTIME, and RESTORE to configure/RELEASE and 
 clean/rebuild configure.
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
 
    xxx_LIBS += evrSupport
-   xxx_LIBS += sSubRecord
    xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
    xxx_LIBS += mrfVme64x

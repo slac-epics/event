@@ -4,7 +4,7 @@ Instructions for RTEMS evgTest users
 I - Correct and build the xxxxApp application:
 ----------------------------------------------
 
-(0) Install and build the event, generalTime, sSubRecord, and miscUtils 
+(0) Install and build the event, generalTime, and miscUtils 
     modules from the LCLS CVS repository if not already done:  
 
     http://www.slac.stanford.edu/cgi-wrap/cvsweb/epics/site/src/?cvsroot=LCLS
