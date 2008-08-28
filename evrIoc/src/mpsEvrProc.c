@@ -1,9 +1,11 @@
 /*=============================================================================
  
   Name: mpsEvrProc.c
+           mpsEvrStart     - MPS EVR Initialization
            mpsEvrProcInit  - MPS EVR Pattern Processing Initialization
            mpsEvrProc      - MPS EVR Pattern Processing
            mpsTask         - MPS EVR Task for testing
+           mpsTaskPrint    - MPS EVR Task printout
 
   Abs: This file contains all subroutine support for mps evr pattern processing
        records.
@@ -39,13 +41,14 @@
 #include <stdio.h>            /* for struct subRecord      */
 #include "subRecord.h"        /* for struct subRecord      */
 #include "registryFunction.h" /* for epicsExport           */
+#include "iocsh.h"            /* for iocshRegister         */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "epicsEvent.h"       /* for epicsEvent*           */
 #include "epicsThread.h"      /* for epicsThreadCreate     */
 
 #include "evrTime.h"          /* MAX_EVR_TIME,evrTimeNext3 */
-#include "evrPattern.h"       /* evrPatternModifier5_ts    */
+#include "evrPattern.h"       /* MOD5_BEAMFULL_MASK        */
 
 typedef struct {
   epicsTimeStamp      timestamp;
@@ -54,7 +57,8 @@ typedef struct {
   epicsUInt32         beam;
   epicsUInt32         spare;
 } mpsPulse_ts;
-static mpsPulse_ts  mpsPulse_as[MAX_EVR_TIME];
+#define MAX_MPS_TIME (MAX_EVR_TIME-1)
+static mpsPulse_ts  mpsPulse_as[MAX_MPS_TIME];
 static epicsMutexId mpsPulseRWMutex_ps = 0;
 static epicsEventId mpsTaskEventSem    = 0;
 int mpsTaskCounter = 0;
@@ -63,11 +67,11 @@ int mpsTaskCounter = 0;
 void mpsTaskPrint()
 {
   int idx;
-  mpsPulse_ts mpsPrint_as[MAX_EVR_TIME];
+  mpsPulse_ts mpsPrint_as[MAX_MPS_TIME];
   if (mpsPulseRWMutex_ps && (!epicsMutexLock(mpsPulseRWMutex_ps))) {
-    for (idx=0;idx<MAX_EVR_TIME; idx++) mpsPrint_as[idx] = mpsPulse_as[idx];
+    for (idx=0;idx<MAX_MPS_TIME; idx++) mpsPrint_as[idx] = mpsPulse_as[idx];
     epicsMutexUnlock(mpsPulseRWMutex_ps);
-    for (idx=0;idx<MAX_EVR_TIME; idx++) {
+    for (idx=0;idx<MAX_MPS_TIME; idx++) {
       printf("Idx = %d, nsec = %x, sec = %u, timeslot = %d, pulseid = %x, beam =%d\n",
              idx, mpsPrint_as[idx].timestamp.nsec,
              mpsPrint_as[idx].timestamp.secPastEpoch,
@@ -97,6 +101,91 @@ static int mpsTask()
 
 /*=============================================================================
 
+  Name: mpsEvrFiducial
+
+  Abs:  360Hz MPS EVR Processing at the fiducial.
+  
+  Args: None.
+
+  Rem:  
+
+  Side: Mutex lock/unlock, event signal.
+
+  Ret:  0 = OK, -1 = Error.
+
+  =============================================================================*/ 
+
+static void mpsEvrFiducial(void)
+{
+  evrModifier_ta modifier_a;
+  unsigned long  patternStatus;
+  int     idx;
+  
+  if (mpsPulseRWMutex_ps && (!epicsMutexLock(mpsPulseRWMutex_ps))) {
+    for (idx = 0; idx < evrTimeNext3; idx++) {
+      if (evrTimeGetFromPipeline(&mpsPulse_as[idx].timestamp, idx,
+                                 modifier_a, &patternStatus,0,0,0)) {
+        mpsPulse_as[idx].timeslot = 0;
+        mpsPulse_as[idx].pulseid  = PULSEID_INVALID;
+        mpsPulse_as[idx].beam     = 1;
+        mpsPulse_as[idx].spare    = 0;
+      } else {
+        mpsPulse_as[idx].timeslot = TIMESLOT(modifier_a);
+        mpsPulse_as[idx].pulseid  = PULSEID(mpsPulse_as[idx].timestamp);
+        mpsPulse_as[idx].beam     = (modifier_a[4] & MOD5_BEAMFULL_MASK)?1:0;
+        mpsPulse_as[idx].spare    = 0;
+      }
+    }
+    epicsMutexUnlock(mpsPulseRWMutex_ps);
+    if (mpsTaskEventSem) epicsEventSignal(mpsTaskEventSem);
+  }
+}
+
+/*=============================================================================
+
+  Name: mpsEvrStart
+
+  Abs:  Initialization for 360Hz MPS EVR processing.  
+		
+  Args: None.
+
+  Rem:  None.
+
+  Side: 
+
+  Ret:  0 = OK, -1 = Error.
+  
+==============================================================================*/ 
+int mpsEvrStart(int registerFiducial)
+{
+  /* Create the mutex used to protect mps pulse data */
+  if (!mpsPulseRWMutex_ps) {
+    mpsPulseRWMutex_ps = epicsMutexCreate();
+    if (!mpsPulseRWMutex_ps) {
+      errlogPrintf("mpsEvrStart: unable to create the MPS pulse data mutex\n");
+    return -1;
+    }
+  }
+  /* Create the semaphore used to wake up the mps task, start task */
+  if (!mpsTaskEventSem) {
+    mpsTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
+    if (!mpsTaskEventSem) {
+      errlogPrintf("mpsEvrStart: unable to create the MPS task semaphore\n");
+      return -1;
+    }
+    if (!epicsThreadCreate("mpsTask", epicsThreadPriorityHigh,
+                           epicsThreadGetStackSize(epicsThreadStackMedium),
+                           (EPICSTHREADFUNC)mpsTask, 0)) {
+      errlogPrintf("mpsEvrProcInit: unable to create the EVR task\n");
+      return -1;
+    }
+    if (registerFiducial) evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial);
+  }
+  return 0;
+}
+
+/*=============================================================================
+
   Name: mpsEvrProcInit
 
   Abs:  Initialization for 360Hz MPS EVR processing.  
@@ -120,25 +209,8 @@ static int mpsTask()
 ==============================================================================*/ 
 static int mpsEvrProcInit(subRecord *psub)
 {
-  /* Create the semaphore used to wake up the mps task */
-  mpsTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
-  if (!mpsTaskEventSem) {
-    errlogPrintf("mpsEvrProcInit: unable to create the MPS task semaphore\n");
-    return -1;
-  }
-  /* Create the mutex used to protect mps pulse data */
-  mpsPulseRWMutex_ps = epicsMutexCreate();
-  if (!mpsPulseRWMutex_ps) {
-    errlogPrintf("mpsEvrProcInit: unable to create the MPS pulse data mutex\n");
-    return -1;
-  }
-  /* Create the MPS task */
-  if (!epicsThreadCreate("mpsTask", epicsThreadPriorityHigh,
-                         epicsThreadGetStackSize(epicsThreadStackMedium),
-                         (EPICSTHREADFUNC)mpsTask, 0)) {
-    errlogPrintf("mpsEvrProcInit: unable to create the EVR task\n");
-    return -1;
-  }
+  /* Start the MPS task if it isn't already started */
+  if (mpsEvrStart(0)) return -1;
   /* do whatever initialization is needed here */
   return 0;
 }
@@ -186,7 +258,7 @@ static long mpsEvrProc(subRecord *psub)
   
   if (mpsPulseRWMutex_ps && (!epicsMutexLock(mpsPulseRWMutex_ps))) {
     for (idx = 0, doubleValue_p = &psub->a; idx < evrTimeNext3; idx++) {
-      evrTimeGetFromPipeline(&mpsPulse_as[idx].timestamp, idx);
+      evrTimeGetFromPipeline(&mpsPulse_as[idx].timestamp, idx, 0,0,0,0,0);
       mpsPulse_as[idx].timeslot = (epicsUInt32)(*doubleValue_p);
       doubleValue_p++;
       mpsPulse_as[idx].pulseid  = (epicsUInt32)(*doubleValue_p);
@@ -208,3 +280,21 @@ static long mpsEvrProc(subRecord *psub)
 }
 epicsRegisterFunction(mpsEvrProcInit);
 epicsRegisterFunction(mpsEvrProc);
+
+static const iocshArg mpsEvrStartArg0 = {"Fiducial Registry Flag", iocshArgInt};
+static const iocshArg *const mpsEvrStartArgs[1] = {&mpsEvrStartArg0};
+static const iocshFuncDef    mpsEvrStartDef     = {"mpsEvrStart", 1, mpsEvrStartArgs};
+static void mpsEvrStartCall(const iocshArgBuf * args) {
+  mpsEvrStart(args[0].ival);
+}
+
+static const iocshFuncDef    mpsTaskPrintDef = {"mpsTaskPrint", 0, 0};
+static void mpsTaskPrintCall(const iocshArgBuf * args) {
+  mpsTaskPrint();
+}
+
+static void mpsEvrRegister() {
+    iocshRegister(&mpsEvrStartDef  , mpsEvrStartCall  );
+    iocshRegister(&mpsTaskPrintDef , mpsTaskPrintCall );
+}
+epicsExportRegistrar(mpsEvrRegister);
