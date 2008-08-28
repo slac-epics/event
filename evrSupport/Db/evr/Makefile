@@ -15,6 +15,7 @@ include $(TOP)/configure/CONFIG
 DB += evr.db
 DB += evrWithDelays.db
 DB += evrWithExtDelays.db
+DB += evrEvent.db
 DB += evrEventCtrl.db
 DB += evrDevTrig.db
 # evrPattern support
@@ -22,7 +23,7 @@ DB += evrPatternProc.db
 DB += evrEventAll.db
 DB += evrPatternAll.db
 DB += evrPatternTest.db
-DB += evrPatternSaaAll.db
+DB += evrPatternTestBsa.db
 DB += evrMod36.db
 
 include $(TOP)/configure/RULES
