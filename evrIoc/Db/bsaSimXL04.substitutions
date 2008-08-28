@@ -27,10 +27,10 @@ file bsaPMTTest.db
 }
 file bsaBLENTest.db 
 {
-  pattern { DEVICE       , S           , ATB }
-	  { BLEN:XX04:1  , ".1 second" , A   }
-	  { BLEN:XX04:2  , ".1 second" , B   }
-	  { BLEN:XX04:3  , ".1 second" , C   }
+  pattern { DEVICE       , S         , ATB }
+	  { BLEN:XX04:1  , "Passive" , A   }
+	  { BLEN:XX04:2  , "Passive" , B   }
+	  { BLEN:XX04:3  , "Passive" , C   }
 }
 file bsaWIRETest.db 
 {
