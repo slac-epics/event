@@ -41,7 +41,7 @@ file bsaWIRETest.db
 	  { WIRE:XX01:4  , ".1 second" }
 }
 # ESIM Pattern records (from EVG) to EVR:
-file evrPatternTest.db 
+file evrPatternTestBsa.db 
 {
   pattern {  EIOC       ,DEVICE       }
 	  { IOC:XX01:1  ,ESIM:XX01:1  }

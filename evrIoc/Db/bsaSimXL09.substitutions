@@ -16,7 +16,7 @@ file bsaTOROTest.db
 	  { TORO:XX09:2  , ".1 second" }
 }
 # ESIM Pattern records (from EVG) to EVR:
-#file evrPatternTest.db 
+#file evrPatternTestBsa.db 
 #{
 #  pattern { EIOC  ,  DEVICE }
 #	  { IOC:XL09:EV01  ,ESIM:XX09:1  }
