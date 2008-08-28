@@ -3,19 +3,11 @@
 #! DBDEND
 
 
-record(sub, "$(DEV):FIDUCIAL") {
+record(longSub, "$(DEV):FIDUCIAL") {
   field(DESC, "Fiducial Processing")
-  field(INAM, "evrTimeInit")
+  field(INAM, "evrTimeProcInit")
   field(SNAM, "evrTimeProc")
   field(FLNK, "$(DEV):PATTERNFO")
-  field(INPA, "$(DEV):PATTERNN-3.L")
-  field(INPB, "$(DEV):PATTERNN-2.L")
-  field(INPC, "$(DEV):PATTERNN-1.L")
-  field(INPD, "$(DEV):PATTERN.L")
-  field(INPE, "$(DEV):PATTERNN-3.SEVR")
-  field(INPF, "$(DEV):PATTERNN-2.SEVR")
-  field(INPG, "$(DEV):PATTERNN-1.SEVR")
-  field(INPH, "$(DEV):PATTERNN-1.C")
   field(INPI, "$(TS1ST)")
   field(INPJ, "$(TS2ND)")
   field(BRSV, "INVALID")
@@ -30,14 +22,14 @@ record(fanout, "$(DEV):PATTERNFO") {
   field(LNK6, "$(LNK6)")
 }
 
-record(sSub, "$(DEV):MODIFIER5") {
+record(longSub, "$(DEV):MODIFIER5") {
   field(SNAM, "evrModifier5Bits")
   field(INPV, "$(DEV):PATTERN.H MS")
   field(BRSV, "INVALID")
   field(FLNK, "$(DEV):EDAVGDONE")
 }
 
-record(sSub, "$(DEV):FIDUCIALDIAG") {
+record(longSub, "$(DEV):FIDUCIALDIAG") {
   field(DESC, "FIDUCIAL Diagnostics")
   field(EVNT, "121")
   field(SCAN, "Event")
@@ -80,7 +72,7 @@ record(mbbo, "$(DEV):PATTERNSTATE") {
   field(ZRST, "OK")
   field(ONST, "INVALID_DATA")
   field(ONSV, "INVALID")
-  field(TWST, "SPARE")
+  field(TWST, "NO_DATA")
   field(TWSV, "INVALID")
   field(THST, "INVALID_TIME")
   field(THSV, "INVALID")
@@ -102,7 +94,7 @@ record(mbbo, "$(DEV):PATTERNSTATE") {
   field(OMSL, "closed_loop")
 }
 
-record(sSub, "$(DEV):EDAVGDONE") {
+record(longSub, "$(DEV):EDAVGDONE") {
   field(DESC, "edef avg done->20")
   field(SNAM, "evrModifier5Bits")
   field(INPV, "$(DEV):PATTERN.K MS")
