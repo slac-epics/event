@@ -6,6 +6,8 @@
         evrSend        - Send EVR data to Message Queue
         evrEvent       - Process Event Codes
         evrTask        - High Priority task to process 360Hz Fiducial and Data
+        evrRecord      - High Priority task to process 360Hz Records
+        evrRegister    - Register User Routine called by evrTask 
 
   Abs:  Driver data and event support for EVR Receiver module or EVR simulator.   
 
@@ -45,6 +47,8 @@ epicsExportAddress(drvet, drvEvr);
 
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
+static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
+static REGISTRYFUNCTION fiducialFunc      = NULL;  /* user function       */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
 
 /*=============================================================================
@@ -61,6 +65,7 @@ static int evrReport( int interest )
       printf("Pattern data from %s card %d\n",
              (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":"VME",
              pCard->Cardno);
+    printf("Registered fiducial function %p\n", fiducialFunc);
     evrMessageReport(EVR_MESSAGE_FIDUCIAL, EVR_MESSAGE_FIDUCIAL_NAME,
                      interest);
     evrMessageReport(EVR_MESSAGE_PATTERN,  EVR_MESSAGE_PATTERN_NAME ,
@@ -90,7 +95,6 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
       (messageSize != sizeof(evrMessagePattern_ts))) {
     evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
   } else {
-    evrMessageStart(messageType);
     if (evrMessageWrite(messageType, (evrMessage_tu *)message))
       evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
   }
@@ -117,14 +121,14 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
       evrMessageNoDataError(EVR_MESSAGE_FIDUCIAL);
     }
   }
-  evrTimeCount((unsigned long)eventNum);
+  evrTimeCount((unsigned int)eventNum);
 }
 
 /*=============================================================================
                                                          
   Name: evrTask
 
-  Abs:  This task performs record processing for the fiducial and data.
+  Abs:  This task performs processing for the fiducial and data.
   
   Rem:  It's started by evrInitialise after the EVR module is configured. 
     
@@ -133,14 +137,18 @@ static int evrTask()
 {  
   epicsEventWaitStatus status;
 
+  if (evrTimeInit(0,0)) {
+    errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
+    return -1;
+  }
   for (;;)
   {
     readyForFiducial = 1;
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     if (status == epicsEventWaitOK) {
-      evrMessageProcess(EVR_MESSAGE_PATTERN);
-      evrMessageEnd(EVR_MESSAGE_PATTERN);
-      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
+      evrPattern(); /* N-3           */
+      evrTime();    /* Move pipeline */
+      if (fiducialFunc != NULL) (*fiducialFunc)(); /* Call user's routine */
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
     /* If timeout or other error, process the data which will result in bad
        status since there is nothing to do.  Then advance the pipeline so
@@ -149,19 +157,55 @@ static int evrTask()
     } else {
       readyForFiducial = 0;
       evrMessageTimeout(EVR_MESSAGE_PATTERN);
-      evrMessageProcess(EVR_MESSAGE_PATTERN);   /* N-3 */
-      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-2 */
-      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N-1 */
-      evrMessageProcess(EVR_MESSAGE_FIDUCIAL);  /* N   */
+      evrPattern(); /* N-3 */
+      evrTime();    /* N-2 */
+      evrTime();    /* N-1 */
+      evrTime();    /* N   */
       if (status != epicsEventWaitTimeout) {
         errlogPrintf("evrTask: Exit due to bad status from epicsEventWaitWithTimeout\n");
         return -1;
       }
     }
+    /* Now do record processing */
+    evrMessageStart(EVR_MESSAGE_PATTERN);
+    epicsEventSignal(evrRecordEventSem);
   }
   return 0;
 }
 
+/*=============================================================================
+                                                         
+  Name: evrRecord
+
+  Abs:  This task performs record processing for the fiducial and data.
+  
+  Rem:  It's started by evrInitialise after the EVR module is configured. 
+    
+=============================================================================*/
+static int evrRecord()
+{  
+  for (;;)
+  {
+    if (epicsEventWait(evrRecordEventSem)) {
+      errlogPrintf("evrRecord: Exit due to bad status from epicsEventWait\n");
+      return -1;
+    }
+    evrMessageProcess(EVR_MESSAGE_PATTERN);
+    evrMessageProcess(EVR_MESSAGE_FIDUCIAL);
+    evrMessageEnd(EVR_MESSAGE_PATTERN);
+  }
+  return 0;
+}
+
+/*=============================================================================
+                                                         
+  Name: evrInitialise
+
+  Abs:  Driver initialization.
+  
+  Rem:  Called during iocInit to initialize fiducial and data processing.
+    
+=============================================================================*/
 static int evrInitialise()
 {
 
@@ -174,18 +218,29 @@ static int evrInitialise()
   if (evrMessageCreate(EVR_MESSAGE_FIDUCIAL_NAME, 0) !=
       EVR_MESSAGE_FIDUCIAL) return -1;
   
-  /* Create the semaphore used by the ISR to wake up the evr task */
+  /* Create the semaphores used by the ISR to wake up the evr tasks */
   evrTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
   if (!evrTaskEventSem) {
     errlogPrintf("evrInitialise: unable to create the EVR task semaphore\n");
     return -1;
   }
+  evrRecordEventSem = epicsEventMustCreate(epicsEventEmpty);
+  if (!evrTaskEventSem) {
+    errlogPrintf("evrInitialise: unable to create the EVR record task semaphore\n");
+    return -1;
+  }
   
-  /* Create the task to process records */
+  /* Create the processing tasks */
   if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh+1,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
                          (EPICSTHREADFUNC)evrTask, 0)) {
     errlogPrintf("evrInitialise: unable to create the EVR task\n");
+    return -1;
+  }
+  if (!epicsThreadCreate("evrRecord", epicsThreadPriorityHigh,
+                         epicsThreadGetStackSize(epicsThreadStackMedium),
+                         (EPICSTHREADFUNC)evrRecord, 0)) {
+    errlogPrintf("evrInitialise: unable to create the EVR record task\n");
     return -1;
   }
   
@@ -203,5 +258,20 @@ static int evrInitialise()
   }
 #endif
   
+  return 0;
+}
+
+/*=============================================================================
+                                                         
+  Name: evrRegisterFiducial
+
+  Abs:  Register a routine for evrTask to call after receipt of fiducial.
+  
+  Rem:  Last caller wins.  
+    
+=============================================================================*/
+int evrTimeRegister(REGISTRYFUNCTION fiducialFuncIn)
+{
+  fiducialFunc = fiducialFuncIn;
   return 0;
 }
