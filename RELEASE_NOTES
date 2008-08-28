@@ -4,6 +4,35 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-7-0: Aug 28, 2008
+        * evrSupport/Db/bsa/Makefile - install databases for apps that want to
+	  do their own substitutions files.
+        * evrSupport/Db/evr/evrEventAll.substitutions - change LCLSTBD1 to
+	  LCTCV3PM for TCAV3 OTR camera triggering.
+	* README, configure/RELEASE, testIoc/README_* - remove sSubRecord 
+          dependency.
+	* README - Add note about registration of user's fiducial routine.
+	* evrSupport/src and Db<many files>:
+	  - Add doubSubRecord and longSubRecord and remove sSubRecord from build.
+	  - Replace as many doubles as possible with unsigned longs.
+	  - Replace sSubRecord and some subRecord with 
+	    longSubRecord and doubSubRecord as appropriate.
+	  - Don't do any unnecessary floating point arithmetic.
+	  - Changes to share more code between event module and Mpg IOC app.
+	  - Use 6 element modifier array instead of 4+modifier5+bunchcharge.
+	  - Move pattern pipelining out of record processing.  Add pattern
+	    to evrTimeGetFromPattern.
+	  - 2 360Hz tasks now started by the event driver:
+		+ evrTask (evrThreadPriorityHigh+1) for pattern pipelining 
+		+ evrRecord (evrThreadPriorityHigh) for record processing.
+	  - evrTask now calls a routine provided by the user on every fiducial.
+	    evrTimeRegister added to register the user's fiducial routine 
+	    (must be called by the user during user's initialization). 
+	  - 360hz record processing is now just shells around static data.
+	  - Simulator logic updated to simulate EVR interrupts.
+	  - Add PATTERN_NO_DATA to possible pattern states.
+	* evrIoc - various changes to support testing.
+
 event-R2-6-5: Aug 15, 2008
         * evrSupport/Db/bsa/bsaBLENEdef&bsaBLENTest.substitutions - added IPK.
 
