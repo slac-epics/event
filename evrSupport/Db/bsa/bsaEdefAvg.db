@@ -11,7 +11,7 @@ record(bi, "$(DEV):$(SECN)$(MDID)GO") {
   field(FLNK, "$(DEV):$(SECN)$(MDID)")
 }
 
-record(sSub, "$(DEV):$(SECN)$(MDID)") {
+record(doubSub, "$(DEV):$(SECN)$(MDID)") {
   field(DESC, "$(SECN) Avg for EDEF $(DESC)")
   field(INPA, "$(INP)")
   field(INPB, "IOC:$(LOCA):$(UNIT):EDAVGDONE.$(BIT)")
