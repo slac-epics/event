@@ -32,6 +32,7 @@ extern "C" {
 /* Masks used to decode beam code and YY from modifier1 */
 #define BEAMCODE_BIT_MASK       (0x0000001F)  /* Beam code mask        */
                                               /* Left shift 8 first    */
+#define BEAMCODE(mod_a)         ((((mod_a)[0]) >> 8) & BEAMCODE_BIT_MASK)
 #define YY_BIT_MASK             (0x000000FF)  /* YY code mask          */
 /* Other useful bits in modifier1                       */
 #define MODULO720_MASK          (0x00008000)  /* Set to sync modulo 720*/
@@ -53,14 +54,14 @@ extern "C" {
 /* Mask used to get timeslot value from modifier4       */
 #define TIMESLOT_VAL_MASK       (0x00000007)  /* Time slot value mask  */
                                               /* Left shift 29 first   */
+#define TIMESLOT(mod_a)         ((((mod_a)[3]) >> 29) & TIMESLOT_VAL_MASK)
 
   
-#define EDEF_MAX                 20           /* Maximum # event defns */
-#define TIMESLOT_MIN              1           /* Minimum time slot     */
-#define TIMESLOT_MAX              6           /* Maximum time slot     */
 #define TIMESLOT_RATE_MAX         5           /* # limited rates       */
                                               /* 30, 10, 5, 1, 0.5hz   */
-  
+
+#define EDEF_MAX                 20           /* Maximum # event defns */
+
 /* Masks defining modifier5 */
 #define MOD5_EDEF_MASK          (0x000FFFFF)  /* EDEF bits             */
 #define MOD5_NOEDEF_MASK        (0xFFF00000)  /* Rate and User bits    */
@@ -75,21 +76,10 @@ extern "C" {
 #define MOD5_1HZ_MASK           (0x00800000)  /* 1hz  base rate        */
 #define MOD5_HALFHZ_MASK        (0x01000000)  /* .5hz base rate        */
 
-
-/* Event codes - see mrfCommon.h for reserved internal event codes */
-/*#define EVENT_FIDUCIAL        1  */         /* Fiducial event code (see evrMessage.h) */
-#define EVENT_EXTERNAL_TRIG     100           /* External trigger event code */
-#define EVENT_EDEFINIT_MIN      101           /* Minimum event code for EDEF Init */
-#define EVENT_EDEFINIT_MAX      120           /* Maximum event code for EDEF Init */
-#define EVENT_MODULO720         121           /* Modulo 720 event code    */
-#define EVENT_MODULO36_MIN      201           /* Min modulo 36 event code */
-#define EVENT_MODULO36_MAX      236           /* Max modulo 36 event code */
-#define MODULO36_MAX            36            /* # modulo 36 event codes  */
-
 /* VAL values set by pattern subroutines */
 #define PATTERN_OK                0
 #define PATTERN_INVALID_WF        1
-#define PATTERN_SPARE             2
+#define PATTERN_NO_DATA           2
 #define PATTERN_INVALID_TIMESTAMP 3
 #define PATTERN_MPG_IPLING        4
 #define PATTERN_SEQ_CHECK1_ERR    5
@@ -98,7 +88,7 @@ extern "C" {
 #define PATTERN_PULSEID_NO_SYNC   8
 #define PATTERN_MODULO720_NO_SYNC 9
 #define PATTERN_TIMEOUT           10
-
+  
 #ifdef __cplusplus
 }
 #endif
