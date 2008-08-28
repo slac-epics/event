@@ -42,8 +42,8 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , L
 	{$(DEVICE) , LCLSTCV3, 156,11916      , LOW  ,120.5,  0.5,  -1 ,  -1 , "TCAV3"        }
 	{$(DEVICE) , LCNOTCV3, 157,11917      , LOW  ,120.5,120.5,  -1 ,  -1 , "Klys StdBy No TCAV3"}
 	{$(DEVICE) , LCLSPOCK, 158,11918      , LOW  ,120.5,120.5,  -1 , 0.5 , "Pockels Cell" }
-	{$(DEVICE) , LCLSPROF, 159,11919      , LOW  ,120.5,120.5,  -1 ,  -1 , "Profile Monitors"   }
-	{$(DEVICE) , LCLSTBD1, 160,11920      , LOW  ,120.5,120.5,  -1 ,  -1 , "Spare 1"      }
+	{$(DEVICE) , LCLSPROF, 159,11919      , LOW  , 10.5, 10.5,  -1 ,  -1 , "Profile Monitors"   }
+	{$(DEVICE) , LCTCV3PM, 160,11920      , LOW  , 10.5, 10.5,  -1 ,  -1 , "TCAV3 OTR"    }
 	{$(DEVICE) , LCLSTBD2, 161,11921      , LOW  ,120.5,120.5,  -1 ,  -1 , "Spare 2"      }
 	{$(DEVICE) , LCLSTBD3, 162,11922      , LOW  ,120.5,120.5,  -1 ,  -1 , "Spare 3"      }
 # Beam-Independent Time Slot Triggers
