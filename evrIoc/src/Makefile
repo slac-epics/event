@@ -15,37 +15,27 @@ USR_CFLAGS += -DDEBUG_PRINT
 DBD += evr.dbd
 DBD += evrTest.dbd
 evrTest_DBD += base.dbd
+evrTest_DBD += mpsEvrProc.dbd
 evrTest_DBD += evrSupport.dbd
 evr_DBD += base.dbd
+evr_DBD += mpsEvrProc.dbd
 evr_DBD += evrSupport.dbd
 evr_DBD += devMrfEr.dbd
-
-DBD += mps.dbd
-mps_DBD += base.dbd
-mps_DBD += evrSupport.dbd
-mps_DBD += devMrfEr.dbd
-mps_DBD += mpsEvrProc.dbd
 
 PROD_IOC = evrTest
 PROD_IOC_RTEMS = evr
 # <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
 evrTest_SRCS += evrTest_registerRecordDeviceDriver.cpp
 evrTest_SRCS += evrTestMain.cpp
+evrTest_SRCS += mpsEvrProc.c
 evr_SRCS += evr_registerRecordDeviceDriver.cpp
+evr_SRCS += mpsEvrProc.c
 
-evrTest_LIBS += evrSupport sSubRecord generalTime
+evrTest_LIBS += evrSupport generalTime
 evrTest_LIBS += $(EPICS_BASE_IOC_LIBS)
-evr_LIBS += evrSupport sSubRecord generalTime
+evr_LIBS += evrSupport generalTime
 evr_LIBS += devMrfEr mrfVme64x
 evr_LIBS += $(EPICS_BASE_IOC_LIBS)
-
-PROD_IOC_RTEMS += mps
-mps_SRCS += mps_registerRecordDeviceDriver.cpp
-mps_SRCS += mpsEvrProc.c
-
-mps_LIBS += evrSupport sSubRecord generalTime
-mps_LIBS += devMrfEr mrfVme64x
-mps_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
 
