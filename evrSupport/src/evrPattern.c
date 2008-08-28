@@ -1,19 +1,20 @@
 /*=============================================================================
  
   Name: evrPattern.c
-           evrPatternProcInit  - Pattern Setup Initialization
-           evrPatternProc      - 360Hz Pattern Setup
-           evrPatternCount     - EVR Event Count Update
-           evrPatternState     - Pattern Processing State and Diagnostics
+           evrPattern          - 360Hz Pattern Processing
+           evrPatternProcInit  - Pattern Record Processing Initialization
+           evrPatternProc      - 360Hz Pattern Record Processing
+           evrPatternState     - Pattern Record Processing State and Diagnostics
+           evrPatternSim       - Pattern Simulator
 
   Abs: This file contains all subroutine support for evr Pattern processing
-       records.
+       records.  It also contains functions called by evr task data processing.
        
-  Rem: All functions called by the subroutine record get passed one argument:
+  Rem: All functions called by a subroutine record get passed one argument:
 
          psub                       Pointer to the subroutine record data.
           Use:  pointer
-          Type: struct subRecord *
+          Type: struct longSubRecord *
           Acc:  read/write
           Mech: reference
 
@@ -37,114 +38,47 @@
  
 =============================================================================*/
 
-#include "subRecord.h"        /* for struct subRecord      */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
-#include "dbScan.h"           /* for post_event            */
-#include "sSubRecord.h"       /* for struct sSubRecord     */
+#include "longSubRecord.h"    /* for struct longSubRecord  */
 
 #include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*  */
 #include "evrTime.h"          /* evrTime* prototypes       */
 #include "evrPattern.h"       /* for PATTERN* defines      */
 
-static unsigned int msgCount         = 0; /* # waveforms processed since boot/reset */ 
-static unsigned int msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
-static unsigned int patternErrCount  = 0; /* # PATTERN errors in-a-row */
-static unsigned int invalidErrCount  = 0; /* # bad PATTERN waveforms   */
-static unsigned int syncErrCount     = 0; /* # out-of-sync patterns    */
-static epicsTimeStamp mod720time;
-
+static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
+static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
+static unsigned long patternErrCount  = 0; /* # PATTERN errors in-a-row */
+static unsigned long invalidErrCount  = 0; /* # bad PATTERN waveforms   */
+static unsigned long syncErrCount     = 0; /* # out-of-sync patterns    */
+
 /*=============================================================================
 
-  Name: evrPatternProcInit
-
-  Abs:  Initialization for 360Hz pattern processing.  Initialize pointer
-        to EVR card.
-		
-  Args: Type	            Name        Access	   Description
-        ------------------- -----------	---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
-
-  Rem:  Initialization subroutine for IOC:LOCA:UNIT:PATTERNN-3
-
-  Side: None.
-
-  Sub Inputs/ Outputs:
-   Inputs:
-    None
-   Outputs:
-    None
-
-  Ret:  0 = OK, -1 = Error.
-  
-==============================================================================*/ 
-static int evrPatternProcInit(subRecord *psub)
-{
-  /* Register this record for pattern processing */
-  if (evrMessageRegister(EVR_MESSAGE_PATTERN_NAME, sizeof(evrMessagePattern_ts),
-                         (dbCommon *)psub) < 0)
-    return -1;
-  /* Initialize MOD720 timestamp */
-  epicsTimeGetCurrent(&mod720time);
-  return 0;
-}
-
-/*=============================================================================
-
-  Name: evrPatternProc
+  Name: evrPattern
 
   Abs:  360Hz Processing, Grab 7 pattern longs from the EVR message storage and
         parse into MODIFIER1-5 longins and two longin evr timestamps.
-
-        Then parse out BEAMCODE from MODIFIER 1 and
-	PULSEID from the lower 17 bits of timestamp nsec integer 
 		
-  Args: Type	            Name        Access	   Description
-        ------------------- -----------	---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
+  Args: None.
 
-  Rem:  Subroutine for IOC:LOCA:UNIT:PATTERN
+  Rem:  None
 
-  Side: Message order:
-        4 PNET 32 bit unsigned integers (MODIFIER 1-4)
-		1 EVR 32 bit unsigned integer (MODIFIER 5)
-		2 EVR timestamp 32 bit unsigned integers 
-		1 bunchcharge 32 bit integer (picoCoulombs)
+  Side: Output to EVR timestamp/pattern table.
 
-  Sub Inputs/ Outputs:
-   Inputs:
-    VAL = Previous error flag.
-   Outputs:
-    A - edefMinorMask
-    B - edefMajorMask
-    C - Time Slot
-    D - MODIFIER1N-3 (PNET)
-    E - MODIFIER2N-3 (PNET)
-    F - MODIFIER3N-3 (PNET)
-    G - MODIFIER4N-3 (PNET)
-    H - MODIFIER5N-3 (evr)
-    I - BUNCHARGEN-3 (evr)
-    J - BEAMCODEN-3 (decoded from PNET bits 8-12, MOD1 8-12)
-    K - EDAVGDONEN-3(evr)
-    L - PULSEIDN-3  (decoded from PNET bits, 17)   
-    VAL = Error flag:
-             OK
-             Invalid Waveform
-             Timeout
-             Invalid Timestamp
-             MPG IPLing
-   Output to evr timestamp table
-  Ret: 0  
+  Ret:  Return from evrTimePatternPutEnd.
+  
 =============================================================================*/ 
 
-static long evrPatternProc(subRecord *psub)
+int evrPattern()
 {
-  evrMessagePattern_ts   evrPatternWF_s;
+  evrMessagePattern_ts   *pattern_ps;
   evrMessageReadStatus_te evrMessageStatus;
-  epicsTimeStamp         currentTime;
-  int                    errFlag = PATTERN_OK;
-  int                    modulo720Flag;
-  int                    edefIdx;
+  epicsTimeStamp          currentTime;
+  epicsTimeStamp         *mod720time_ps;
+  unsigned long          *timeslot_p;
+  unsigned long          *patternStatus_p;
+  int                     modulo720Flag;
+  int                     idx;
 
   /* Keep a count of messages and reset before overflow */
   if (msgCount < EVR_MAX_INT) {
@@ -152,121 +86,154 @@ static long evrPatternProc(subRecord *psub)
   } else {
     msgRolloverCount++;
     msgCount = 0;
-  }
+  }  
+  /* Lock the pattern table and get pointer to newest pattern data */
+  if (evrTimePatternPutStart(&pattern_ps, &timeslot_p,
+                             &patternStatus_p, &mod720time_ps))
+    return -1;
   /* if we cannot read the message or the message has an invalid header */
-  /*   set record invalid; pulse id to invalid, and                     */
+  /*   set pattern to invalid, and                                      */
   /*   evr timestamp status to invalid                                  */
   evrMessageStatus = evrMessageRead(EVR_MESSAGE_PATTERN,
-                                    (evrMessage_tu *)&evrPatternWF_s);
-  if (evrMessageStatus                                         ||
-      (evrPatternWF_s.header_s.type    != EVR_MESSAGE_PATTERN) ||
-      (evrPatternWF_s.header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
+                                    (evrMessage_tu *)pattern_ps);
+  if (evrMessageStatus                                      ||
+      (pattern_ps->header_s.type    != EVR_MESSAGE_PATTERN) ||
+      (pattern_ps->header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
     patternErrCount++;
-    psub->c = psub->e = psub->f = psub->g = psub->h = psub->i = psub->j = 0.0;
-    psub->l = PULSEID_INVALID;
+    for (idx = 0; idx < EVR_MODIFIER_MAX; idx++)
+      pattern_ps->modifier_a[idx] = 0;
+    pattern_ps->modifier_a[0] = MPG_IPLING;
+    *timeslot_p               = 0;
     if        (evrMessageStatus == evrMessageDataNotAvail) {
-      errFlag = PATTERN_TIMEOUT;
+      *patternStatus_p = PATTERN_NO_DATA;
     } else if (evrMessageStatus == evrMessageTimeoutError) {
-      errFlag = PATTERN_TIMEOUT;
+      *patternStatus_p = PATTERN_TIMEOUT;
     } else {
-      errFlag = PATTERN_INVALID_WF;
+      *patternStatus_p = PATTERN_INVALID_WF;
       invalidErrCount++;
     }
-    psub->d = MPG_IPLING;
     /* Set timestamp invalid if the last 3 pulses had an error too -
        allow a few glitches before messing with time */
     epicsTimeGetCurrent(&currentTime);
     if ((patternErrCount >= 3) ||
-        (evrMessageStatus == evrMessageTimeoutError))
-      evrTimePutIntoPipeline(&currentTime, epicsTimeERROR);
-    if (epicsTimeDiffInSeconds(&currentTime, &mod720time) > MODULO720_SECS)
-      modulo720Flag = 1;
-    else
-      modulo720Flag = 0;
+        (evrMessageStatus == evrMessageTimeoutError)) {
+      pattern_ps->time = currentTime;
+    }
+    evrTimePutPulseID(&pattern_ps->time, PULSEID_INVALID);
+    if (epicsTimeDiffInSeconds(&currentTime, mod720time_ps) > MODULO720_SECS)
+      pattern_ps->modifier_a[0] |= MODULO720_MASK;
   } else {
     patternErrCount = 0;
-      /* set outputs to the modifiers */
-      psub->d = (double)(evrPatternWF_s.pnet_s.modifier_a[0]);
-      psub->e = (double)(evrPatternWF_s.pnet_s.modifier_a[1]);
-      psub->f = (double)(evrPatternWF_s.pnet_s.modifier_a[2]);
-      psub->g = (double)(evrPatternWF_s.pnet_s.modifier_a[3]);
-      psub->h = (double)(evrPatternWF_s.modifier5);
-      psub->i = (double)(evrPatternWF_s.bunchcharge);
-      /* beamcode decoded from modifier 1*/
-      psub->j = (double)((evrPatternWF_s.pnet_s.modifier_a[0] >> 8) &
-                         BEAMCODE_BIT_MASK);
-      /* timeslot decoded from modifier 4*/
-      /* edef avg done mask   */
-      psub->k = (double)(evrPatternWF_s.edefAvgDoneMask);
-      /* edef meassevr minor mask;  upon error, last value is kept  */
-      psub->a = (double)(evrPatternWF_s.edefMinorMask);
-      /* edef meassevr major mask; upon error, last value is kept   */
-      psub->b = (double)(evrPatternWF_s.edefMajorMask);
-      psub->c = (double)((evrPatternWF_s.pnet_s.modifier_a[3] >> 29) &
-                         TIMESLOT_VAL_MASK);
-
-      /* modulo720 decoded from modifier 1*/
-      if (evrPatternWF_s.pnet_s.modifier_a[0] & MODULO720_MASK)
-        modulo720Flag = 1;
-      else
-        modulo720Flag = 0;
-      /* decode pulseid field to output j (keep lower 17 bits) */
-      psub->l = (double)(evrPatternWF_s.time.nsec & LOWER_17_BIT_MASK);
-      /* write to evr timestamp table and error check */
-      if (evrTimePutIntoPipeline (&evrPatternWF_s.time, epicsTimeOK)) {
-        errFlag = PATTERN_INVALID_TIMESTAMP;
-      /* Check if EVG reporting a problem  */
-      } else if (evrPatternWF_s.pnet_s.modifier_a[0] & MPG_IPLING) {
-        errFlag = PATTERN_MPG_IPLING;
-        syncErrCount++;
-      }
-      /* for every non-zero bit in ederInitMask, call post_event */
-      if (evrPatternWF_s.edefInitMask) { /* should we bother w loop? */
-        for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++) {
-          if (evrPatternWF_s.edefInitMask & (1 << edefIdx)) /* init is set */
-            post_event(edefIdx + EVENT_EDEFINIT_MIN);
-        }
-      }
+    /* Check if EVG reporting a problem  */
+    if (pattern_ps->modifier_a[0] & MPG_IPLING) {
+      *patternStatus_p = PATTERN_MPG_IPLING;
+      syncErrCount++;
+    } else {
+      *patternStatus_p = PATTERN_OK;
+    }
+    /* Set timeslot */
+    *timeslot_p = TIMESLOT(pattern_ps->modifier_a);
+    /* Post EDEF init events if needed */
+    if (pattern_ps->edefInitMask)
+      evrEdefInitEvent(pattern_ps->edefInitMask, EVENT_EDEFINIT_MIN);
   }  
-  /* Post the modulo-720 sync event if the pattern has that bit set */
-  if (modulo720Flag) {
-    post_event(EVENT_MODULO720);
-    epicsTimeGetCurrent(&mod720time);
-  }
-  psub->val = (double)errFlag;
-  if (errFlag) return -1;
-  return 0;
+  /* modulo720 decoded from modifier 1*/
+  if (pattern_ps->modifier_a[0] & MODULO720_MASK) modulo720Flag = 1;
+  else                                            modulo720Flag = 0;
+  /* Unlock pattern data and post MOD720 events if needed */
+  return (evrTimePatternPutEnd(modulo720Flag));
 }
 
 /*=============================================================================
 
-  Name: evrPatternCount
+  Name: evrPatternProcInit
 
-  Abs:  Increment a counter for an event code.  Also, update the event code
-        timestamp.
+  Abs:  Initialization for the pattern processing record.
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
+        longSubRecord *     psub        read       point to subroutine record
 
-  Rem:  Subroutine for IOC:LOCA:UNIT:NAMECNT
+  Rem:  Init Subroutine for IOC:LOCA:UNIT:PATTERNN-3
 
-  Inputs:
-       A - Event code
-       VAL - Counter that is updated every time the event is received
-     
-  Outputs:
-       VAL - Incremented by 1
+  Side: None.
   
-  Ret:  0 = OK
+  Ret:  -1=Failed; 0 = Success
+==============================================================================*/ 
 
-==============================================================================*/
-static long evrPatternCount(subRecord *psub)
+static int evrPatternProcInit(longSubRecord *psub)
 {
-  /* Rollover if value gets too big */
-  if (psub->val < EVR_MAX_INT) psub->val++;
-  else                         psub->val = 1;
-  evrTimePut((int)psub->a, epicsTimeOK);
+  /* Register this record for the start of fiducial processing */
+  if (evrMessageRegister(EVR_MESSAGE_PATTERN_NAME,
+                         sizeof(evrMessagePattern_ts),
+                         (dbCommon *)psub) < 0)
+    return -1;  
+  return 0;
+}
+
+/*=============================================================================
+
+  Name: evrPatternProc
+
+  Abs:  360Hz Record Processing - get data from storage.
+		
+  Args: Type	            Name        Access	   Description
+        ------------------- -----------	---------- ----------------------------
+        longSubRecord *     psub        read       point to subroutine record
+
+  Rem:  Subroutine for IOC:LOCA:UNIT:PATTERN, N-1, N-2, N-3, 360HZ
+
+  Side: None.
+
+  Sub Inputs/ Outputs:
+   Inputs:
+    Z - Time ID (see evrTimeId_e in evrTime.h, 0=Current,
+                 1=Next1, 2=Next2, 3=Next3)
+    
+   Outputs:
+    A - edefMinorMask
+    B - edefMajorMask
+    C - Time Slot
+    D - MODIFIER1 (PNET)
+    E - MODIFIER2 (PNET)
+    F - MODIFIER3 (PNET)
+    G - MODIFIER4 (PNET)
+    H - MODIFIER5 (evr)
+    I - MODIFIER6 (evr)
+    J - BEAMCODE  (decoded from PNET bits 8-12, MOD1 8-12)
+    K - EDAVGDONE (evr)
+    L - PULSEID   (decoded from PNET bits, 17)
+    M - TimeStamp (sec)
+    N - TimeStamp (nsec)
+    O - TimeStamp status (0=OK, 1=not OK)
+    VAL = Error flag:
+             OK
+             Invalid Waveform
+             Timeout
+             Invalid Timestamp
+             MPG IPLing
+    
+  Ret: 0 if VAL is OK, -1 if VAL is not OK.  
+=============================================================================*/ 
+
+static long evrPatternProc(longSubRecord *psub)
+{
+  int status;
+  epicsTimeStamp currentTime;
+
+  psub->val = PATTERN_INVALID_TIMESTAMP;
+  status = evrTimeGetFromPipeline(&currentTime, (evrTimeId_te)psub->z,
+                                  &psub->d, &psub->val, &psub->k,
+                                  &psub->a, &psub->b);
+  /* Parse out beamcode, timeslot, and pulse ID */
+  psub->j = BEAMCODE(&psub->d);
+  psub->c = TIMESLOT(&psub->d);
+  psub->m = currentTime.secPastEpoch;
+  psub->n = currentTime.nsec;
+  psub->l = PULSEID(currentTime);
+  if (status) psub->o = 1;
+  else        psub->o = 0;
+  if (psub->val) return -1;
   return 0;
 }
 
@@ -279,7 +246,7 @@ static long evrPatternCount(subRecord *psub)
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
+        longSubRecord *     psub        read       point to subroutine record
 
   Rem:  Subroutine for IOC:LOCA:UNIT:PATTERNDIAG
 
@@ -313,7 +280,7 @@ static long evrPatternCount(subRecord *psub)
   Ret:  0 = OK
 
 ==============================================================================*/
-static long evrPatternState(sSubRecord *psub)
+static long evrPatternState(longSubRecord *psub)
 {
   psub->val = psub->a;
   psub->d = msgCount;          /* # waveforms processed since boot/reset */
@@ -323,8 +290,8 @@ static long evrPatternState(sSubRecord *psub)
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->k,&psub->l,
                    &psub->m,&psub->v,&psub->w,&psub->x,&psub->z);
-  if (psub->b > 0.5) {
-    psub->b               = 0.0;
+  if (psub->b > 0) {
+    psub->b               = 0;
     msgCount              = 0;
     msgRolloverCount      = 0;
     invalidErrCount       = 0;
@@ -342,7 +309,7 @@ static long evrPatternState(sSubRecord *psub)
 		
   Args: Type	            Name        Access	   Description
         ------------------- -----------	---------- ----------------------------
-        subRecord *         psub        read       point to subroutine record
+        longSubRecord *     psub        read       point to subroutine record
 
   Rem:  Subroutine for IOC:LOCA:UNIT:PATTERNSIM
 
@@ -350,60 +317,73 @@ static long evrPatternState(sSubRecord *psub)
   
   Sub Inputs/ Outputs:
     Simulated inputs:
+    C - TIMESLOT (input and output)
     D - MODIFIER1
     E - MODIFIER2
     F - MODIFIER3
     G - MODIFIER4
     H - MODIFIER5  
-    I - BUNCHARGE  
+    I - MODIFIER6  
     J - BEAMCODE
     K - YY
-  Ret:  Return from evrMessageWrite.
+    L - PULSEID
+    
+  Ret:  0 = Success, -1 = Failed.
 
 ==============================================================================*/
-static long evrPatternSim(subRecord *psub)
+static long evrPatternSim(longSubRecord *psub)
 { 
-  evrMessage_tu          evrMessage_u;
+  evrMessagePattern_ts   pattern_s;
   epicsTimeStamp         prev_time;
   double                 delta_time;
+  int                    idx;
+  void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum);
+  void evrSend(void *pCard, epicsInt16 messageSize, void *message);
 
 /*------------- parse input into sub outputs ----------------------------*/
 
-  if (epicsTimeGetCurrent(&evrMessage_u.pattern_s.time)) return -1;
+  if (epicsTimeGetCurrent(&pattern_s.time)) return -1;
   /* The time is for 3 pulses in the future - add 1/120sec */
-  epicsTimeAddSeconds(&evrMessage_u.pattern_s.time, 1/120);
+  epicsTimeAddSeconds(&pattern_s.time, 1/120);
   /* Overlay the pulse ID into the lower 17 bits of the nsec field */
-  evrTimePutPulseID(&evrMessage_u.pattern_s.time, (unsigned int)psub->l);
+  evrTimePutPulseID(&pattern_s.time, (unsigned int)psub->l);
 
   /* The timestamp must ALWAYS be increasing.  Check if this time
      is less than the previous time (due to rollover) and adjust up
      slightly using bit 17 (the lower-most bit of the top 15 bits). */
-  if (!evrTimeGetFromPipeline(&prev_time, evrTimeNext3)) {
-    delta_time = epicsTimeDiffInSeconds(&evrMessage_u.pattern_s.time,
-                                        &prev_time);
+  if (evrTimeGetFromPipeline(&prev_time, evrTimeNext3, 0,0,0,0,0) >= 0) {
+    delta_time = epicsTimeDiffInSeconds(&pattern_s.time, &prev_time);
     if (delta_time < 0.0) {
-      epicsTimeAddSeconds(&evrMessage_u.pattern_s.time,
-                          PULSEID_BIT17/NSEC_PER_SEC);
-      evrTimePutPulseID(&evrMessage_u.pattern_s.time, (unsigned int)psub->l);
+      epicsTimeAddSeconds(&pattern_s.time, PULSEID_BIT17/NSEC_PER_SEC);
+      evrTimePutPulseID(&pattern_s.time, (unsigned int)psub->l);
     }
   }
+  /* Simulate time slot */
+  if ((psub->c < TIMESLOT_MIN) || (psub->c >= TIMESLOT_MAX))
+    psub->c = 1;
+  else
+    psub->c++;
   /* Timestamp done - now fill in the rest of the pattern */
-  evrMessage_u.pattern_s.header_s.type         = EVR_MESSAGE_PATTERN;
-  evrMessage_u.pattern_s.header_s.version      = EVR_MESSAGE_PATTERN_VERSION;
-  evrMessage_u.pattern_s.pnet_s.modifier_a[0]  = ((epicsUInt32)psub->d) & 0xFFFFE000;
-  evrMessage_u.pattern_s.pnet_s.modifier_a[0] |= ((((epicsUInt32)psub->j) << 8) & 0x1F00);
-  evrMessage_u.pattern_s.pnet_s.modifier_a[0] |= ( ((epicsUInt32)psub->k) & YY_BIT_MASK);
-  evrMessage_u.pattern_s.pnet_s.modifier_a[1]  = psub->e;
-  evrMessage_u.pattern_s.pnet_s.modifier_a[2]  = psub->f;
-  evrMessage_u.pattern_s.pnet_s.modifier_a[3]  = psub->g;
-  evrMessage_u.pattern_s.modifier5             = psub->h;
-  evrMessage_u.pattern_s.bunchcharge           = psub->i;
+  pattern_s.header_s.type     = EVR_MESSAGE_PATTERN;
+  pattern_s.header_s.version  = EVR_MESSAGE_PATTERN_VERSION;
+  for (idx = 0; idx < EVR_MODIFIER_MAX; idx++)
+    pattern_s.modifier_a[idx] = (&psub->d)[idx];
+  pattern_s.modifier_a[0]    |= ((psub->j << 8) & 0x1F00);
+  pattern_s.modifier_a[0]    |= ( psub->k & YY_BIT_MASK);
+  pattern_s.modifier_a[3]    |= ((psub->c << 29) & 0xE0000000);
+  pattern_s.edefAvgDoneMask   = 0;
+  pattern_s.edefMinorMask     = 0;
+  pattern_s.edefMajorMask     = 0;
+  pattern_s.edefInitMask      = 0;
 
-  /* Send the pattern to the EVR pattern queue */
-  return(evrMessageWrite(EVR_MESSAGE_PATTERN, &evrMessage_u));
+  /* Send the pattern to the EVR pattern queue and wake up evrTask */
+
+  evrSend(0, sizeof(evrMessagePattern_ts), &pattern_s);
+  evrEvent(0, EVENT_FIDUCIAL, 0);
+  return 0;
 }
+
 epicsRegisterFunction(evrPatternProcInit);
 epicsRegisterFunction(evrPatternProc);
-epicsRegisterFunction(evrPatternCount);
 epicsRegisterFunction(evrPatternState);
 epicsRegisterFunction(evrPatternSim);
