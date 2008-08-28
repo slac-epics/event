@@ -44,7 +44,7 @@
 #include <math.h>          /* sqrt   */
 
 #include <subRecord.h>        /* for struct subRecord      */
-#include <sSubRecord.h>       /* for struct sSubRecord in site area */
+#include <doubSubRecord.h>    /* for struct doubSubRecord  */
 #include <registryFunction.h> /* for epicsExport           */
 #include <epicsExport.h>      /* for epicsRegisterFunction */
 #include <epicsTime.h>        /* epicsTimeStamp */
@@ -98,7 +98,7 @@
   Ret:  0
 
 ==============================================================================*/
-static long bsaSecnAvg(sSubRecord *psub)
+static long bsaSecnAvg(doubSubRecord *psub)
 {
 /* linux uses system time; rtems general time */
 #ifndef linux
@@ -256,7 +256,7 @@ static long bsaSecnAvg(sSubRecord *psub)
 
   Args: Type	            Name        Access	   Description
         ------------------- -----------	---------- ----------------------------
-        sSubRecord *        psub        read       point to sSub subroutine record
+        doubSubRecord *     psub        read       point to subroutine record
 
   Rem:   Subroutine for EVR:$IOC:1:CHECKEVR$MDID
 
@@ -292,7 +292,7 @@ override modifier 4 if one hertz bit is set
   Ret:  none
 
 ==============================================================================*/
-static long bsaSimCheckTest(sSubRecord *psub)
+static long bsaSimCheckTest(doubSubRecord *psub)
 {
   psub->val = 0;
   psub->q = 0;
