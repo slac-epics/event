@@ -8,9 +8,9 @@ record(event, "$(DEV):$(NAME)EV") {
   field(FLNK, "$(DEV):$(NAME)CNT")
 }
 
-record(sub, "$(DEV):$(NAME)CNT") {
+record(longSub, "$(DEV):$(NAME)CNT") {
   field(DESC, "$(NAME) Event Counter")
-  field(SNAM, "evrPatternCount")
+  field(SNAM, "evrTimeEvent")
   field(BRSV, "INVALID")
   field(INPA, "$(ID)")
 }
