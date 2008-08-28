@@ -17,6 +17,9 @@ INC+=evrTime.h
 INC+=evrPattern.h
 INC+=evrMessage.h
 
+DBDINC += longSubRecord
+DBDINC += doubSubRecord
+
 DBD += evrSupport.dbd
 DBD += evrPattern.dbd
 DBD += evrModifier5.dbd
@@ -26,13 +29,14 @@ DBD += drvEvr.dbd
 
 LIBRARY_IOC = evrSupport
 
-evrSupport_SRCS += bsa.c
 evrSupport_SRCS += evrPattern.c
 evrSupport_SRCS += evrModifier5.c
 evrSupport_SRCS += evrTime.c
-evrSupport_SRCS += drvEvr.c
 evrSupport_SRCS += evrMessage.c
-evrSupport_LIBS += sSubRecord
+evrSupport_SRCS += bsa.c
+evrSupport_SRCS += longSubRecord.c
+evrSupport_SRCS += doubSubRecord.c
+evrSupport_SRCS += drvEvr.c
 evrSupport_LIBS += generalTime
 evrSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
