@@ -17,3 +17,4 @@ dbLoadRecords("db/bsaXL04.db")
 dbLoadRecords("db/bsaSimXL04.db")
 
 iocInit() # after h/w initialisations
+dbpf("IOC:XL04:EV01:PATTERN360HZ.TSE","0")
