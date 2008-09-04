@@ -2105,7 +2105,7 @@ int EgSeqRamRead(EgCardStruct *pParm, int ram, unsigned short address, int len)
           /* Read back to flush pipelines */
           dummy = MRF_VME_REG16_READ(&pEg->Seq1Addr);
           printf("Address %d evno %d timestamp %d\n",dummy,
-                 MRF_VME_REG16_READ(&pEg->Seq1Data), MRF_VME_REG32_READ(&pEg->Seq1Time));
+                 MRF_VME_REG16_READ(&pEg->Seq1Data), (int)MRF_VME_REG32_READ(&pEg->Seq1Time));
         }
     }
   else if (ram == 2)
@@ -2116,7 +2116,7 @@ int EgSeqRamRead(EgCardStruct *pParm, int ram, unsigned short address, int len)
           /* Read back to flush pipelines */
           dummy = MRF_VME_REG16_READ(&pEg->Seq2Addr);
           printf("Address %d evno %d timestamp %d\n",dummy,
-                 MRF_VME_REG16_READ(&pEg->Seq2Data), MRF_VME_REG32_READ(&pEg->Seq2Time));
+                 MRF_VME_REG16_READ(&pEg->Seq2Data), (int)MRF_VME_REG32_READ(&pEg->Seq2Time));
         }
     }
   else
