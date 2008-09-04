@@ -103,7 +103,7 @@
 #ifdef PCI
 #ifdef __rtems__
 #include <rtems/pci.h>          /* for PCI_VENDOR_ID_PLX */
-#include <rtems/irq.h>          /* for rtems_irq_connect_data, rtems_irq_hdl_param */
+#include <bsp/irq.h>            /* for rtems_irq_connect_data, rtems_irq_hdl_param */
 #endif
 #include "devLibPMC.h"          /* for epicsFindDevice */
 #endif
@@ -1081,7 +1081,7 @@ int ErConfigure (
          * Handle the PMC-EVR 
          */
 		{ int plx, unit;
-		  unsigned	subId;
+		  EpicsPciDWord	subId;
 		
 		  plx  = 0;
 		  unit = 0;
@@ -1103,9 +1103,9 @@ int ErConfigure (
 		  } while ( (subId != ((DeviceId << 16) | VendorId)) ||
                             (unit++ < ErPMCCount) );
                   ErPMCCount++;
-        }
+                }
 
-        unsigned int configRegAddr;
+        EpicsPciDWord configRegAddr;
         epicsPciConfigInLong((unsigned char) pciBusNo, (unsigned char) pciDevNo,
           (unsigned char) pciFuncNo, PCI_BASE_ADDRESS_0, &configRegAddr); 
 
@@ -1116,19 +1116,19 @@ int ErConfigure (
         status = devRegisterAddress (
                    CfgRegName,                      /* Event Receiver Cfg Reg name               */
                    atPCIMEM32NOFETCH,               /* Address space                          */
-                   configRegAddr,                   /* Physical address of register space     */
+                   (size_t)configRegAddr,           /* Physical address of register space     */
                    sizeof (PmcErCfgRegs),              /* Size of device register space          */
                    (volatile void **)(void *)&pCfgRegs); /* Local address of board register space  */
         if (OK != status) {
           errPrintf (status, NULL, 0,
                      "ErConfigure: Unable to register EVR Card %d config space addr at PCI/MEM32/NOPREFETCH address 0x%08X\n",
-                     Card, configRegAddr);
+                     Card, (unsigned int)configRegAddr);
           epicsMutexDestroy (pCard->CardLock);
           free (pCard);
           return ERROR;
         }/*end if devRegisterAddress() failed*/
 #else /* cheat. assume no conflict */ 
-        localCfgSpaceAddress = configRegAddr;
+        localCfgSpaceAddress = (unsigned long)configRegAddr;
         pCfgRegs = (PmcErCfgRegs *) localCfgSpaceAddress;
 #endif
         
@@ -1164,19 +1164,19 @@ int ErConfigure (
         status = devRegisterAddress (
                    CardName,                        /* Event Receiver Card name               */
                    atPCIMEM32NOFETCH,            /* Address space                          */
-                   configRegAddr,                   /* Physical address of register space     */
+                   (size_t)configRegAddr,        /* Physical address of register space     */
                    sizeof (MrfErRegs),              /* Size of device register space          */
                    (volatile void **)(void *)&pEr); /* Local address of board register space  */
         if (OK != status) {
           errPrintf (status, NULL, 0,
                      "ErConfigure: Unable to register EVR Card %d at PCI/MEM32/NOPREFETCH address 0x%08X\n",
-                     Card, configRegAddr);
+                     Card, (unsigned int)configRegAddr);
           epicsMutexDestroy (pCard->CardLock);
           free (pCard);
           return ERROR;
         }/*end if devRegisterAddress() failed*/
 #else /* cheat. assume no conflict */ 
-        localRegSpaceAddress = configRegAddr;
+        localRegSpaceAddress = (unsigned long)configRegAddr;
         pEr = (MrfErRegs *)localRegSpaceAddress;
 #endif
 
@@ -3436,7 +3436,8 @@ void ErSetOtp (
         printf (
             "ErSetOtp(): Card %d, OTP Chan %d, Select Addr %x, Width = %u, Delay = %u\n", 
              pCard->Cardno, Channel, MRF_VME_REG16_READ(&pEr->DelayPulseSelect),
-            MRF_VME_REG32_READ(&pEr->ExtWidth), MRF_VME_REG32_READ(&pEr->ExtDelay));
+            (unsigned int)MRF_VME_REG32_READ(&pEr->ExtWidth),
+            (unsigned int)MRF_VME_REG32_READ(&pEr->ExtDelay));
     }/*end if debug level is 10 or higher*/
 
 }/*end ErSetOtp()*/
@@ -3860,7 +3861,7 @@ void DiagDumpDataBuffer (ErCardStruct *pCard)
 	    * Inner loop displays individual longwords
 	    */
 	    for (i=index;  i < lastIndex;  i++) {
-		printf (" %8.8X", MRF_VME_REG32_READ(&pEr->DataBuffer[i]));
+		printf (" %8.8X", (unsigned int)MRF_VME_REG32_READ(&pEr->DataBuffer[i]));
 	    }/*end for each long-word*/
 
 	    printf ("\n");
@@ -4069,7 +4070,7 @@ void DiagDumpRegs (ErCardStruct *pCard)
     printf ("DB enab, data:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->DBusEnables),
             MRF_VME_REG16_READ(&pEr->DBusData));
     printf ("Clock ctl:      %4.4X \n", MRF_VME_REG16_READ(&pEr->ClockControl));
-    printf ("Ref clock ctl:  %8.8X \n", MRF_VME_REG32_READ(&pEr->FracDiv));
+    printf ("Ref clock ctl:  %8.8X \n", (unsigned int)MRF_VME_REG32_READ(&pEr->FracDiv));
     printf ("Data buf ctl:   %4.4X \n", MRF_VME_REG16_READ(&pEr->DataBuffControl));
     printf ("FPGA version :  %4.4X \n", MRF_VME_REG16_READ(&pEr->FPGAVersion));
 
