@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 08/28/2008
+Instructions for RTEMS EVR users                    Last Updated 09/17/2008
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -84,6 +84,23 @@ Note that the order of the above libraries is important.
     IOCs (ie, BPMs) that were acquired on the same pulse.  Make sure that
     the event code IRQ for all possible TSE values is enabled in your EVR
     database.
+
+(12) Add each EVR to the following displays:
+	$EDM/event/evnt_<loca>_main.edl
+	and one of the following:
+	$EDM/event/evnt_all_controllers.edl
+	$EDM/event/evnt_all_beamDiag1.edl
+	$EDM/event/evnt_all_beamDiag2.edl
+	$EDM/event/evnt_all_laser.edl
+	$EDM/event/evnt_all_profileMonitor.edl
+
+(13) Add the following PVs to ALH under the "IOC" subgroup 
+     of the "Event" subgroup for the applicable machine areas:
+	For each IOC:
+	<iocname>:PATTERNSTATE
+	<iocname>:FIDUCIALRATE
+	For each EVR:
+	<evrname>:LINK
 
 II - Adding event databases and EVR configuration to your IOC startup file:
 --------------------------------------------------------------------------
