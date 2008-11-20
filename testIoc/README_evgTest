@@ -105,7 +105,7 @@ III - EVG Diagnostics Display:
 
 (5) To periodically trigger a sequence when no external trigger is available,
     set one of the sequence RAMs (sequence RAM 1 if all event codes are 
-    set up in sequence RAM 1) into a non-OFF state (except "Single") and  
+    set up in sequence RAM 1) into either "Normal" or "Alternate" state and  
     select the time interval to send the sequence using the menu button under 
     the  "Periodic Sends" heading in the Sequence RAM block of the EVG 
     display.  To stop the sending, set the menu button back to "Passive".
