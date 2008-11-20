@@ -36,7 +36,7 @@ Note that the order of the above libraries is important.
 	    evrModifier_ta modifier_a;
 	    epicsTimeStamp time_s;
 	    unsigned long  patternStatus; /* see evrPattern.h for values */
-	    int status = epicsTimeGetFromPipeline(&time_s, 
+	    int status = evrTimeGetFromPipeline(&time_s, 
 		<evrTimeCurrent, evrTimeNext1, evrTimeNext2>,
 		modifier_a, &patternStatus, 0,0,0);
 	... use BEAMCODE, TIMESLOT macros defined in evrPattern.h ... 
