@@ -26,6 +26,7 @@ DB += bsaPMTTest.db
 DB += bsaFARCTest.db
 # Device edef records
 DB += bsaBPMSEdef.db
+DB += bsaBPMSCavityEdef.db
 DB += bsaTOROEdef.db
 DB += bsaFARCEdef.db
 DB += bsaBLENEdef.db
