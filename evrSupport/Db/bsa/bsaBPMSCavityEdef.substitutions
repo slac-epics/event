@@ -1,0 +1,134 @@
+#==============================================================================
+#
+# Abs:  Beam Synchronous Acquisition records for a single cavity BPM.
+#	Load this database in addition to bsaBPMSEdef.substitutions.
+#
+# Name: bsaBPMSCavityEdef.substitutions
+#
+# Note: Must follow the LCLS naming conventions.  
+#
+#==============================================================================
+#
+# BSA Integration Note:
+# Each device attribute (such as bpm x, y, tmit) provides input to bsaEdefAvg.db.
+# The bsaEdefAvg.db provides the RMS and Avg -$(DEV):$(SECN)<edef id>, and history - 
+#   $(DEV):$(SECN)HST<edef id> for each device attribute for each of 20 edefs.
+#
+file bsaEdefAvg.db
+{
+#	      Device   Name                                                                    IOC    IOC   mod5  Init 
+#                                                                                              loc'n  unit  bit   Event Code
+  pattern {   DEV     ,SECN,  INP         , MDID   ,MD , DESC,EGU,HOPR,LOPR, PREC, ADEL , MDEL, LOCA  , UNIT ,BIT ,  EC }
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    1   , 1 , 1   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), A  ,  101}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    1   , 1 , 1   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), A  ,  101}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    1   , 1 , 1   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), A  ,  101}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    1   , 1 , 1   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), A  ,  101}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    1   , 1 , 1   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), A  ,  101}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    2   , 2 , 2   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    2   , 2 , 2   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    2   , 2 , 2   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    2   , 2 , 2   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    2   , 2 , 2   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), B  ,  102}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    3   , 3 , 3   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    3   , 3 , 3   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    3   , 3 , 3   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    3   , 3 , 3   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    3   , 3 , 3   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), C  ,  103}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    4   , 4 , 4   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    4   , 4 , 4   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    4   , 4 , 4   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    4   , 4 , 4   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    4   , 4 , 4   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), D  ,  104}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    5   , 5 , 5   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    5   , 5 , 5   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    5   , 5 , 5   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    5   , 5 , 5   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    5   , 5 , 5   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), E  ,  105}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    6   , 6 , 6   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), F  ,  106}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    6   , 6 , 6   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), F  ,  106}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    6   , 6 , 6   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), F  ,  106}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    6   , 6 , 6   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), F  ,  106}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    6   , 6 , 6   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), F  ,  106}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    7   , 7 , 7   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    7   , 7 , 7   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    7   , 7 , 7   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    7   , 7 , 7   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    7   , 7 , 7   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), G  ,  107}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    8   , 8 , 8   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    8   , 8 , 8   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    8   , 8 , 8   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    8   , 8 , 8   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    8   , 8 , 8   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), H  ,  108}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,    9   , 9 , 9   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,    9   , 9 , 9   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,    9   , 9 , 9   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,    9   , 9 , 9   ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,    9   , 9 , 9   ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), I  ,  109}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   10   , 10, 10  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), J  ,  110}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   10   , 10, 10  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), J  ,  110}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   10   , 10, 10  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), J  ,  110}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   10   , 10, 10  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), J  ,  110}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   10   , 10, 10  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), J  ,  110}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   11   , 11, 11  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   11   , 11, 11  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   11   , 11, 11  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   11   , 11, 11  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   11   , 11, 11  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), K  ,  111}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   12   , 12, 12  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), L  ,  112}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   12   , 12, 12  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), L  ,  112}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   12   , 12, 12  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), L  ,  112}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   12   , 12, 12  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), L  ,  112}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   12   , 12, 12  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), L  ,  112}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   13   , 13, 13  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   13   , 13, 13  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   13   , 13, 13  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   13   , 13, 13  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   13   , 13, 13  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), M  ,  113}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   14   , 14, 14  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), N  ,  114}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   14   , 14, 14  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), N  ,  114}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   14   , 14, 14  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), N  ,  114}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   14   , 14, 14  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), N  ,  114}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   14   , 14, 14  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), N  ,  114}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   15   , 15, 15  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), O  ,  115}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   15   , 15, 15  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), O  ,  115}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   15   , 15, 15  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), O  ,  115}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   15   , 15, 15  ,   ,   ,     ,   1 ,      ,     , $(LOC), $(UN), O  ,  115}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   15   , 15, 15  ,   ,   ,     ,   1,       ,     , $(LOC), $(UN), O  ,  115}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   1H   , 16, 1HZ  ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), P  ,  116}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   1H   , 16, 1HZ  ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), P  ,  116}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   1H   , 16, 1HZ  ,  ,   ,     ,   1,       ,     , $(LOC), $(UN), P  ,  116}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   1H   , 16, 1HZ  ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), P  ,  116}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   1H   , 16, 1HZ  ,  ,   ,     ,   1,       ,     , $(LOC), $(UN), P  ,  116}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   TH   , 17, 10HZ ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), Q  ,  117}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   TH   , 17, 10HZ ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), Q  ,  117}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   TH   , 17, 10HZ ,  ,   ,     ,   1,       ,     , $(LOC), $(UN), Q  ,  117}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   TH   , 17, 10HZ ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), Q  ,  117}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   TH   , 17, 10HZ ,  ,   ,     ,   1,       ,     , $(LOC), $(UN), Q  ,  117}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   BR   , 18, FULL ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), R  ,  118}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   BR   , 18, FULL ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), R  ,  118}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   BR   , 18, FULL ,  ,   ,     ,   1,       ,     , $(LOC), $(UN), R  ,  118}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   BR   , 18, FULL ,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), R  ,  118}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   BR   , 18, FULL ,  ,   ,     ,   1,       ,     , $(LOC), $(UN), R  ,  118}
+ 	  { $(DEVICE) ,URER,$(DEVICE):URER,   F1   , 19, FBCK1,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), S  ,  119}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   F1   , 19, FBCK1,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), S  ,  119}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   F1   , 19, FBCK1,  ,   ,     ,   1,       ,     , $(LOC), $(UN), S  ,  119}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   F1   , 19, FBCK1,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), S  ,  119}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   F1   , 19, FBCK1,  ,   ,     ,   1,       ,     , $(LOC), $(UN), S  ,  119}
+	  { $(DEVICE) ,URER,$(DEVICE):URER,   F2   , 20, FBCK2,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), T  ,  120}
+	  { $(DEVICE) ,UIMR,$(DEVICE):UIMR,   F2   , 20, FBCK2,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), T  ,  120}
+	  { $(DEVICE) ,VRER,$(DEVICE):VRER,   F2   , 20, FBCK2,  ,   ,     ,   1,       ,     , $(LOC), $(UN), T  ,  120}
+	  { $(DEVICE) ,VIMR,$(DEVICE):VIMR,   F2   , 20, FBCK2,  ,   ,     ,   1 ,      ,     , $(LOC), $(UN), T  ,  120}
+	  { $(DEVICE) ,REFR,$(DEVICE):REFR,   F2   , 20, FBCK2,  ,   ,     ,   1,       ,     , $(LOC), $(UN), T  ,  120}
+}
+
+file bsaEdefFanouts.db
+{
+#	      Device   Name
+  pattern {   DEV     ,SECN  ,  LOCA  , UNIT  ,   FLNK                }
+	  { $(DEVICE) ,URER  , $(LOC) , $(UN) , "$(DEVICE):EFUIMR PP" }
+	  { $(DEVICE) ,UIMR  , $(LOC) , $(UN) , "$(DEVICE):EFVRER PP" }
+	  { $(DEVICE) ,VRER  , $(LOC) , $(UN) , "$(DEVICE):EFVIMR PP" }
+	  { $(DEVICE) ,VIMR  , $(LOC) , $(UN) , "$(DEVICE):EFREFR PP" }
+	  { $(DEVICE) ,REFR  , $(LOC) , $(UN) ,  $(SLCLNK)            }
+}
+
