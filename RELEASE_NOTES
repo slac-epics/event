@@ -4,6 +4,16 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-7-1: Dec 3, 2008
+	* add /evrSupport/Db/bsa/bsaBPMSCavityEdef.substitutions,
+	  contains new cavity BPM BSA attributes
+	* mrfApp/src/devLibPMC.h, drvMrfEr.c, pmc_isr_test.c - 
+	  RTEMS 4.9 changes.
+	* mrfApp/src/drvMrfEg.c - get rid of compiler warnings on 2 printf's.
+	* README - add instructions for updating event EDM displays and
+	  ALH for new EVRs.
+	* testIoc/README_evgTest - correct typo in EVG usage instructions.
+
 event-R2-7-0: Aug 28, 2008
         * evrSupport/Db/bsa/Makefile - install databases for apps that want to
 	  do their own substitutions files.
