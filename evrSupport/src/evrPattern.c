@@ -6,6 +6,7 @@
            evrPatternProc      - 360Hz Pattern Record Processing
            evrPatternState     - Pattern Record Processing State and Diagnostics
            evrPatternSim       - Pattern Simulator
+           evrPatternSimTest   - EVG Pattern Simulater for EVG
 
   Abs: This file contains all subroutine support for evr Pattern processing
        records.  It also contains functions called by evr task data processing.
@@ -45,6 +46,7 @@
 #include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*  */
 #include "evrTime.h"          /* evrTime* prototypes       */
 #include "evrPattern.h"       /* for PATTERN* defines      */
+#include "alarm.h"            /* INVALID_ALARM             */
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
@@ -59,7 +61,9 @@ static unsigned long syncErrCount     = 0; /* # out-of-sync patterns    */
   Abs:  360Hz Processing, Grab 7 pattern longs from the EVR message storage and
         parse into MODIFIER1-5 longins and two longin evr timestamps.
 		
-  Args: None.
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        int                 timeout     read       timeout flag
 
   Rem:  None
 
@@ -69,7 +73,7 @@ static unsigned long syncErrCount     = 0; /* # out-of-sync patterns    */
   
 =============================================================================*/ 
 
-int evrPattern()
+int evrPattern(int timeout)
 {
   evrMessagePattern_ts   *pattern_ps;
   evrMessageReadStatus_te evrMessageStatus;
@@ -96,7 +100,7 @@ int evrPattern()
   /*   evr timestamp status to invalid                                  */
   evrMessageStatus = evrMessageRead(EVR_MESSAGE_PATTERN,
                                     (evrMessage_tu *)pattern_ps);
-  if (evrMessageStatus                                      ||
+  if (timeout || evrMessageStatus ||
       (pattern_ps->header_s.type    != EVR_MESSAGE_PATTERN) ||
       (pattern_ps->header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
     patternErrCount++;
@@ -104,10 +108,11 @@ int evrPattern()
       pattern_ps->modifier_a[idx] = 0;
     pattern_ps->modifier_a[0] = MPG_IPLING;
     *timeslot_p               = 0;
-    if        (evrMessageStatus == evrMessageDataNotAvail) {
-      *patternStatus_p = PATTERN_NO_DATA;
-    } else if (evrMessageStatus == evrMessageTimeoutError) {
+    pattern_ps->edefInitMask  = 0;
+    if (timeout) {
       *patternStatus_p = PATTERN_TIMEOUT;
+    } else if (evrMessageStatus == evrMessageDataNotAvail) {
+      *patternStatus_p = PATTERN_NO_DATA;
     } else {
       *patternStatus_p = PATTERN_INVALID_WF;
       invalidErrCount++;
@@ -115,8 +120,7 @@ int evrPattern()
     /* Set timestamp invalid if the last 3 pulses had an error too -
        allow a few glitches before messing with time */
     epicsTimeGetCurrent(&currentTime);
-    if ((patternErrCount >= 3) ||
-        (evrMessageStatus == evrMessageTimeoutError)) {
+    if ((patternErrCount >= 3) || timeout) {
       pattern_ps->time = currentTime;
     }
     evrTimePutPulseID(&pattern_ps->time, PULSEID_INVALID);
@@ -133,9 +137,6 @@ int evrPattern()
     }
     /* Set timeslot */
     *timeslot_p = TIMESLOT(pattern_ps->modifier_a);
-    /* Post EDEF init events if needed */
-    if (pattern_ps->edefInitMask)
-      evrEdefInitEvent(pattern_ps->edefInitMask, EVENT_EDEFINIT_MIN);
   }  
   /* modulo720 decoded from modifier 1*/
   if (pattern_ps->modifier_a[0] & MODULO720_MASK) modulo720Flag = 1;
@@ -382,8 +383,94 @@ static long evrPatternSim(longSubRecord *psub)
   evrEvent(0, EVENT_FIDUCIAL, 0);
   return 0;
 }
+
+/*=============================================================================
+  
+  Name: evrPatternSimTest
+  Simulater for EVG - simulates only 1 hertz and 10 hertz right now
+  
+  Abs:  360Hz Processing
+  Check to see if current beam pulse is to be used in any
+  current measurement definition.
+
+
+
+  Args: Type	            Name        Access	   Description
+        ------------------- -----------	---------- ----------------------------
+        longSubRecord *     psub        read       point to subroutine record
+
+  Rem:   Subroutine for EVR:$IOC:1:CHECKEVR$MDID
+
+  side: 
+        INPA - EDEF:LCLS:$(MD):CTRL  1= active; 0 = inactive
+		
+		INPB - ESIM:$(IOC):1:MEASCNT$(MDID)
+		INPC -          EDEF:SYS0:$(MD):CNTMAX - now is calculated from inp I & J
+        INPD - ESIM:SYS0:1:DONE$(MDID)
+		INPE - EDEF:SYS0:$(MD):AVGCNT
+        INPF - ESIM:$(IOC):1:MODIFIER4
+		INPG - INCLUSION2
+        INPH - 
+		INPI - EDEF:SYS0:$(MD):AVGCNT
+		INPJ - EDEF:SYS0:$(MD):MEASCNT
+for testing, match on Inclusion bits only;
+override modifier 4 if one hertz bit is set
+        INPP - EDEF:$(IOC):$(MD):INCLUSION4
+
+        INPU - INCLUSION2   ONE HERTZ BIT from Masksetup		
+        INPV - INCLUSION3   TEN HERTZ BIT from masksetup
+		  Note: above masksetup bits override MODIFIER4 input!
+        INPW - ESIM:$(IOC):1:BEAMCODE.SEVR
+        INPX - EVR:$(IOC):1:CNT$(MDID).Q
+                OUT
+	    Q - full measurement count complete - flags DONE
+	    VAL = EVR pattern match = 1
+		 no match = 0; enable/disable for bsaSimCount
+
+        All three outputs are initialized to 0 before first-time processing
+        when MDEF CTRL changes to ON.
+
+  Ret:  none
+
+==============================================================================*/
+static long evrPatternSimTest(longSubRecord *psub)
+{
+  psub->val = 0;
+  psub->q = 0;
+  
+
+  if (psub->w>MAJOR_ALARM) {
+    /* bad data - do nothing this pulse and return bad status */
+    return(-1);
+  }
+  /* if this edef is not active, exit */
+  if (!psub->a) return 0;
+  psub->c = psub->i * psub->j;
+  /* now check this pulse */
+  /* check inclusion mask */
+  if ( (unsigned long)psub->u ) psub->p = 10; /* force one hertz processing */
+  /* set modifier 4 to 10; assuming evg sim counts 1 to 10 */
+  if ( (unsigned long)psub->v ) psub->p = 0 ; /* force 10  hertz processing */	 
+  
+  if (  (((unsigned long)psub->f & (unsigned long)psub->p)==(unsigned long)psub->p)
+		/*		&&(((unsigned long)psub->g & (unsigned long)psub->q)==(unsigned long)psub->q)*/) 
+	{
+		psub->val = 1;
+	
+	}
+
+  /* check for end of measurement */
+  /* if SYS EDEF,EDEF:SYS0:MD:MEASCNT = -1, and this will go forever */ 
+  if ( (psub->b==psub->c) && (!psub->d) ) { /* we're done - */
+	psub->val = 0;       /* clear modmatch flag */
+	psub->q = 1;         /* flag to DONE to disable downstream */
+	return 0;
+  }
+return 0;
+}
 
 epicsRegisterFunction(evrPatternProcInit);
 epicsRegisterFunction(evrPatternProc);
 epicsRegisterFunction(evrPatternState);
 epicsRegisterFunction(evrPatternSim);
+epicsRegisterFunction(evrPatternSimTest);
