@@ -43,6 +43,8 @@
 
 #define MAX_DELTA_TIME 1000000
 
+unsigned long evrFiducialTime;
+
 typedef struct 
 {
   evrMessage_tu       message_au[2]; /* Message, double-buffered          */
@@ -52,7 +54,6 @@ typedef struct
   long                readingIdx; /* Message currently being read, -1 = none */ 
   unsigned long       newestIdx;     /* Index in double buffer of newest msg */
   unsigned long       fiducialIdx;   /* Index at the time of the fiducial */
-  unsigned long       timeout;       /* Driver wants timeout processing   */
   unsigned long       updateCount;   
   unsigned long       updateCountRollover;
   unsigned long       overwriteCount;
@@ -189,7 +190,6 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
   evrMessage_as[messageIdx].newestIdx          = 0;
   evrMessage_as[messageIdx].fiducialIdx        = 0;
   evrMessage_as[messageIdx].procTimeDeltaCount = 0;
-  evrMessage_as[messageIdx].timeout            = 0;
   evrMessageCountReset(messageIdx);
   return messageIdx;
 }
@@ -335,7 +335,7 @@ int evrMessageProcess(unsigned int messageIdx)
 
   Side: None
 
-  Return: 0 = OK, 1 = Input Error, 2 = Timeout Error, 3 = No Data Available
+  Return: 0 = OK, 1 = Input Error, 2 = No Data Available
   
 ==============================================================================*/
 
@@ -351,6 +351,7 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
   idx = evrMessage_as[messageIdx].fiducialIdx;
   if (!evrMessage_as[messageIdx].notRead_a[idx]) {
     status = evrMessageDataNotAvail;
+    evrMessage_as[messageIdx].noDataCount++;
   } else {
     status = evrMessageOK;
     evrMessage_as[messageIdx].readingIdx = idx;
@@ -371,12 +372,6 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
     evrMessage_as[messageIdx].readingIdx = -1;
     evrMessage_as[messageIdx].notRead_a[idx] = 0;
   }
-  if (evrMessage_as[messageIdx].timeout) {
-    evrMessage_as[messageIdx].timeout = 0;
-    status = evrMessageTimeoutError;
-  }
-  if ((status == evrMessageDataNotAvail) || (status == evrMessageTimeoutError))
-    evrMessage_as[messageIdx].noDataCount++;
   return status;
 }
 
@@ -429,6 +424,7 @@ int evrMessageStart(unsigned int messageIdx)
   /* Special processing for the fiducial - set PATTERN message to read
      and throw away any old PATTERN messages */
   if (messageIdx == EVR_MESSAGE_FIDUCIAL) {
+    evrFiducialTime = evrMessage_as[messageIdx].procTimeStart;
     idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx;
     evrMessage_as[EVR_MESSAGE_PATTERN].fiducialIdx = idx;
     oldidx = idx?0:1;
@@ -719,29 +715,5 @@ int evrMessageNoDataError(unsigned int messageIdx)
 {  
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
   evrMessage_as[messageIdx].noDataCount++;
-  return 0;
-}
-
-/*=============================================================================
-
-  Name: evrMessageTimeout
-
-  Abs:  Set timeout flag.
-
-  Args: Type     Name           Access     Description
-        -------  -------        ---------- ----------------------------
-  unsigned int    messageIdx     Read       Index into Message Array
-
-  Rem:  None.
-
-  Side: None.
-
-  Return: 0 = OK, -1 = Failed
-==============================================================================*/
-
-int evrMessageTimeout(unsigned int messageIdx)
-{  
-  if (messageIdx >= EVR_MESSAGE_MAX) return -1;
-  evrMessage_as[messageIdx].timeout = 1;
   return 0;
 }

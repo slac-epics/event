@@ -146,7 +146,7 @@ static int evrTask()
     readyForFiducial = 1;
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     if (status == epicsEventWaitOK) {
-      evrPattern(); /* N-3           */
+      evrPattern(0);/* N-3           */
       evrTime();    /* Move pipeline */
       if (fiducialFunc != NULL) (*fiducialFunc)(); /* Call user's routine */
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
@@ -156,8 +156,7 @@ static int evrTask()
        then to N. */
     } else {
       readyForFiducial = 0;
-      evrMessageTimeout(EVR_MESSAGE_PATTERN);
-      evrPattern(); /* N-3 */
+      evrPattern(1);/* N-3 */
       evrTime();    /* N-2 */
       evrTime();    /* N-1 */
       evrTime();    /* N   */
