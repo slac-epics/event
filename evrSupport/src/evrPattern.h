@@ -60,8 +60,6 @@ extern "C" {
 #define TIMESLOT_RATE_MAX         5           /* # limited rates       */
                                               /* 30, 10, 5, 1, 0.5hz   */
 
-#define EDEF_MAX                 20           /* Maximum # event defns */
-
 /* Masks defining modifier5 */
 #define MOD5_EDEF_MASK          (0x000FFFFF)  /* EDEF bits             */
 #define MOD5_NOEDEF_MASK        (0xFFF00000)  /* Rate and User bits    */
