@@ -6,7 +6,6 @@
 	mpgEdefMeasSevrMasks- Encodes 20 MEASSEVRS into 2 (minor and major) masks
 	evrEdefMeasSevr     - Decodes edefMinorMask and edefMajorMask into 20 meassevrs
 	mpgEdefInitMask     - Encodes 20 EDEFINITs into mask
-	evrEdefInitEvent    - Post Init Events for 20 EDEFs
 
   Abs: This file contains all subroutine support for evr Pattern processing
        records.
@@ -46,7 +45,8 @@
 #include "dbScan.h"           /* for post_event            */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
-#include "evrPattern.h"       /* EDEF_MAX, MOD5_NOEDEF_MASK*/
+#include "evrTime.h"          /* EDEF_MAX                  */
+#include "evrPattern.h"       /* MOD5_NOEDEF_MASK          */
 
 /*=============================================================================
 
@@ -122,8 +122,8 @@ static long evrModifier5Bits(longSubRecord *psub)
   psub->val = psub->v;
   psub->u   = psub->v & MOD5_NOEDEF_MASK;
   for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++, check_p++) {
-    if (psub->v & (1 << edefIdx)) *check_p = 1.0;
-    else                          *check_p = 0.0;
+    if (psub->v & (1 << edefIdx)) *check_p = 1;
+    else                          *check_p = 0;
   }
   return 0;
 }
@@ -251,36 +251,6 @@ static long mpgEdefInitMask (longSubRecord *psub)
     psub->val |= (*check_p) << edefIdx;
     *check_p = 0;  /* now set back to zero for next time */
   } 
-  return 0;
-}
-
-/*=============================================================================
-
-  Name: evrEdefInitEvent
-
-  Abs:  Post Event for each EDEF Init Flag
-
-  Args: Type                Name        Access     Description
-        ------------------- ----------- ---------- ----------------------------
-        unsigned long       edefInitMask  read     EDEF Initialization Mask
-        unsigned int    edefInitEventCode read     EDEF Initialization Mask
-
-  Rem:  
-
-  Side: Events posted.
-  
-  Ret:  0 = OK
-
-==============================================================================*/
-int evrEdefInitEvent(unsigned long edefInitMask,
-                     unsigned int  edefInitEventCode)
-{
-  int edefIdx;
-
-  for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++) {
-    if (edefInitMask & (1 << edefIdx)) /* init is set */
-      post_event(edefIdx + edefInitEventCode);
-  }
   return 0;
 }
 
