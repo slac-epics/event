@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 09/17/2008
+Instructions for RTEMS EVR users                    Last Updated 01/08/2009
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -109,9 +109,9 @@ II - Adding event databases and EVR configuration to your IOC startup file:
     large waveforms for channel access.  Add the following command 
     before iocInit:
 
-    epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "30000")
+    epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "300000")
 
-    If your IOC already supports waveforms larger than 30000 bytes for other
+    If your IOC already supports waveforms larger than 300000 bytes for other
     reasons, then this command is not needed. 
 
 (2) Load databases created in the previous section (before iocInit).
