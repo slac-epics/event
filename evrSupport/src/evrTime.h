@@ -46,10 +46,13 @@ extern "C" {
 #define TIMESLOT_MIN            1               /* Minimum time slot   */
 #define TIMESLOT_MAX            6               /* Maximum time slot   */
 #define TIMESLOT_DIFF           3               /* Timeslot difference */
+  
+#define EDEF_MAX                20              /* Max # event defns   */
+#define EDEF_MASK               (0x000FFFFF)    /* EDEF bits           */
 
 /* For time ID */
 typedef enum {
-  evrTimeCurrent=0, evrTimeNext1=1, evrTimeNext2=2, evrTimeNext3=3
+  evrTimeCurrent=0, evrTimeNext1=1, evrTimeNext2=2, evrTimeNext3=3, evrTimeActive
 } evrTimeId_te;
 #define MAX_EVR_TIME  4
 
@@ -60,8 +63,6 @@ typedef unsigned long evrModifier_ta[MAX_EVR_MODIFIER];
 /* Event codes - see mrfCommon.h for reserved internal event codes      */
 #define EVENT_FIDUCIAL          1        /* Fiducial event code         */
 #define EVENT_EXTERNAL_TRIG     100      /* External trigger event code */
-#define EVENT_EDEFINIT_MIN      101 /* Minimum event code for EDEF Init */
-#define EVENT_EDEFINIT_MAX      120 /* Maximum event code for EDEF Init */
 #define EVENT_MODULO720         121      /* Modulo 720 event code       */
 #define EVENT_MODULO36_MIN      201      /* Min modulo 36 event code    */
 #define EVENT_MODULO36_MAX      236      /* Max modulo 36 event code    */
@@ -75,6 +76,11 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            unsigned long   *edefAvgDoneMask_p,
                            unsigned long   *edefMinorMask_p,
                            unsigned long   *edefMajorMask_p);
+int evrTimeGetFromEdef    (unsigned int     edefIdx,
+                           epicsTimeStamp  *edefTime_ps,
+                           epicsTimeStamp  *edefTimeInit_ps,
+                           int             *edefAvgDone_p,
+                           epicsEnum16     *edefSevr_p);
 int evrTimeGet            (epicsTimeStamp  *epicsTime_ps,
                            unsigned int eventCode);
 int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
@@ -85,14 +91,12 @@ int evrTimeInit           (epicsInt32 firstTimeSlotIn,
                            epicsInt32 secondTimeSlotIn);
 int evrTime               (void);
 int evrTimeCount          (unsigned int eventCode);
-int evrPattern            (void);
+int evrPattern            (int timeout);
 int evrTimePatternPutStart(evrMessagePattern_ts **pattern_pps,
                            unsigned long        **timeslot_pp,
                            unsigned long        **patternStatus_pp,
                            epicsTimeStamp       **mod720time_pps);
 int evrTimePatternPutEnd  (int modulo720Flag);
-int evrEdefInitEvent      (unsigned long edefInitMask,
-                           unsigned int  edefInitEventCode);
 #endif
 
 #ifdef __cplusplus
