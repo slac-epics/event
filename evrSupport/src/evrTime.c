@@ -636,7 +636,6 @@ static int evrTimeProc (longSubRecord *psub)
         rate like 1Hz.
   
   Inputs:
-  Q - Error Flag from evrTimeProc
   R - Counter Reset Flag
 
   Outputs:
@@ -656,6 +655,7 @@ static int evrTimeProc (longSubRecord *psub)
   N  Number of times M has rolled over
   O  Number of same pulses
   P  Number of skipped pulses
+  Q  Spare
   S  Number of invalid pulses
   T  Number of fiducial interrupts
   U  Number of times T has rolled over
@@ -675,7 +675,7 @@ static long evrTimeDiag (longSubRecord *psub)
   unsigned long  dummy;
   unsigned long  *output_p = &psub->a;
   
-  psub->val = psub->q;
+  psub->val = fiducialStatus;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */
   psub->n = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->o = samePulseCount;
