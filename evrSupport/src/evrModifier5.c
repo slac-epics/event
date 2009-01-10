@@ -4,7 +4,6 @@
         evrModifer5     - Modifier 5 Creation using EDEF Check Bits
         evrModifer5Bits - Get EDEF Check Bits out of Modifier 5
 	mpgEdefMeasSevrMasks- Encodes 20 MEASSEVRS into 2 (minor and major) masks
-	evrEdefMeasSevr     - Decodes edefMinorMask and edefMajorMask into 20 meassevrs
 	mpgEdefInitMask     - Encodes 20 EDEFINITs into mask
 
   Abs: This file contains all subroutine support for evr Pattern processing
@@ -177,47 +176,6 @@ static long mpgEdefMeasSevrMasks(longSubRecord *psub)
 
 /*=============================================================================
 
-  Name: evrEdefMeasSevr
-
-  Abs:  Create meas sevr value for each edef, then place into 20 edef meas sevr bits
- 
-		
-  Args: Type	            Name        Access	   Description
-        ------------------- -----------	---------- ----------------------------
-        longSubRecord *     psub        read       point to subroutine record
-
-  Rem:  Decodes edefMinorMask and edefMajorMask into 20 bits with value of either
-
-  Side: Subroutine for EVR IOC:LOCA:UNIT:EDEFMEASSEVR 
- 
- Sub Inputs/ Outputs:
-   Inputs:
-    U = spare
-    V = edefMinorMask
-    W = edefMajorMask
-    
-   Outputs:   
-    A-T - MeasSevr Results (for 20 EDEFs)
-  Ret:  0
-
-==============================================================================*/
-static long evrEdefMeasSevr (longSubRecord *psub)
-{ 
-  unsigned long *check_p = &psub->a;
-  int            edefIdx;
-
-  /* for minormask, a bit is set if MEASSEVR is set to MINOR */
-  /* for majormask, a bit is set if MEASSEVR is set to either MINOR or MAJOR */
-  for (edefIdx = 0; edefIdx < EDEF_MAX; edefIdx++, check_p++) {
-    if      (psub->v & (1 << edefIdx)) *check_p = MINOR_ALARM;
-    else if (psub->w & (1 << edefIdx)) *check_p = MAJOR_ALARM;
-    else                               *check_p = INVALID_ALARM;
-  }
-  return 0;
-}
-
-/*=============================================================================
-
   Name: mpgEdefInitMask
 
   Abs:  Create edefInitMask by encoding 20 EDEFINIT inputs
@@ -257,5 +215,4 @@ static long mpgEdefInitMask (longSubRecord *psub)
 epicsRegisterFunction(evrModifier5);
 epicsRegisterFunction(evrModifier5Bits);
 epicsRegisterFunction(mpgEdefMeasSevrMasks);
-epicsRegisterFunction(evrEdefMeasSevr);
 epicsRegisterFunction(mpgEdefInitMask);
