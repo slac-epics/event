@@ -43,7 +43,7 @@
 
 #define MAX_DELTA_TIME 1000000
 
-unsigned long evrFiducialTime;
+unsigned long evrFiducialTime = 0;
 
 typedef struct 
 {
