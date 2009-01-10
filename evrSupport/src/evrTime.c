@@ -102,6 +102,8 @@ typedef struct {
 static evrTimePattern_ts   evr_as[MAX_EVR_TIME];
 static evrTimePattern_ts  *evr_aps[MAX_EVR_TIME];
 static evrTimePattern_ts  *activeTimeSlot_ps = 0;
+extern unsigned long evrFiducialTime;
+unsigned long evrActiveFiducialTime = 0;
 
 /* Event definition (BSA) patterns */
 static evrTimeEdef_ts      edef_as[EDEF_MAX];
@@ -519,8 +521,10 @@ int evrTime()
       }
     }
     if ((timeslot == 0) ||
-        (firstTimeSlot == timeslot) || (secondTimeSlot == timeslot))
+        (firstTimeSlot == timeslot) || (secondTimeSlot == timeslot)) {
       activeTimeSlot_ps = evr_ps;
+      evrActiveFiducialTime = evrFiducialTime;
+    }
     /* determine if the next 3 pulses are all the same. */
     /* Same pulses means the EVG is not sending timestamps and this forces   
        record timestamps to revert to system time */
@@ -593,6 +597,8 @@ static int evrTimeProcInit(longSubRecord *psub)
     I - First  Active Time Slot for this IOC (1, 2, 3)
     J - Second Active Time Slot for this IOC (4, 5, 6)   
    Outputs:
+    A - Fiducial High Resolution Clock Time (360hz)
+    B - Active Time Slot High Resolution Clock Time (120hz)
     L - Enable/Disable flag for current pattern and timestamp update
     VAL = Error Flag
 
@@ -601,6 +607,8 @@ static int evrTimeProcInit(longSubRecord *psub)
 ==============================================================================*/
 static int evrTimeProc (longSubRecord *psub)
 {
+  psub->a = evrFiducialTime;
+  psub->b = evrActiveFiducialTime;
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     psub->l   = (activeTimeSlot_ps == evr_aps[evrTimeCurrent])?0:1;
     psub->val = fiducialStatus;
