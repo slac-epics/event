@@ -7,7 +7,7 @@
         evrEvent       - Process Event Codes
         evrTask        - High Priority task to process 360Hz Fiducial and Data
         evrRecord      - High Priority task to process 360Hz Records
-        evrRegister    - Register User Routine called by evrTask 
+        evrTimeRegister- Register User Routine called by evrTask 
 
   Abs:  Driver data and event support for EVR Receiver module or EVR simulator.   
 
@@ -24,15 +24,16 @@
  
 =============================================================================*/
 
-#include <drvSup.h> 		/* for DRVSUPFN           */
-#include <errlog.h>		/* for errlogPrintf       */
-#include <epicsExport.h> 	/* for epicsExportAddress */
-#include <epicsEvent.h> 	/* for epicsEvent*        */
-#include <epicsThread.h> 	/* for epicsThreadCreate  */
-#include <evrMessage.h>		/* for evrMessageCreate   */
-#include <evrTime.h>		/* for evrTimeCount       */
-#include <drvMrfEr.h>		/* for ErRegisterDevDBuffHandler */
-#include <devMrfEr.h>		/* for ErRegisterEventHandler    */
+#include <stdlib.h> 		/* for calloc             */
+#include "drvSup.h" 		/* for DRVSUPFN           */
+#include "errlog.h"		/* for errlogPrintf       */
+#include "epicsExport.h" 	/* for epicsExportAddress */
+#include "epicsEvent.h" 	/* for epicsEvent*        */
+#include "epicsThread.h" 	/* for epicsThreadCreate  */
+#include "evrMessage.h"		/* for evrMessageCreate   */
+#include "evrTime.h"		/* for evrTimeCount       */
+#include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
+#include "devMrfEr.h"		/* for ErRegisterEventHandler    */
 
 #define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
 
@@ -48,8 +49,17 @@ epicsExportAddress(drvet, drvEvr);
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
-static REGISTRYFUNCTION fiducialFunc      = NULL;  /* user function       */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
+
+/* Fiducial User Functions */
+typedef struct {
+  ELLNODE node;
+  REGISTRYFUNCTION func;
+
+} evrFiducialFunc_ts;
+
+ELLLIST evrFiducialFuncList_s;
+static epicsMutexId evrRWMutex_ps = 0; 
 
 /*=============================================================================
 
@@ -65,7 +75,14 @@ static int evrReport( int interest )
       printf("Pattern data from %s card %d\n",
              (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":"VME",
              pCard->Cardno);
-    printf("Registered fiducial function %p\n", fiducialFunc);
+    if (evrRWMutex_ps) {
+      evrFiducialFunc_ts *fid_ps =
+        (evrFiducialFunc_ts *)ellFirst(&evrFiducialFuncList_s);
+      while (fid_ps) {
+        printf("Registered fiducial function %p\n", fid_ps->func);
+        fid_ps = (evrFiducialFunc_ts *)ellNext(&fid_ps->node);
+      }
+    } 
     evrMessageReport(EVR_MESSAGE_FIDUCIAL, EVR_MESSAGE_FIDUCIAL_NAME,
                      interest);
     evrMessageReport(EVR_MESSAGE_PATTERN,  EVR_MESSAGE_PATTERN_NAME ,
@@ -148,7 +165,16 @@ static int evrTask()
     if (status == epicsEventWaitOK) {
       evrPattern(0);/* N-3           */
       evrTime();    /* Move pipeline */
-      if (fiducialFunc != NULL) (*fiducialFunc)(); /* Call user's routine */
+      /* Call routines that the user has registered for 360hz processing */
+      if (evrRWMutex_ps && (!epicsMutexLock(evrRWMutex_ps))) {
+        evrFiducialFunc_ts *fid_ps =
+          (evrFiducialFunc_ts *)ellFirst(&evrFiducialFuncList_s);
+        while (fid_ps) {
+          (*(fid_ps->func))(); /* Call user's routine */
+          fid_ps = (evrFiducialFunc_ts *)ellNext(&fid_ps->node);
+        }
+        epicsMutexUnlock(evrRWMutex_ps);
+      }   
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
     /* If timeout or other error, process the data which will result in bad
        status since there is nothing to do.  Then advance the pipeline so
@@ -266,11 +292,45 @@ static int evrInitialise()
 
   Abs:  Register a routine for evrTask to call after receipt of fiducial.
   
-  Rem:  Last caller wins.  
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        REGISTRYFUNCTION    fiducialFunc Read      Fiducial Function
+
+  Rem:  The same function can be registered multiple times.
+
+  Ret:  0 = OK, -1 = Invalid argument, mutex lock error, or
+        memory allocation error
     
 =============================================================================*/
-int evrTimeRegister(REGISTRYFUNCTION fiducialFuncIn)
+int evrTimeRegister(REGISTRYFUNCTION fiducialFunc)
 {
-  fiducialFunc = fiducialFuncIn;
+  evrFiducialFunc_ts *fiducialFunc_ps;
+
+  if (!fiducialFunc) {
+    errlogPrintf("evrTimeRegister: invalid fiducial function argument\n");
+    return -1;
+  }
+  /* Create the fiducial function mutex and initialize link list*/
+  if (!evrRWMutex_ps) {
+    evrRWMutex_ps = epicsMutexCreate();
+    if (!evrRWMutex_ps) {
+      errlogPrintf("evrTimeRegister: unable to create the EVR fiducial function mutex\n");
+      return -1;
+    }
+    ellInit(&evrFiducialFuncList_s);
+  }
+  /* Get space for this function */
+  if (!(fiducialFunc_ps = calloc(1,sizeof(evrFiducialFunc_ts)))) {
+    errlogPrintf("evrTimeRegister: unable to allocate memory for the fiducial function\n");
+    return -1;
+  }
+  fiducialFunc_ps->func = fiducialFunc;
+  /* Add to list */  
+  if (epicsMutexLock(evrRWMutex_ps)) {
+    errlogPrintf("evrTimeRegister: unable to lock the EVR fiducial function mutex\n");
+    return -1;
+  }
+  ellAdd(&evrFiducialFuncList_s, &fiducialFunc_ps->node);
+  epicsMutexUnlock(evrRWMutex_ps);
   return 0;
 }
