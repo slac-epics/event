@@ -99,9 +99,8 @@ typedef struct {
 } evrTimeEdef_ts;
 
 /* Pattern and timestamp pipeline */
-static evrTimePattern_ts   evr_as[MAX_EVR_TIME];
-static evrTimePattern_ts  *evr_aps[MAX_EVR_TIME];
-static evrTimePattern_ts  *activeTimeSlot_ps = 0;
+static evrTimePattern_ts   evr_as[MAX_EVR_TIME+1];
+static evrTimePattern_ts  *evr_aps[MAX_EVR_TIME+1];
 extern unsigned long evrFiducialTime;
 unsigned long evrActiveFiducialTime = 0;
 
@@ -123,6 +122,7 @@ static unsigned long fiducialStatus   = EVR_TIME_INVALID;
 /* Other valid combination are 2 and 5 and 3 and 6.                               */
 static unsigned long firstTimeSlot    = 1;
 static unsigned long secondTimeSlot   = 4;
+static unsigned long activeTimeSlot   = 0; /* 1=time slot active on the current pulse*/
 static epicsTimeStamp mod720time;
 
 /*=============================================================================
@@ -160,6 +160,7 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
         evrTimeId_te        id            Read     Timestamp pipeline index;
 	                                  0=time associated w this pulse
                                           1,2,3 = time associated w next pulses
+                                          4 = last active pulse
         evrModifier_ta  modifier_a        Write    First 6 longwords of the pattern
         unsigned long * patternStatus_p   Write    Pattern Status (see evrPattern.h)
         unsigned long * edefAvgDoneMask_p Write    EDEF average-done mask
@@ -189,8 +190,7 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
   if ((id > evrTimeActive) || (!evrTimeRWMutex_ps)) return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
   if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
-  if (id == evrTimeActive) evr_ps = activeTimeSlot_ps;
-  else                     evr_ps = evr_aps[id];
+  evr_ps = evr_aps[id];
   status = evr_ps->timeStatus;
   if (epicsTime_ps) *epicsTime_ps = evr_ps->pattern_s.time;
   if (modifier_a) {
@@ -366,13 +366,12 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         if (evrTimeGetSystem(&mod720time, evrTimeCurrent))
           return epicsTimeERROR;
 	/* init patterns in pipeline */
-        for (idx=0; idx<MAX_EVR_TIME; idx++) {
+        for (idx=0; idx<MAX_EVR_TIME+1; idx++) {
           memset(&evr_as[idx].pattern_s, 0, sizeof(evrMessagePattern_ts));
           evr_as[idx].pattern_s.time = mod720time;
           evr_as[idx].timeStatus     = epicsTimeERROR;
           evr_aps[idx] = evr_as + idx;
         }
-	activeTimeSlot_ps = evr_aps[evrTimeCurrent];
         /* Init EDEF pattern array */
         for (idx=0; idx<EDEF_MAX; idx++) {
           memset(&edef_as[idx], 0, sizeof(evrTimeEdef_ts));
@@ -522,8 +521,11 @@ int evrTime()
     }
     if ((timeslot == 0) ||
         (firstTimeSlot == timeslot) || (secondTimeSlot == timeslot)) {
-      activeTimeSlot_ps = evr_ps;
+      evr_as[evrTimeActive] = *evr_ps;
       evrActiveFiducialTime = evrFiducialTime;
+      activeTimeSlot = 1;
+    } else {
+      activeTimeSlot = 0;
     }
     /* determine if the next 3 pulses are all the same. */
     /* Same pulses means the EVG is not sending timestamps and this forces   
@@ -534,7 +536,7 @@ int evrTime()
       eventCodeTime_as[0].status = epicsTimeERROR;
       eventCodeTime_as[EVENT_FIDUCIAL].status = epicsTimeERROR;
     } else {
-      if (activeTimeSlot_ps == evr_ps) {
+      if (activeTimeSlot) {
         eventCodeTime_as[0].time   = evr_ps->pattern_s.time;
         eventCodeTime_as[0].status = evr_ps->timeStatus;
       }
@@ -610,7 +612,7 @@ static int evrTimeProc (longSubRecord *psub)
   psub->a = evrFiducialTime;
   psub->b = evrActiveFiducialTime;
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-    psub->l   = (activeTimeSlot_ps == evr_aps[evrTimeCurrent])?0:1;
+    psub->l   = activeTimeSlot?0:1;
     psub->val = fiducialStatus;
     /* See if user wants different time slots */
     if ((psub->i != firstTimeSlot) || (psub->j != secondTimeSlot)) {
