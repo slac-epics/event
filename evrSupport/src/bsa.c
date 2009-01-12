@@ -232,7 +232,7 @@ int bsaSecnInit(char  *secnName,
     bsaRWMutex_ps = epicsMutexCreate();
     if (bsaRWMutex_ps) ellInit(&bsaDeviceList_s);
   }
-  if (bsaRWMutex_ps) { 
+  if (bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) { 
     /* Check if device name is already registered. */
     dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
     while(dev_ps) {
@@ -246,6 +246,7 @@ int bsaSecnInit(char  *secnName,
         ellAdd(&bsaDeviceList_s,&dev_ps->node);
       }
     }
+    epicsMutexUnlock(bsaRWMutex_ps);
   }
   *dev_pps = dev_ps;
   if (dev_ps) {
