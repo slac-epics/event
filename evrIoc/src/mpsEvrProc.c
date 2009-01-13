@@ -57,7 +57,7 @@ typedef struct {
   epicsUInt32         beam;
   epicsUInt32         spare;
 } mpsPulse_ts;
-#define MAX_MPS_TIME (MAX_EVR_TIME-1)
+#define MAX_MPS_TIME (MAX_EVR_TIME)
 static mpsPulse_ts  mpsPulse_as[MAX_MPS_TIME];
 static epicsMutexId mpsPulseRWMutex_ps = 0;
 static epicsEventId mpsTaskEventSem    = 0;
@@ -122,7 +122,7 @@ static void mpsEvrFiducial(void)
   int     idx;
   
   if (mpsPulseRWMutex_ps && (!epicsMutexLock(mpsPulseRWMutex_ps))) {
-    for (idx = 0; idx < evrTimeNext3; idx++) {
+    for (idx = 0; idx < MAX_MPS_TIME-1; idx++) {
       if (evrTimeGetFromPipeline(&mpsPulse_as[idx].timestamp, idx,
                                  modifier_a, &patternStatus,0,0,0)) {
         mpsPulse_as[idx].timeslot = 0;
@@ -135,6 +135,45 @@ static void mpsEvrFiducial(void)
         mpsPulse_as[idx].beam     = (modifier_a[4] & MOD5_BEAMFULL_MASK)?1:0;
         mpsPulse_as[idx].spare    = 0;
       }
+    }
+    epicsMutexUnlock(mpsPulseRWMutex_ps);
+  }
+}
+
+/*=============================================================================
+
+  Name: mpsEvrFiducial2
+
+  Abs:  360Hz MPS EVR Processing at the fiducial. Second routine.
+  
+  Args: None.
+
+  Rem:  
+
+  Side: Mutex lock/unlock, event signal.
+
+  Ret:  0 = OK, -1 = Error.
+
+  =============================================================================*/ 
+
+static void mpsEvrFiducial2(void)
+{
+  evrModifier_ta modifier_a;
+  unsigned long  patternStatus;
+  int     idx = MAX_MPS_TIME-1;
+  
+  if (mpsPulseRWMutex_ps && (!epicsMutexLock(mpsPulseRWMutex_ps))) {
+    if (evrTimeGetFromPipeline(&mpsPulse_as[idx].timestamp, evrTimeActive,
+                               modifier_a, &patternStatus, 0,0,0)) {
+      mpsPulse_as[idx].timeslot = 0;
+      mpsPulse_as[idx].pulseid  = PULSEID_INVALID;
+      mpsPulse_as[idx].beam     = 1;
+      mpsPulse_as[idx].spare    = 0;
+    } else {
+      mpsPulse_as[idx].timeslot = TIMESLOT(modifier_a);
+      mpsPulse_as[idx].pulseid  = PULSEID(mpsPulse_as[idx].timestamp);
+      mpsPulse_as[idx].beam     = (modifier_a[4] & MOD5_BEAMFULL_MASK)?1:0;
+      mpsPulse_as[idx].spare    = 0;
     }
     epicsMutexUnlock(mpsPulseRWMutex_ps);
     if (mpsTaskEventSem) epicsEventSignal(mpsTaskEventSem);
@@ -179,7 +218,10 @@ int mpsEvrStart(int registerFiducial)
       errlogPrintf("mpsEvrProcInit: unable to create the EVR task\n");
       return -1;
     }
-    if (registerFiducial) evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial);
+    if (registerFiducial) {
+      evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial);
+      evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial2);
+    }
   }
   return 0;
 }
