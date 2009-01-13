@@ -1,10 +1,10 @@
-Instructions for RTEMS EVR users                    Last Updated 01/08/2009
+Instructions for RTEMS EVR users                    Last Updated 01/12/2009
 --------------------------------
 
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
 
-(1) Add EVENT, GENERALTIME, and RESTORE to configure/RELEASE and 
+(1) Add EVENT, GENERALTIME, and RESTORE or AUTOSAVE to configure/RELEASE and 
 clean/rebuild configure.
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
@@ -13,7 +13,7 @@ clean/rebuild configure.
    xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
    xxx_LIBS += mrfVme64x
-   xxx_LIBS += restore
+   xxx_LIBS += restore or autosave
 
 Note that the order of the above libraries is important.
 
@@ -22,7 +22,7 @@ Note that the order of the above libraries is important.
 
    xxx_DBD += evrSupport.dbd
    xxx_DBD += devMrfEr.dbd
-   xxx_DBD += dbRestore.dbd
+   xxx_DBD += dbRestore.dbd or autosave.dbd
 
 (4) If you want a routine to run after the fiducial at 360hz by the evrTask,
     (which runs at epicsThreadPriorityHigh+1), register the routine in your
@@ -37,7 +37,7 @@ Note that the order of the above libraries is important.
 	    epicsTimeStamp time_s;
 	    unsigned long  patternStatus; /* see evrPattern.h for values */
 	    int status = evrTimeGetFromPipeline(&time_s, 
-		<evrTimeCurrent, evrTimeNext1, evrTimeNext2>,
+		<evrTimeCurrent, evrTimeNext1, evrTimeNext2, evrTimeActive>,
 		modifier_a, &patternStatus, 0,0,0);
 	... use BEAMCODE, TIMESLOT macros defined in evrPattern.h ... 
 	...   to parse out beam code and time slot from modifier_a ...
@@ -66,9 +66,49 @@ Note that the order of the above libraries is important.
     your application.  For an example, see:
 	event/<release>/evrIoc/Db/bsaXL05.substitutions
 
-(9) For IOCs with triggered devices, add the trigger setpoints to the IOC's
-    ChannelWatcher configuration file.  The .cwConfig file can be created 
-    from a .cwsubstitutions file.  For an example, see:
+(8a) For each record that is an input to BSA, add a forward-link (FLNK) to 
+     record processing that occurs at beam or trigger time:
+	  field(FLNK, "<dev>:EF<secn>")
+     Consult with the HLA group to determine the proper values of <dev> and
+     <secn> for your application.
+
+(8b) If you prefer not to use the FLNK to provide input to BSA, use the
+     API directly:
+
+	#include "bsa.h"
+	... your initialization logic - do at or before iocInit ....
+	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
+	char[PVNAME_STRINGSZ] bsaName = <BSA name for the data>
+	void                 *dpvt = 0; /* unique per value */
+	status = bsaSecnInit(bsaName, 0, &dpvt);
+
+	... your data processing logic here ...
+	... to update BSA after data is ready ...
+	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
+	epicsTimeStamp dataTimeStamp = <timestamp of your data>
+	double         dataValue = <value of your data>
+	epicsEnum16    dataSevr = <EPICS alarm severity of your data>
+	void          *dpvt = <value of dpvt from bsaSecnInit>
+	status = bsaSecnAvg(&dataTimeStamp, dataValue, dataSevr, dpvt);
+
+(9) For IOCs with triggered devices, add setpoints to the proper 
+    configuration file used to save and restore setpoints.  
+    The setpoint PVs include:
+	Per IOC:
+	$(IOC):FIDUCIALRATE.HIHI /LOG
+	$(IOC):FIDUCIALRATE.LOLO /LOG
+	$(IOC):TREF /LOG
+	Per triggered device:
+	$(DEV)TDES
+	$(DEV)TCON
+	$(DEV)TWID /LOG
+	$(DEV)TPOL /LOG
+	$(DEV)TCTL /LOG
+
+(9a) If the IOC is using ChannelWatcher to save setpoints, add the above 
+     setpoints to the IOC's ChannelWatcher configuration file.  
+     The .cwConfig file can be created from a .cwsubstitutions file.  
+     For an example, see:
 	event/<release>/evrIoc/srcRestore/trigXL05.cwsubstitutions
 
 (10) For IOCs with triggered devices, add the trigger delays to the Channel
@@ -101,6 +141,14 @@ Note that the order of the above libraries is important.
 	<iocname>:FIDUCIALRATE
 	For each EVR:
 	<evrname>:LINK
+
+(14) Two global variables providing the high resolution time of the fiducial
+     are available for diagnostics purposes:
+	evrFiducialTime - high resolution time of the last fiducial 
+			  (360hz update)
+	evrActiveFiducialTime - high resolution time of the last 
+                          timeslot 1 or 4 fiducial (120hz update)
+     These values are also provided in <ioc>:FIDUCIAL.A and B, respectively.
 
 II - Adding event databases and EVR configuration to your IOC startup file:
 --------------------------------------------------------------------------
