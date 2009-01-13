@@ -4,6 +4,30 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-8-0: Jan 12, 2009
+	* change README to increase EPICS_CA_MAX_ARRAY_BYTES to 300000 and
+	  add more details for using BSA and the high resolution fiducial time.
+	* evrSupport - many files.  
+	  (1) Change to beam synchronous acquisition to reduce lockset sizes, 
+	      make more efficient, and make BSA updates done in the low 
+	      priority callback task.  
+	  (2) Add ability to use rate-limited devices (devices that takes
+	      longer than 7 ms to process) in BSA processing for 
+	      rate-limited EDEFs.
+	  (3) Do EDEF initialization without needed special event codes.
+	  (4) Add ability to get pattern and timestamp for last active 
+	      timeslot (timeslot 1 or 4 for LCLS).  Remove timestamps
+	      from fiducial diagnostics since it's available in pattern diags.
+	      Process PATTERN at 360hz but let it get the same data 3 times
+	      in a row (instead of disabling for the 2 off pulses).
+	  (5) Provide global 360hz and 120hz fiducial time variable for 
+	      timing difference determinations WRT to fiducial.
+	  (6) Separate out BSA device-non-specific info from device-specific
+	      info so that IOC engineers can move the device specific files
+	      to their own apps.
+	  (7) Reduce size of 360hz pattern record lockset.
+	  (8) Allow multiple user functions for 360hz fiducial processing. 
+
 event-R2-7-1: Dec 3, 2008
 	* add /evrSupport/Db/bsa/bsaBPMSCavityEdef.substitutions,
 	  contains new cavity BPM BSA attributes
