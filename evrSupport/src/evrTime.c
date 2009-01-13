@@ -633,7 +633,7 @@ static int evrTimeProc (longSubRecord *psub)
 
   Name: evrTimeDiag
 
-  Abs:  Expose time from the table to pvs, expose counters
+  Abs:  Expose expose counters
         This subroutine is for status only and should update at a low
         rate like 1Hz.
   
@@ -641,18 +641,7 @@ static int evrTimeProc (longSubRecord *psub)
   R - Counter Reset Flag
 
   Outputs:
-  A  secPastEpoch for timestamp 0, n (evr_aps[0])
-  B  nsec for timestamp 0, n
-  C  status "
-  D  secPastEpoch for timestamp 1, n-1 (evr_aps[1])
-  E  nsec for timestamp 1, n-1
-  F  status "
-  G  secPastEpoch for timestamp 2, n-2 (evr_aps[2])
-  H  nsec for timestamp 2, n-2
-  I  status "
-  J  secPastEpoch for timestamp 3, n-3 (evr_aps[3])
-  K  nsec for timestamp 3, n-3
-  L  status "
+  A - L Spare
   M  fiducial counter
   N  Number of times M has rolled over
   O  Number of same pulses
@@ -666,16 +655,14 @@ static int evrTimeProc (longSubRecord *psub)
   X  Average Fiducial Processing Time  (us)
   Y  Number of missed fiducials
   Z  Maximum Fiducial Processing Time  (us)
-  VAL = Last Error flag from evrTimeProc
+  VAL = Error flag from evrTime
   
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/ 
 
 static long evrTimeDiag (longSubRecord *psub)
 {
-  int            idx;
   unsigned long  dummy;
-  unsigned long  *output_p = &psub->a;
   
   psub->val = fiducialStatus;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */
@@ -695,19 +682,6 @@ static long evrTimeDiag (longSubRecord *psub)
     pulseErrCount     = 0;
     evrMessageCountReset(EVR_MESSAGE_FIDUCIAL);
   }
-
-  /* read evr timestamps in the pipeline*/
-  if ((!evrTimeRWMutex_ps) || (epicsMutexLock(evrTimeRWMutex_ps)))
-    return epicsTimeERROR;
-  for (idx=0; idx<MAX_EVR_TIME; idx++) {
-    *output_p = (unsigned long)evr_aps[idx]->pattern_s.time.secPastEpoch;
-    output_p++;
-    *output_p = (unsigned long)evr_aps[idx]->pattern_s.time.nsec;
-    output_p++;
-    *output_p = (unsigned long)evr_aps[idx]->timeStatus;
-    output_p++;
-  }
-  epicsMutexUnlock(evrTimeRWMutex_ps);
   return epicsTimeOK;
 }
 
