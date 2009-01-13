@@ -15,7 +15,6 @@ record(longSub, "$(DEV):FIDUCIAL") {
 
 record(fanout, "$(DEV):PATTERNFO") {
   field(LNK1, "$(DEV):PATTERN")
-  field(LNK2, "$(DEV):PATTERN360HZ")
   field(LNK3, "$(DEV):MODIFIER5")
   field(LNK4, "$(LNK4)")
   field(LNK5, "$(LNK5)")
