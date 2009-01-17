@@ -298,12 +298,16 @@ static long read_bsa(bsaRecord *pbsa)
     }
     epicsMutexUnlock(bsaRWMutex_ps);
   }
+  /* Read alarm if there was nothing to read.
+     Soft alarm if there were no valid inputs to the average.*/ 
   if (noread) {
     pbsa->val  = 0.0;
     pbsa->rms  = 0.0;
     pbsa->cnt  = 0;
     epicsTimeGetEvent(&pbsa->time, 0);
     recGblSetSevr(pbsa,READ_ALARM,INVALID_ALARM);
+  } else if (pbsa->cnt == 0) {
+    recGblSetSevr(pbsa,SOFT_ALARM,INVALID_ALARM);
   }
   /* Reset compress records if requested */
   if (reset) {

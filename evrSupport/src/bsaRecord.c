@@ -177,21 +177,22 @@ static long get_control_double(struct dbAddr *paddr, struct dbr_ctrlDouble *pcd)
 
 static void monitor(struct bsaRecord *pbsa)
 {
-	unsigned short	monitor_mask;
+	unsigned short	monitor_mask, save_monitor_mask;
 	double		delta;
 
         /* get previous stat and sevr  and new stat and sevr*/
-        monitor_mask = recGblResetAlarms(pbsa);
+        save_monitor_mask = recGblResetAlarms(pbsa);
         /* check for value change */
         delta = pbsa->mlst - pbsa->val;
         if(delta<0.0) delta = -delta;
         if (delta > pbsa->mdel) {
                 /* post events for value change */
-                monitor_mask |= DBE_VALUE;
+                save_monitor_mask |= DBE_VALUE;
                 /* update last value monitored */
                 pbsa->mlst = pbsa->val;
         }
         /* check for archive change */
+        monitor_mask = save_monitor_mask;
         delta = pbsa->alst - pbsa->val;
         if(delta<0.0) delta = -delta;
         if (delta > pbsa->adel) {
@@ -200,19 +201,30 @@ static void monitor(struct bsaRecord *pbsa)
                 /* update last archive value monitored */
                 pbsa->alst = pbsa->val;
         }
-        /* send out monitors connected to the value and rms field */
-        if (monitor_mask){
-                db_post_events(pbsa,&pbsa->val,monitor_mask);
-                if (pbsa->rms != pbsa->rlst) {
-                  db_post_events(pbsa,&pbsa->rms,monitor_mask);
-                  pbsa->rlst = pbsa->rms;
-                }
+        /* send out monitors connected to the value field */
+        if (monitor_mask) db_post_events(pbsa,&pbsa->val,monitor_mask);
+        /* check for RMS archive change */
+        monitor_mask = save_monitor_mask;
+        if (pbsa->rms != pbsa->rlst) {
+                /* post events on value field for archive change */
+                monitor_mask |= DBE_VALUE|DBE_LOG;
+                /* update last archive value monitored */
+                pbsa->rlst = pbsa->rms;
         }
-        /* send out monitors connected to the count and diagnostics fields */
+        /* send out monitors connected to the rms field */
+        if (monitor_mask) db_post_events(pbsa,&pbsa->rms,monitor_mask);
+        /* check for CNT archive change */
+        monitor_mask = save_monitor_mask;
         if (pbsa->cnt != pbsa->clst) {
-                db_post_events(pbsa,&pbsa->cnt,monitor_mask|DBE_VALUE|DBE_LOG);
+                /* post events on value field for archive change */
+                monitor_mask |= DBE_VALUE|DBE_LOG;
+                /* update last archive value monitored */
                 pbsa->clst = pbsa->cnt;
         }
+        /* send out monitors connected to the cnt field */
+        if (monitor_mask) db_post_events(pbsa,&pbsa->cnt,monitor_mask);
+        /* Do diagnostics now */
+        monitor_mask = save_monitor_mask;
         if (pbsa->noch != pbsa->lnoc) {
                 db_post_events(pbsa,&pbsa->noch,monitor_mask|DBE_VALUE|DBE_LOG);
                 pbsa->lnoc = pbsa->noch;
