@@ -4,6 +4,19 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-8-1: Jan 20, 2009
+	* evrSupport/src/bsa.c - Report SOFT INVALID alarm when there's been
+          no valid inputs to the average for the BSA record.
+        * evrSupport/src/bsaRecord.c - Make sure VAL/RMS/CNT all post a
+          monitor when VAL changes.
+	* evrSupport/src/evrTime.c - initialize new pattern timestamp with
+	  the previous pattern timestamp.  It will be overwritten by the new 
+	  pattern timestamp only if the new pattern is valid.
+	* evrSupport/src/evrPattern.c - if the timestamp from EVR data is 
+	  different from system time by 10 seconds or more 
+	  (evrDeltaTimeMax global variable), throw the data away and use 
+	  system time for record timestamps.  
+
 event-R2-8-0: Jan 12, 2009
 	* change README to increase EPICS_CA_MAX_ARRAY_BYTES to 300000 and
 	  add more details for using BSA and the high resolution fiducial time.
