@@ -49,17 +49,19 @@
 #include "alarm.h"            /* INVALID_ALARM             */
 
 #define  MAX_PATTERN_DELTA_TIME  10 /* sec */
-#define  MAX_PATTERN_ERR_COUNT    3
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
-static unsigned long patternErrCount  = MAX_PATTERN_ERR_COUNT;
+static unsigned long patternErrCount  = TIMESLOT_DIFF;
                                            /* # PATTERN errors in-a-row */
 static unsigned long invalidErrCount  = 0; /* # bad PATTERN waveforms   */
 static unsigned long syncErrCount     = 0; /* # out-of-sync patterns    */
 static unsigned long invalidTimeCount = 0; /* # invalid timestamps      */
-static unsigned long deltaTimeMax     = 0; /* Max Diff between event and sys
-                                              times in # seconds        */
+static unsigned long deltaTimeMax     = 0; /* Max diff between event and sys
+                                              times in # seconds since reset */
+unsigned long        evrDeltaTimeMax  = MAX_PATTERN_DELTA_TIME;
+                                           /* Max allowed diff between event
+                                              and sys times in # seconds     */
 
 /*=============================================================================
 
@@ -113,44 +115,33 @@ int evrPattern(int timeout)
   if (timeout || evrMessageStatus ||
       (pattern_ps->header_s.type    != EVR_MESSAGE_PATTERN) ||
       (pattern_ps->header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
-    if (patternErrCount < MAX_PATTERN_ERR_COUNT) patternErrCount++;
+    if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
     if (timeout) {
       *patternStatus_p = PATTERN_TIMEOUT;
-      patternErrCount  = MAX_PATTERN_ERR_COUNT;
+      patternErrCount  = TIMESLOT_DIFF;
     } else if (evrMessageStatus == evrMessageDataNotAvail) {
       *patternStatus_p = PATTERN_NO_DATA;
     } else {
       *patternStatus_p = PATTERN_INVALID_WF;
       invalidErrCount++;
     }
-  } else {
-    /* Make sure timestamp from pattern is not too much different from
-       system time */
-    if (pattern_ps->time.secPastEpoch != currentTime.secPastEpoch) {
+  /* Make sure timestamp from pattern is not too much different from
+     system time */
+  } else if (pattern_ps->time.secPastEpoch != currentTime.secPastEpoch) {
       if (pattern_ps->time.secPastEpoch > currentTime.secPastEpoch)
         deltaTime = pattern_ps->time.secPastEpoch - currentTime.secPastEpoch;
       else
         deltaTime = currentTime.secPastEpoch - pattern_ps->time.secPastEpoch;
       if (deltaTime > deltaTimeMax) deltaTimeMax = deltaTime;
-    } else {
-      deltaTime = 0;
-    }
-    if (deltaTime > MAX_PATTERN_DELTA_TIME) {
-      if (patternErrCount < MAX_PATTERN_ERR_COUNT) patternErrCount++;
-      invalidTimeCount++;
-      *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
-    } else {
-      patternErrCount = 0;     
-      /* Check if EVG reporting a problem  */
-      if (pattern_ps->modifier_a[0] & MPG_IPLING) {
-        *patternStatus_p = PATTERN_MPG_IPLING;
-        syncErrCount++;
+      if (deltaTime >= evrDeltaTimeMax) {
+        if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
+        invalidTimeCount++;
+        *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
       } else {
-        *patternStatus_p = PATTERN_OK;
+        patternErrCount = 0;
       }
-      /* Set timeslot */
-      *timeslot_p = TIMESLOT(pattern_ps->modifier_a);
-    }
+  } else {
+    patternErrCount = 0;
   }
   /* If there is an error with the incoming pattern, set
      everything to invalid values. */
@@ -162,12 +153,22 @@ int evrPattern(int timeout)
     pattern_ps->edefInitMask  = 0;
     /* Set timestamp invalid if the last 3 pulses had an error too -
        allow a few glitches before messing with time */
-    if (patternErrCount >= MAX_PATTERN_ERR_COUNT) {
+    if (patternErrCount >= TIMESLOT_DIFF) {
       pattern_ps->time = currentTime;
     }
     evrTimePutPulseID(&pattern_ps->time, PULSEID_INVALID);
     if (epicsTimeDiffInSeconds(&currentTime, mod720time_ps) > MODULO720_SECS)
       pattern_ps->modifier_a[0] |= MODULO720_MASK;
+  } else {
+    /* Check if EVG reporting a problem  */
+    if (pattern_ps->modifier_a[0] & MPG_IPLING) {
+      *patternStatus_p = PATTERN_MPG_IPLING;
+      syncErrCount++;
+    } else {
+      *patternStatus_p = PATTERN_OK;
+    }
+    /* Set timeslot */
+    *timeslot_p = TIMESLOT(pattern_ps->modifier_a);
   }
   /* modulo720 decoded from modifier 1*/
   if (pattern_ps->modifier_a[0] & MODULO720_MASK) modulo720Flag = 1;
