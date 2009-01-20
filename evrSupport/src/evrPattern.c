@@ -48,11 +48,18 @@
 #include "evrPattern.h"       /* for PATTERN* defines      */
 #include "alarm.h"            /* INVALID_ALARM             */
 
+#define  MAX_PATTERN_DELTA_TIME  10 /* sec */
+#define  MAX_PATTERN_ERR_COUNT    3
+
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
-static unsigned long patternErrCount  = 0; /* # PATTERN errors in-a-row */
+static unsigned long patternErrCount  = MAX_PATTERN_ERR_COUNT;
+                                           /* # PATTERN errors in-a-row */
 static unsigned long invalidErrCount  = 0; /* # bad PATTERN waveforms   */
 static unsigned long syncErrCount     = 0; /* # out-of-sync patterns    */
+static unsigned long invalidTimeCount = 0; /* # invalid timestamps      */
+static unsigned long deltaTimeMax     = 0; /* Max Diff between event and sys
+                                              times in # seconds        */
 
 /*=============================================================================
 
@@ -81,6 +88,7 @@ int evrPattern(int timeout)
   epicsTimeStamp         *mod720time_ps;
   unsigned long          *timeslot_p;
   unsigned long          *patternStatus_p;
+  unsigned long           deltaTime;
   int                     modulo720Flag;
   int                     idx;
 
@@ -90,7 +98,9 @@ int evrPattern(int timeout)
   } else {
     msgRolloverCount++;
     msgCount = 0;
-  }  
+  }
+  /* Get system time */
+  epicsTimeGetCurrent(&currentTime);
   /* Lock the pattern table and get pointer to newest pattern data */
   if (evrTimePatternPutStart(&pattern_ps, &timeslot_p,
                              &patternStatus_p, &mod720time_ps))
@@ -103,41 +113,62 @@ int evrPattern(int timeout)
   if (timeout || evrMessageStatus ||
       (pattern_ps->header_s.type    != EVR_MESSAGE_PATTERN) ||
       (pattern_ps->header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
-    patternErrCount++;
-    for (idx = 0; idx < EVR_MODIFIER_MAX; idx++)
-      pattern_ps->modifier_a[idx] = 0;
-    pattern_ps->modifier_a[0] = MPG_IPLING;
-    *timeslot_p               = 0;
-    pattern_ps->edefInitMask  = 0;
+    if (patternErrCount < MAX_PATTERN_ERR_COUNT) patternErrCount++;
     if (timeout) {
       *patternStatus_p = PATTERN_TIMEOUT;
+      patternErrCount  = MAX_PATTERN_ERR_COUNT;
     } else if (evrMessageStatus == evrMessageDataNotAvail) {
       *patternStatus_p = PATTERN_NO_DATA;
     } else {
       *patternStatus_p = PATTERN_INVALID_WF;
       invalidErrCount++;
     }
+  } else {
+    /* Make sure timestamp from pattern is not too much different from
+       system time */
+    if (pattern_ps->time.secPastEpoch != currentTime.secPastEpoch) {
+      if (pattern_ps->time.secPastEpoch > currentTime.secPastEpoch)
+        deltaTime = pattern_ps->time.secPastEpoch - currentTime.secPastEpoch;
+      else
+        deltaTime = currentTime.secPastEpoch - pattern_ps->time.secPastEpoch;
+      if (deltaTime > deltaTimeMax) deltaTimeMax = deltaTime;
+    } else {
+      deltaTime = 0;
+    }
+    if (deltaTime > MAX_PATTERN_DELTA_TIME) {
+      if (patternErrCount < MAX_PATTERN_ERR_COUNT) patternErrCount++;
+      invalidTimeCount++;
+      *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
+    } else {
+      patternErrCount = 0;     
+      /* Check if EVG reporting a problem  */
+      if (pattern_ps->modifier_a[0] & MPG_IPLING) {
+        *patternStatus_p = PATTERN_MPG_IPLING;
+        syncErrCount++;
+      } else {
+        *patternStatus_p = PATTERN_OK;
+      }
+      /* Set timeslot */
+      *timeslot_p = TIMESLOT(pattern_ps->modifier_a);
+    }
+  }
+  /* If there is an error with the incoming pattern, set
+     everything to invalid values. */
+  if (patternErrCount) {
+    for (idx = 0; idx < EVR_MODIFIER_MAX; idx++)
+      pattern_ps->modifier_a[idx] = 0;
+    pattern_ps->modifier_a[0] = MPG_IPLING;
+    *timeslot_p               = 0;
+    pattern_ps->edefInitMask  = 0;
     /* Set timestamp invalid if the last 3 pulses had an error too -
        allow a few glitches before messing with time */
-    epicsTimeGetCurrent(&currentTime);
-    if ((patternErrCount >= 3) || timeout) {
+    if (patternErrCount >= MAX_PATTERN_ERR_COUNT) {
       pattern_ps->time = currentTime;
     }
     evrTimePutPulseID(&pattern_ps->time, PULSEID_INVALID);
     if (epicsTimeDiffInSeconds(&currentTime, mod720time_ps) > MODULO720_SECS)
       pattern_ps->modifier_a[0] |= MODULO720_MASK;
-  } else {
-    patternErrCount = 0;
-    /* Check if EVG reporting a problem  */
-    if (pattern_ps->modifier_a[0] & MPG_IPLING) {
-      *patternStatus_p = PATTERN_MPG_IPLING;
-      syncErrCount++;
-    } else {
-      *patternStatus_p = PATTERN_OK;
-    }
-    /* Set timeslot */
-    *timeslot_p = TIMESLOT(pattern_ps->modifier_a);
-  }  
+  }
   /* modulo720 decoded from modifier 1*/
   if (pattern_ps->modifier_a[0] & MODULO720_MASK) modulo720Flag = 1;
   else                                            modulo720Flag = 0;
@@ -260,15 +291,16 @@ static long evrPatternProc(longSubRecord *psub)
        D - Number of waveforms processed by this subroutine
        E - Number of times D has rolled over
        F - Number of bad waveforms
-           The following G-L outputs are pop'ed by a call to evrMessageCounts()
+           G,H,I,K,L,M,V,W,X,Z are pop'ed by a call to evrMessageCounts()
        G - Number of times ISR wrote a message
        H - Number of times G has rolled over
        I - Number of times ISR overwrote a message
-       J - Spare
-       K - Number of timeouts
+       J - Number of invalid timestamps
+       K - Number of pulse with no data
        L - Number of message write errors
        M - Number of check sum errors
-       N to U - Spares
+       N - abs(Event - System Time Diff) (# nsec)
+       O to U - Spares
        V - Minimum Pattern Delta Start Time (us)
        W - Maximum Pattern Delta Start Time (us)
        X - Average Data Processing Time     (us)
@@ -288,6 +320,8 @@ static long evrPatternState(longSubRecord *psub)
   psub->e = msgRolloverCount;  /* # time msgCount reached EVR_MAX_INT    */
   psub->f = invalidErrCount;
   psub->c = syncErrCount;
+  psub->j = invalidTimeCount;
+  psub->n = deltaTimeMax;
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->k,&psub->l,
                    &psub->m,&psub->v,&psub->w,&psub->x,&psub->z);
@@ -297,6 +331,8 @@ static long evrPatternState(longSubRecord *psub)
     msgRolloverCount      = 0;
     invalidErrCount       = 0;
     syncErrCount          = 0;
+    invalidTimeCount      = 0;
+    deltaTimeMax          = 0;
     evrMessageCountReset(EVR_MESSAGE_PATTERN);
   }
   return 0;

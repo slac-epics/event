@@ -816,12 +816,13 @@ int evrTimePatternPutStart(evrMessagePattern_ts **pattern_pps,
   evrTimePattern_ts *evr_ps;
   
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-    evr_ps = evr_aps[evrTimeNext3];
-    evr_ps->timeStatus = epicsTimeOK;
-    *pattern_pps       = &evr_ps->pattern_s;
-    *timeslot_pp       = &evr_ps->timeslot;
-    *patternStatus_pp  = &evr_ps->patternStatus;
-    *mod720time_pps    = &mod720time;
+    evr_ps                 = evr_aps[evrTimeNext3];
+    evr_ps->timeStatus     = epicsTimeOK;
+    evr_ps->pattern_s.time = evr_aps[evrTimeNext2]->pattern_s.time;
+    *pattern_pps           = &evr_ps->pattern_s;
+    *timeslot_pp           = &evr_ps->timeslot;
+    *patternStatus_pp      = &evr_ps->patternStatus;
+    *mod720time_pps        = &mod720time;
     return epicsTimeOK;
   }
   return epicsTimeERROR;
