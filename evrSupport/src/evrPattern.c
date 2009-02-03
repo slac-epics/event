@@ -57,6 +57,7 @@ static unsigned long patternErrCount  = TIMESLOT_DIFF;
 static unsigned long invalidErrCount  = 0; /* # bad PATTERN waveforms   */
 static unsigned long syncErrCount     = 0; /* # out-of-sync patterns    */
 static unsigned long invalidTimeCount = 0; /* # invalid timestamps      */
+static unsigned long timeoutCount     = 0; /* # timeouts                */
 static unsigned long deltaTimeMax     = 0; /* Max diff between event and sys
                                               times in # seconds since reset */
 unsigned long        evrDeltaTimeMax  = MAX_PATTERN_DELTA_TIME;
@@ -87,6 +88,7 @@ int evrPattern(int timeout)
   evrMessagePattern_ts   *pattern_ps;
   evrMessageReadStatus_te evrMessageStatus;
   epicsTimeStamp          currentTime;
+  epicsTimeStamp          prevTime;
   epicsTimeStamp         *mod720time_ps;
   unsigned long          *timeslot_p;
   unsigned long          *patternStatus_p;
@@ -110,6 +112,7 @@ int evrPattern(int timeout)
   /* if we cannot read the message or the message has an invalid header */
   /*   set pattern to invalid, and                                      */
   /*   evr timestamp status to invalid                                  */
+  prevTime = pattern_ps->time;
   evrMessageStatus = evrMessageRead(EVR_MESSAGE_PATTERN,
                                     (evrMessage_tu *)pattern_ps);
   if (timeout || evrMessageStatus ||
@@ -119,6 +122,7 @@ int evrPattern(int timeout)
     if (timeout) {
       *patternStatus_p = PATTERN_TIMEOUT;
       patternErrCount  = TIMESLOT_DIFF;
+      timeoutCount++;
     } else if (evrMessageStatus == evrMessageDataNotAvail) {
       *patternStatus_p = PATTERN_NO_DATA;
     } else {
@@ -155,6 +159,8 @@ int evrPattern(int timeout)
        allow a few glitches before messing with time */
     if (patternErrCount >= TIMESLOT_DIFF) {
       pattern_ps->time = currentTime;
+    } else {
+      pattern_ps->time = prevTime;
     }
     evrTimePutPulseID(&pattern_ps->time, PULSEID_INVALID);
     if (epicsTimeDiffInSeconds(&currentTime, mod720time_ps) > MODULO720_SECS)
@@ -301,7 +307,8 @@ static long evrPatternProc(longSubRecord *psub)
        L - Number of message write errors
        M - Number of check sum errors
        N - abs(Event - System Time Diff) (# nsec)
-       O to U - Spares
+       O - Number of timeouts
+       P to U - Spares
        V - Minimum Pattern Delta Start Time (us)
        W - Maximum Pattern Delta Start Time (us)
        X - Average Data Processing Time     (us)
@@ -323,6 +330,7 @@ static long evrPatternState(longSubRecord *psub)
   psub->c = syncErrCount;
   psub->j = invalidTimeCount;
   psub->n = deltaTimeMax;
+  psub->o = timeoutCount;
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->k,&psub->l,
                    &psub->m,&psub->v,&psub->w,&psub->x,&psub->z);
@@ -334,6 +342,7 @@ static long evrPatternState(longSubRecord *psub)
     syncErrCount          = 0;
     invalidTimeCount      = 0;
     deltaTimeMax          = 0;
+    timeoutCount          = 0;
     evrMessageCountReset(EVR_MESSAGE_PATTERN);
   }
   return 0;
