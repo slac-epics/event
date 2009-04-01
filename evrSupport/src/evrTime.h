@@ -68,6 +68,7 @@ typedef unsigned long evrModifier_ta[MAX_EVR_MODIFIER];
 #define EVENT_MODULO36_MAX      236      /* Max modulo 36 event code    */
 #define MODULO36_MAX            36       /* # modulo 36 event codes     */
 
+int evrInitialize         (void);
 int evrTimeRegister(REGISTRYFUNCTION fiducialFuncIn);
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            evrTimeId_te     id,
