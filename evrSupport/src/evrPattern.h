@@ -85,6 +85,17 @@ extern "C" {
 #define PATTERN_PULSEID_NO_SYNC   8
 #define PATTERN_MODULO720_NO_SYNC 9
 #define PATTERN_TIMEOUT           10
+#define PATTERN_ERROR             11
+  
+/* Routines used only by event module and Mpg application */
+#ifdef INCevrMessageH
+int evrPattern            (int timeout);
+#endif
+#ifdef INCevrTimeH
+int evrPatternCheck(unsigned long  beamCode,    unsigned long  timeSlot,
+                    evrModifier_ta inclusion_a, evrModifier_ta exclusion_a,
+                    evrModifier_ta modifier_a);
+#endif
   
 #ifdef __cplusplus
 }
