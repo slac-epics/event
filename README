@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 05/25/2009
+Instructions for RTEMS EVR users                    Last Updated 05/29/2009
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -187,7 +187,21 @@ III - Adding event databases and EVR configuration to your IOC startup file:
 
 (2) Load databases created in the previous section (before iocInit).
 
-(3) Add ErConfigure for each EVR before iocInit.
+(3) If any of the EVRs on your IOC is a VME model 200 and you are running 
+    RTEMS 4.9.1 on an MVME6100, add the following lines before ErConfigure 
+    (do NOT add these lines if your EVR is PMC or VME model 230 or higher):
+
+    # From Till Straumann (for RTEMS 4.9.1 upgrade):
+    # This should set the VME chip into a mode where it  
+    # surrenders the VME bus after every transaction.
+    # This means that the master has to rearbitrate for the bus for every cycle
+    # (which slows things down).
+    #
+    # The faster setting I had enabled would let the master hold on to 
+    # until some other master requests it.
+    *(long*)(vmeTsi148RegBase + 0x234) &= ~ 0x18    
+
+(4) Add ErConfigure for each EVR before iocInit.
 
     VME:      ErConfigure(<instance>,<address>,<vector>,<level>,0)
     PMC:      ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
@@ -210,11 +224,11 @@ III - Adding event databases and EVR configuration to your IOC startup file:
        or 1        = PMC
        or 2	   = Embedded
 
-(4) Add evrInitialize (after ErConfigure) if a fiducial routine will be
+(5) Add evrInitialize (after ErConfigure) if a fiducial routine will be
     registered before iocInit driver initialization:
 	evrInitialize()
 
-(5) For IOCs with triggers, add a line to restore the trigger setpoints 
+(6) For IOCs with triggers, add a line to restore the trigger setpoints 
     before iocInit.  See the ChannelWatcher README file.
 
 IV - Hardware Setup:
