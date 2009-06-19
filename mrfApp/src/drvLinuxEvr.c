@@ -1122,6 +1122,13 @@ epicsStatus ErSetFPMap(ErCardStruct *pCard, int Port, epicsUInt16 Map)
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
 
+	/* An interesting feature of the EVR firmware is that if you access
+	   a non-existant port, it will actually write into an existing port
+	   (in that case it ignores the upper part of the address) =>
+	   we reject any port above 3 which is the limit for PMC, but may
+	   not for other cards */
+	if((pCard->FormFactor == PMC_EVR) && (Port>=3))
+		return ERROR;
 	epicsMutexLock(pCard->CardLock);
 	/* This is tricky: with FW 230 the Map has changed. The old map
 	   was just a way to redirect one of the backplane channel on 
@@ -1466,17 +1473,17 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 				func = pLinuxErCard->tb_channel[OTL_0+(map>>1)];
 				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9)) {
 					if(map & 1)
-						ramloc.PulseSet |= pLinuxErCard->tb_channel[OTL_0+(map>>1)]-PULSE_GENERATOR_0;
+						ramloc.PulseSet |= 1<<(func-PULSE_GENERATOR_0);
 					else
-						ramloc.PulseClear |= pLinuxErCard->tb_channel[OTL_0+(map>>1)]-PULSE_GENERATOR_0;
+						ramloc.PulseClear |= 1<<(func-PULSE_GENERATOR_0);
 				}
 				func = pLinuxErCard->tb_channel[OTP_DBUS_0+map];
 				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9))
-					ramloc.PulseTrigger |= pLinuxErCard->tb_channel[OTP_DBUS_0+map]-PULSE_GENERATOR_0;
+					ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				if(map < EVR_NUM_DG) {
 					func = pLinuxErCard->tb_channel[DELAYED_PULSE_0+map];
 					if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9))
-						ramloc.PulseTrigger |= pLinuxErCard->tb_channel[DELAYED_PULSE_0+map]-PULSE_GENERATOR_0;
+						ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				}
 			}
 		}
