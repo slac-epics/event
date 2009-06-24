@@ -1334,8 +1334,8 @@ unsigned long EgGetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel)
     return(-1);
         
    Addr = MRF_VME_REG16_READ(&pEg->MuxCountSelect);
-   Addr &= 0x0fff8;     /* high word select */
-   Addr |= j;
+   Addr &= 0x0fff0;
+   Addr |= 0x8 | j;     /* high word select */
    
    if ((Addr & 0x0007) != Channel) Addr |= Channel;
    MRF_VME_REG16_WRITE(&pEg->MuxCountSelect, Addr);
@@ -1358,7 +1358,7 @@ unsigned long EgSetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel, uns
   return(-1);
 
   MRF_VME_REG16_WRITE(&pEg->MuxCountSelect,
-                      MRF_VME_REG16_READ(&pEg->MuxCountSelect)&0xfff7); /* high word clear */
+                      MRF_VME_REG16_READ(&pEg->MuxCountSelect)&0xfff0); /* high word clear */
   MRF_VME_REG16_WRITE(&pEg->MuxCountSelect,
                       MRF_VME_REG16_READ(&pEg->MuxCountSelect)|j);      /* Mux select */
   
