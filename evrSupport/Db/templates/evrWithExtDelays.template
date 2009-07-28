@@ -83,7 +83,7 @@ record(er, "$(DEV):CTRL")
 
 record(bi, "$(DEV):LINK")
 {
-  field(DESC, "$(DEV) Link Status")
+  field(DESC, "$(EVR) Link Status")
   field(DTYP, "MRF Event Receiver")
   field(INP,  "#C$(CARD) S0 @")
   field(PINI, "YES")
