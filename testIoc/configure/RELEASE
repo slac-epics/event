@@ -35,8 +35,10 @@ include $(EPICS_SITE_CONFIG)
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # ===============================================================
-# NOTE: do not set, if you need a specific version it should be set
-# in RELEASE_SITE otherwise it will be set by release script.
+GENERALTIME_MODULE_VERSION=R1.2.2.2-0.1.0
+SSUBRECORD_MODULE_VERSION=R1.0.2.1-0.1.0
+MISCUTILS_MODULE_VERSION=R1.0.2.1-0.1.0
+EVENT_MODULE_VERSION=R2.8.1-0.1.0
 
 # ============================================================
 # External Support
