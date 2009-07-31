@@ -72,10 +72,23 @@ static epicsMutexId evrRWMutex_ps = 0;
 static int evrReport( int interest )
 {
   if (interest > 0) {
-    if (pCard) 
+    if (pCard) {
+      epicsUInt32 pulseIDfromTime;
+      epicsUInt32 pulseIDfromEvr = 0;
+      epicsTimeStamp currentTime;
       printf("Pattern data from %s card %d\n",
              (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":"VME",
              pCard->Cardno);
+      /* Get pulse ID from timestamp. */
+      evrTimeGetFromPipeline(&currentTime, evrTimeCurrent, 0, 0, 0, 0, 0);
+      pulseIDfromTime = PULSEID(currentTime);
+      /* Get pulse ID from EVR seconds register. */
+#ifdef __rtems__
+      pulseIDfromEvr = ErGetSecondsSR(pCard);
+#endif
+      printf("Pulse ID from Data = %lu, from EVR: %lu\n",
+             (unsigned long)pulseIDfromTime, (unsigned long)pulseIDfromEvr);
+    }
     if (evrRWMutex_ps) {
       evrFiducialFunc_ts *fid_ps =
         (evrFiducialFunc_ts *)ellFirst(&evrFiducialFuncList_s);
@@ -83,7 +96,7 @@ static int evrReport( int interest )
         printf("Registered fiducial function %p\n", fid_ps->func);
         fid_ps = (evrFiducialFunc_ts *)ellNext(&fid_ps->node);
       }
-    } 
+    }
     evrMessageReport(EVR_MESSAGE_FIDUCIAL, EVR_MESSAGE_FIDUCIAL_NAME,
                      interest);
     evrMessageReport(EVR_MESSAGE_PATTERN,  EVR_MESSAGE_PATTERN_NAME ,
