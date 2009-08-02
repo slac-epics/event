@@ -13,6 +13,7 @@ include $(TOP)/configure/CONFIG
 #
 # EVR databases
 DB += evr.db
+DB += evr-pmc.db
 DB += evrWithDelays.db
 DB += evrWithExtDelays.db
 DB += evrEvent.db
@@ -25,6 +26,9 @@ DB += evrPatternAll.db
 DB += evrPatternTest.db
 DB += evrPatternTestBsa.db
 DB += evrMod36.db
+# LCLS templates
+DB += fiducial.db
+DB += beam.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------

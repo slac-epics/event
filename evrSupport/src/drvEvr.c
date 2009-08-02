@@ -35,7 +35,11 @@
 #include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
 #include "devMrfEr.h"		/* for ErRegisterEventHandler    */
 
+#if 0
 #define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
+#else
+#define EVR_TIMEOUT     (2)  /* Timeout in sec waiting for 360hz input. */
+#endif
 
 static int evrReport();
 static int evrInitialise();
@@ -269,7 +273,6 @@ static int evrInitialise()
     return -1;
   }
   
-#ifdef __rtems__
   /* Get first EVR in the list */
   pCard = ErGetCardStruct(0);
   if (!pCard) {
@@ -281,7 +284,6 @@ static int evrInitialise()
     ErDBuffIrq               (pCard, 1);
     ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
   }
-#endif
   
   return 0;
 }

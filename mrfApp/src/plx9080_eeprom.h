@@ -1,6 +1,6 @@
 #ifndef PLX9080_EEPROM_H
 #define PLX9080_EEPROM_H
-/* $Id$ */
+/* $Id: plx9080_eeprom.h,v 1.1 2007/02/09 01:39:03 saa Exp $ */
 
 /* PLX9080 serial EEPROM access (93CS46 device) */
 #include <stdio.h>

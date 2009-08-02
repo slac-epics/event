@@ -2,8 +2,8 @@
  *
  *  File:     PmcTest.c
  *            $RCSfile: PmcTest.c,v $
- *            $Date: 2006/02/21 04:50:40 $
- *            $Revision: 1.1 $
+ *            $Date: 2006/06/21 00:31:50 $
+ *            $Revision: 1.1.1.1 $
  *
  *  Title:    Test Program to test PMC-EVR-200 with Test Bench and EVG-200
  *
@@ -12,6 +12,10 @@
  *            <jukka.pietarinen@mrf.fi>
  *
  *            $Log: PmcTest.c,v $
+ *            Revision 1.1.1.1  2006/06/21 00:31:50  saa
+ *            Version 2.3.1 event software from Eric Bjorkland at LANL.
+ *            Some changes added after consultation with Eric before this initial import.
+ *
  *            Revision 1.1  2006/02/21 04:50:40  jpietari
  *            First version of PMC-EVR test for prototype.
  *

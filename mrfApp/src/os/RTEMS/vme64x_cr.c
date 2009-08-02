@@ -2,7 +2,7 @@
  *
  *  File:     vme64x_cr.c
  *            $RCSfile: vme64x_cr.c,v $
- *            $Date: 2004/12/30 07:39:34 $
+ *            $Date: 2006/06/19 13:14:34 $
  *            $Revision: 1.1.1.1 $
  *
  *  Title:    VME64x Configuration ROM (CR) access functions
@@ -12,6 +12,10 @@
  *            <jukka.pietarinen@mrf.fi>
  *
  *            $Log: vme64x_cr.c,v $
+ *            Revision 1.1.1.1  2006/06/19 13:14:34  saa
+ *            Version 2.3.1 event software from Eric Bjorkland at LANL.
+ *            Some changes added after consultation with Eric before this initial import.
+ *
  *            Revision 1.1.1.1  2004/12/30 07:39:34  jpietari
  *            Moved project to CVS
  *

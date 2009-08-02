@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: plx9080_eeprom.c,v 1.2 2007/02/09 01:39:03 saa Exp $ */
 
 /* PLX9080 serial EEPROM access (93CS46 device) */
 #include <stdio.h>

@@ -64,6 +64,7 @@
 #include "mrfCommon.h"        /* MRF_NUM_EVENTS */    
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
+#include <sys/time.h>
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -386,27 +387,16 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         }
         evrTimeRWMutex_ps = epicsMutexCreate();
         if (!evrTimeRWMutex_ps) return epicsTimeERROR;
-  /* For IOCs that support iocClock (RTEMS and vxWorks), register
-     evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
-#ifdef __rtems__
         if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
                                   (pepicsTimeGetEvent)evrTimeGet))
           return epicsTimeERROR;
         if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
                                   (pepicsTimeGetEvent)evrTimeGetSystem))
           return epicsTimeERROR;
-#endif
   }
   return epicsTimeOK;
 }
-/* For IOCs that don't support iocClock (linux), supply a dummy
-   iocClockRegister to keep the linker happy. */
-#ifdef linux
-void iocClockRegister(pepicsTimeGetCurrent getCurrent,
-                      pepicsTimeGetEvent   getEvent) 
-{
-}
-#endif
+
 /*=============================================================================
 
   Name: evrTime

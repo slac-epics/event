@@ -1,4 +1,4 @@
-/* $Id: egDefs.h,v 1.2 2006/11/02 23:24:25 saa Exp $ */
+/* $Id: egDefs.h,v 1.3 2006/11/22 16:59:43 saa Exp $ */
 #ifndef EPICS_EGDEFS_H
 #define EPICS_EGDEFS_H
 
