@@ -13,6 +13,7 @@ include $(TOP)/configure/CONFIG
 #
 # EVR databases
 DB += evr.db
+DB += evr-pmc.db
 DB += evrWithDelays.db
 DB += evrWithExtDelays.db
 DB += evrWithFrontPanel.db
