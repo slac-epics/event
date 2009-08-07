@@ -14,6 +14,7 @@ include $(TOP)/configure/CONFIG
 # EVR databases
 DB += evr.template
 DB += evrEvent.db
+DB += beam-base.db
 DB += evrEventCtrl.db
 DB += evrDevTrig.db
 # evrPattern support
