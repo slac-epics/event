@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 05/29/2009
+Instructions for RTEMS EVR users                    Last Updated 09/04/2009
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -114,12 +114,17 @@ II - Using event module functions and global variables in your IOC application:
 	    int status = evrTimeGetFromPipeline(&time_s, 
 		<evrTimeCurrent, evrTimeNext1, evrTimeNext2, evrTimeActive>,
 		modifier_a, &patternStatus, 0,0,0);
-	... check status - status is bad when same/missing pulses ...
+	... check status - status is non-zero when same/missing pulses ...
 	...   in the pipeline or bad timestamp.
+	... check patternStatus - status is non-zero when there is a timeout,
+	...   unsynchronized pulse ID, and other PATTERN error listed in 
+	...   evrPattern.h.
 	... use BEAMCODE, TIMESLOT macros defined in evrPattern.h ... 
-	...   to parse out beam code and time slot from modifier_a ...
+	...   to parse out beam code and time slot from modifier_a
+	...   TIMESLOT is zero if pattern is bad.
 	... use PULSEID macro defined in evrTime.h ... 
-	...   to parse out pulse ID from time_s ...
+	...   to parse out pulse ID from time_s
+	...   PULSEID is set to PULSEID_INVALID when pattern is bad.
 	... do your 360hz logic requiring pattern here ...
 	}
 	... in your init code ...
