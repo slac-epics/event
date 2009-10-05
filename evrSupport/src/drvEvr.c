@@ -36,7 +36,11 @@
 #include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
 #include "devMrfEr.h"		/* for ErRegisterEventHandler    */
 
+#ifdef __rtems__
 #define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
+#else
+#define EVR_TIMEOUT     (2)     /* Timeout in sec waiting for 360hz input. */
+#endif
 
 static int evrReport();
 struct drvet drvEvr = {
@@ -52,10 +56,11 @@ static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
 static int evrInitialized = 0;          /* evrInitialize performed        */
 
-/* Fiducial User Functions */
+/* Fiducial User Function List */
 typedef struct {
   ELLNODE node;
-  REGISTRYFUNCTION func;
+  FIDUCIALFUNCTION func;
+  void * arg;
 
 } evrFiducialFunc_ts;
 
@@ -83,7 +88,7 @@ static int evrReport( int interest )
       evrTimeGetFromPipeline(&currentTime, evrTimeCurrent, 0, 0, 0, 0, 0);
       pulseIDfromTime = PULSEID(currentTime);
       /* Get pulse ID from EVR seconds register. */
-#ifdef __rtems__
+#ifdef EVR_DRIVER_SUPPORT
       pulseIDfromEvr = ErGetSecondsSR(pCard);
 #endif
       printf("Pulse ID from Data = %lu, from EVR: %lu\n",
@@ -184,7 +189,7 @@ static int evrTask()
         evrFiducialFunc_ts *fid_ps =
           (evrFiducialFunc_ts *)ellFirst(&evrFiducialFuncList_s);
         while (fid_ps) {
-          (*(fid_ps->func))(); /* Call user's routine */
+          (*(fid_ps->func))(fid_ps->arg); /* Call user's routine */
           fid_ps = (evrFiducialFunc_ts *)ellNext(&fid_ps->node);
         }
         epicsMutexUnlock(evrRWMutex_ps);
@@ -298,7 +303,7 @@ int evrInitialize()
     return -1;
   }
   
-#ifdef __rtems__
+#ifdef EVR_DRIVER_SUPPORT
   /* Get first EVR in the list */
   pCard = ErGetCardStruct(0);
   if (!pCard) {
@@ -323,7 +328,8 @@ int evrInitialize()
   
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
-        REGISTRYFUNCTION    fiducialFunc Read      Fiducial Function
+        FIDUCIALFUNCTION    fiducialFunc Read      Fiducial Function
+        void *              fiducialArg  Read      Fiducial Function Argument
 
   Rem:  The same function can be registered multiple times.
 
@@ -331,7 +337,7 @@ int evrInitialize()
         memory allocation error
     
 =============================================================================*/
-int evrTimeRegister(REGISTRYFUNCTION fiducialFunc)
+int evrTimeRegister(FIDUCIALFUNCTION fiducialFunc, void * fiducialArg)
 {
   evrFiducialFunc_ts *fiducialFunc_ps;
 
@@ -349,6 +355,7 @@ int evrTimeRegister(REGISTRYFUNCTION fiducialFunc)
     return -1;
   }
   fiducialFunc_ps->func = fiducialFunc;
+  fiducialFunc_ps->arg  = fiducialArg;
   /* Add to list */  
   if (epicsMutexLock(evrRWMutex_ps)) {
     errlogPrintf("evrTimeRegister: unable to lock the EVR fiducial function mutex\n");
