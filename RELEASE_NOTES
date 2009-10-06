@@ -23,6 +23,8 @@ event-R3-0-3:  Oct 5, 2009:
 	  EVG ticks event code.  Also, the EVG can now set the "seconds"
 	  part of the timestamp and reset the event counter using
 	  special event codes.  
+	* evrSupport/Db/evr/evrEventAll.substitutions - add kicker event
+	  codes.
 	* configure/CONFIG_SITE - add EVR_DRIVER_SUPPORT_LINUX variable.
 
 event-R3-0-2:  July 10, 2009:
