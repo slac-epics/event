@@ -296,7 +296,7 @@ int evrInitialize()
     errlogPrintf("evrInitialize: unable to create the EVR task\n");
     return -1;
   }
-  if (!epicsThreadCreate("evrRecord", epicsThreadPriorityHigh,
+  if (!epicsThreadCreate("evrRecord", epicsThreadPriorityScanHigh+10,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
                          (EPICSTHREADFUNC)evrRecord, 0)) {
     errlogPrintf("evrInitialize: unable to create the EVR record task\n");
