@@ -211,7 +211,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
 
   Name: bsaSecnInit
 
-  Abs:  Beam Synchronous Acquisition Processing Initialization
+  Abs:  Beam Synchronous Acquisition Processing Initialization for a Device
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
@@ -221,7 +221,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
         
   Rem:  
       
-  Ret:  0 = OK, -1 = Mutex creation or memory allocation error
+  Ret:  0 = OK, -1 = Mutex lock or memory allocation error
 
 ==============================================================================*/
 
@@ -231,32 +231,55 @@ int bsaSecnInit(char  *secnName,
 {
   bsaDevice_ts *dev_ps = 0;
   
-  if (!bsaRWMutex_ps) {
-    bsaRWMutex_ps = epicsMutexCreate();
-    if (bsaRWMutex_ps) ellInit(&bsaDeviceList_s);
+  if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps))
+    return -1;
+  /* Check if device name is already registered. */
+  dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
+  while(dev_ps) {
+    if(strcmp(dev_ps->name, secnName)==0) break;
+    dev_ps = (bsaDevice_ts *)ellNext(&dev_ps->node);
   }
-  if (bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) { 
-    /* Check if device name is already registered. */
-    dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
-    while(dev_ps) {
-      if(strcmp(dev_ps->name, secnName)==0) break;
-      dev_ps = (bsaDevice_ts *)ellNext(&dev_ps->node);
+  if (!dev_ps) {
+    dev_ps = calloc(1,sizeof(bsaDevice_ts));
+    if (dev_ps) {
+      strcpy(dev_ps->name, secnName);
+      ellAdd(&bsaDeviceList_s,&dev_ps->node);
     }
-    if (!dev_ps) {
-      dev_ps = calloc(1,sizeof(bsaDevice_ts));
-      if (dev_ps) {
-        strcpy(dev_ps->name, secnName);
-        ellAdd(&bsaDeviceList_s,&dev_ps->node);
-      }
-    }
-    epicsMutexUnlock(bsaRWMutex_ps);
   }
+  epicsMutexUnlock(bsaRWMutex_ps);
   *dev_pps = dev_ps;
   if (dev_ps) {
     if (noAverage) dev_ps->noAverage = 1;
     return 0;
   }
   return -1;
+}
+
+/*=============================================================================
+
+  Name: bsaInit
+
+  Abs:  Beam Synchronous Acquisition Processing Global Initialization
+
+  Args: None.
+        
+  Rem:  
+      
+  Ret:  0 = OK, -1 = Mutex creation error
+
+==============================================================================*/
+
+int bsaInit()
+{
+  if (!bsaRWMutex_ps) {
+    bsaRWMutex_ps = epicsMutexCreate();
+    if (bsaRWMutex_ps) {
+      ellInit(&bsaDeviceList_s);
+    } else {
+      return -1;
+    }
+  }
+  return 0;
 }
 
 /*=============================================================================
