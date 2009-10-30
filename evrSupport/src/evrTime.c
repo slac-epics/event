@@ -64,6 +64,7 @@
 #include "mrfCommon.h"        /* MRF_NUM_EVENTS */    
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
+#include "evrPattern.h"        
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -423,6 +424,7 @@ void iocClockRegister(pepicsTimeGetCurrent getCurrent,
 {
 }
 #endif
+
 /*=============================================================================
 
   Name: evrTime
@@ -439,7 +441,9 @@ void iocClockRegister(pepicsTimeGetCurrent getCurrent,
   Error advancing EVR timestamps - set error flag used later to disable 
     triggers (EVR) or event codes (EVG). 
 		
-  Args: None.
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        epicsUInt32         mpsModifier read       MPS pattern modifier
 
   Rem:  
 
@@ -457,7 +461,7 @@ void iocClockRegister(pepicsTimeGetCurrent getCurrent,
   Ret:  -1=Failed; 0 = Success
    
 ==============================================================================*/
-int evrTime()
+int evrTime(epicsUInt32 mpsModifier)
 {
   int idx;
   evrTimePattern_ts *evr_ps;
@@ -474,10 +478,13 @@ int evrTime()
   }
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     fiducialStatus = EVR_TIME_OK;
-    /* advance the evr pattern in the pipeline */
+    /* Advance the evr pattern in the pipeline.  Update MPS
+       information (which is not pipelined) into the pattern. */
     evr_ps = evr_aps[evrTimeCurrent];
     for (idx=0;idx<evrTimeNext3;idx++) {
       evr_aps[idx] = evr_aps[idx+1];
+      evr_aps[idx]->pattern_s.modifier_a[MOD6_IDX] = mpsModifier;
+      evrPatternMPS(evr_aps[idx]->pattern_s.modifier_a);
     }
     evr_aps[evrTimeNext3] = evr_ps;
     evr_aps[evrTimeNext3]->timeStatus = epicsTimeERROR;
@@ -485,7 +492,7 @@ int evrTime()
     /* Update the EDEF array for any initialized or active EDEF -
        this array is used later by BSA processing */
     if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask ||
-        evr_ps->pattern_s.modifier_a[4] & EDEF_MASK) {
+        evr_ps->pattern_s.modifier_a[MOD5_IDX] & MOD5_EDEF_MASK) {
       for (idx=0;idx<EDEF_MAX;idx++) {
         edefMask = 1 << idx;
         /* EDEF initialized? - check the newest mask so init done ASAP */
@@ -493,7 +500,7 @@ int evrTime()
           edef_as[idx].timeInit = evr_aps[evrTimeNext2]->pattern_s.time;
         }
         /* EDEF active? - set time and flags used by BSA processing later */
-        if (evr_ps->pattern_s.modifier_a[4] & edefMask) {
+        if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
           edef_as[idx].time = evr_ps->pattern_s.time;
           if    (evr_ps->pattern_s.edefAvgDoneMask & edefMask)
             edef_as[idx].avgdone = 1;
@@ -649,7 +656,7 @@ static int evrTimeProc (longSubRecord *psub)
 
   Name: evrTimeDiag
 
-  Abs:  Expose expose counters
+  Abs:  Expose counters.
         This subroutine is for status only and should update at a low
         rate like 1Hz.
   
@@ -813,7 +820,7 @@ static long evrTimeEvent(longSubRecord *psub)
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
         evrMessagePattern_ts ** pattern_pps Write  Pointer to pattern
-        unsigned long **          timeslot_pp Write  Pointer to timeslot
+        unsigned long **        timeslot_pp Write  Pointer to timeslot
         unsigned long **     patternStatus_pp Write  Pointer to status
         epicsTimeStamp *     mod720time_pps Write  Pointer to mod720 timestamp
 
