@@ -173,6 +173,7 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 static int evrTask()
 {  
   epicsEventWaitStatus status;
+  epicsUInt32          mpsModifier;
 
   if (evrTimeInit(0,0)) {
     errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
@@ -183,8 +184,8 @@ static int evrTask()
     readyForFiducial = 1;
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
     if (status == epicsEventWaitOK) {
-      evrPattern(0);/* N-3           */
-      evrTime();    /* Move pipeline */
+      evrPattern(0, &mpsModifier);/* N-3           */
+      evrTime(mpsModifier);       /* Move pipeline */
       /* Call routines that the user has registered for 360hz processing */
       if (evrRWMutex_ps && (!epicsMutexLock(evrRWMutex_ps))) {
         evrFiducialFunc_ts *fid_ps =
@@ -202,10 +203,10 @@ static int evrTask()
        then to N. */
     } else {
       readyForFiducial = 0;
-      evrPattern(1);/* N-3 */
-      evrTime();    /* N-2 */
-      evrTime();    /* N-1 */
-      evrTime();    /* N   */
+      evrPattern(1, &mpsModifier);/* N-3 */
+      evrTime(mpsModifier);       /* N-2 */
+      evrTime(mpsModifier);       /* N-1 */
+      evrTime(mpsModifier);       /* N   */
       if (status != epicsEventWaitTimeout) {
         errlogPrintf("evrTask: Exit due to bad status from epicsEventWaitWithTimeout\n");
         return -1;
