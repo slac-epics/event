@@ -40,8 +40,12 @@ extern "C" {
 #define MPG_IPLING              (0x00004000)  /* Set on MPG/EVG problem*/
 /* Bits in modifier 2                                                  */
 #define MOD2_IDX                1  
-#define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
 #define EVG_BURST               (0x00000040)  /*Single-shot/burst pulse*/
+#define LHTRSHUT_PERM           (0x00020000)  /* Laser heater shutter  */
+#define MECHSHUT_PERM           (0x00800000)  /* Mechanical Shutter    */
+#define KICKER_LI25             (0x10000000)  /* BXKIK trigger         */
+#define KICKER_LTU              (0x20000000)  /* BYKIK trigger         */
+#define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
 /* Mask used to decode timeslot 1 to 6 from modifier2   */
 #define TIMESLOT_MASK           (0x0000003F)  /* timeslot   mask       */
 #define TIMESLOT1_MASK          (0x00000001)  /* timeslot 1 mask       */
@@ -66,7 +70,8 @@ extern "C" {
 
 /* Masks defining modifier5 */  
 #define MOD5_IDX                4  
-#define MOD5_EDEF_MASK          (0x000FFFFF)  /* EDEF bits             */
+#define EDEF_MAX                20            /* Max # event defns   */
+#define MOD5_EDEF_MASK          (0x000FFFFF)  /* EDEF bits           */
 #define MOD5_NOEDEF_MASK        (0xFFF00000)  /* Rate and User bits    */
 #define MOD5_RATE_MASK          (0x01F00000)  /* Rate bits             */
 #define MOD5_USER_MASK          (0xFE000000)  /* User-settable bits    */
@@ -78,6 +83,32 @@ extern "C" {
 #define MOD5_5HZ_MASK           (0x00400000)  /* 5hz  base rate        */
 #define MOD5_1HZ_MASK           (0x00800000)  /* 1hz  base rate        */
 #define MOD5_HALFHZ_MASK        (0x01000000)  /* .5hz base rate        */
+
+/* Masks defining modifier6 (MPS modifier) */  
+#define MOD6_IDX                5  
+#define MPS_DEST_MASK           (0x000FFFFE)  /* MPS Destination bits  */
+#define MPS_PERM_MASK           (0xFFF00000)  /* MPS Permit bits       */
+#define MPS_VALID               (0x00000001)  /* MPS Valid data        */
+
+#define MPS_DEST_POCKCELL_MASK  (0x00000002)  /* MPSDestinationPockelsCell             */
+#define MPS_DEST_MECHSHUT_MASK  (0x00000004)  /* MPSDestinationMechanicalShutter       */
+#define MPS_DEST_LHTRSHUT_MASK  (0x00000008)  /* MPSDestinationLaserHeaterShutter      */
+#define MPS_DEST_GUNSPECT_MASK  (0x00000010)  /* MPSDestinationGunSpectrometer         */
+#define MPS_DEST_YAGB1211_MASK  (0x00000020)  /* MPSDestinationYagBl211                */
+#define MPS_DEST_SABDUMP_MASK   (0x00000040)  /* MPSDestinationStraightAheadBeamDump   */
+#define MPS_DEST_TD11_MASK      (0x00000080)  /* MPSDestinationTd11                    */
+#define MPS_DEST_D2_MASK        (0x00000100)  /* MPSDestinationD2                      */
+#define MPS_DEST_52S12_MASK     (0x00000200)  /* MPSDestination52Sl2                   */
+#define MPS_DEST_BYKIKDMP_MASK  (0x00000400)  /* MPSDestinationBykikDump               */
+#define MPS_DEST_TDUND_MASK     (0x00000800)  /* MPSDestinationTdUnd                   */
+#define MPS_DEST_MAINDMP_MASK   (0x00001000)  /* MPSDestinationMainDump                */
+#define MPS_DEST_PHOTSHUT_MASK  (0x00002000)  /* MPSDestinationPhotonShutter           */
+#define MPS_DEST_EXPERIMT_MASK  (0x00004000)  /* MPSDestinationExperiment              */
+
+#define MPS_PERM_POCKCELL_MASK  (0x00100000)  /* MPSMitigationDevicePockelsCell        */
+#define MPS_PERM_MECHSHUT_MASK  (0x00200000)  /* MPSMitigationDeviceMechanicalShutter  */
+#define MPS_PERM_BYKIK_MASK     (0x00400000)  /* MPSMitigationDeviceBykik              */
+#define MPS_PERM_LHTRSHUT_MASK  (0x00800000)  /* MPSMitigationDeviceLaserHeaterShutter */
 
 /* VAL values set by pattern subroutines */
 #define PATTERN_OK                0
@@ -95,12 +126,13 @@ extern "C" {
   
 /* Routines used only by event module and Mpg application */
 #ifdef INCevrMessageH
-int evrPattern            (int timeout);
+int evrPattern     (int timeout, epicsUInt32 *mpsModifier_p);
 #endif
 #ifdef INCevrTimeH
 int evrPatternCheck(unsigned long  beamCode,    unsigned long  timeSlot,
                     evrModifier_ta inclusion_a, evrModifier_ta exclusion_a,
                     evrModifier_ta modifier_a);
+int evrPatternMPS  (evrModifier_ta modifier_a);
 #endif
   
 #ifdef __cplusplus
