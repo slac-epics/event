@@ -41,6 +41,11 @@
  
 =============================================================================*/
 
+#ifdef __rtems__
+#include <rtems.h>
+#include <sys/timex.h>
+#endif
+#include <string.h>
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "longSubRecord.h"    /* for struct longSubRecord  */
@@ -49,6 +54,7 @@
 #include "evrTime.h"          /* evrTime* prototypes       */
 #include "evrPattern.h"       /* for PATTERN* defines      */
 #include "alarm.h"            /* INVALID_ALARM             */
+
 
 #define  MAX_PATTERN_DELTA_TIME  10 /* sec */
 
@@ -63,6 +69,7 @@ static unsigned long invalidTimeCount = 0; /* # invalid timestamps      */
 static unsigned long timeoutCount     = 0; /* # timeouts                */
 static unsigned long deltaTimeMax     = 0; /* Max diff between event and sys
                                               times in # seconds since reset */
+static unsigned long ntpStatus        = 0; /* NTP status, 0 = OK, >0 = error */
 unsigned long        evrDeltaTimeMax  = MAX_PATTERN_DELTA_TIME;
                                            /* Max allowed diff between event
                                               and sys times in # seconds     */
@@ -141,12 +148,16 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
       else
         deltaTime = currentTime.secPastEpoch - pattern_ps->time.secPastEpoch;
       if (deltaTime > deltaTimeMax) deltaTimeMax = deltaTime;
+      /* Time is very different.  Update a counter but don't set invalid
+         if NTP is no good. */
       if (deltaTime >= evrDeltaTimeMax) {
-        if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
         invalidTimeCount++;
-        *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
-      } else {
-        patternErrCount = 0;
+        if (ntpStatus) {
+          patternErrCount = 0;
+        } else {
+          if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
+          *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
+        }
       }
   } else {
     patternErrCount = 0;
@@ -187,6 +198,15 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
   /* modulo720 decoded from modifier 1*/
   if (pattern_ps->modifier_a[MOD1_IDX] & MODULO720_MASK) modulo720Flag = 1;
   else                                                   modulo720Flag = 0;
+  /* check NTP status at a low rate */
+#ifdef __rtems__
+  if (modulo720Flag) {
+    struct timex ntp;
+    memset(&ntp, 0, sizeof(ntp));
+    ntpStatus = ntp_adjtime(&ntp);
+  }
+#endif  
+    
   /* Unlock pattern data and post MOD720 events if needed */
   return (evrTimePatternPutEnd(modulo720Flag));
 }
@@ -424,7 +444,8 @@ static long evrPatternProc(longSubRecord *psub)
        N - abs(Event - System Time Diff) (# nsec)
        O - Number of timeouts
        P - Number of invalid MPS modifiers
-       Q to U - Spares
+       Q - NTP status, 0 = OK, >0 = Error
+       R to U - Spares
        V - Minimum Pattern Delta Start Time (us)
        W - Maximum Pattern Delta Start Time (us)
        X - Average Data Processing Time     (us)
@@ -448,6 +469,7 @@ static long evrPatternState(longSubRecord *psub)
   psub->n = deltaTimeMax;
   psub->o = timeoutCount;
   psub->p = invalidMPSCount;
+  psub->q = ntpStatus;
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->k,&psub->l,
                    &psub->m,&psub->v,&psub->w,&psub->x,&psub->z);
