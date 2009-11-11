@@ -28,7 +28,7 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , L
 	{$(DEVICE) , LCLSTCAV, 149,11909      , LOW  ,120.5,  0.5,  -1 ,  -1 , "TCAV0"        }
 	{$(DEVICE) , LCLSBURS, 150,11910      , LOW  ,120.5,120.5,  -1 ,  -1 , "Burst"        }
 	{$(DEVICE) , LCLS_ACC, 151,11911      , LOW  ,120.5,120.5,  -1 ,  -1 , "Klys Accel"   }
-	{$(DEVICE) , LCLSTBD1, 152,11912      , LOW  ,120.5,120.5,  -1 ,  -1 , "Spare 1"      }
+	{$(DEVICE) , LCLSSTBY, 152,11912      , LOW  ,120.5,120.5,  -1 ,  -1 , "Klys Standby" }
 	{$(DEVICE) , LCRFONLY, 153,11913      , LOW  ,120.5,120.5,  -1 ,  -1 , "Klys StdBy No TCAV0"}
 	{$(DEVICE) , LCACC_10, 154,11914      , LOW  , 10.5, 10.5,  -1 ,  -1 , "Klys Accel at 10Hz" }
 	{$(DEVICE) , STRAIGHT, 155,11915      , LOW  ,120.5,120.5,  -1 ,  -1 , "Straight Ahead"     }
