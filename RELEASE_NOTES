@@ -1,6 +1,30 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-0-4:  Nov 11, 2009:
+	* evrSupport/src/drvEvr.c - change evrRecord thread to run at a
+	  lower priority.  Add bsaInit.  Add MPS modifier to evrTime and 
+	  evrPattern argument lists.
+	* evrSupport/src/evrPattern.c, evrPattern.h - add processing of
+	  modifier6, the MPS modifier.  Add ntp status check.
+	* evrSupport/src/bsa.c, bsa.h - get rid of race condition
+	  in BSA initialization.
+	* evrSupport/src/evrTime.h, evrTime.c - add MPS modifier processing.
+	* evrSupport/src/evrModifier.c - remove unused include file.
+	* evrSupport/Db/bsa/bsaEdefAvg.db - process BSA waveforms at high
+	  priority to keep up at 120hz.
+	* evrSupport/Db/evr/evrEvent.db - process event rates at medium
+	  priority.
+	* evrSupport/Db/evr/evrFiducial.db - add NTPSTATE.
+	* evrSupport/Db/evr/evr.template - add records to reset the RX
+	  violation counter and to keep the time of last reset.
+	* evrSupport/Db/evr/evrEventCtrl.db, evrPatternProc.db, 
+	  evrEventAll.substitutions - disable all erevent records if
+	  the fiducial event code (1) is chosen.  Separate fiducial erevent 
+	  record from the other erevent records.  Add event code 152 for
+	  the new klystron standby trigger.
+	* mrfApp/src/devMrfEr.c, erRecord.dbd - add RX violation counter reset.
+
 event-R3-0-3:  Oct 5, 2009:
 	* README - add more error description for evrTimeGetFromPipeline.
 	  Add description of optional input to fiducial function.
