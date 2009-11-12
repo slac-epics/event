@@ -781,6 +781,11 @@ recordtype(er) {
 		pp(TRUE)
 		interest(1)
 	}
+	field(RXVR,DBF_CHAR) {
+		prompt("RX violation counter reset")
+		pp(TRUE)
+		interest(1)
+	}
 	field(PLOK,DBF_MENU) {
 		prompt("PLL lock lost")
 		promptgroup(GUI_DISPLAY)
