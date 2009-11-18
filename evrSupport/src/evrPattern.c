@@ -3,7 +3,6 @@
   Name: evrPattern.c
            evrPattern          - 360Hz Pattern Processing
            evrPatternCheck     - Pattern Check
-           evrPatternMPS       - Set MPS-related bits in the Pattern
            evrPatternProcInit  - Pattern Record Processing Initialization
            evrPatternProc      - 360Hz Pattern Record Processing
            evrPatternState     - Pattern Record Processing State and Diagnostics
@@ -258,48 +257,6 @@ int evrPatternCheck(unsigned long  beamCode,    unsigned long  timeSlot,
     }
   }
   return (matches);
-}
-
-/*=============================================================================
-
-  Name: evrPatternMPS
-
-  Abs:  Update MPS-Related Bits in the Pattern
-		
-  Args: Type                Name        Access     Description
-        ------------------- ----------- ---------- ----------------------------
-        evrModifier_ta      modifier_a  read/write Pattern Modifiers
-
-  Rem:  None.
-
-  Side: None.
-
-  Ret:  0 = OK
-  
-=============================================================================*/ 
-
-int evrPatternMPS(evrModifier_ta modifier_a)
-{
-  /* Only do something if the pattern is good. */
-  if ((!(modifier_a[MOD1_IDX] & MPG_IPLING)) &&
-      (modifier_a[MOD6_IDX] & MPS_VALID)) { 
-    /* Remove pockels cell permit if MPS doesn't permit it. */
-    if (!(modifier_a[MOD6_IDX] & MPS_PERM_POCKCELL_MASK))
-      modifier_a[MOD3_IDX] &= ~POCKCEL_PERM;
-    /* Add BYKIK bit if beam is not permitted into the undulator. */
-    if (!(modifier_a[MOD6_IDX] & MPS_PERM_BYKIK_MASK))
-      modifier_a[MOD2_IDX] |= KICKER_LTU;
-    /* Set shutter permits based solely on MPS */
-    if (modifier_a[MOD6_IDX] & MPS_PERM_MECHSHUT_MASK)
-      modifier_a[MOD2_IDX] |=  MECHSHUT_PERM;
-    else
-      modifier_a[MOD2_IDX] &= ~MECHSHUT_PERM;
-    if (modifier_a[MOD6_IDX] & MPS_PERM_LHTRSHUT_MASK)
-      modifier_a[MOD2_IDX] |=  LHTRSHUT_PERM;
-    else
-      modifier_a[MOD2_IDX] &= ~LHTRSHUT_PERM;
-  }
-  return 0;
 }
 
 /*=============================================================================
