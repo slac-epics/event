@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 11/11/2009
+Instructions for RTEMS EVR users                    Last Updated 3/1/2010
 --------------------------------
 
 I - Adding the event package to your IOC application:
