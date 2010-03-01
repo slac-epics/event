@@ -151,9 +151,10 @@ II - Using event module functions and global variables in your IOC application:
 	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
 	epicsTimeStamp dataTimeStamp = <timestamp of your data>
 	double         dataValue = <value of your data>
+	epicsEnum16    dataStat = <EPICS alarm status of your data>
 	epicsEnum16    dataSevr = <EPICS alarm severity of your data>
 	void          *dpvt = <value of dpvt from bsaSecnInit>
-	status = bsaSecnAvg(&dataTimeStamp, dataValue, dataSevr, dpvt);
+	status = bsaSecnAvg(&dataTimeStamp, dataValue, dataStat, dataSevr, dpvt);
 
 (3) Two global variables providing the high resolution time of the fiducial
     are available for diagnostics purposes:
