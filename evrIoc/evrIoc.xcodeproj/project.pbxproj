@@ -1,0 +1,531 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5AA54959113DB5FE00458394 /* bsaBP21.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54926113DB5FE00458394 /* bsaBP21.substitutions */; };
+		5AA5495A113DB5FE00458394 /* bsaSimBP21.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54927113DB5FE00458394 /* bsaSimBP21.substitutions */; };
+		5AA5495B113DB5FE00458394 /* bsaSimTO20.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54928113DB5FE00458394 /* bsaSimTO20.substitutions */; };
+		5AA5495C113DB5FE00458394 /* bsaSimXL01.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54929113DB5FE00458394 /* bsaSimXL01.substitutions */; };
+		5AA5495D113DB5FE00458394 /* bsaSimXL02.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5492A113DB5FE00458394 /* bsaSimXL02.substitutions */; };
+		5AA5495E113DB5FE00458394 /* bsaSimXL03.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5492B113DB5FE00458394 /* bsaSimXL03.substitutions */; };
+		5AA5495F113DB5FE00458394 /* bsaSimXL04.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5492C113DB5FE00458394 /* bsaSimXL04.substitutions */; };
+		5AA54960113DB5FE00458394 /* bsaSimXL05.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5492D113DB5FE00458394 /* bsaSimXL05.substitutions */; };
+		5AA54961113DB5FE00458394 /* bsaXL09.substitutions_XL16test in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5492E113DB5FE00458394 /* bsaXL09.substitutions_XL16test */; };
+		5AA54962113DB5FE00458394 /* bsaTO20.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5492F113DB5FE00458394 /* bsaTO20.substitutions */; };
+		5AA54963113DB5FE00458394 /* bsaXL01.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54930113DB5FE00458394 /* bsaXL01.substitutions */; };
+		5AA54964113DB5FE00458394 /* bsaXL02.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54931113DB5FE00458394 /* bsaXL02.substitutions */; };
+		5AA54965113DB5FE00458394 /* bsaXL03.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54932113DB5FE00458394 /* bsaXL03.substitutions */; };
+		5AA54966113DB5FE00458394 /* bsaXL04.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54933113DB5FE00458394 /* bsaXL04.substitutions */; };
+		5AA54967113DB5FE00458394 /* bsaXL05.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54934113DB5FE00458394 /* bsaXL05.substitutions */; };
+		5AA54968113DB5FE00458394 /* devTestFanouts.db_XL16test in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54935113DB5FE00458394 /* devTestFanouts.db_XL16test */; };
+		5AA54969113DB5FE00458394 /* devBP21TestFanouts.db in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54936113DB5FE00458394 /* devBP21TestFanouts.db */; };
+		5AA5496A113DB5FE00458394 /* devTO20TestFanouts.db in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54937113DB5FE00458394 /* devTO20TestFanouts.db */; };
+		5AA5496B113DB5FE00458394 /* bsaSimXL09.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54938113DB5FE00458394 /* bsaSimXL09.substitutions */; };
+		5AA5496C113DB5FE00458394 /* evrBP21.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54939113DB5FE00458394 /* evrBP21.substitutions */; };
+		5AA5496D113DB5FE00458394 /* evrEV02.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5493A113DB5FE00458394 /* evrEV02.substitutions */; };
+		5AA5496E113DB5FE00458394 /* evrPatternBP21.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5493B113DB5FE00458394 /* evrPatternBP21.substitutions */; };
+		5AA5496F113DB5FE00458394 /* evrPatternEV02.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5493C113DB5FE00458394 /* evrPatternEV02.substitutions */; };
+		5AA54970113DB5FE00458394 /* evrPatternTO20.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5493D113DB5FE00458394 /* evrPatternTO20.substitutions */; };
+		5AA54971113DB5FE00458394 /* evrPatternXL04.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5493E113DB5FE00458394 /* evrPatternXL04.substitutions */; };
+		5AA54972113DB5FE00458394 /* evrPatternXL05.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5493F113DB5FE00458394 /* evrPatternXL05.substitutions */; };
+		5AA54973113DB5FE00458394 /* evrPatternXL09.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54940113DB5FE00458394 /* evrPatternXL09.substitutions */; };
+		5AA54974113DB5FE00458394 /* bsaXL09.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54941113DB5FE00458394 /* bsaXL09.substitutions */; };
+		5AA54975113DB5FE00458394 /* evrTO20.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54942113DB5FE00458394 /* evrTO20.substitutions */; };
+		5AA54976113DB5FE00458394 /* evrXL04.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54943113DB5FE00458394 /* evrXL04.substitutions */; };
+		5AA54977113DB5FE00458394 /* evrXL05.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54944113DB5FE00458394 /* evrXL05.substitutions */; };
+		5AA54978113DB5FE00458394 /* evrXL09.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54945113DB5FE00458394 /* evrXL09.substitutions */; };
+		5AA54979113DB5FE00458394 /* evrXL16.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54946113DB5FE00458394 /* evrXL16.substitutions */; };
+		5AA5497A113DB5FE00458394 /* patternSimXL04.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54947113DB5FE00458394 /* patternSimXL04.substitutions */; };
+		5AA5497B113DB5FE00458394 /* trigXL04.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54948113DB5FE00458394 /* trigXL04.substitutions */; };
+		5AA5497C113DB5FE00458394 /* trigXL05.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54949113DB5FE00458394 /* trigXL05.substitutions */; };
+		5AA5497D113DB5FE00458394 /* trigXL09.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5494A113DB5FE00458394 /* trigXL09.substitutions */; };
+		5AA5497E113DB5FE00458394 /* mpsEvr.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5494B113DB5FE00458394 /* mpsEvr.substitutions */; };
+		5AA5497F113DB5FE00458394 /* mpsEvrPattern.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5494C113DB5FE00458394 /* mpsEvrPattern.substitutions */; };
+		5AA54980113DB5FE00458394 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 5AA5494D113DB5FE00458394 /* Makefile */; };
+		5AA54981113DB5FE00458394 /* mpsEvrProc.db in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5494E113DB5FE00458394 /* mpsEvrProc.db */; };
+		5AA54982113DB5FE00458394 /* evrPatternXL16.substitutions_withmps in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5494F113DB5FE00458394 /* evrPatternXL16.substitutions_withmps */; };
+		5AA54983113DB5FE00458394 /* bsaSimXL09.substitutions_XL16test in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54950113DB5FE00458394 /* bsaSimXL09.substitutions_XL16test */; };
+		5AA54984113DB5FE00458394 /* evrPatternXL16.substitutions_test in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54951113DB5FE00458394 /* evrPatternXL16.substitutions_test */; };
+		5AA54985113DB5FE00458394 /* devTestFanouts.db in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54952113DB5FE00458394 /* devTestFanouts.db */; };
+		5AA54986113DB5FE00458394 /* evrPatternXL16.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54953113DB5FE00458394 /* evrPatternXL16.substitutions */; };
+		5AA54987113DB5FE00458394 /* trigXL16.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54954113DB5FE00458394 /* trigXL16.substitutions */; };
+		5AA54988113DB5FE00458394 /* bpmTest.db in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54955113DB5FE00458394 /* bpmTest.db */; };
+		5AA54989113DB5FE00458394 /* bpmTestIoc.db in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54956113DB5FE00458394 /* bpmTestIoc.db */; };
+		5AA5498A113DB5FE00458394 /* bsaXL16.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54957113DB5FE00458394 /* bsaXL16.substitutions */; };
+		5AA5498B113DB5FE00458394 /* phaseCavityevr.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54958113DB5FE00458394 /* phaseCavityevr.substitutions */; };
+		5AA54997113DB61000458394 /* screenrc in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5498E113DB61000458394 /* screenrc */; };
+		5AA54998113DB61000458394 /* st.cmd.XL01 in Resources */ = {isa = PBXBuildFile; fileRef = 5AA5498F113DB61000458394 /* st.cmd.XL01 */; };
+		5AA54999113DB61000458394 /* st.cmd.XL02 in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54990113DB61000458394 /* st.cmd.XL02 */; };
+		5AA5499A113DB61000458394 /* st.cmd.XL03 in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54991113DB61000458394 /* st.cmd.XL03 */; };
+		5AA5499B113DB61000458394 /* st.cmd.XL04 in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54992113DB61000458394 /* st.cmd.XL04 */; };
+		5AA5499C113DB61000458394 /* st.cmd.XL05 in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54993113DB61000458394 /* st.cmd.XL05 */; };
+		5AA5499D113DB61000458394 /* st.cmd.XL16 in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54994113DB61000458394 /* st.cmd.XL16 */; };
+		5AA5499E113DB61000458394 /* st.cmd.test in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54995113DB61000458394 /* st.cmd.test */; };
+		5AA5499F113DB61000458394 /* nvramConfig in Resources */ = {isa = PBXBuildFile; fileRef = 5AA54996113DB61000458394 /* nvramConfig */; };
+		5AA549A5113DB61C00458394 /* evrTestMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5AA549A1113DB61C00458394 /* evrTestMain.cpp */; };
+		5AA549A6113DB61C00458394 /* mpsEvrProc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5AA549A2113DB61C00458394 /* mpsEvrProc.c */; };
+		5AA549A7113DB61C00458394 /* mpsEvrProc.dbd in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549A3113DB61C00458394 /* mpsEvrProc.dbd */; };
+		5AA549A8113DB61C00458394 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 5AA549A4113DB61C00458394 /* Makefile */; };
+		5AA549AE113DB62D00458394 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 5AA549AC113DB62D00458394 /* Makefile */; };
+		5AA549AF113DB62D00458394 /* trigXL05.cwsubstitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549AD113DB62D00458394 /* trigXL05.cwsubstitutions */; };
+		5AA549BA113DB63700458394 /* CONFIG in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B1113DB63700458394 /* CONFIG */; };
+		5AA549BB113DB63700458394 /* CONFIG_SITE in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B2113DB63700458394 /* CONFIG_SITE */; };
+		5AA549BC113DB63700458394 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 5AA549B3113DB63700458394 /* Makefile */; };
+		5AA549BD113DB63700458394 /* RELEASE in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B4113DB63700458394 /* RELEASE */; };
+		5AA549BE113DB63700458394 /* RULES in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B5113DB63700458394 /* RULES */; };
+		5AA549BF113DB63700458394 /* RULES.ioc in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B6113DB63700458394 /* RULES.ioc */; };
+		5AA549C0113DB63700458394 /* RULES_DIRS in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B7113DB63700458394 /* RULES_DIRS */; };
+		5AA549C1113DB63700458394 /* RULES_TOP in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B8113DB63700458394 /* RULES_TOP */; };
+		5AA549C2113DB63700458394 /* makeRegistrar in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B9113DB63700458394 /* makeRegistrar */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5AA54926113DB5FE00458394 /* bsaBP21.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaBP21.substitutions; sourceTree = "<group>"; };
+		5AA54927113DB5FE00458394 /* bsaSimBP21.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimBP21.substitutions; sourceTree = "<group>"; };
+		5AA54928113DB5FE00458394 /* bsaSimTO20.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimTO20.substitutions; sourceTree = "<group>"; };
+		5AA54929113DB5FE00458394 /* bsaSimXL01.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimXL01.substitutions; sourceTree = "<group>"; };
+		5AA5492A113DB5FE00458394 /* bsaSimXL02.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimXL02.substitutions; sourceTree = "<group>"; };
+		5AA5492B113DB5FE00458394 /* bsaSimXL03.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimXL03.substitutions; sourceTree = "<group>"; };
+		5AA5492C113DB5FE00458394 /* bsaSimXL04.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimXL04.substitutions; sourceTree = "<group>"; };
+		5AA5492D113DB5FE00458394 /* bsaSimXL05.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimXL05.substitutions; sourceTree = "<group>"; };
+		5AA5492E113DB5FE00458394 /* bsaXL09.substitutions_XL16test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL09.substitutions_XL16test; sourceTree = "<group>"; };
+		5AA5492F113DB5FE00458394 /* bsaTO20.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaTO20.substitutions; sourceTree = "<group>"; };
+		5AA54930113DB5FE00458394 /* bsaXL01.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL01.substitutions; sourceTree = "<group>"; };
+		5AA54931113DB5FE00458394 /* bsaXL02.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL02.substitutions; sourceTree = "<group>"; };
+		5AA54932113DB5FE00458394 /* bsaXL03.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL03.substitutions; sourceTree = "<group>"; };
+		5AA54933113DB5FE00458394 /* bsaXL04.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL04.substitutions; sourceTree = "<group>"; };
+		5AA54934113DB5FE00458394 /* bsaXL05.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL05.substitutions; sourceTree = "<group>"; };
+		5AA54935113DB5FE00458394 /* devTestFanouts.db_XL16test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devTestFanouts.db_XL16test; sourceTree = "<group>"; };
+		5AA54936113DB5FE00458394 /* devBP21TestFanouts.db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devBP21TestFanouts.db; sourceTree = "<group>"; };
+		5AA54937113DB5FE00458394 /* devTO20TestFanouts.db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devTO20TestFanouts.db; sourceTree = "<group>"; };
+		5AA54938113DB5FE00458394 /* bsaSimXL09.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimXL09.substitutions; sourceTree = "<group>"; };
+		5AA54939113DB5FE00458394 /* evrBP21.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrBP21.substitutions; sourceTree = "<group>"; };
+		5AA5493A113DB5FE00458394 /* evrEV02.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrEV02.substitutions; sourceTree = "<group>"; };
+		5AA5493B113DB5FE00458394 /* evrPatternBP21.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternBP21.substitutions; sourceTree = "<group>"; };
+		5AA5493C113DB5FE00458394 /* evrPatternEV02.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternEV02.substitutions; sourceTree = "<group>"; };
+		5AA5493D113DB5FE00458394 /* evrPatternTO20.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternTO20.substitutions; sourceTree = "<group>"; };
+		5AA5493E113DB5FE00458394 /* evrPatternXL04.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternXL04.substitutions; sourceTree = "<group>"; };
+		5AA5493F113DB5FE00458394 /* evrPatternXL05.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternXL05.substitutions; sourceTree = "<group>"; };
+		5AA54940113DB5FE00458394 /* evrPatternXL09.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternXL09.substitutions; sourceTree = "<group>"; };
+		5AA54941113DB5FE00458394 /* bsaXL09.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL09.substitutions; sourceTree = "<group>"; };
+		5AA54942113DB5FE00458394 /* evrTO20.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrTO20.substitutions; sourceTree = "<group>"; };
+		5AA54943113DB5FE00458394 /* evrXL04.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrXL04.substitutions; sourceTree = "<group>"; };
+		5AA54944113DB5FE00458394 /* evrXL05.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrXL05.substitutions; sourceTree = "<group>"; };
+		5AA54945113DB5FE00458394 /* evrXL09.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrXL09.substitutions; sourceTree = "<group>"; };
+		5AA54946113DB5FE00458394 /* evrXL16.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrXL16.substitutions; sourceTree = "<group>"; };
+		5AA54947113DB5FE00458394 /* patternSimXL04.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = patternSimXL04.substitutions; sourceTree = "<group>"; };
+		5AA54948113DB5FE00458394 /* trigXL04.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trigXL04.substitutions; sourceTree = "<group>"; };
+		5AA54949113DB5FE00458394 /* trigXL05.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trigXL05.substitutions; sourceTree = "<group>"; };
+		5AA5494A113DB5FE00458394 /* trigXL09.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trigXL09.substitutions; sourceTree = "<group>"; };
+		5AA5494B113DB5FE00458394 /* mpsEvr.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mpsEvr.substitutions; sourceTree = "<group>"; };
+		5AA5494C113DB5FE00458394 /* mpsEvrPattern.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mpsEvrPattern.substitutions; sourceTree = "<group>"; };
+		5AA5494D113DB5FE00458394 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		5AA5494E113DB5FE00458394 /* mpsEvrProc.db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mpsEvrProc.db; sourceTree = "<group>"; };
+		5AA5494F113DB5FE00458394 /* evrPatternXL16.substitutions_withmps */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternXL16.substitutions_withmps; sourceTree = "<group>"; };
+		5AA54950113DB5FE00458394 /* bsaSimXL09.substitutions_XL16test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaSimXL09.substitutions_XL16test; sourceTree = "<group>"; };
+		5AA54951113DB5FE00458394 /* evrPatternXL16.substitutions_test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternXL16.substitutions_test; sourceTree = "<group>"; };
+		5AA54952113DB5FE00458394 /* devTestFanouts.db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = devTestFanouts.db; sourceTree = "<group>"; };
+		5AA54953113DB5FE00458394 /* evrPatternXL16.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = evrPatternXL16.substitutions; sourceTree = "<group>"; };
+		5AA54954113DB5FE00458394 /* trigXL16.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trigXL16.substitutions; sourceTree = "<group>"; };
+		5AA54955113DB5FE00458394 /* bpmTest.db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bpmTest.db; sourceTree = "<group>"; };
+		5AA54956113DB5FE00458394 /* bpmTestIoc.db */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bpmTestIoc.db; sourceTree = "<group>"; };
+		5AA54957113DB5FE00458394 /* bsaXL16.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = bsaXL16.substitutions; sourceTree = "<group>"; };
+		5AA54958113DB5FE00458394 /* phaseCavityevr.substitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = phaseCavityevr.substitutions; sourceTree = "<group>"; };
+		5AA5498E113DB61000458394 /* screenrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = screenrc; sourceTree = "<group>"; };
+		5AA5498F113DB61000458394 /* st.cmd.XL01 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL01; sourceTree = "<group>"; };
+		5AA54990113DB61000458394 /* st.cmd.XL02 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL02; sourceTree = "<group>"; };
+		5AA54991113DB61000458394 /* st.cmd.XL03 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL03; sourceTree = "<group>"; };
+		5AA54992113DB61000458394 /* st.cmd.XL04 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL04; sourceTree = "<group>"; };
+		5AA54993113DB61000458394 /* st.cmd.XL05 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL05; sourceTree = "<group>"; };
+		5AA54994113DB61000458394 /* st.cmd.XL16 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL16; sourceTree = "<group>"; };
+		5AA54995113DB61000458394 /* st.cmd.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.test; sourceTree = "<group>"; };
+		5AA54996113DB61000458394 /* nvramConfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nvramConfig; sourceTree = "<group>"; };
+		5AA549A1113DB61C00458394 /* evrTestMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = evrTestMain.cpp; sourceTree = "<group>"; };
+		5AA549A2113DB61C00458394 /* mpsEvrProc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mpsEvrProc.c; sourceTree = "<group>"; };
+		5AA549A3113DB61C00458394 /* mpsEvrProc.dbd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mpsEvrProc.dbd; sourceTree = "<group>"; };
+		5AA549A4113DB61C00458394 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		5AA549AC113DB62D00458394 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		5AA549AD113DB62D00458394 /* trigXL05.cwsubstitutions */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = trigXL05.cwsubstitutions; sourceTree = "<group>"; };
+		5AA549B1113DB63700458394 /* CONFIG */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CONFIG; sourceTree = "<group>"; };
+		5AA549B2113DB63700458394 /* CONFIG_SITE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CONFIG_SITE; sourceTree = "<group>"; };
+		5AA549B3113DB63700458394 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		5AA549B4113DB63700458394 /* RELEASE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RELEASE; sourceTree = "<group>"; };
+		5AA549B5113DB63700458394 /* RULES */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RULES; sourceTree = "<group>"; };
+		5AA549B6113DB63700458394 /* RULES.ioc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RULES.ioc; sourceTree = "<group>"; };
+		5AA549B7113DB63700458394 /* RULES_DIRS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RULES_DIRS; sourceTree = "<group>"; };
+		5AA549B8113DB63700458394 /* RULES_TOP */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RULES_TOP; sourceTree = "<group>"; };
+		5AA549B9113DB63700458394 /* makeRegistrar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = makeRegistrar; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* evrIoc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = evrIoc.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107320486CEB800E47090 /* evrIoc.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* evrIoc */ = {
+			isa = PBXGroup;
+			children = (
+				5AA549B0113DB63700458394 /* configure */,
+				5AA5498C113DB61000458394 /* iocBoot */,
+				5AA54925113DB5FD00458394 /* Db */,
+				5AA549A0113DB61C00458394 /* src */,
+				5AA549AB113DB62D00458394 /* srcRestore */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = evrIoc;
+			sourceTree = "<group>";
+		};
+		5AA54925113DB5FD00458394 /* Db */ = {
+			isa = PBXGroup;
+			children = (
+				5AA5494D113DB5FE00458394 /* Makefile */,
+				5AA54926113DB5FE00458394 /* bsaBP21.substitutions */,
+				5AA54927113DB5FE00458394 /* bsaSimBP21.substitutions */,
+				5AA54928113DB5FE00458394 /* bsaSimTO20.substitutions */,
+				5AA54929113DB5FE00458394 /* bsaSimXL01.substitutions */,
+				5AA5492A113DB5FE00458394 /* bsaSimXL02.substitutions */,
+				5AA5492B113DB5FE00458394 /* bsaSimXL03.substitutions */,
+				5AA5492C113DB5FE00458394 /* bsaSimXL04.substitutions */,
+				5AA5492D113DB5FE00458394 /* bsaSimXL05.substitutions */,
+				5AA5492E113DB5FE00458394 /* bsaXL09.substitutions_XL16test */,
+				5AA5492F113DB5FE00458394 /* bsaTO20.substitutions */,
+				5AA54930113DB5FE00458394 /* bsaXL01.substitutions */,
+				5AA54931113DB5FE00458394 /* bsaXL02.substitutions */,
+				5AA54932113DB5FE00458394 /* bsaXL03.substitutions */,
+				5AA54933113DB5FE00458394 /* bsaXL04.substitutions */,
+				5AA54934113DB5FE00458394 /* bsaXL05.substitutions */,
+				5AA54935113DB5FE00458394 /* devTestFanouts.db_XL16test */,
+				5AA54936113DB5FE00458394 /* devBP21TestFanouts.db */,
+				5AA54937113DB5FE00458394 /* devTO20TestFanouts.db */,
+				5AA54938113DB5FE00458394 /* bsaSimXL09.substitutions */,
+				5AA54939113DB5FE00458394 /* evrBP21.substitutions */,
+				5AA5493A113DB5FE00458394 /* evrEV02.substitutions */,
+				5AA5493B113DB5FE00458394 /* evrPatternBP21.substitutions */,
+				5AA5493C113DB5FE00458394 /* evrPatternEV02.substitutions */,
+				5AA5493D113DB5FE00458394 /* evrPatternTO20.substitutions */,
+				5AA5493E113DB5FE00458394 /* evrPatternXL04.substitutions */,
+				5AA5493F113DB5FE00458394 /* evrPatternXL05.substitutions */,
+				5AA54940113DB5FE00458394 /* evrPatternXL09.substitutions */,
+				5AA54941113DB5FE00458394 /* bsaXL09.substitutions */,
+				5AA54942113DB5FE00458394 /* evrTO20.substitutions */,
+				5AA54943113DB5FE00458394 /* evrXL04.substitutions */,
+				5AA54944113DB5FE00458394 /* evrXL05.substitutions */,
+				5AA54945113DB5FE00458394 /* evrXL09.substitutions */,
+				5AA54946113DB5FE00458394 /* evrXL16.substitutions */,
+				5AA54947113DB5FE00458394 /* patternSimXL04.substitutions */,
+				5AA54948113DB5FE00458394 /* trigXL04.substitutions */,
+				5AA54949113DB5FE00458394 /* trigXL05.substitutions */,
+				5AA5494A113DB5FE00458394 /* trigXL09.substitutions */,
+				5AA5494B113DB5FE00458394 /* mpsEvr.substitutions */,
+				5AA5494C113DB5FE00458394 /* mpsEvrPattern.substitutions */,
+				5AA5494E113DB5FE00458394 /* mpsEvrProc.db */,
+				5AA5494F113DB5FE00458394 /* evrPatternXL16.substitutions_withmps */,
+				5AA54950113DB5FE00458394 /* bsaSimXL09.substitutions_XL16test */,
+				5AA54951113DB5FE00458394 /* evrPatternXL16.substitutions_test */,
+				5AA54952113DB5FE00458394 /* devTestFanouts.db */,
+				5AA54953113DB5FE00458394 /* evrPatternXL16.substitutions */,
+				5AA54954113DB5FE00458394 /* trigXL16.substitutions */,
+				5AA54955113DB5FE00458394 /* bpmTest.db */,
+				5AA54956113DB5FE00458394 /* bpmTestIoc.db */,
+				5AA54957113DB5FE00458394 /* bsaXL16.substitutions */,
+				5AA54958113DB5FE00458394 /* phaseCavityevr.substitutions */,
+			);
+			path = Db;
+			sourceTree = "<group>";
+		};
+		5AA5498C113DB61000458394 /* iocBoot */ = {
+			isa = PBXGroup;
+			children = (
+				5AA5498D113DB61000458394 /* test */,
+			);
+			path = iocBoot;
+			sourceTree = "<group>";
+		};
+		5AA5498D113DB61000458394 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				5AA5498E113DB61000458394 /* screenrc */,
+				5AA5498F113DB61000458394 /* st.cmd.XL01 */,
+				5AA54990113DB61000458394 /* st.cmd.XL02 */,
+				5AA54991113DB61000458394 /* st.cmd.XL03 */,
+				5AA54992113DB61000458394 /* st.cmd.XL04 */,
+				5AA54993113DB61000458394 /* st.cmd.XL05 */,
+				5AA54994113DB61000458394 /* st.cmd.XL16 */,
+				5AA54995113DB61000458394 /* st.cmd.test */,
+				5AA54996113DB61000458394 /* nvramConfig */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		5AA549A0113DB61C00458394 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				5AA549A4113DB61C00458394 /* Makefile */,
+				5AA549A1113DB61C00458394 /* evrTestMain.cpp */,
+				5AA549A2113DB61C00458394 /* mpsEvrProc.c */,
+				5AA549A3113DB61C00458394 /* mpsEvrProc.dbd */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		5AA549AB113DB62D00458394 /* srcRestore */ = {
+			isa = PBXGroup;
+			children = (
+				5AA549AC113DB62D00458394 /* Makefile */,
+				5AA549AD113DB62D00458394 /* trigXL05.cwsubstitutions */,
+			);
+			path = srcRestore;
+			sourceTree = "<group>";
+		};
+		5AA549B0113DB63700458394 /* configure */ = {
+			isa = PBXGroup;
+			children = (
+				5AA549B3113DB63700458394 /* Makefile */,
+				5AA549B1113DB63700458394 /* CONFIG */,
+				5AA549B2113DB63700458394 /* CONFIG_SITE */,
+				5AA549B4113DB63700458394 /* RELEASE */,
+				5AA549B5113DB63700458394 /* RULES */,
+				5AA549B6113DB63700458394 /* RULES.ioc */,
+				5AA549B7113DB63700458394 /* RULES_DIRS */,
+				5AA549B8113DB63700458394 /* RULES_TOP */,
+				5AA549B9113DB63700458394 /* makeRegistrar */,
+			);
+			path = configure;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D1107260486CEB800E47090 /* evrIoc */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "evrIoc" */;
+			buildPhases = (
+				8D1107290486CEB800E47090 /* Resources */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = evrIoc;
+			productInstallPath = "$(HOME)/Applications";
+			productName = evrIoc;
+			productReference = 8D1107320486CEB800E47090 /* evrIoc.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "evrIoc" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* evrIoc */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D1107260486CEB800E47090 /* evrIoc */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D1107290486CEB800E47090 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AA54959113DB5FE00458394 /* bsaBP21.substitutions in Resources */,
+				5AA5495A113DB5FE00458394 /* bsaSimBP21.substitutions in Resources */,
+				5AA5495B113DB5FE00458394 /* bsaSimTO20.substitutions in Resources */,
+				5AA5495C113DB5FE00458394 /* bsaSimXL01.substitutions in Resources */,
+				5AA5495D113DB5FE00458394 /* bsaSimXL02.substitutions in Resources */,
+				5AA5495E113DB5FE00458394 /* bsaSimXL03.substitutions in Resources */,
+				5AA5495F113DB5FE00458394 /* bsaSimXL04.substitutions in Resources */,
+				5AA54960113DB5FE00458394 /* bsaSimXL05.substitutions in Resources */,
+				5AA54961113DB5FE00458394 /* bsaXL09.substitutions_XL16test in Resources */,
+				5AA54962113DB5FE00458394 /* bsaTO20.substitutions in Resources */,
+				5AA54963113DB5FE00458394 /* bsaXL01.substitutions in Resources */,
+				5AA54964113DB5FE00458394 /* bsaXL02.substitutions in Resources */,
+				5AA54965113DB5FE00458394 /* bsaXL03.substitutions in Resources */,
+				5AA54966113DB5FE00458394 /* bsaXL04.substitutions in Resources */,
+				5AA54967113DB5FE00458394 /* bsaXL05.substitutions in Resources */,
+				5AA54968113DB5FE00458394 /* devTestFanouts.db_XL16test in Resources */,
+				5AA54969113DB5FE00458394 /* devBP21TestFanouts.db in Resources */,
+				5AA5496A113DB5FE00458394 /* devTO20TestFanouts.db in Resources */,
+				5AA5496B113DB5FE00458394 /* bsaSimXL09.substitutions in Resources */,
+				5AA5496C113DB5FE00458394 /* evrBP21.substitutions in Resources */,
+				5AA5496D113DB5FE00458394 /* evrEV02.substitutions in Resources */,
+				5AA5496E113DB5FE00458394 /* evrPatternBP21.substitutions in Resources */,
+				5AA5496F113DB5FE00458394 /* evrPatternEV02.substitutions in Resources */,
+				5AA54970113DB5FE00458394 /* evrPatternTO20.substitutions in Resources */,
+				5AA54971113DB5FE00458394 /* evrPatternXL04.substitutions in Resources */,
+				5AA54972113DB5FE00458394 /* evrPatternXL05.substitutions in Resources */,
+				5AA54973113DB5FE00458394 /* evrPatternXL09.substitutions in Resources */,
+				5AA54974113DB5FE00458394 /* bsaXL09.substitutions in Resources */,
+				5AA54975113DB5FE00458394 /* evrTO20.substitutions in Resources */,
+				5AA54976113DB5FE00458394 /* evrXL04.substitutions in Resources */,
+				5AA54977113DB5FE00458394 /* evrXL05.substitutions in Resources */,
+				5AA54978113DB5FE00458394 /* evrXL09.substitutions in Resources */,
+				5AA54979113DB5FE00458394 /* evrXL16.substitutions in Resources */,
+				5AA5497A113DB5FE00458394 /* patternSimXL04.substitutions in Resources */,
+				5AA5497B113DB5FE00458394 /* trigXL04.substitutions in Resources */,
+				5AA5497C113DB5FE00458394 /* trigXL05.substitutions in Resources */,
+				5AA5497D113DB5FE00458394 /* trigXL09.substitutions in Resources */,
+				5AA5497E113DB5FE00458394 /* mpsEvr.substitutions in Resources */,
+				5AA5497F113DB5FE00458394 /* mpsEvrPattern.substitutions in Resources */,
+				5AA54981113DB5FE00458394 /* mpsEvrProc.db in Resources */,
+				5AA54982113DB5FE00458394 /* evrPatternXL16.substitutions_withmps in Resources */,
+				5AA54983113DB5FE00458394 /* bsaSimXL09.substitutions_XL16test in Resources */,
+				5AA54984113DB5FE00458394 /* evrPatternXL16.substitutions_test in Resources */,
+				5AA54985113DB5FE00458394 /* devTestFanouts.db in Resources */,
+				5AA54986113DB5FE00458394 /* evrPatternXL16.substitutions in Resources */,
+				5AA54987113DB5FE00458394 /* trigXL16.substitutions in Resources */,
+				5AA54988113DB5FE00458394 /* bpmTest.db in Resources */,
+				5AA54989113DB5FE00458394 /* bpmTestIoc.db in Resources */,
+				5AA5498A113DB5FE00458394 /* bsaXL16.substitutions in Resources */,
+				5AA5498B113DB5FE00458394 /* phaseCavityevr.substitutions in Resources */,
+				5AA54997113DB61000458394 /* screenrc in Resources */,
+				5AA54998113DB61000458394 /* st.cmd.XL01 in Resources */,
+				5AA54999113DB61000458394 /* st.cmd.XL02 in Resources */,
+				5AA5499A113DB61000458394 /* st.cmd.XL03 in Resources */,
+				5AA5499B113DB61000458394 /* st.cmd.XL04 in Resources */,
+				5AA5499C113DB61000458394 /* st.cmd.XL05 in Resources */,
+				5AA5499D113DB61000458394 /* st.cmd.XL16 in Resources */,
+				5AA5499E113DB61000458394 /* st.cmd.test in Resources */,
+				5AA5499F113DB61000458394 /* nvramConfig in Resources */,
+				5AA549A7113DB61C00458394 /* mpsEvrProc.dbd in Resources */,
+				5AA549AF113DB62D00458394 /* trigXL05.cwsubstitutions in Resources */,
+				5AA549BA113DB63700458394 /* CONFIG in Resources */,
+				5AA549BB113DB63700458394 /* CONFIG_SITE in Resources */,
+				5AA549BD113DB63700458394 /* RELEASE in Resources */,
+				5AA549BE113DB63700458394 /* RULES in Resources */,
+				5AA549BF113DB63700458394 /* RULES.ioc in Resources */,
+				5AA549C0113DB63700458394 /* RULES_DIRS in Resources */,
+				5AA549C1113DB63700458394 /* RULES_TOP in Resources */,
+				5AA549C2113DB63700458394 /* makeRegistrar in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AA54980113DB5FE00458394 /* Makefile in Sources */,
+				5AA549A5113DB61C00458394 /* evrTestMain.cpp in Sources */,
+				5AA549A6113DB61C00458394 /* mpsEvrProc.c in Sources */,
+				5AA549A8113DB61C00458394 /* Makefile in Sources */,
+				5AA549AE113DB62D00458394 /* Makefile in Sources */,
+				5AA549BC113DB63700458394 /* Makefile in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C01FCF4B08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = evrIoc_Prefix.pch;
+				INFOPLIST_FILE = "evrIoc-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = evrIoc;
+			};
+			name = Debug;
+		};
+		C01FCF4C08A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = evrIoc_Prefix.pch;
+				INFOPLIST_FILE = "evrIoc-Info.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = evrIoc;
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "evrIoc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4B08A954540054247B /* Debug */,
+				C01FCF4C08A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "evrIoc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
