@@ -97,6 +97,23 @@ Note that the order of the above libraries is important.
 	<evrname>:LINK
 	<evrname>:LINKERR
 
+(14) Add event code sequence PVs to your application by installing the
+     event code sequence db file...
+
+Db/Makefile:
+DB_INSTALLS += $(EVENT)/db/eventCodeSequenceAll.db
+
+     Doing so provides the following PVs
+     $(DEVICE):ECS_$(EVENT_CODE)EV
+     $(DEVICE):ECS_$(EVENT_CODE)CNT
+     $(DEVICE):ECS_$(EVENT_CODE)RATE
+     $(DEVICE):ECS_$(EVENT_CODE)NAME
+
+     for 67 <= $(EVENT_CODE) <= 98
+
+
+
+
 II - Using event module functions and global variables in your IOC application:
 -------------------------------------------------------------------------------
 
