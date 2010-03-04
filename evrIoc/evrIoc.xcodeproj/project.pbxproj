@@ -82,6 +82,8 @@
 		5AA549C0113DB63700458394 /* RULES_DIRS in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B7113DB63700458394 /* RULES_DIRS */; };
 		5AA549C1113DB63700458394 /* RULES_TOP in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B8113DB63700458394 /* RULES_TOP */; };
 		5AA549C2113DB63700458394 /* makeRegistrar in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549B9113DB63700458394 /* makeRegistrar */; };
+		5AA549E1113DB73A00458394 /* ecsTestTemplate.db in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549E0113DB73A00458394 /* ecsTestTemplate.db */; };
+		5AA549F6113DB97C00458394 /* ecsTest.substitutions in Resources */ = {isa = PBXBuildFile; fileRef = 5AA549F5113DB97C00458394 /* ecsTest.substitutions */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -142,7 +144,7 @@
 		5AA54991113DB61000458394 /* st.cmd.XL03 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL03; sourceTree = "<group>"; };
 		5AA54992113DB61000458394 /* st.cmd.XL04 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL04; sourceTree = "<group>"; };
 		5AA54993113DB61000458394 /* st.cmd.XL05 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL05; sourceTree = "<group>"; };
-		5AA54994113DB61000458394 /* st.cmd.XL16 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.XL16; sourceTree = "<group>"; };
+		5AA54994113DB61000458394 /* st.cmd.XL16 */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = st.cmd.XL16; sourceTree = "<group>"; };
 		5AA54995113DB61000458394 /* st.cmd.test */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = st.cmd.test; sourceTree = "<group>"; };
 		5AA54996113DB61000458394 /* nvramConfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nvramConfig; sourceTree = "<group>"; };
 		5AA549A1113DB61C00458394 /* evrTestMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = evrTestMain.cpp; sourceTree = "<group>"; };
@@ -160,6 +162,8 @@
 		5AA549B7113DB63700458394 /* RULES_DIRS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RULES_DIRS; sourceTree = "<group>"; };
 		5AA549B8113DB63700458394 /* RULES_TOP */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RULES_TOP; sourceTree = "<group>"; };
 		5AA549B9113DB63700458394 /* makeRegistrar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = makeRegistrar; sourceTree = "<group>"; };
+		5AA549E0113DB73A00458394 /* ecsTestTemplate.db */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = ecsTestTemplate.db; sourceTree = "<group>"; };
+		5AA549F5113DB97C00458394 /* ecsTest.substitutions */ = {isa = PBXFileReference; explicitFileType = text.script; fileEncoding = 4; path = ecsTest.substitutions; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* evrIoc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = evrIoc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -199,56 +203,9 @@
 			isa = PBXGroup;
 			children = (
 				5AA5494D113DB5FE00458394 /* Makefile */,
-				5AA54926113DB5FE00458394 /* bsaBP21.substitutions */,
-				5AA54927113DB5FE00458394 /* bsaSimBP21.substitutions */,
-				5AA54928113DB5FE00458394 /* bsaSimTO20.substitutions */,
-				5AA54929113DB5FE00458394 /* bsaSimXL01.substitutions */,
-				5AA5492A113DB5FE00458394 /* bsaSimXL02.substitutions */,
-				5AA5492B113DB5FE00458394 /* bsaSimXL03.substitutions */,
-				5AA5492C113DB5FE00458394 /* bsaSimXL04.substitutions */,
-				5AA5492D113DB5FE00458394 /* bsaSimXL05.substitutions */,
-				5AA5492E113DB5FE00458394 /* bsaXL09.substitutions_XL16test */,
-				5AA5492F113DB5FE00458394 /* bsaTO20.substitutions */,
-				5AA54930113DB5FE00458394 /* bsaXL01.substitutions */,
-				5AA54931113DB5FE00458394 /* bsaXL02.substitutions */,
-				5AA54932113DB5FE00458394 /* bsaXL03.substitutions */,
-				5AA54933113DB5FE00458394 /* bsaXL04.substitutions */,
-				5AA54934113DB5FE00458394 /* bsaXL05.substitutions */,
-				5AA54935113DB5FE00458394 /* devTestFanouts.db_XL16test */,
-				5AA54936113DB5FE00458394 /* devBP21TestFanouts.db */,
-				5AA54937113DB5FE00458394 /* devTO20TestFanouts.db */,
-				5AA54938113DB5FE00458394 /* bsaSimXL09.substitutions */,
-				5AA54939113DB5FE00458394 /* evrBP21.substitutions */,
-				5AA5493A113DB5FE00458394 /* evrEV02.substitutions */,
-				5AA5493B113DB5FE00458394 /* evrPatternBP21.substitutions */,
-				5AA5493C113DB5FE00458394 /* evrPatternEV02.substitutions */,
-				5AA5493D113DB5FE00458394 /* evrPatternTO20.substitutions */,
-				5AA5493E113DB5FE00458394 /* evrPatternXL04.substitutions */,
-				5AA5493F113DB5FE00458394 /* evrPatternXL05.substitutions */,
-				5AA54940113DB5FE00458394 /* evrPatternXL09.substitutions */,
-				5AA54941113DB5FE00458394 /* bsaXL09.substitutions */,
-				5AA54942113DB5FE00458394 /* evrTO20.substitutions */,
-				5AA54943113DB5FE00458394 /* evrXL04.substitutions */,
-				5AA54944113DB5FE00458394 /* evrXL05.substitutions */,
-				5AA54945113DB5FE00458394 /* evrXL09.substitutions */,
-				5AA54946113DB5FE00458394 /* evrXL16.substitutions */,
-				5AA54947113DB5FE00458394 /* patternSimXL04.substitutions */,
-				5AA54948113DB5FE00458394 /* trigXL04.substitutions */,
-				5AA54949113DB5FE00458394 /* trigXL05.substitutions */,
-				5AA5494A113DB5FE00458394 /* trigXL09.substitutions */,
-				5AA5494B113DB5FE00458394 /* mpsEvr.substitutions */,
-				5AA5494C113DB5FE00458394 /* mpsEvrPattern.substitutions */,
-				5AA5494E113DB5FE00458394 /* mpsEvrProc.db */,
-				5AA5494F113DB5FE00458394 /* evrPatternXL16.substitutions_withmps */,
-				5AA54950113DB5FE00458394 /* bsaSimXL09.substitutions_XL16test */,
-				5AA54951113DB5FE00458394 /* evrPatternXL16.substitutions_test */,
-				5AA54952113DB5FE00458394 /* devTestFanouts.db */,
-				5AA54953113DB5FE00458394 /* evrPatternXL16.substitutions */,
-				5AA54954113DB5FE00458394 /* trigXL16.substitutions */,
-				5AA54955113DB5FE00458394 /* bpmTest.db */,
-				5AA54956113DB5FE00458394 /* bpmTestIoc.db */,
-				5AA54957113DB5FE00458394 /* bsaXL16.substitutions */,
-				5AA54958113DB5FE00458394 /* phaseCavityevr.substitutions */,
+				5AA549E0113DB73A00458394 /* ecsTestTemplate.db */,
+				5AA549F5113DB97C00458394 /* ecsTest.substitutions */,
+				5AA549E3113DB74200458394 /* Others */,
 			);
 			path = Db;
 			sourceTree = "<group>";
@@ -311,6 +268,63 @@
 				5AA549B9113DB63700458394 /* makeRegistrar */,
 			);
 			path = configure;
+			sourceTree = "<group>";
+		};
+		5AA549E3113DB74200458394 /* Others */ = {
+			isa = PBXGroup;
+			children = (
+				5AA54926113DB5FE00458394 /* bsaBP21.substitutions */,
+				5AA54927113DB5FE00458394 /* bsaSimBP21.substitutions */,
+				5AA54928113DB5FE00458394 /* bsaSimTO20.substitutions */,
+				5AA54929113DB5FE00458394 /* bsaSimXL01.substitutions */,
+				5AA5492A113DB5FE00458394 /* bsaSimXL02.substitutions */,
+				5AA5492B113DB5FE00458394 /* bsaSimXL03.substitutions */,
+				5AA5492C113DB5FE00458394 /* bsaSimXL04.substitutions */,
+				5AA5492D113DB5FE00458394 /* bsaSimXL05.substitutions */,
+				5AA5492E113DB5FE00458394 /* bsaXL09.substitutions_XL16test */,
+				5AA5492F113DB5FE00458394 /* bsaTO20.substitutions */,
+				5AA54930113DB5FE00458394 /* bsaXL01.substitutions */,
+				5AA54931113DB5FE00458394 /* bsaXL02.substitutions */,
+				5AA54932113DB5FE00458394 /* bsaXL03.substitutions */,
+				5AA54933113DB5FE00458394 /* bsaXL04.substitutions */,
+				5AA54934113DB5FE00458394 /* bsaXL05.substitutions */,
+				5AA54935113DB5FE00458394 /* devTestFanouts.db_XL16test */,
+				5AA54936113DB5FE00458394 /* devBP21TestFanouts.db */,
+				5AA54937113DB5FE00458394 /* devTO20TestFanouts.db */,
+				5AA54938113DB5FE00458394 /* bsaSimXL09.substitutions */,
+				5AA54939113DB5FE00458394 /* evrBP21.substitutions */,
+				5AA5493A113DB5FE00458394 /* evrEV02.substitutions */,
+				5AA5493B113DB5FE00458394 /* evrPatternBP21.substitutions */,
+				5AA5493C113DB5FE00458394 /* evrPatternEV02.substitutions */,
+				5AA5493D113DB5FE00458394 /* evrPatternTO20.substitutions */,
+				5AA5493E113DB5FE00458394 /* evrPatternXL04.substitutions */,
+				5AA5493F113DB5FE00458394 /* evrPatternXL05.substitutions */,
+				5AA54940113DB5FE00458394 /* evrPatternXL09.substitutions */,
+				5AA54941113DB5FE00458394 /* bsaXL09.substitutions */,
+				5AA54942113DB5FE00458394 /* evrTO20.substitutions */,
+				5AA54943113DB5FE00458394 /* evrXL04.substitutions */,
+				5AA54944113DB5FE00458394 /* evrXL05.substitutions */,
+				5AA54945113DB5FE00458394 /* evrXL09.substitutions */,
+				5AA54946113DB5FE00458394 /* evrXL16.substitutions */,
+				5AA54947113DB5FE00458394 /* patternSimXL04.substitutions */,
+				5AA54948113DB5FE00458394 /* trigXL04.substitutions */,
+				5AA54949113DB5FE00458394 /* trigXL05.substitutions */,
+				5AA5494A113DB5FE00458394 /* trigXL09.substitutions */,
+				5AA5494B113DB5FE00458394 /* mpsEvr.substitutions */,
+				5AA5494C113DB5FE00458394 /* mpsEvrPattern.substitutions */,
+				5AA5494E113DB5FE00458394 /* mpsEvrProc.db */,
+				5AA5494F113DB5FE00458394 /* evrPatternXL16.substitutions_withmps */,
+				5AA54950113DB5FE00458394 /* bsaSimXL09.substitutions_XL16test */,
+				5AA54951113DB5FE00458394 /* evrPatternXL16.substitutions_test */,
+				5AA54952113DB5FE00458394 /* devTestFanouts.db */,
+				5AA54953113DB5FE00458394 /* evrPatternXL16.substitutions */,
+				5AA54954113DB5FE00458394 /* trigXL16.substitutions */,
+				5AA54955113DB5FE00458394 /* bpmTest.db */,
+				5AA54956113DB5FE00458394 /* bpmTestIoc.db */,
+				5AA54957113DB5FE00458394 /* bsaXL16.substitutions */,
+				5AA54958113DB5FE00458394 /* phaseCavityevr.substitutions */,
+			);
+			name = Others;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -425,6 +439,8 @@
 				5AA549C0113DB63700458394 /* RULES_DIRS in Resources */,
 				5AA549C1113DB63700458394 /* RULES_TOP in Resources */,
 				5AA549C2113DB63700458394 /* makeRegistrar in Resources */,
+				5AA549E1113DB73A00458394 /* ecsTestTemplate.db in Resources */,
+				5AA549F6113DB97C00458394 /* ecsTest.substitutions in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

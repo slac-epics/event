@@ -8,7 +8,7 @@
 # change this easily when relocating software.
 # ==============================================================
 include $(TOP)/RELEASE_SITE
-#EPICS_SITE_TOP=/afs/slac/g/lcls/epics
+EPICS_SITE_TOP=/afs/slac/g/lcls/epics
 TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 
 
