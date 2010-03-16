@@ -67,9 +67,6 @@
 /*  If EVR_DEBUG Flag is Defined, Make All Local Routines Globally Callable                       */
 /**************************************************************************************************/
 
-/* NOT REACHING drvMrfEg.h FOR SOME REASON
-#define EVG_DRIVER_SUPPORT_MODULE   Indicates we are in the driver support module environment */
-
 #ifdef EVG_DEBUG
 #undef  LOCAL
 #define LOCAL
@@ -500,7 +497,7 @@ long EgLoadRamList(EgCardStruct *pParm, long Ram) {
   egeventRecord                 *pEgevent;
   int                           RamPos = 0;
   int                           AltFlag = 0;
-  volatile int                  dummy; /*trick to flush bridge pipeline*/
+  int                  			dummy; /*trick to flush bridge pipeline*/
   int                           maxtime=0;
   double                        RamSpeed;
   volatile long origEvt;
@@ -2197,12 +2194,12 @@ int EgSeqRamWrite(EgCardStruct *pParm, int ram, unsigned short address,
 
   if (ram == 1) {
     MRF_VME_REG16_WRITE(&pEg->Seq1Addr, address);
-    dummy = MRF_VME_DUMMY_READ(pAddr);
+    dummy = MRF_VME_DUMMY_READ(address);
     MRF_VME_REG16_WRITE(&pEg->Seq1Data, pSeq->EventCode);
     MRF_VME_REG32_WRITE(&pEg->Seq1Time, pSeq->Timestamp);
   } else {
     MRF_VME_REG16_WRITE(&pEg->Seq2Addr, address);
-    dummy = MRF_VME_DUMMY_READ(pAddr);
+    dummy = MRF_VME_DUMMY_READ(address);
     MRF_VME_REG16_WRITE(&pEg->Seq2Data, pSeq->EventCode);
     MRF_VME_REG32_WRITE(&pEg->Seq2Time, pSeq->Timestamp);
   }

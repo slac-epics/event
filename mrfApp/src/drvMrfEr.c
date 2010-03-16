@@ -110,6 +110,7 @@
 #include <mrfVme64x.h>          /* VME-64X CR/CSR routines and definitions (with MRF extensions)  */
 #include <basicIoOps.h>         /* for out_le16, in_le16 */
 #include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
+#include "pci_mrfev.h"		/* MRF PCI device id's	*/
 
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
@@ -338,9 +339,6 @@ Descriptor */
 #endif
 #ifndef PCI_DEVICE_ID_PLX_9030
 #define PCI_DEVICE_ID_PLX_9030 (0x9030)
-#endif
-#ifndef PCI_DEVICE_ID_MRF_EVR200
-#define PCI_DEVICE_ID_MRF_EVR200 (0x10c8) /* as per email Jukka Pietarinen to TSS, 2/7/7 */
 #endif
 #ifndef VME_AM_STD_SUP_DATA
 #define VME_AM_STD_SUP_DATA (0x3D)
@@ -1080,14 +1078,13 @@ int ErConfigure (
         /*---------------------
          * Handle the PMC-EVR 
          */
-		{ int plx, unit;
+		{
 		  EpicsPciDWord	subId;
-		
-		  plx  = 0;
-		  unit = 0;
-                  DeviceId = PCI_DEVICE_ID_MRF_EVR200;
+		  epicsUInt32	subIdEvr200	= ( PCI_DEVICE_ID_MRF_PMCEVR200 << 16 ) | VendorId;
+		  epicsUInt32	subIdEvr230	= ( PCI_DEVICE_ID_MRF_PMCEVR230 << 16 ) | VendorId;
+		  int		unit = 0;
 		  do {
-			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, plx, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
+			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, unit, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
 			/* no more plx chips */
 			  DEBUGPRINT (DP_ERROR, drvMrfErFlag,
 				("ErConfigure: epicsPciFindDevice unable to find match for subsystem vendorid %d, device %d and instance #%d.\n",
@@ -1099,9 +1096,11 @@ int ErConfigure (
 			epicsPciConfigInLong(
 			  (unsigned char) pciBusNo, (unsigned char) pciDevNo, (unsigned char) pciFuncNo,
 			  PCI_SUBSYSTEM_VENDOR_ID, &subId); 
-			plx++;
-		  } while ( (subId != ((DeviceId << 16) | VendorId)) ||
-                            (unit++ < ErPMCCount) );
+		  	if ( subId == subIdEvr200 )
+				break;
+		  	if ( subId == subIdEvr230 )
+				break;
+		  } while ( unit++ < ErPMCCount );
                   ErPMCCount++;
                 }
 

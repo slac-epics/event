@@ -7,9 +7,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef	RTEMS
 #include <rtems.h>
 #include <bsp/pci.h>
 #include <libcpu/io.h>
+#endif	/* RTEMS */
 
 #include <plx9080_eeprom.h>
 

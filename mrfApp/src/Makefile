@@ -32,12 +32,6 @@ ifeq ($(BSP_SUPPORTS_PCI), YES)
     USR_CFLAGS += -DPCI
 endif
 
-ifneq ($(T_A),linux-x86)
-MRFAPI_DIR=$(MRFAPI)/$(T_A)
-else
-MRFAPI_DIR=$(MRFAPI)/linux-i686
-endif
-
 #---------------------
 # Only build for "hardware" IOC's
 #
@@ -118,6 +112,9 @@ devMrfEr_OBJS_vxWorks += evrEEPROMFixup
 endif
 # Linux source
 devMrfEr_OBJS_Linux += drvLinuxEvr
+devMrfEr_OBJS_Linux += evrEEPROMFixup
+# Direct EEPROM access not yet supported in linux
+#devMrfEr_OBJS_Linux += plx9080_eeprom
 
 devMrfErLib_OBJS += $(devMrfEr_OBJS)
 devMrfErLib_SRCS += devMrfErLib_registerRecordDeviceDriver.cpp
@@ -135,12 +132,12 @@ drvMrf_OBJS_RTEMS += $(CRCSR_PROBE_NAME)
 drvMrf_OBJS_vxWorks += mrfVme64x
 drvMrf_OBJS_vxWorks += $(CRCSR_PROBE_NAME)
 drvMrf_OBJS_Linux += drvLinux
-drvMrf_OBJS_Linux += $(MRFAPI_DIR)/erapi.o
-CFLAGS+=-I$(MRFAPI_DIR)
 
 drvMrfLib_OBJS += $(drvMrf_OBJS)
 
 OBJS_IOC_vxWorks  += $(drvMrf_OBJS)
+
+drvMrfLib_LIBS_Linux	+= mrfApi
 
 #---------------------
 # Testing

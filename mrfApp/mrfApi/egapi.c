@@ -15,6 +15,8 @@
 #include <endian.h>
 #include <byteswap.h>
 #include <errno.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "egcpci.h"
 #include "egapi.h"
@@ -197,7 +199,7 @@ int EvgSetMxcTrigMap(volatile struct MrfEgRegs *pEg, int mxc, int map)
     return -1;
 
   if (map >= 0)
-    pEg->MXC[mxc].Control = be32_to_cpu(1 << map + C_EVG_MXCMAP_TRIG_BASE);
+    pEg->MXC[mxc].Control = be32_to_cpu( 1 << (map + C_EVG_MXCMAP_TRIG_BASE));
   else
     pEg->MXC[mxc].Control = be32_to_cpu(0);
 
@@ -323,13 +325,15 @@ void EvgACDump(volatile struct MrfEgRegs *pEg)
   unsigned int result;
 
   result = be32_to_cpu(pEg->ACControl);
-  DEBUG_PRINTF("AC Input div %d delay %d", (result &
-					    (2 << C_EVG_ACCTRL_DIV_HIGH)
-					    - (1 << C_EVG_ACCTRL_DIV_LOW))
-	       >> C_EVG_ACCTRL_DIV_LOW,
-	       (result &
-		(2 << C_EVG_ACCTRL_DELAY_HIGH) - (1 << C_EVG_ACCTRL_DELAY_LOW))
-	       >> C_EVG_ACCTRL_DELAY_LOW);
+  DEBUG_PRINTF(	"AC Input div %d delay %d",
+  				(	result &
+					(	(2 << C_EVG_ACCTRL_DIV_HIGH)
+					-	(1 << C_EVG_ACCTRL_DIV_LOW)	) )
+	       		>>	C_EVG_ACCTRL_DIV_LOW,
+				(	result &
+					(	(2 << C_EVG_ACCTRL_DELAY_HIGH)
+					-	(1 << C_EVG_ACCTRL_DELAY_LOW) ) )
+				>>	C_EVG_ACCTRL_DELAY_LOW	);
   if (result & (1 << C_EVG_ACCTRL_BYPASS))
     DEBUG_PRINTF(" BYPASS");
   if (result & (1 << C_EVG_ACCTRL_ACSYNC))
@@ -485,6 +489,7 @@ int EvgSetUnivinMap(volatile struct MrfEgRegs *pEg, int univ, int trig, int dbus
     map |= (1 << (C_EVG_INMAP_DBUS_BASE + dbus));
 
   pEg->UnivInMap[univ] = be32_to_cpu(map);
+  return 0;
 }
 
 void EvgUnivinDump(volatile struct MrfEgRegs *pEg)
@@ -493,7 +498,7 @@ void EvgUnivinDump(volatile struct MrfEgRegs *pEg)
 
   for (univ = 0; univ < EVG_UNIVINS; univ++)
     {
-      DEBUG_PRINTF("UnivIn%d Mapped to Trig %08x, DBus %02x\n",
+      DEBUG_PRINTF( "UnivIn%d Mapped to Trig %08x, DBus %02x\n", univ,
 		   (be32_to_cpu(pEg->UnivInMap[univ]) >> C_EVG_INMAP_TRIG_BASE)
 		   & ((1 << EVG_MAX_TRIGGERS) - 1),
 		   (be32_to_cpu(pEg->UnivInMap[univ]) >> C_EVG_INMAP_DBUS_BASE)
@@ -545,6 +550,7 @@ void EvgTriggerEventDump(volatile struct MrfEgRegs *pEg)
 int EvgSetUnivOutMap(volatile struct MrfEgRegs *pEg, int output, int map)
 {
   pEg->UnivOutMap[output] = be16_to_cpu(map);
+  return 0;
 }
 
 int EvgSetDBufMode(volatile struct MrfEgRegs *pEg, int enable)

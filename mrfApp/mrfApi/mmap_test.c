@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <endian.h>
 #include <byteswap.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #define DEVICE "/dev/mrfevr3"
 
@@ -18,7 +22,7 @@
 #define be32_to_cpu(x) ((unsigned long)(x))
 #endif
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
   char s[20];
   int fdEvr;
@@ -37,14 +41,14 @@ main(int argc, char *argv[])
   if (argc < 2)
     {
       printf("Usage: %s /dev/mrfevra3\n", argv[0]);
-      return;
+      return -1;
     }
 
   fdEvr = open(argv[1], O_RDWR);
   if (!fdEvr)
     {
       printf("Could not open %s\n", argv[1]);
-      return;
+      return -1;
     }
   if (fdEvr)
     {
@@ -55,7 +59,7 @@ main(int argc, char *argv[])
         }
       if (pa != MAP_FAILED)
 	{
-	  printf("Buffer %08x\n", (unsigned long) pa);
+	  printf("Buffer %08lx\n", (unsigned long) pa);
 	  pEvr = (int *) pa;
 	  do
 	    {
@@ -160,7 +164,7 @@ main(int argc, char *argv[])
 			  }
 			case 4:
 			  p &= -4;
-			  printf("%08x: %08lx ? ", p & 0xfffffffc,
+			  printf("%08x: %08x ? ", p & 0xfffffffc,
 				 be32_to_cpu(pEvr[p/4]));
 			  fflush(stdout);
 			  fgets(s, sizeof(s), stdin);

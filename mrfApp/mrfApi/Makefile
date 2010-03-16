@@ -1,72 +1,83 @@
+#------------------------------------------------------------------------------
+# $(TIMING)/mrfApp/mrfApi/Makefile
+#
+# Author:  Bruce Hill
+# Date:    Mar 15, 2010
+#------------------------------------------------------------------------------
+# EPICS make rules for Micro-Research Finland API library and diagnostic tools
+#------------------------------------------------------------------------------
 
-CFLAGS += -fPIC
-CC=gcc
-OBJECTS = egapi.o irqtest.o irq_monitor.o factest.o
-HEADERS = egapi.h erapi.h
-PKG_DIR = pci_mrfapi
-PKG_FILES = $(PKG_DIR)/COPYING \
-        $(PKG_DIR)/egapi.c \
-        $(PKG_DIR)/egapi.h \
-        $(PKG_DIR)/egcpci.h \
-        $(PKG_DIR)/erapi.c \
-        $(PKG_DIR)/erapi.h \
-        $(PKG_DIR)/evan_monitor.c \
-        $(PKG_DIR)/evrpresc.c \
-        $(PKG_DIR)/irq_monitor.c \
-        $(PKG_DIR)/irqtest.c \
-        $(PKG_DIR)/Makefile \
-        $(PKG_DIR)/mmap_test.c \
-        $(PKG_DIR)/factest.c \
-        $(PKG_DIR)/fwdump.c
+#---------------------
+# Set up the Environment
+#
+TOP = ../..
+SOURCE_DIR := $(patsubst %../.., %., $(TOP))
 
-PKG_DATE = $(shell date +"%y%m%d")
-PKG_NAME = pci_mrfapi.$(PKG_DATE).tar.gz
+include $(TOP)/configure/CONFIG
 
-all: evan_monitor evrpresc mmap_test irqtest irq_monitor factest
+USR_CFLAGS += -g
+USR_CFLAGS += -O0
+USR_CFLAGS += -fPIC
+USR_CFLAGS += -std=gnu99
 
-package: $(PKG_NAME)
 
-$(PKG_NAME):
-	cd ..; tar zcvf $@ $(PKG_FILES)
+#---------------------
+# Build the MRF APplication Interface library
+#
+LIBRARY_IOC_Linux	+= mrfApi
 
-egapi.o: egapi.c egapi.h
-	$(CC) $(CFLAGS) -c egapi.c
+# API lib source
+mrfApi_SRCS			+=	egapi.c
+mrfApi_SRCS			+=	erapi.c
 
-erapi.o: erapi.c erapi.h
-	$(CC) $(CFLAGS) -c erapi.c
+#---------------------
+# Build the MRF Diagnostic tools
 
-evan_monitor.o: evan_monitor.c egapi.h
-	$(CC) $(CFLAGS) -c evan_monitor.c
+# ? Monitor 
+PROD_IOC_Linux		+= evan_monitor
+evan_monitor_SRCS	+= evan_monitor.c
+evan_monitor_SRCS	+= egapi.c
 
-evan_monitor: evan_monitor.o egapi.o
-	$(CC) $(LDFLAGS) -o $@ evan_monitor.o egapi.o
+# EVR Prescaler enable
+PROD_IOC_Linuxc		+= evrpresc
+evrpresc_SRCS		+= evrpresc.c
 
-evrpresc.o: evrpresc.c erapi.h
-	$(CC) $(CFLAGS) -c evrpresc.c
+# Memory map test
+PROD_IOC_Linux		+= mmap_test
+mmap_test_SRCS		+= mmap_test.c
 
-evrpresc: evrpresc.o erapi.o
-	$(CC) $(LDFLAGS) -o $@ evrpresc.o erapi.o
+# IRQ test
+PROD_IOC_Linux		+= irqtest
+irqtest_SRCS		+= irqtest.c
+irqtest_SRCS		+= erapi.c
+irqtest_SRCS		+= egapi.c
 
-mmap_test: mmap_test.c
-	$(CC) -o $@ $<
+# IRQ monitor
+PROD_IOC_Linux		+= irq_monitor
+irq_monitor_SRCS	+= irq_monitor.c
+irq_monitor_SRCS	+= erapi.c
 
-irqtest.o: irqtest.c egapi.h erapi.h
-	$(CC) $(CFLAGS) -c irqtest.c
+# Factory Test
+PROD_IOC_Linux		+= factest
+factest_SRCS		+= factest.c
+factest_SRCS		+= egapi.c
+factest_SRCS		+= erapi.c
 
-irqtest: irqtest.o egapi.o erapi.o
-	$(CC) $(LDFLAGS) -o $@ irqtest.o egapi.o erapi.o
 
-irq_monitor.o: irq_monitor.c egapi.h erapi.h
-	$(CC) $(CFLAGS) -c irq_monitor.c
+#---------------------
+# Install include files
+#
+INC += egcpci.h
+INC += egapi.h
+INC += erapi.h
 
-irq_monitor: irq_monitor.o egapi.o erapi.o
-	$(CC) $(LDFLAGS) -o $@ irq_monitor.o egapi.o erapi.o
 
-factest.o: factest.c egapi.h erapi.h
-	$(CC) $(CFLAGS) -c factest.c
+#=======================================================================#
+#                               RULES                                   #
+#=======================================================================#
 
-factest: factest.o egapi.o erapi.o
-	$(CC) $(LDFLAGS) -o $@ factest.o egapi.o erapi.o
+#---------------------
+# Generic EPICS build rules
+#
+include $(TOP)/configure/RULES
 
-clean:
-	rm -rf *.o *~ evan_monitor evrpresc mmap_test irqtest irq_monitor factest
