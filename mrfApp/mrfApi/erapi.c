@@ -18,6 +18,8 @@
 #include <signal.h>
 #include <sys/ioctl.h>
 #include <signal.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "erapi.h"
 
@@ -187,6 +189,7 @@ int EvrDumpMapRam(volatile struct MrfErRegs *pEr, int ram)
 	  DEBUG_PRINTF("\n");
 	}
     }
+  return 0;
 }
 
 int EvrMapRamEnable(volatile struct MrfErRegs *pEr, int ram, int enable)
@@ -388,7 +391,7 @@ int EvrDumpFIFO(volatile struct MrfErRegs *pEr)
       i = EvrGetFIFOEvent(pEr, &fe);
       if (!i)
 	{
-	  printf("Code %08x, %08x:%08x\n",
+	  printf("Code %08lx, %08lx:%08lx\n",
 		 fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
 	}
     }
@@ -425,6 +428,7 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
   pEr->Pulse[pulse].Prescaler = be32_to_cpu(presc);
   pEr->Pulse[pulse].Delay = be32_to_cpu(delay);
   pEr->Pulse[pulse].Width = be32_to_cpu(width);
+  return 0;
 }
 
 void EvrDumpPulses(volatile struct MrfErRegs *pEr, int pulses)
@@ -505,6 +509,7 @@ int EvrSetUnivOutMap(volatile struct MrfErRegs *pEr, int output, int map)
     return -1;
 
   pEr->UnivOutMap[output] = be16_to_cpu(map);
+  return 0;
 }
 
 void EvrDumpUnivOutMap(volatile struct MrfErRegs *pEr, int outputs)
@@ -521,6 +526,7 @@ int EvrSetFPOutMap(volatile struct MrfErRegs *pEr, int output, int map)
     return -1;
 
   pEr->FPOutMap[output] = be16_to_cpu(map);
+  return 0;
 }
 
 void EvrDumpFPOutMap(volatile struct MrfErRegs *pEr, int outputs)
@@ -537,6 +543,7 @@ int EvrSetTBOutMap(volatile struct MrfErRegs *pEr, int output, int map)
     return -1;
 
   pEr->TBOutMap[output] = be16_to_cpu(map);
+  return 0;
 }
 
 void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs)
@@ -593,6 +600,7 @@ void EvrIrqHandled(int fd)
 int EvrSetPulseIrqMap(volatile struct MrfErRegs *pEr, int map)
 {
   pEr->PulseIrqMap = be32_to_cpu(map);
+  return 0;
 }
 
 void EvrClearDiagCounters(volatile struct MrfErRegs *pEr)

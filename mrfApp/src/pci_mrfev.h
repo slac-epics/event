@@ -1,3 +1,6 @@
+#ifndef	PCI_MRFEV_H
+#define	PCI_MRFEV_H
+
 /*
   pci_mrfev.h -- Definitions for Micro-Research Event Generator /
                  Event Receiver Linux 2.6 driver
@@ -47,6 +50,7 @@
 #define XCF_BLOCK_SIZE              1024
 #define XCF_ERASE_TCKS              140000000
 
+#if 0	/* This stuff won't compile and link w/o other MRF src we don't have */
 struct mrf_dev {
   int    access_mode;        /* Only one minor device is allowed open
                                 at a time. access_mode hold either 0 for
@@ -97,6 +101,7 @@ long ev_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg);
 int ev_fasync(int fd, struct file *filp, int mode);
 int ev_remap_mmap(struct file *filp, struct vm_area_struct *vma);
 irqreturn_t ev_interrupt(int irq, void *dev_id, struct pt_regs *regs);
+#endif	/* This stuff won't compile and link w/o other MRF src we don't have */
 
 #define EV_IOC_MAGIC 220
 #define EV_IOCRESET  _IO(EV_IOC_MAGIC, 0)
@@ -204,6 +209,7 @@ irqreturn_t ev_interrupt(int irq, void *dev_id, struct pt_regs *regs);
 #define XCFXXP_XSC_DATA_SUCR     0x000e
 #define XCFXXP_XSC_ADDRESS_DUMP  0x00e6
 
+#if 0	/* This stuff won't compile and link w/o other MRF src we don't have */
 struct Pci9030LocalConf
 {
   unsigned int LAS0RR;    /* 0x00 Local Address Space 0 Range */
@@ -295,4 +301,6 @@ int jtag_XCF_progend(struct mrf_dev *ev_dev);
 int jtag_init_load_fpga(struct mrf_dev *ev_dev);
 #define jtag_load_fpga_byte(x, y) jtag_SCFD(x, y, 0)
 int jtag_end_load_fpga(struct mrf_dev *ev_dev);
+#endif	/* This stuff won't compile and link w/o other MRF src we don't have */
 
+#endif	/*	PCI_MRFEV_H	*/

@@ -26,6 +26,8 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include "egcpci.h"
 #include "egapi.h"
 #include "erapi.h"
@@ -103,11 +105,11 @@ int              fdIrqEr;
 void evr_irq_handler(int param)
 {
   int flags, i;
-  time_t t;
 
   flags = EvrGetIrqFlags(pIrqEr);
 
   /*
+  time_t t;
   t = time(NULL);
   printf("IRQ %08x %s", flags, asctime(localtime(&t)));
   */
@@ -266,14 +268,14 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	    {
 	      if (EvrGetDiagCounter(pEr, j-1))
 		{
-		  printf(ERROR_TEXT "1 Spurious pulses on UNIVOUT%d: %d, i = %d, j = %d\n", j-1,
+		  printf(ERROR_TEXT "1 Spurious pulses on UNIVOUT%d: %ld, i = %d, j = %d\n", j-1,
 			 EvrGetDiagCounter(pEr, j-1), i, j);
 		  err_pulse++;
 		}
 	    }
 	  else if (EvrGetDiagCounter(pEr, j-1) != PULSES)
 	    {
-	      printf(ERROR_TEXT "1 Wrong number of pulses on UNIVOUT%d: %d (%d), i = %d, j = %d\n",
+	      printf(ERROR_TEXT "1 Wrong number of pulses on UNIVOUT%d: %ld (%d), i = %d, j = %d\n",
 		     j-1, EvrGetDiagCounter(pEr, j-1), PULSES, i, j);
 	      err_pulse++;
 	    }
@@ -330,12 +332,12 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	  }
 	if ((ev2.EventCode & 0x00ff) != j)
 	  {
-	    printf(ERROR_TEXT "Evan: wrong event code %02x/%02x\n", ev2.EventCode, j);
+	    printf(ERROR_TEXT "Evan: wrong event code %02lx/%02x\n", ev2.EventCode, j);
 	    err_evan++;
 	  }
 	if (ev2.TimestampLow <= ev1.TimestampLow)
 	  {
-	    printf(ERROR_TEXT "Evan: Timestamp error %d - %d\n", ev1.TimestampLow, ev2.TimestampLow);
+	    printf(ERROR_TEXT "Evan: Timestamp error %ld - %ld\n", ev1.TimestampLow, ev2.TimestampLow);
 	    err_evan++;
 	  }
 
@@ -674,8 +676,8 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	      err_dbuf++;
 	      for (size = 0; size < i/4; size++)
 		if (buf1[size] != buf2[size])
-		printf(ERROR_TEXT "TX %08x, %08x, RX %08x, %08x\n", buf1[size], pEg->Databuf[size], buf2[size], pEr->Databuf[size]);
-	      //		printf("TX %08x, RX %08x\n", pEg->Databuf[size], pEr->Databuf[size]);
+		printf(ERROR_TEXT "TX %08x, %08lx, RX %08x, %08lx\n", buf1[size], pEg->Databuf[size], buf2[size], pEr->Databuf[size]);
+	      //		printf("TX %08lx, RX %08lx\n", pEg->Databuf[size], pEr->Databuf[size]);
 	    }
       }
 
@@ -730,14 +732,14 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	    {
 	      if (EvrGetDiagCounter(pEr, j-1))
 		{
-		  printf(ERROR_TEXT "2 Spurious pulses on UNIVOUT%d: %d\n", j-1,
+		  printf(ERROR_TEXT "2 Spurious pulses on UNIVOUT%d: %ld\n", j-1,
 			 EvrGetDiagCounter(pEr, j-1));
 		  err_pulse++;
 		}
 	    }
 	  else if (EvrGetDiagCounter(pEr, j-1) != PULSES)
 	    {
-	      printf(ERROR_TEXT "2 Wrong number of pulses on UNIVOUT%d: %d (%d)\n",
+	      printf(ERROR_TEXT "2 Wrong number of pulses on UNIVOUT%d: %ld (%d)\n",
 		     j-1, EvrGetDiagCounter(pEr, j-1), PULSES);
 	      err_pulse++;
 	    }
@@ -1063,18 +1065,18 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	  {
 	    if (fe[i].EventCode != (1 << i))
 	      {
-		printf(ERROR_TEXT "Wrong event code in FIFO %d/%d\n", fe[i].EventCode, (1 << i));
+		printf(ERROR_TEXT "Wrong event code in FIFO %ld/%d\n", fe[i].EventCode, (1 << i));
 		err_fifo++;
 	      }
 	    if (fe[i].TimestampHigh != cnt[1])
 	      {
-		printf(ERROR_TEXT "Seconds error in FIFO %08x/%08x\n", fe[i].TimestampHigh, cnt[1]);
+		printf(ERROR_TEXT "Seconds error in FIFO %08lx/%08x\n", fe[i].TimestampHigh, cnt[1]);
 		err_fifo++;
 	      }
 	    if (i > 0)
 	      if (fe[i].TimestampLow < fe[i-1].TimestampLow)
 		{
-		  printf(ERROR_TEXT "Timestamp error in FIFO %08x/%08x\n",  fe[i-1].TimestampLow,
+		  printf(ERROR_TEXT "Timestamp error in FIFO %08lx/%08lx\n",  fe[i-1].TimestampLow,
 			 fe[i].TimestampLow);
 		  err_fifo++;
 		}
@@ -1083,7 +1085,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
     if (!j)
       {
-	printf(ERROR_TEXT "FIFO not empty after reading %i events.\n");
+	printf( ERROR_TEXT "FIFO not empty after reading %i events.\n", i );
 	err_fifo++;
       }
 
@@ -1230,14 +1232,14 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	    {
 	      if (EvrGetDiagCounter(pBEr, j))
 		{
-		  printf(ERROR_TEXT "3 Spurious pulses on UNIVOUT%d: %d\n", j,
+		  printf(ERROR_TEXT "3 Spurious pulses on UNIVOUT%d: %ld\n", j,
 			 EvrGetDiagCounter(pBEr, j));
 		  err_bev++;
 		}
 	    }
 	  else if (EvrGetDiagCounter(pBEr, j) != PULSES)
 	    {
-	      printf(ERROR_TEXT "3 Wrong number of pulses on UNIVOUT%d: %d (%d)\n",
+	      printf(ERROR_TEXT "3 Wrong number of pulses on UNIVOUT%d: %ld (%d)\n",
 		     j, EvrGetDiagCounter(pBEr, j), PULSES);
 	      err_bev++;
 	    }
@@ -1287,14 +1289,14 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	    {
 	      if (EvrGetDiagCounter(pBEr, j+2))
 		{
-		  printf(ERROR_TEXT "4 Spurious pulses on UNIVOUT%d: %d\n", j+2,
+		  printf(ERROR_TEXT "4 Spurious pulses on UNIVOUT%d: %ld\n", j+2,
 			 EvrGetDiagCounter(pBEr, j+2));
 		  err_bdbus++;
 		}
 	    }
 	  else if (EvrGetDiagCounter(pBEr, j+2) != PULSES)
 	    {
-	      printf(ERROR_TEXT "4 Wrong number of pulses on UNIVOUT%d: %d (%d)\n",
+	      printf(ERROR_TEXT "4 Wrong number of pulses on UNIVOUT%d: %ld (%d)\n",
 		     j+2, EvrGetDiagCounter(pBEr, j+2), PULSES);
 	      err_bdbus++;
 	    }
@@ -1363,7 +1365,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	      err_bdbuf++;
 	      for (size = 0; size < i/4; size++)
 		if (buf1[size] != buf2[size])
-		printf("TX %08x, %08x, RX %08x, %08x\n", buf1[size], pEr->Databuf[size], buf2[size], pBEr->Databuf[size]);
+		printf("TX %08x, %08lx, RX %08x, %08lx\n", buf1[size], pEr->Databuf[size], buf2[size], pBEr->Databuf[size]);
 	      //		printf("TX %08x, RX %08x\n", pEr->Databuf[size], pBEr->Databuf[size]);
 	    }
       }
@@ -1408,7 +1410,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
   
   usleep(1000);
 
-  if (i = EvrGetDiagCounter(pBEr, 1))
+  if ( (i = EvrGetDiagCounter(pBEr, 1)) != 0 )
     {
       printf(ERROR_TEXT "Spurios events %d (fowarding disabled)\n", i);
       err_fwd++;
@@ -1459,11 +1461,11 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	  }
 	if (fe.EventCode != eventseq[i])
 	  {
-	    printf(ERROR_TEXT "Received wrong event %02x (%02x)\n",
+	    printf(ERROR_TEXT "Received wrong event %02lx (%02x)\n",
 		   fe.EventCode, eventseq[i]);
 	    err_fwd++;
 	  }
-	printf("Forwarded event Code %08x, %08x:%08x\n",
+	printf("Forwarded event Code %08lx, %08lx:%08lx\n",
 	       fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
       }
   }
@@ -1514,7 +1516,7 @@ int dlytest(struct MrfEgRegs *pEg, struct MrfErRegs *pEr)
    * Test DLYs
    */
 
-  int i, j;
+  int i;
 
   EvrEnable(pEr, 1);
   if (!EvrGetEnable(pEr))
@@ -1596,7 +1598,7 @@ int toggle_fp(struct MrfErRegs *pEr)
    * Toggle PMC-EVR-230 front panel outputs
    */
 
-  int i, j;
+  int i;
 
   EvrEnable(pEr, 1);
   if (!EvrGetEnable(pEr))
@@ -1621,6 +1623,7 @@ int toggle_fp(struct MrfErRegs *pEr)
       EvrSetFPOutMap(pEr, 1, C_EVR_SIGNAL_MAP_LOW);
       usleep(50000);
     }
+  return 0;
 }
 
 int main(int argc, char *argv[])

@@ -3,9 +3,18 @@
 /* $Id: plx9080_eeprom.h,v 1.1 2007/02/09 01:39:03 saa Exp $ */
 
 /* PLX9080 serial EEPROM access (93CS46 device) */
+
 #include <stdio.h>
+
+#ifdef	RTEMS
 #include <rtems.h>
+#endif	/* RTEMS	*/
+
+#ifdef	linux
+#include "linux/pci_ids.h"
+#else
 #include <bsp/pci.h>
+#endif	/* linux */
 
 /* Primitive Driver for Accessing EEPROM attached to
  * PLX9080 or PLX9030 chips.

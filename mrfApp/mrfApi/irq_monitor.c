@@ -42,8 +42,6 @@ void user_sig_handler(int parm)
 
 int main(int argc, char *argv[])
 {
-  int              i;
-
   if (argc < 2)
     {
       printf("Usage: %s /dev/era3\n", argv[0]);
@@ -64,9 +62,12 @@ int main(int argc, char *argv[])
   EvrIrqEnable(pEr, EVR_IRQ_MASTER_ENABLE | EVR_IRQFLAG_PULSE |
 	       EVR_IRQFLAG_HEARTBEAT | EVR_IRQFLAG_VIOLATION);
   printf("Press 'q' + ENTER to exit...\n");
-  while(getchar() != 'q');
+  while(getchar() != 'q')
+  	;
 
   EvrIrqEnable(pEr, 0);
 
   EvrClose(fdEr);
+
+  return 0;
 }

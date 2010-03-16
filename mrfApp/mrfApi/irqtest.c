@@ -9,6 +9,7 @@
 
 #include <errno.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "egcpci.h"
 #include "egapi.h"
 #include "erapi.h"
@@ -30,8 +31,6 @@ void user_sig_handler(int parm)
 
 int main(int argc, char *argv[])
 {
-  int              i;
-
   if (argc < 2)
     {
       printf("Usage: %s /dev/ega3 /dev/era3\n", argv[0]);
