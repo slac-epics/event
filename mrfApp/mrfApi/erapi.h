@@ -17,15 +17,15 @@
 #define u16 unsigned short
 #endif
 #ifndef u32
-#define u32 unsigned long
+#define u32 unsigned int
 #endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be16_to_cpu(x) bswap_16(x)
 #define be32_to_cpu(x) bswap_32(x)
 #else
-#define be16_to_cpu(x) ((unsigned short)(x))
-#define be32_to_cpu(x) ((unsigned long)(x))
+#define be16_to_cpu(x) ((u16)(x))
+#define be32_to_cpu(x) ((u32)(x))
 #endif
 
 #define EVR_MAX_FPOUT_MAP   32

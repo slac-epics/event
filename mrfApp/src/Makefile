@@ -27,6 +27,7 @@ include $(TOP)/configure/CONFIG
 include $(SOURCE_DIR)/MRF_CONFIG
 
 #USR_CFLAGS += -pedantic
+USR_CFLAGS += -O0
 USR_CFLAGS += -DDEBUG_PRINT
 ifeq ($(BSP_SUPPORTS_PCI), YES)
     USR_CFLAGS += -DPCI
@@ -112,8 +113,8 @@ devMrfEr_OBJS_vxWorks += evrEEPROMFixup
 endif
 # Linux source
 devMrfEr_OBJS_Linux += drvLinuxEvr
-devMrfEr_OBJS_Linux += evrEEPROMFixup
 # Direct EEPROM access not yet supported in linux
+#devMrfEr_OBJS_Linux += evrEEPROMFixup
 #devMrfEr_OBJS_Linux += plx9080_eeprom
 
 devMrfErLib_OBJS += $(devMrfEr_OBJS)
