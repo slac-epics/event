@@ -1,6 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-2-0: 	Build with base-R3-14-8-2-lcls6
+	      	Build with rtems-4.9.4
+
 event-R3-1-7:
 	* Added status PVs for Event Code Sequences (ecs)
 
