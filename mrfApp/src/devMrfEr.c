@@ -189,7 +189,7 @@ epicsStatus ErInitRecord (erRecord *pRec)
     */
     if (pCard->pRec != NULL) {
         recGblRecordError (S_dev_badCard, (void *)pRec, 
-                          "devMrfEr::ErInitErRec() onlyone record allowed per card");
+                          "devMrfEr::ErInitErRec() only one record allowed per card");
         return (S_dev_badCard);
     }/*end if card already initialized*/
 
