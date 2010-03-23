@@ -12,12 +12,16 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #
 # XTOD templates
+DB_INSTALLS += basic-evr.substitutions
+DB_INSTALLS += evrPmc230.template
+DB_INSTALLS += evrPmcEvent.template
 DB_INSTALLS += evrEventCtrl.template
 DB_INSTALLS += evrEventRate.template
 DB_INSTALLS += evrLabels.template
 DB_INSTALLS += evrTaxi.template
 DB_INSTALLS += evr.template
 DB_INSTALLS += evrWithExtDelays.template
+
 
 include $(TOP)/configure/RULES
 #----------------------------------------

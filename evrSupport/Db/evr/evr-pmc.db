@@ -6,9 +6,9 @@
 #	TRIG_WIDTH = Width of all triggers generated.
 #	TRIG_DELAY = Delay to apply between event and trigger.
 # 		WARNING: TRIG_DELAY MUST BE NON-0 IF YOU USE DGX
-#	TRIG0_SRC = Source of the first trigger output on the PMC card (see bellow)
-#	TRIG1_SRC = Source of the second trigger output on the PMC card (see bellow)
-#	TRIG2_SRC = Source of the third trigger output on the PMC card (see bellow)
+#	TRIG0_SRC = Source of the first trigger output on the PMC card (see below)
+#	TRIG1_SRC = Source of the second trigger output on the PMC card (see below)
+#	TRIG2_SRC = Source of the third trigger output on the PMC card (see below)
 #
 # For the trigger sources (TRIGX_SRC) the following are valid:
 # 0 = Extended Delay Trigger 0 (DG0)
