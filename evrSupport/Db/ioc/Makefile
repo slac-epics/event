@@ -30,7 +30,6 @@ DB += bsaAMPLEdef.db
 DB += bsaPHASEdef.db
 DB += bsaPWREdef.db
 DB += bsaEnergyEdef.db
-DB += basic-evr.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------

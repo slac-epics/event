@@ -4,6 +4,23 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R?-?-?: Mar 23, 2010
+	* mrfApp/src/drvLinux.c -
+		Ported updates from Steve's 3.0.1 Event module:
+			Modified front panel output map code to handle CPCI or PMC FormFactor
+				(FormFactor is last parameter of ErConfigure() call)
+			Lock IRQ before calling EvrIrqAssignHandler()
+		Added diagnostic code enabled via ErDebugLevel( 1 )
+		Improved error message when find_free_pulsegen() fails
+	* Added README_LINUX for linux EVR installation procedure
+	* Added new template files evrPmc230.template and evrPmcEvent.template
+	* Modifed basic-evr.substitutions to use new templates to fix prior
+		deficiencies and to configure only the pulse generators
+		supported by the PMC EVR.
+	* Moved basic-evr.substitutions into evrSupport/Db/templates where
+		it belongs, as it is a sample substitution file where other files
+		in evrSupport/Db/ioc are specific to lcls IOC's.
+
 event-R2-8-1: Jan 20, 2009
 	* evrSupport/src/bsa.c - Report SOFT INVALID alarm when there's been
           no valid inputs to the average for the BSA record.
