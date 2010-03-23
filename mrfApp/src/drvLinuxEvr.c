@@ -1,6 +1,7 @@
-/* This code is a dummy implementation of the mrfApp EVR/EVG driver code
+/*
+ *	This code is a linux implementation of the mrfApp EVR driver code
  *
- * Copyright 2008, Stanford University
+ * Copyright 2010, Stanford University
  * Author: Remi Machet <rmachet@slac.stanford.edu>
  *
  * Released under the GPLv2 licence <http://www.gnu.org/licenses/gpl-2.0.html>
@@ -8,6 +9,7 @@
 
 #define  EVR_DRIVER_SUPPORT_MODULE   /* Indicates we are in the driver support module environment */
 #include "drvMrfEr.h"
+#undef	EVR_MAX_BUFFER
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
 #include <registryFunction.h>   /* EPICS Registry support library                                 */
 #include <epicsStdio.h>
@@ -36,7 +38,8 @@
 /*                                                                                                */
 
 #define TOTAL_EVR_PULSES	10
-enum outputs_mapping_id {
+enum outputs_mapping_id
+{
 	PULSE_GENERATOR_0 = 0,
 	PULSE_GENERATOR_1 = 1,
 	PULSE_GENERATOR_2 = 2,
@@ -65,7 +68,8 @@ enum outputs_mapping_id {
 
 #define TOTAL_FP_CHANNELS	8
 #define TOTAL_TB_CHANNELS	32
-enum transition_board_channel {
+enum transition_board_channel
+{
 	DELAYED_PULSE_0 = 0,
 	DELAYED_PULSE_1 = 1,
 	DELAYED_PULSE_2 = 2,
@@ -103,23 +107,25 @@ enum transition_board_channel {
 
 #define TOTAL_PULSE_GENERATORS	10
 
-struct PulseInfo {
-	epicsBoolean DBusEnable;	/* Set if the DBus is used instead of Pulse */
-	epicsBoolean Enable;		/* Should a pulse generator be used */
-	epicsUInt32 Delay;		/* Desired delay */
-	epicsUInt32 Width;		/* Desired width */
-	epicsBoolean Pol;		/* Desired polarity */
+struct PulseInfo
+{
+	epicsBoolean	DBusEnable;	/* Set if the DBus is used instead of Pulse */
+	epicsBoolean	Enable;		/* Should a pulse generator be used */
+	epicsUInt32		Delay;		/* Desired delay */
+	epicsUInt32		Width;		/* Desired width */
+	epicsBoolean	Pol;		/* Desired polarity */
 };
 
-struct LinuxErCardStruct {
-	struct ErCardStruct ErCard;
+struct LinuxErCardStruct
+{
+	struct ErCardStruct				ErCard;
 	/* Backplane channels on the old firmware, those now share
-	   a common set of ressources, we need to keep track of them */
-	struct PulseInfo OTP[EVR_NUM_OTP];
+	   a common set of resources, we need to keep track of them */
+	struct PulseInfo				OTP[EVR_NUM_OTP];
 	/* we cache the Map for each channel to go faster */
-	enum outputs_mapping_id tb_channel[TOTAL_TB_CHANNELS];
-	enum transition_board_channel fp_channel[TOTAL_FP_CHANNELS];
-	enum outputs_mapping_id pulse_irq;
+	enum outputs_mapping_id			tb_channel[TOTAL_TB_CHANNELS];
+	enum transition_board_channel	fp_channel[TOTAL_FP_CHANNELS];
+	enum outputs_mapping_id			pulse_irq;
 };
 #ifdef __compiler_offsetof
 #define offsetof(TYPE,MEMBER) __compiler_offsetof(TYPE,MEMBER)
@@ -160,6 +166,8 @@ int find_free_pulsegen(struct LinuxErCardStruct *pLinuxErCard)
 		/* If no channel uses this pulse it is available */
 		if(id != TOTAL_TB_CHANNELS)
 			continue;
+		if ( ErDebug >= 1 )
+			printf( "%s: Pulse %d is available.\n", __func__, pulse - PULSE_GENERATOR_0 );
 		return pulse-PULSE_GENERATOR_0;
 	}
 	return -1;
@@ -173,12 +181,16 @@ int update_fp_map(struct LinuxErCardStruct *pLinuxErCard, enum transition_board_
 {
 	int fp, count = 0;
 	
-	if(channel >= 32)	/* just in case someone would call this API with a value
-					that is valid for FP but has no meaning as a TB output */
+	/* just in case someone would call this API with a value
+	   that is valid for FP but has no meaning as a TB output */
+	if(channel >= 32)
 		return 0;
 	for(fp = 0; fp < TOTAL_FP_CHANNELS; fp++) {
 		if(pLinuxErCard->fp_channel[fp] == channel) {
-			EvrSetFPOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
+			if(pLinuxErCard->ErCard.FormFactor == PMC_EVR)
+				EvrSetFPOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
+			if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR)
+				EvrSetUnivOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
 			count++;
 		}
 	}
@@ -460,8 +472,8 @@ static int ErConfigure (
 	pCard->Slot = fdEvr;	/* we steal this irrelevant field */
 	/* Set the clock divider. For now it is a fixed value */
 	EvrSetFracDiv(pEr, FR_SYNTH_WORD);
-	EvrIrqAssignHandler(pEr, fdEvr, ErIrqHandler);
 	ErEnableIrq_nolock(pCard, EVR_IRQ_OFF);
+	EvrIrqAssignHandler(pEr, fdEvr, ErIrqHandler);
 	pCard->IrqLevel = 1;	/* Tell the interrupt handler this interrupt is enabled */
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);
@@ -506,7 +518,7 @@ epicsBoolean ErCheckTaxi(ErCardStruct *pCard)
 |*-------------------------------------------------------------------------------------------------
 |* NOTES:
 |* Debug Level Definitions:
-|*    0: Now debug output produced.
+|*    0: No debug output produced.
 |*    1: Messages on entry to driver and device initialization routines
 |*       Messages when the event mapping RAM is changed.
 |*   10: All previous messages, plus:
@@ -1002,8 +1014,15 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
 	enum outputs_mapping_id map;
 	int pulse;
-	
-	if(Channel >= EVR_NUM_DG) {
+
+	if ( ErDebug >= 1 )
+		printf( "%s: EVR %d-%d %s DG %d: del=%u, wid=%u, pre=%u, pol=%s.\n",
+				__func__, pCard->Cardno, pCard->Slot,
+				( Enable ? "Enable" : "Disable" ),
+				Channel, Delay, Width, Prescaler,
+				( Pol ? "Nml" : "Inv" )	);
+
+	if( Channel < 0 || Channel >= EVR_NUM_DG ) {
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
 		return;
 	}
@@ -1018,7 +1037,7 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 			/* Check for error */
 			if (pulse < 0) {
 				epicsMutexUnlock(pCard->CardLock);
-				errlogPrintf("%s: reached max number of pulse generator.\n", __func__);
+				errlogPrintf("%s: No free pulse generators! Wrong template?\n", __func__);
 				return;
 			}
 			map = pulse + PULSE_GENERATOR_0;
@@ -1068,6 +1087,12 @@ void ErSetDirq(ErCardStruct *pCard, epicsBoolean Enable, epicsUInt16 Delay, epic
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
 	int pulse;
 
+	if ( ErDebug >= 1 )
+		printf( "%s: EVR %d-%d %s D-IRQ: del=%u, pre=%u.\n",
+				__func__, pCard->Cardno, pCard->Slot,
+				( Enable ? "Enable" : "Disable" ),
+				Delay, Prescaler );
+
 	epicsMutexLock(pCard->CardLock);
 	if(Enable) {
 		if((pLinuxErCard->pulse_irq < PULSE_GENERATOR_0) || (pLinuxErCard->pulse_irq > PULSE_GENERATOR_9)) {
@@ -1075,7 +1100,7 @@ void ErSetDirq(ErCardStruct *pCard, epicsBoolean Enable, epicsUInt16 Delay, epic
 			/* Check for error */
 			if (pulse < 0) {
 				epicsMutexUnlock(pCard->CardLock);
-				errlogPrintf("%s: reached max number of pulse generator.\n", __func__);
+				errlogPrintf("%s: No free pulse generators! Wrong template?\n", __func__);
 				return;
 			}
 			pLinuxErCard->pulse_irq = pulse + PULSE_GENERATOR_0;
@@ -1165,6 +1190,12 @@ void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
 
+	if ( ErDebug >= 1 )
+		printf( "%s: EVR %d-%d %s OTB %d\n",
+				__func__, pCard->Cardno, pCard->Slot,
+				( Enable ? "Enable" : "Disable" ),
+				Channel );
+
 	if(Enable) {
 		epicsMutexLock(pCard->CardLock);
 		EvrSetTBOutMap(pEr, OTP_DBUS_0 + Channel, DBUS_0 + Channel);
@@ -1174,10 +1205,10 @@ void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		epicsMutexUnlock(pCard->CardLock);
 	} else {
 		pLinuxErCard->OTP[Channel].DBusEnable = epicsFalse;
-		ErSetOtp(pCard, Channel, pLinuxErCard->OTP[Channel].Enable,
-			pLinuxErCard->OTP[Channel].Delay, 
-			pLinuxErCard->OTP[Channel].Width,
-			pLinuxErCard->OTP[Channel].Pol);
+		ErSetOtp(	pCard, Channel, pLinuxErCard->OTP[Channel].Enable,
+					pLinuxErCard->OTP[Channel].Delay, 
+					pLinuxErCard->OTP[Channel].Width,
+					pLinuxErCard->OTP[Channel].Pol );
 	}
 	return;
 }
@@ -1222,7 +1253,7 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		/* Check for error */
 		if (pulse < 0) {
 			epicsMutexUnlock(pCard->CardLock);
-			errlogPrintf("%s: reached max number of pulse generator.\n", __func__);
+			errlogPrintf("%s: No free pulse generators! Wrong template?\n", __func__);
 			return;
 		}
 		map = pulse + PULSE_GENERATOR_0;
@@ -1247,14 +1278,13 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	return;
 }
 
+
+/**	ErSetOtp
+ *	Enable or disable a Programmable Width (OTP) channel
+ ***********************************************************************************************/
 void ErSetOtp(
-
-   /***********************************************************************************************/
-   /*  Parameter Declarations                                                                     */
-   /***********************************************************************************************/
-
     ErCardStruct                  *pCard,       /* Pointer to Event Receiver card structure       */
-    int                            Channel,     /* Channel number of the OTP channel to set       */
+    int                            Channel,     /* Channel number (0-13) of the OTP channel		  */
     epicsBoolean                   Enable,      /* Enable/Disable flag                            */
     epicsUInt32                    Delay,       /* Desired delay                                  */
     epicsUInt32                    Width,       /* Desired width                                  */
@@ -1264,8 +1294,15 @@ void ErSetOtp(
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
 	enum outputs_mapping_id map;
 	int pulse;
-	
-	if(Channel >= EVR_NUM_OTP) {
+
+	if ( ErDebug >= 1 )
+		printf( "%s: EVR %d-%d %s OTP%d: del=%u, wid=%u, pol=%s.\n",
+				__func__, pCard->Cardno, pCard->Slot,
+				( Enable ? "Enable" : "Disable" ),
+				Channel, Delay, Width,
+				( Pol ? "Nml" : "Inv" )	);
+
+	if( Channel < 0 || Channel >= EVR_NUM_OTP ) {
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
 		return;
 	}
@@ -1287,7 +1324,7 @@ void ErSetOtp(
 				/* Check for error */
 				if (pulse < 0) {
 					epicsMutexUnlock(pCard->CardLock);
-					errlogPrintf("%s: reached max number of pulse generator.\n", __func__);
+					errlogPrintf("%s: No free pulse generators! Wrong template?\n", __func__);
 					return;
 				}
 				map = pulse + PULSE_GENERATOR_0;
@@ -1320,12 +1357,18 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
 	enum outputs_mapping_id map;
 	int pulse;
+
+	if ( ErDebug >= 1 )
+		printf( "%s: EVR %d-%d %s Trg %d.\n",
+				__func__, pCard->Cardno, pCard->Slot,
+				( Enable ? "Enable" : "Disable" ),
+				Channel );
 	
-	if(Channel >= EVR_NUM_TRG) {
+	if ( Channel < 0 || Channel >= EVR_NUM_TRG ) {
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
 		return;
 	}
-	
+
 	epicsMutexLock(pCard->CardLock);
 	map = pLinuxErCard->tb_channel[TRIGGER_EVENT_0 + Channel];
 	if(Enable) {
@@ -1339,7 +1382,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		/* Check for error */
 		if (pulse < 0) {
 			epicsMutexUnlock(pCard->CardLock);
-			errlogPrintf("%s: reached max number of pulse generator.\n", __func__);
+			errlogPrintf("%s: No free pulse generators! Wrong template?\n", __func__);
 			return;
 		}
 		map = pulse + PULSE_GENERATOR_0;
@@ -1616,7 +1659,8 @@ epicsStatus ErDrvInit (void)
 /*                                                                                                */
 
 
-drvet drvMrf200Er = {
+drvet drvMrf200Er =
+{
     2,                                  /* Number of entries in the table                         */
     (DRVSUPFUN)ErDrvReport,             /* Driver Support Layer device report routine             */
     (DRVSUPFUN)ErDrvInit                /* Driver Support layer device initialization routine     */
@@ -1644,7 +1688,8 @@ LOCAL const iocshArg *const ErConfigureArgs[5] = {
 						};
 LOCAL const iocshFuncDef    ErConfigureDef     = {"ErConfigure", 5, ErConfigureArgs};
 
-LOCAL_RTN void ErConfigureCall(const iocshArgBuf * args) {
+LOCAL_RTN void ErConfigureCall(const iocshArgBuf * args)
+{
 	ErConfigure(args[0].ival, (epicsUInt32)args[1].ival,
 			(epicsUInt32)args[2].ival, (epicsUInt32)args[3].ival,
 			args[4].ival);
@@ -1655,12 +1700,14 @@ LOCAL const iocshArg ErDebugLevelArg0 = {"Level" , iocshArgInt};
 LOCAL const iocshArg *const ErDebugLevelArgs[1] = {&ErDebugLevelArg0};
 LOCAL const iocshFuncDef ErDebugLevelDef = {"ErDebugLevel", 1, ErDebugLevelArgs};
 
-LOCAL_RTN void ErDebugLevelCall(const iocshArgBuf * args) {
+LOCAL_RTN void ErDebugLevelCall(const iocshArgBuf * args)
+{
 	ErDebugLevel((epicsInt32)args[0].ival);
 }
 
 /* Registration APIs */
-LOCAL void drvMrfErRegister() {
+LOCAL void drvMrfErRegister()
+{
 	/* Initialize global variables */
 	ErCardListLock = epicsMutexCreate();
 	ErConfigureLock = epicsMutexCreate();
