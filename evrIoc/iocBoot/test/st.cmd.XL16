@@ -32,6 +32,7 @@ bspExtVerbosity=0
 ErConfigure(0,0x300000,0x60,4,0)  # VME type.
 ErConfigure(1,0x400000,0x62,4,0)  # VME type
 ErConfigure(2,0x000000,0x00,0,1)  # PMC type
+ErConfigure(3,0x500000,0x64,4,0)  # EVR type
 
 evrTimeFlag=0
 iocInit() # after h/w initialisations
