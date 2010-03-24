@@ -58,7 +58,7 @@ typedef enum {
 
 /* For modifier array */
 #define MAX_EVR_MODIFIER  6
-typedef unsigned long evrModifier_ta[MAX_EVR_MODIFIER];
+typedef epicsUInt32 evrModifier_ta[MAX_EVR_MODIFIER];
   
 /* Event codes - see mrfCommon.h for reserved internal event codes      */
 #define EVENT_FIDUCIAL          1        /* Fiducial event code         */
@@ -68,9 +68,12 @@ typedef unsigned long evrModifier_ta[MAX_EVR_MODIFIER];
 #define EVENT_MODULO36_MIN      201      /* Min modulo 36 event code    */
 #define EVENT_MODULO36_MAX      236      /* Max modulo 36 event code    */
 #define MODULO36_MAX            36       /* # modulo 36 event codes     */
+  
+typedef void (*FIDUCIALFUNCTION)(void *arg);
 
 int evrInitialize         (void);
-int evrTimeRegister(REGISTRYFUNCTION fiducialFuncIn);
+int evrTimeRegister       (FIDUCIALFUNCTION fiducialFunc,
+                           void *           fiducialArg);
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            evrTimeId_te     id,
                            evrModifier_ta   modifier_a, 
