@@ -2,6 +2,7 @@
  
   Name: evrPattern.c
            evrPattern          - 360Hz Pattern Processing
+           evrPatternCheck     - Pattern Check
            evrPatternProcInit  - Pattern Record Processing Initialization
            evrPatternProc      - 360Hz Pattern Record Processing
            evrPatternState     - Pattern Record Processing State and Diagnostics
@@ -185,6 +186,58 @@ int evrPattern(int timeout)
 
 /*=============================================================================
 
+  Name: evrPatternCheck
+
+  Abs:  Pattern Check. Check modifier array for a match with the beam code,
+        time slot, inclusion masks, and exclusion masks.
+		
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        unsigned long       beamCode    read       Desired Beam Code
+                                                   (0 = use any beam code)
+        unsigned long       timeSlot    read       Desired Time Slot
+                                                   (0 = desired time slot
+                                                    encoded in inclusion/
+                                                    exclusion masks)
+        evrModifier_ta      inclusion_a read       Inclusion Masks*
+        evrModifier_ta      exclusion_a read       Exclusion Masks*
+        evrModifier_ta      modifier_a  read       Pattern Modifiers*
+        First value in the array is ignored.
+
+  Rem:  None.
+
+  Side: None.
+
+  Ret:  0 = no match, 1 = match
+  
+=============================================================================*/ 
+
+int evrPatternCheck(unsigned long  beamCode,    unsigned long  timeSlot,
+                    evrModifier_ta inclusion_a, evrModifier_ta exclusion_a,
+                    evrModifier_ta modifier_a)
+{
+  unsigned long beamCodeInp = BEAMCODE(modifier_a);
+  unsigned long timeSlotInp = TIMESLOT(modifier_a);
+  int           matches = 0;
+  int           midx;
+
+  if (((beamCode == 0) || (beamCodeInp == beamCode)) &&
+      ((timeSlot == 0) || (timeSlotInp == timeSlot))) {
+    matches = 1;
+    /* check inclusion and exclusion masks */
+    for (midx = 1; midx < EVR_MODIFIER_MAX; midx++) {
+      if (((modifier_a[midx] & inclusion_a[midx]) != inclusion_a[midx]) ||
+          (modifier_a[midx] & exclusion_a[midx])) {
+        matches = 0;
+        break;
+      }
+    }
+  }
+  return (matches);
+}
+
+/*=============================================================================
+
   Name: evrPatternProcInit
 
   Abs:  Initialization for the pattern processing record.
@@ -197,16 +250,27 @@ int evrPattern(int timeout)
 
   Side: None.
   
+  Sub Inputs/ Outputs:
+   Inputs:
+    X - Data source (0=PNET, 1=PATTERN)
+  
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/ 
 
 static int evrPatternProcInit(longSubRecord *psub)
 {
   /* Register this record for the start of fiducial processing */
-  if (evrMessageRegister(EVR_MESSAGE_PATTERN_NAME,
-                         sizeof(evrMessagePattern_ts),
-                         (dbCommon *)psub) < 0)
-    return -1;  
+  if        (psub->x == EVR_MESSAGE_PNET) {
+    if (evrMessageRegister(EVR_MESSAGE_PNET_NAME,
+                           sizeof(evrMessagePnet_ts),
+                           (dbCommon *)psub) < 0) return -1;
+  } else if (psub->x == EVR_MESSAGE_PATTERN) {
+    if (evrMessageRegister(EVR_MESSAGE_PATTERN_NAME,
+                           sizeof(evrMessagePattern_ts),
+                           (dbCommon *)psub) < 0) return -1;
+  } else {
+    return -1;
+  }
   return 0;
 }
 
@@ -226,6 +290,7 @@ static int evrPatternProcInit(longSubRecord *psub)
 
   Sub Inputs/ Outputs:
    Inputs:
+    X - Data source (0=PNET, 1=PATTERN), used only by evrPatternProcInit.
     Z - Time ID (see evrTimeId_e in evrTime.h, 0=Current,
                  1=Next1, 2=Next2, 3=Next3)
     

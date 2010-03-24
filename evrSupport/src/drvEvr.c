@@ -32,6 +32,7 @@
 #include "epicsThread.h" 	/* for epicsThreadCreate  */
 #include "evrMessage.h"		/* for evrMessageCreate   */
 #include "evrTime.h"		/* for evrTimeCount       */
+#include "evrPattern.h"		/* for evrPattern         */
 #include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
 #include "devMrfEr.h"		/* for ErRegisterEventHandler    */
 

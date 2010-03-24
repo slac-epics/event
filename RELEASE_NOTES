@@ -1,22 +1,22 @@
-#==============================================================
-#
-#  Name: RELEASE_NOTES
-#
-#  Rem:  This file contains the the release notes for
-#        the event package.
-#
-#        Note: The file called "CHANGES" has only changes in mrfApp.
-#        This file (RELEASE_NOTES) lists changes for ALL directories.
-#
-#  Auth:  dd-mmm-yyyy, Stephanie Allison  (SAA)
-#  Rev:   dd-mmm-yyyy, Reviewer's Name    (USERNAME)
-#==============================================================
-#  Mod:
-#         28-Apr-2009, K. Luchini         (LUCHINI):
-#          release event-R3-0-0
-#
-#=============================================================
-#
+Release Notes for the event package
+-----------------------------------
+
+event-R3-0-1:  May 25, 2009:
+        * evrSupport/src/evrModifier5.* - remove mpg subroutines that
+          are no longer used by mpgApp.
+	* evrSupport/src/evrTime.h - add EVENT_MPG event code.
+	* evrSupport/src/evrMessage.c - add RTEMS check in uC5282 timer logic.
+	* evrSupport/src/evrPattern.c,.h, drvEvr.c -
+	  Add evrPatternCheck for a general purpose pattern check routine
+          (used by mpgApp, could be used by future fast feedback).  Add new 
+	  field (X) for pattern record initialization.  Move evrPattern proto 
+	  from evrTime.h to evrPattern.h.  Add PATTERN_ERROR state 
+          (used by mpgApp).
+	* evrSupport/Db/evr/evrFiducial.db - add state 11 (ERROR) for
+	  used by mpgApp.
+	* evrSupport/Db/evr/evrPatternProc.db - initialize X field for pattern
+	  record initialization.
+ 
 event-R3-0-0:  Apr 28, 2009:
         * build with rtems-4.9.1 and base-R3-14-8-2-lcls3
  
