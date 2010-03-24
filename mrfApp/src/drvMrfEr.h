@@ -237,6 +237,7 @@ void           ErEventIrq (ErCardStruct*, epicsBoolean);
 void           ErFlushFifo (ErCardStruct*);
 ErCardStruct  *ErGetCardStruct (int);
 epicsUInt16    ErGetFpgaVersion (ErCardStruct*);
+epicsUInt32    ErGetSecondsSR (ErCardStruct*);
 epicsBoolean   ErGetRamStatus (ErCardStruct*, int);
 epicsStatus    ErGetTicks (int, epicsUInt32*);
 epicsBoolean   ErMasterEnableGet (ErCardStruct*);
@@ -272,6 +273,7 @@ typedef void (*DBUFF_FUNC) (void);
 #define VME_EVR (0)
 #define PMC_EVR (1)
 #define EMBEDDED_EVR (2)
+#define CPCI_EVR (3)
 
 /*---------------------
  * Event Receiver Card Structure

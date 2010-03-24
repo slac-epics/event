@@ -4,6 +4,7 @@ record(er, "$(EVR):CTRL") {
   field(OUT, "#C$(C) S0 @")
   field(PINI, "YES")
   field(ENAB, "YES")
+  field(PRES, "1")
   field(FPS0, "$(F0)")
   field(FPS1, "$(F1)")
   field(FPS2, "$(F2)")

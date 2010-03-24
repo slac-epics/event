@@ -327,7 +327,8 @@ static long evrPatternProc(longSubRecord *psub)
 
   psub->val = PATTERN_INVALID_TIMESTAMP;
   status = evrTimeGetFromPipeline(&currentTime, (evrTimeId_te)psub->z,
-                                  &psub->d, &psub->val, &psub->k,
+                                  (epicsUInt32 *)&psub->d, &psub->val,
+                                  &psub->k,
                                   &psub->a, &psub->b);
   /* Parse out beamcode, timeslot, and pulse ID */
   psub->j = BEAMCODE(&psub->d);
@@ -559,12 +560,12 @@ static long evrPatternSimTest(longSubRecord *psub)
   psub->c = psub->i * psub->j;
   /* now check this pulse */
   /* check inclusion mask */
-  if ( (unsigned long)psub->u ) psub->p = 10; /* force one hertz processing */
+  if (psub->u) psub->p = 10; /* force one hertz processing */
   /* set modifier 4 to 10; assuming evg sim counts 1 to 10 */
-  if ( (unsigned long)psub->v ) psub->p = 0 ; /* force 10  hertz processing */	 
+  if (psub->v) psub->p = 0 ; /* force 10  hertz processing */	 
   
-  if (  (((unsigned long)psub->f & (unsigned long)psub->p)==(unsigned long)psub->p)
-		/*		&&(((unsigned long)psub->g & (unsigned long)psub->q)==(unsigned long)psub->q)*/) 
+  if (  ((psub->f & psub->p)==psub->p)
+		/*		&&((psub->g & psub->q)==psub->q)*/) 
 	{
 		psub->val = 1;
 	

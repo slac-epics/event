@@ -402,7 +402,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         }
   /* For IOCs that support iocClock (RTEMS and vxWorks), register
      evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
-#ifdef __rtems__
+#ifdef EVR_DRIVER_SUPPORT
         if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
                                   (pepicsTimeGetEvent)evrTimeGet))
           return epicsTimeERROR;
@@ -417,7 +417,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
 }
 /* For IOCs that don't support iocClock (linux), supply a dummy
    iocClockRegister to keep the linker happy. */
-#ifdef linux
+#ifndef EVR_DRIVER_SUPPORT
 void iocClockRegister(pepicsTimeGetCurrent getCurrent,
                       pepicsTimeGetEvent   getEvent) 
 {

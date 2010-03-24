@@ -1,6 +1,32 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-0-3:  Oct 5, 2009:
+	* README - add more error description for evrTimeGetFromPipeline.
+	  Add description of optional input to fiducial function.
+	* mrfApp/src/drvMrfEr.c and .h - add ErGetSecondsSR for getting 
+	  the "seconds" part of the timestamp from the EVR.  Add CPCI_EVR.
+	* mrfApp/src/Makefile, drvLinux*.c - old snapshot of the photon 
+	  group's linux drivers for reference.
+	* mrfApp/src/devMrfEr.c and erRecord.dbd - add PRES field for
+	  setting the event clock prescaler.
+	* evrSupport/src/evrPattern.h - add EVG_BURST and MODx_IDX macros.
+	* evrSupport/src/drvEvr.c - in the report function, get and
+	  report the pulse ID from the data and from the EVR register.
+	  They should be the same.  Add argument to fiducial function.
+	* evrSupport/src/evrMessage.h - use epicsUInt32 instead of
+	  unsigned long to be OSI.
+	* evrSupport/src/evrTime.c, Makefile - linux logic based on
+	  CONFIG variable.  Add argument to fiducial function.
+	* evrSupport/Db/evr/evr.template - set PRES to 1 so that the
+	  event clock is used instead of the distributed bus or the
+	  EVG ticks event code.  Also, the EVG can now set the "seconds"
+	  part of the timestamp and reset the event counter using
+	  special event codes.  
+	* evrSupport/Db/evr/evrEventAll.substitutions - add kicker event
+	  codes.
+	* configure/CONFIG_SITE - add EVR_DRIVER_SUPPORT_LINUX variable.
+
 event-R3-0-2:  July 10, 2009:
 	* README - add information on evrPatternCheck and kluge for 
           VME EVR 200 modules.
