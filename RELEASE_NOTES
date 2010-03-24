@@ -1,6 +1,20 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-0-2:  July 10, 2009:
+	* README - add information on evrPatternCheck and kluge for 
+          VME EVR 200 modules.
+	* evrSupport/Db/evr/evrFiducial.db and evrPatternProc.db -
+	  Move $IOC:FIDUCIALRATE from evrFiducial.db to evrPatternProc.db
+	  so that it is not instantiated for the EVG IOC.
+	* evrSupport/Db/evr - Replace all EVR module database files with
+	  evr.template that has many macros.
+	* evrSupport/Db/evrModule - new directory with various EVR module
+	  substitutions files (apps can choose which one to use)
+	* evrSupport/Db/Makefile - add evrModule directory which is built
+	  after evr.
+	* evrIoc - various changes to update examples.
+
 event-R3-0-1:  May 25, 2009:
         * evrSupport/src/evrModifier5.* - remove mpg subroutines that
           are no longer used by mpgApp.
