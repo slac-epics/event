@@ -5,6 +5,6 @@ include $(TOP)/configure/CONFIG
 DIRS += configure
 DIRS += mrfApp
 DIRS += evrSupport
-DIRS += testIoc
+#DIRS += evrIoc
 
 include $(TOP)/configure/RULES_TOP
