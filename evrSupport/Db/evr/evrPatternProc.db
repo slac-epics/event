@@ -39,6 +39,16 @@ record(sub, "$(DEV):FIDUCIALRATE") {
   field(HOPR, "360")
 }
 
+record(erevent, "$(DEV):FIDUCIALCTRL") {
+  field(DESC, "Fiducial Event Control")
+  field(PINI, "YES")
+  field(DTYP, "MRF Event Receiver")
+  field(OUT, "#C0 S0 @")
+  field(ENAB, "Enabled")
+  field(ENM, "1")
+  field(VME,  "1")
+}
+
 #! Further lines contain data used by VisualDCT
 #! View(86,0,1.1)
 #! Record("$(DEV):PATTERNN-3",202,291,0,1,"$(DEV):PATTERNN-3")
