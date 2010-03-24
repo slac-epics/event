@@ -64,6 +64,7 @@ typedef unsigned long evrModifier_ta[MAX_EVR_MODIFIER];
 #define EVENT_FIDUCIAL          1        /* Fiducial event code         */
 #define EVENT_EXTERNAL_TRIG     100      /* External trigger event code */
 #define EVENT_MODULO720         121      /* Modulo 720 event code       */
+#define EVENT_MPG               122      /* MPG update event code       */
 #define EVENT_MODULO36_MIN      201      /* Min modulo 36 event code    */
 #define EVENT_MODULO36_MAX      236      /* Max modulo 36 event code    */
 #define MODULO36_MAX            36       /* # modulo 36 event codes     */
@@ -92,7 +93,6 @@ int evrTimeInit           (epicsInt32 firstTimeSlotIn,
                            epicsInt32 secondTimeSlotIn);
 int evrTime               (void);
 int evrTimeCount          (unsigned int eventCode);
-int evrPattern            (int timeout);
 int evrTimePatternPutStart(evrMessagePattern_ts **pattern_pps,
                            unsigned long        **timeslot_pp,
                            unsigned long        **patternStatus_pp,
