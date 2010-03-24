@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 11/11/2009
+Instructions for RTEMS EVR users                    Last Updated 3/1/2010
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -97,6 +97,23 @@ Note that the order of the above libraries is important.
 	<evrname>:LINK
 	<evrname>:LINKERR
 
+(14) Add event code sequence PVs to your application by installing the
+     event code sequence db file...
+
+Db/Makefile:
+DB_INSTALLS += $(EVENT)/db/eventCodeSequenceAll.db
+
+     Doing so provides the following PVs
+     $(DEVICE):ECS_$(EVENT_CODE)EV
+     $(DEVICE):ECS_$(EVENT_CODE)CNT
+     $(DEVICE):ECS_$(EVENT_CODE)RATE
+     $(DEVICE):ECS_$(EVENT_CODE)NAME
+
+     for 67 <= $(EVENT_CODE) <= 98
+
+
+
+
 II - Using event module functions and global variables in your IOC application:
 -------------------------------------------------------------------------------
 
@@ -151,9 +168,10 @@ II - Using event module functions and global variables in your IOC application:
 	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
 	epicsTimeStamp dataTimeStamp = <timestamp of your data>
 	double         dataValue = <value of your data>
+	epicsEnum16    dataStat = <EPICS alarm status of your data>
 	epicsEnum16    dataSevr = <EPICS alarm severity of your data>
 	void          *dpvt = <value of dpvt from bsaSecnInit>
-	status = bsaSecnAvg(&dataTimeStamp, dataValue, dataSevr, dpvt);
+	status = bsaSecnAvg(&dataTimeStamp, dataValue, dataStat, dataSevr, dpvt);
 
 (3) Two global variables providing the high resolution time of the fiducial
     are available for diagnostics purposes:

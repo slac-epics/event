@@ -21,7 +21,36 @@
  
 /*-----------------------------------------------------------------------------
  
-  Mod:  (newest to oldest)  
+  Mod:  12 Feb 2010     S. Hoobler (sonya)
+
+	To set SEVR/STAT on BSA PVs:
+
+	  Structure bsa_ts:
+	    (1) Add epicsEnum16 sevr and stat fields.
+
+	  Routine bsaSecnAvg:
+	    (1) Add epicsEnum16 secnStat to the argument list.
+	    (2) In the code that initializes the average under "if
+	    ((bsa_ps->avgcnt == 1) || noAverage)", set sevr and stat 
+	    of the bsa_ts structure to the input secnStat and secnSevr.
+	    (3) In the code that calculates running avg, add logic to 
+            compute running max of stat and sev
+
+	  Routine read_bsa:
+	    (1) Add local variables dstat and dsevr to copy stat and sevr from bsa_ts.
+	    (2) In the logic that calls recGblSetSevr, add an "else" that calls 
+                recGblSetSevr with the local variables. 
+
+	 Routine write_ao:
+	    (1) Replace dbGetTimeStamp with dbGetField in order to get stat, sevr, 
+	    and time of input record.
+	    (2) In bsaSecnAvg call, replace pao->nsev with severity of input record
+	    and add stat of input record.
+
+	 README file of the event module:
+	  (1) In the section that describes calling BSA routines directly
+	  (II-2), update the API description to include the new argument.
+
  
 =============================================================================*/
 
@@ -66,6 +95,8 @@ typedef struct {
   epicsTimeStamp      timeData;  /* latest input time */
   epicsTimeStamp      timeInit;  /* init         time */
   IOSCANPVT           ioscanpvt; /* to process records using above fields */
+  epicsEnum16         stat;      /* max status so far */
+  epicsEnum16         sevr;      /* max severity so far*/
 
 } bsa_ts;
 
@@ -87,12 +118,15 @@ static epicsMutexId bsaRWMutex_ps = 0;
 
   Abs:  Beam Synchronous Acquisition Processing
         Computes BSA device running average and RMS values for all EDEFs
+        Computes running maximum status and severity
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
         epicsTimeStamp *    secnTime_ps Read       Data timestamp
         double              secnVal     Read       Data value
+        epicsEnum16         secnStat    Read       Data status
         epicsEnum16         secnSevr    Read       Data severity
+	int                 noAveraging 
         void *              dev_ps      Read/Write BSA Device Structure
 
   Rem:  
@@ -103,6 +137,7 @@ static epicsMutexId bsaRWMutex_ps = 0;
 
 int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
                double          secnVal,
+               epicsEnum16     secnStat,
                epicsEnum16     secnSevr,
                int             noAveraging,
                void           *dev_ps)
@@ -168,10 +203,15 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
 	/*                                                       */
 	/*        Note that CUM's method of computing VAR avoids */
 	/*        possible loss of significance.                 */
+	/*                                                       */
+	/*  Compute running maximum status and severity          */
+                                                       
 	if ((bsa_ps->avgcnt == 1) || noAverage) {
           bsa_ps->avgcnt = 1;
 	  bsa_ps->avg    = secnVal;
           bsa_ps->var    = 0.0;
+	  bsa_ps->stat   = secnStat;
+	  bsa_ps->sevr   = secnSevr;
 	} 
 	else {
 	  int avgcnt_1 = bsa_ps->avgcnt-1;
@@ -181,6 +221,10 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
 	  diff        /= (double)avgcnt_1;
 	  bsa_ps->var  = ((double)avgcnt_2*(bsa_ps->var/(double)avgcnt_1)) +
                          ((double)bsa_ps->avgcnt*diff*diff);
+	    if (secnSevr > bsa_ps->sevr) {
+                bsa_ps->sevr = secnSevr;
+                bsa_ps->stat = secnStat;
+            }
 	}
       } /* if good, include in averaging */
     }
@@ -306,6 +350,8 @@ static long read_bsa(bsaRecord *pbsa)
   bsa_ts *bsa_ps = (bsa_ts *)pbsa->dpvt;
   short reset    = 0;
   int   noread   = 1;
+  epicsEnum16 dstat = UDF_ALARM;      /* data status */
+  epicsEnum16 dsevr = INVALID_ALARM;  /* data severity */
 
   /* Lock and update */
   if (bsa_ps && bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) {
@@ -325,6 +371,8 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
       pbsa->rcnt = bsa_ps->readcnt;
+      dstat      = bsa_ps->stat;
+      dsevr      = bsa_ps->sevr;
     }
     if (bsa_ps->reset) {
       bsa_ps->reset = 0;
@@ -333,7 +381,8 @@ static long read_bsa(bsaRecord *pbsa)
     epicsMutexUnlock(bsaRWMutex_ps);
   }
   /* Read alarm if there was nothing to read.
-     Soft alarm if there were no valid inputs to the average.*/ 
+     Soft alarm if there were no valid inputs to the average.
+     Else set stat/sevr to max values */ 
   if (noread) {
     pbsa->val  = 0.0;
     pbsa->rms  = 0.0;
@@ -342,7 +391,8 @@ static long read_bsa(bsaRecord *pbsa)
     recGblSetSevr(pbsa,READ_ALARM,INVALID_ALARM);
   } else if (pbsa->cnt == 0) {
     recGblSetSevr(pbsa,SOFT_ALARM,INVALID_ALARM);
-  }
+  } else recGblSetSevr(pbsa,dstat,dsevr);
+
   /* Reset compress records if requested */
   if (reset) {
     dbPutLink(&pbsa->vres, DBR_SHORT, &reset, 1);
@@ -400,16 +450,29 @@ static long init_ao_record(aoRecord *pao)
 
 static long write_ao(aoRecord *pao)
 {
-  long           status = 0;
+  long status = 0;
 
-  /* Get the input's timestamp to match with the EDEFs */
-  if (dbGetTimeStamp(&pao->dol, &pao->time)) {
+  DBADDR *paddr = dbGetPdbAddrFromLink(&pao->dol);
+  long options = DBR_STATUS | DBR_TIME;
+  long nrequest = 0;
+
+  struct {
+	DBRstatus
+	DBRtime
+  } options_s;
+
+  /* Get the input's STAT and SEVR and timestamp (but don't get value) */
+
+  if (!paddr) status = -1;
+  else if (dbGetField(paddr, DBR_DOUBLE, &options_s, &options, &nrequest, 0)) {
     status = -1;
   } else {
-    status = bsaSecnAvg(&pao->time, pao->val, pao->nsev, 0, pao->dpvt);
+    status = bsaSecnAvg(&options_s.time, pao->val, options_s.status, options_s.severity, 0, pao->dpvt);
   }
+
   if (status) recGblSetSevr(pao,WRITE_ALARM,INVALID_ALARM);
   return status;
+
 }
 
 /* Create the device support entry tables */
