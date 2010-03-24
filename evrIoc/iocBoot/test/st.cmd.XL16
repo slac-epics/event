@@ -18,11 +18,20 @@ dbLoadRecords("db/trigXL16.db")
 dbLoadRecords("db/bsaXL16.db")
 #dbLoadRecords("db/bsaSimXL09.db")
 #ErDebug=100
+# From Till Straumann (for RTEMS 4.9.1 upgrade):
+# This should set the VME chip into a mode where it 
+# surrenders the VME bus after every transaction.
+# This means that the master has to rearbitrate for the bus for every cycle 
+# (which slows things down).
+#
+# The faster setting I had enabled would let the master hold on to the bus 
+# until some other master requests it.
+*(long*)(vmeTsi148RegBase + 0x234) &= ~ 0x18
 bspExtVerbosity=0
 
-ErConfigure(0,0x000000,0x00,0,1)  # PMC type
-ErConfigure(1,0x300000,0x60,4,0)  # VME type.
-ErConfigure(2,0x400000,0x62,4,0)  # VME type
+ErConfigure(0,0x300000,0x60,4,0)  # VME type.
+ErConfigure(1,0x400000,0x62,4,0)  # VME type
+ErConfigure(2,0x000000,0x00,0,1)  # PMC type
 
 evrTimeFlag=0
 iocInit() # after h/w initialisations
