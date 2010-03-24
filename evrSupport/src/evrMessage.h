@@ -58,28 +58,28 @@ typedef struct {
 
 /* Waveform sent by the MPG and read by the EVG IOC */
 typedef struct {
-  unsigned long       modifier_a[EVR_PNET_MODIFIER_MAX];
+  epicsUInt32       modifier_a[EVR_PNET_MODIFIER_MAX];
 } evrMessagePnet_ts;
   
 /* Waveform sent by the EVG and received by the EVR */
 typedef struct {
   evrMessageHeader_ts header_s;
-  unsigned long       modifier_a[EVR_MODIFIER_MAX];
+  epicsUInt32         modifier_a[EVR_MODIFIER_MAX];
   epicsTimeStamp      time;     /* epics timestamp:                        */
                                 /* 1st 32 bits = # of seconds since 1990   */
                                 /* 2nd 32 bits = # of nsecs since last sec */
                                 /*           except lower 17 bits = pulsid */
-  unsigned long       edefAvgDoneMask;
-  unsigned long       edefMinorMask;
-  unsigned long       edefMajorMask;
-  unsigned long       edefInitMask;
+  epicsUInt32         edefAvgDoneMask;
+  epicsUInt32         edefMinorMask;
+  epicsUInt32         edefMajorMask;
+  epicsUInt32         edefInitMask;
 } evrMessagePattern_ts;
   
 typedef union
 {
   evrMessagePnet_ts    pnet_s;
   evrMessagePattern_ts pattern_s;
-  unsigned long        data_a[EVR_DATA_MAX];
+  epicsUInt32          data_a[EVR_DATA_MAX];
 } evrMessage_tu;
 
 typedef enum
