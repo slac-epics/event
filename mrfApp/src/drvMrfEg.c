@@ -67,9 +67,6 @@
 /*  If EVR_DEBUG Flag is Defined, Make All Local Routines Globally Callable                       */
 /**************************************************************************************************/
 
-/* NOT REACHING drvMrfEg.h FOR SOME REASON
-#define EVG_DRIVER_SUPPORT_MODULE   Indicates we are in the driver support module environment */
-
 #ifdef EVG_DEBUG
 #undef  LOCAL
 #define LOCAL
@@ -456,7 +453,12 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
   DEBUGPRINT (DP_INFO, drvMrfEgFlag, ("EVG Rx Delay %d/%d (current/init)\n", 
                                       pEvg->DelayRx, pEvg->DelayRxInit));
 
-  MRF_VME_REG32_WRITE(&pEvg->FracDivControl, FR_SYNTH_WORD);
+  MRF_VME_REG16_WRITE(&pEvg->Control, 0x8000);        /* Disable all local event generation */
+  /* Do not re-program the SY87729L unless necessary to avoid glitches */
+  if(MRF_VME_REG32_READ(&pEvg->FracDivControl) != FR_SYNTH_WORD) {
+    MRF_VME_REG32_WRITE(&pEvg->FracDivControl, FR_SYNTH_WORD);
+    usleep(100);
+  }
   if (internalClock)
     MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT_SY87729L);
   else
@@ -464,7 +466,8 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
   pCard->pEg    = (void *)pEvg;
   pCard->Cardno = Card;
   pCard->Slot   = Slot;
-  ellAdd (&EgCardList, &pCard->Link); /* NEW 3/30/06 */
+  ellAdd (&EgCardList, &pCard->Link);
+  EgResetAll(pCard);
   return OK;
 }
 /**
@@ -494,7 +497,7 @@ long EgLoadRamList(EgCardStruct *pParm, long Ram) {
   egeventRecord                 *pEgevent;
   int                           RamPos = 0;
   int                           AltFlag = 0;
-  int                           dummy; /*trick to flush bridge pipeline*/
+  int                  			dummy; /*trick to flush bridge pipeline*/
   int                           maxtime=0;
   double                        RamSpeed;
   volatile long origEvt;
@@ -543,7 +546,6 @@ long EgLoadRamList(EgCardStruct *pParm, long Ram) {
                 dummy = MRF_VME_DUMMY_READ(pAddr);
                 MRF_VME_REG32_WRITE(pTime, pEgevent->apos);
                 MRF_VME_REG16_WRITE(pData, pEgevent->enm);
-        
                 /* Remember where the last event went into the RAM */
                 RamPos++;
               }
@@ -962,6 +964,11 @@ long EgMasterEnableGet(EgCardStruct *pParm)
 long EgClearSeq(EgCardStruct *pParm, int channel)
 {
   volatile MrfEVGRegs *pEg = pParm->pEg;
+  volatile unsigned short       *pAddr;
+  volatile unsigned int         *pTime;
+  volatile unsigned short       *pData;
+  volatile int dummy; /*trick to flush bridge pipeline*/
+  int i;
 
   if (channel == 1)
   {
@@ -972,6 +979,9 @@ long EgClearSeq(EgCardStruct *pParm, int channel)
                         MRF_VME_REG16_READ(&pEg->EventMask) & (~0x0004));  /* Turn off seq 1 */
     MRF_VME_REG16_WRITE(&pEg->Control,
                         (MRF_VME_REG16_READ(&pEg->Control)&CTL_OR_MASK)|0x0004);   /* Reset seq RAM address */
+    pAddr = &pEg->Seq1Addr;
+    pTime = &pEg->Seq1Time;
+    pData = &pEg->Seq1Data;
   }
   else if(channel == 2)
   {
@@ -982,6 +992,18 @@ long EgClearSeq(EgCardStruct *pParm, int channel)
                         MRF_VME_REG16_READ(&pEg->EventMask) & (~0x0002));
     MRF_VME_REG16_WRITE(&pEg->Control,
                         (MRF_VME_REG16_READ(&pEg->Control)&CTL_OR_MASK)|0x0002);
+    pAddr = &pEg->Seq2Addr;
+    pTime = &pEg->Seq2Time;
+    pData = &pEg->Seq2Data;
+  }
+  else return ERROR;
+  for(i=0; i<pParm->MaxRamPos; i++)
+  {
+    /* put the record's event code into the RAM */
+    MRF_VME_REG16_WRITE(pAddr, i);
+    dummy = MRF_VME_DUMMY_READ(pAddr);
+    MRF_VME_REG32_WRITE(pTime, 0);
+    MRF_VME_REG16_WRITE(pData, 0);
   }
   return(0);
 }
@@ -1309,8 +1331,8 @@ unsigned long EgGetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel)
     return(-1);
         
    Addr = MRF_VME_REG16_READ(&pEg->MuxCountSelect);
-   Addr &= 0x0fff8;     /* high word select */
-   Addr |= j;
+   Addr &= 0x0fff0;
+   Addr |= 0x8 | j;     /* high word select */
    
    if ((Addr & 0x0007) != Channel) Addr |= Channel;
    MRF_VME_REG16_WRITE(&pEg->MuxCountSelect, Addr);
@@ -1333,7 +1355,7 @@ unsigned long EgSetMuxPrescaler(EgCardStruct *pParm, unsigned short Channel, uns
   return(-1);
 
   MRF_VME_REG16_WRITE(&pEg->MuxCountSelect,
-                      MRF_VME_REG16_READ(&pEg->MuxCountSelect)&0xfff7); /* high word clear */
+                      MRF_VME_REG16_READ(&pEg->MuxCountSelect)&0xfff0); /* high word clear */
   MRF_VME_REG16_WRITE(&pEg->MuxCountSelect,
                       MRF_VME_REG16_READ(&pEg->MuxCountSelect)|j);      /* Mux select */
   
@@ -1695,7 +1717,6 @@ long EgEnableVme(EgCardStruct *pParm, int state)
 long EgGenerateVmeEvent(EgCardStruct *pParm, int Event)
 {
   volatile MrfEVGRegs  *pEg = pParm->pEg;
-
   MRF_VME_REG16_WRITE(&pEg->VmeEvent, Event);
   return(0);
 }
@@ -1795,17 +1816,11 @@ int EgWriteSeqRam(EgCardStruct *pParm, int channel, unsigned char *pBuf)
   else
     return(-1);
 
-#ifdef EG_DEBUG
-  printf("ready to download ram\n");
-#endif
   for(j=0;j<MRF_MAX_SEQ_SIZE; j++) {
     MRF_VME_REG16_WRITE(pSeqAddr, j);
     MRF_VME_REG16_WRITE(pSeqData, pBuf[j]);
   }
   
-#ifdef EG_DEBUG
-  printf("sequence ram downloaded\n");
-#endif
   return(0);
 }
 
@@ -2032,6 +2047,7 @@ int DiagMainMenu(void)
   printf("gnnn - generate a one-shot event number nnn\n");
   printf("annn - read RAM 1 position nnn\n");
   printf("bnnn - read RAM 2 position nnn\n");
+  printf("xhh - read register at hex address hh\n");
   return OK;
 }
 epicsStatus EG(void)
@@ -2078,6 +2094,9 @@ epicsStatus EG(void)
       printf("\n");
       break;
     case 'z': EgDumpRegs(pCard); break;
+    case 'x': 
+      printf("Register 0x%02lx: 0x%04x.\n",strtol(buf+1, (char **)NULL, 16),MRF_VME_REG16_READ((epicsUInt32)pCard->pEg + strtol(buf+1, (char **)NULL, 16)));
+      break;
     case 'q': return OK;
     }
   }
@@ -2168,16 +2187,19 @@ int EgSeqRamWrite(EgCardStruct *pParm, int ram, unsigned short address,
                   MrfEvgSeqStruct *pSeq)
 {
   volatile MrfEVGRegs *pEg = pParm->pEg;
+  volatile int dummy; /*trick to flush bridge pipeline*/
 
   if (address >= MRF_MAX_SEQ_SIZE)
     return ERROR;
 
   if (ram == 1) {
     MRF_VME_REG16_WRITE(&pEg->Seq1Addr, address);
+    dummy = MRF_VME_DUMMY_READ(address);
     MRF_VME_REG16_WRITE(&pEg->Seq1Data, pSeq->EventCode);
     MRF_VME_REG32_WRITE(&pEg->Seq1Time, pSeq->Timestamp);
   } else {
     MRF_VME_REG16_WRITE(&pEg->Seq2Addr, address);
+    dummy = MRF_VME_DUMMY_READ(address);
     MRF_VME_REG16_WRITE(&pEg->Seq2Data, pSeq->EventCode);
     MRF_VME_REG32_WRITE(&pEg->Seq2Time, pSeq->Timestamp);
   }

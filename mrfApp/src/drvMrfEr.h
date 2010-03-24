@@ -237,7 +237,6 @@ void           ErEventIrq (ErCardStruct*, epicsBoolean);
 void           ErFlushFifo (ErCardStruct*);
 ErCardStruct  *ErGetCardStruct (int);
 epicsUInt16    ErGetFpgaVersion (ErCardStruct*);
-epicsUInt32    ErGetSecondsSR (ErCardStruct*);
 epicsBoolean   ErGetRamStatus (ErCardStruct*, int);
 epicsStatus    ErGetTicks (int, epicsUInt32*);
 epicsBoolean   ErMasterEnableGet (ErCardStruct*);
