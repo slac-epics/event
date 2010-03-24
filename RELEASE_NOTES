@@ -1,9 +1,25 @@
-Release Notes for the event package
------------------------------------
-
-Note: The file called "CHANGES" has only changes in mrfApp.  This file 
-(RELEASE_NOTES) lists changes for ALL directories.
-
+#==============================================================
+#
+#  Name: RELEASE_NOTES
+#
+#  Rem:  This file contains the the release notes for
+#        the event package.
+#
+#        Note: The file called "CHANGES" has only changes in mrfApp.
+#        This file (RELEASE_NOTES) lists changes for ALL directories.
+#
+#  Auth:  dd-mmm-yyyy, Stephanie Allison  (SAA)
+#  Rev:   dd-mmm-yyyy, Reviewer's Name    (USERNAME)
+#==============================================================
+#  Mod:
+#         28-Apr-2009, K. Luchini         (LUCHINI):
+#          release event-R3-0-0
+#
+#=============================================================
+#
+event-R3-0-0:  Apr 28, 2009:
+        * build with rtems-4.9.1 and base-R3-14-8-2-lcls3
+ 
 event-R2-8-2: Mar 31, 2009
 	* evrSupport/src/bsa.c, bsaRecord.c, bsaRecord.dbd - 
           Add # values readout and reset to diagnostics.
