@@ -1,5 +1,7 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-1-5:  Build with base-R3-14-8-2-lcls5
+               Build with rtems-4.9.3
 
 event-R3-0-5:  Nov 18, 2009:
 	* evrSupport/src/evrPattern.c, evrPattern.h - remove evrPatternMPS 
