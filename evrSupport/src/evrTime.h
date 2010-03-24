@@ -47,6 +47,9 @@ extern "C" {
 #define TIMESLOT_MAX            6               /* Maximum time slot   */
 #define TIMESLOT_DIFF           3               /* Timeslot difference */
   
+#define EDEF_MAX                20              /* Max # event defns   */
+#define EDEF_MASK               (0x000FFFFF)    /* EDEF bits           */
+
 /* For time ID */
 typedef enum {
   evrTimeCurrent=0, evrTimeNext1=1, evrTimeNext2=2, evrTimeNext3=3, evrTimeActive
@@ -55,22 +58,17 @@ typedef enum {
 
 /* For modifier array */
 #define MAX_EVR_MODIFIER  6
-typedef epicsUInt32 evrModifier_ta[MAX_EVR_MODIFIER];
+typedef unsigned long evrModifier_ta[MAX_EVR_MODIFIER];
   
 /* Event codes - see mrfCommon.h for reserved internal event codes      */
 #define EVENT_FIDUCIAL          1        /* Fiducial event code         */
 #define EVENT_EXTERNAL_TRIG     100      /* External trigger event code */
 #define EVENT_MODULO720         121      /* Modulo 720 event code       */
-#define EVENT_MPG               122      /* MPG update event code       */
 #define EVENT_MODULO36_MIN      201      /* Min modulo 36 event code    */
 #define EVENT_MODULO36_MAX      236      /* Max modulo 36 event code    */
 #define MODULO36_MAX            36       /* # modulo 36 event codes     */
-  
-typedef void (*FIDUCIALFUNCTION)(void *arg);
 
-int evrInitialize         (void);
-int evrTimeRegister       (FIDUCIALFUNCTION fiducialFunc,
-                           void *           fiducialArg);
+int evrTimeRegister(REGISTRYFUNCTION fiducialFuncIn);
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            evrTimeId_te     id,
                            evrModifier_ta   modifier_a, 
@@ -84,15 +82,16 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
                            int             *edefAvgDone_p,
                            epicsEnum16     *edefSevr_p);
 int evrTimeGet            (epicsTimeStamp  *epicsTime_ps,
-                           unsigned int     eventCode);
+                           unsigned int eventCode);
 int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
-                           unsigned int     pulseID);
+                           unsigned int pulseID);
 /* Routines used only by event module and Mpg application */
 #ifdef INCevrMessageH
-int evrTimeInit           (epicsInt32   firstTimeSlotIn,
-                           epicsInt32   secondTimeSlotIn);
-int evrTime               (epicsUInt32  mpsModifier);
+int evrTimeInit           (epicsInt32 firstTimeSlotIn,
+                           epicsInt32 secondTimeSlotIn);
+int evrTime               (void);
 int evrTimeCount          (unsigned int eventCode);
+int evrPattern            (int timeout);
 int evrTimePatternPutStart(evrMessagePattern_ts **pattern_pps,
                            unsigned long        **timeslot_pp,
                            unsigned long        **patternStatus_pp,

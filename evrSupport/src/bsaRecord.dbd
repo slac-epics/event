@@ -21,10 +21,6 @@ recordtype(bsa) {
 		prompt("Count")
 		special(SPC_NOMOD)
 	}
-	field(RCNT,DBF_ULONG) {
-		prompt("# values read")
-		special(SPC_NOMOD)
-	}
         field(INP,DBF_INLINK) {
                 prompt("Input Specification")
                 promptgroup(GUI_INPUTS)
@@ -35,9 +31,6 @@ recordtype(bsa) {
         }
         field(NOAV,DBF_LONG) {
                 prompt("No Averaging")
-        }
-        field(RES,DBF_LONG) {
-                prompt("Reset Diagnostics")
         }
 	field(EGU,DBF_STRING) {
 		prompt("Units Name")
@@ -87,11 +80,6 @@ recordtype(bsa) {
 	}
 	field(MLST,DBF_DOUBLE) {
 		prompt("Last Value Monitored")
-		special(SPC_NOMOD)
-		interest(3)
-	}
-	field(LRCT,DBF_LONG) {
-		prompt("Prev Value of # read")
 		special(SPC_NOMOD)
 		interest(3)
 	}
