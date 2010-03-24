@@ -39,6 +39,8 @@ int bsaSecnInit(char          *secnName,
                 int            noAverage,
                 void         **dev_pps);
 
+int bsaInit(void);
+
 
 #ifdef __cplusplus
 }
