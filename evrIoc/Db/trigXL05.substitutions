@@ -40,19 +40,17 @@
 #	IOC	Name of IOC that contains the EVR, not including the 3rd colon.
 #	DRVL and DRVH  Drive low and high limits for the trigger delay in nsec.
 #	TCTL	Field in EVR:<loca>:<unit>:CTRL that enables/disables the trigger:
-#		DGxE, where x=0 to 3   for extended delay triggers.
-#		OTPx, where x=0 to 0xD for normal   delay triggers.
+#		DGxE, where x=0 to 3   for front panel triggers.
+#		OTPx, where x=0 to 0xD for transition module triggers.
 #	TPOL	Field in EVR:<loca>:<unit>:CTRL for polarity: 
-#		DGxP, where x=0 to 3   for extended delay triggers.
-#		OTxP, where x=0 to 0xD for normal   delay triggers.
+#		DGxP, where x=0 to 3   for front panel triggers.
+#		OTxP, where x=0 to 0xD for transition module triggers.
 #	TWID	Field in EVR:<loca>:<unit>:CTRL for pulse width: 
-#		DGxW, where x=0 to 3   for extended delay triggers.
-#		OTxW, where x=0 to 0xD for normal   delay triggers.
+#		DGxW, where x=0 to 3   for front panel triggers.
+#		OTxW, where x=0 to 0xD for transition module triggers.
 #	TDES	Field in EVR:<loca>:<unit>:CTRL for delay: 
-#		DGxD, where x=0 to 3   for extended delay triggers.
-#		OTxD, where x=0 to 0xD for normal   delay triggers.
-#	Note:  For most EVRs, the 4 extended delay triggers are used by the front panel
-#	       and the 14 normal delay triggers are used by the transition module.
+#		DGxD, where x=0 to 3   for front panel triggers.
+#		OTxD, where x=0 to 0xD for transition module triggers.
 #==============================================================================
 # 
 file evrDevTrig.db 

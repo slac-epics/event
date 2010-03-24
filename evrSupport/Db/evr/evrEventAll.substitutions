@@ -10,6 +10,13 @@ file evrPatternProc.db {
 pattern { DEV       }
 	{ $(DEVICE) }
 }
+file evrEventCtrl.db
+{
+#
+#	  Device      Card  <-----------------------------  Event -------------------------->
+pattern { DEV       , CARD , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,VME}
+	{ $(DEVICE) ,   0  , FIDUCIAL,  1 , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
+}
 file evrEvent.db
 {
 #                            Event  Delay in
@@ -28,7 +35,7 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , L
 	{$(DEVICE) , LCLSTCAV, 149,11909      , LOW  ,120.5,  0.5,  -1 ,  -1 , "TCAV0"        }
 	{$(DEVICE) , LCLSBURS, 150,11910      , LOW  ,120.5,120.5,  -1 ,  -1 , "Burst"        }
 	{$(DEVICE) , LCLS_ACC, 151,11911      , LOW  ,120.5,120.5,  -1 ,  -1 , "Klys Accel"   }
-	{$(DEVICE) , LCLSSTBY, 152,11912      , LOW  ,120.5,120.5,  -1 ,  -1 , "Klys Standby" }
+	{$(DEVICE) , LCLSSHUT, 152,11912      , LOW  ,120.5,120.5,  -1 , 0.5 , "Shutter"      }
 	{$(DEVICE) , LCRFONLY, 153,11913      , LOW  ,120.5,120.5,  -1 ,  -1 , "Klys StdBy No TCAV0"}
 	{$(DEVICE) , LCACC_10, 154,11914      , LOW  , 10.5, 10.5,  -1 ,  -1 , "Klys Accel at 10Hz" }
 	{$(DEVICE) , STRAIGHT, 155,11915      , LOW  ,120.5,120.5,  -1 ,  -1 , "Straight Ahead"     }
@@ -37,8 +44,8 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , L
 	{$(DEVICE) , LCLSPOCK, 158,11918      , LOW  ,120.5,120.5,  -1 , 0.5 , "Pockels Cell" }
 	{$(DEVICE) , LCLSPROF, 159,11919      , LOW  , 10.5, 10.5,  -1 ,  -1 , "Profile Monitors"   }
 	{$(DEVICE) , LCTCV3PM, 160,11920      , LOW  , 10.5, 10.5,  -1 ,  -1 , "TCAV3 OTR"    }
-	{$(DEVICE) , LCBXKIK , 161,11921      , LOW  ,120.5,120.5,  -1 ,  -1 , "LI25 Kicker (BXKIK)"}
-	{$(DEVICE) , LCBYKIK , 162,11922      , LOW  ,120.5,120.5,  -1 ,  -1 , "LTU  Kicker (BYKIK)"}
+	{$(DEVICE) , LCLSTBD2, 161,11921      , LOW  ,120.5,120.5,  -1 ,  -1 , "Spare 2"      }
+	{$(DEVICE) , LCLSTBD3, 162,11922      , LOW  ,120.5,120.5,  -1 ,  -1 , "Spare 3"      }
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 ,12950      , LOW  ,360.5,360.5,359.5,359.5, "360Hz"        }

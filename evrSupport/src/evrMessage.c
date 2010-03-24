@@ -34,10 +34,6 @@
 #include <rtems.h>              /* timer routines              */
 #include <rtems/timerdrv.h>     /* timer routines              */
 #include <bsp.h>                /* BSP*                        */
-#if (__RTEMS_MAJOR__ > 4) || (__RTEMS_MAJOR__ == 4 && __RTEMS_MINOR__ >= 9)
-#define Timer_initialize benchmark_timer_initialize
-#define Read_timer benchmark_timer_read
-#endif
 #endif
 
 #include "dbAccess.h"           /* dbProcess,dbScan* protos    */

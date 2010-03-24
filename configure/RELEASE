@@ -11,6 +11,12 @@ include $(TOP)/RELEASE_SITE
 #EPICS_SITE_TOP=/afs/slac/g/lcls/epics
 TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 
+# ==================================================================================
+#If using macro substitutions, point MSI at the binary:
+#EXTENSIONS_MODULE_VERSION=extensions-R3-14-9
+EXTENSIONS_MODULE_VERSION=extensions-R3-14-8-2
+MSI=$(EPICS_SITE_TOP)/extensions/$(EXTENSIONS_MODULE_VERSION)/bin/$(EPICS_HOST_ARCH)/msi
+# ==================================================================================
 
 # =============================================================
 # Define location of module tree with respect to
@@ -21,14 +27,17 @@ EPICS_MODULES=$(EPICS_SITE_TOP)/modules
 # ==============================================================
 # Define the version of EPICS BASE that you will use
 # =============================================================
-BASE_MODULE_VERSION=base-R3-14-8-2-lcls5
+#BASE_MODULE_VERSION=base-R3-14-9-lcls1
+BASE_MODULE_VERSION=base-R3-14-8-2-lcls2
 
 # =============================================================
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # =============================================================
-GENERALTIME_MODULE_VERSION=generalTime-R2-1-0
-MISCUTILS_MODULE_VERSION=miscUtils-R2-1-0
+#GENERALTIME_MODULE_VERSION=generalTime-R1-2-2-2
+#MISCUTILS_MODULE_VERSION=miscUtils-R1-0-2-1
+GENERALTIME_MODULE_VERSION=generalTime-R1-2-1
+MISCUTILS_MODULE_VERSION=miscUtils-R1-0-1
 
 # ============================================================
 # External Support
@@ -42,4 +51,3 @@ MISCUTILS=$(EPICS_MODULES)/miscUtils/$(MISCUTILS_MODULE_VERSION)
 # =================================================================
 EPICS_BASE=$(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)
 
-# End of file

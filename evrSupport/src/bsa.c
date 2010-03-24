@@ -43,7 +43,6 @@
 #include "dbScan.h"           /* IOSCANPVT      */
 #include "alarm.h"            /* INVALID_ALARM  */
 #include "evrTime.h"          /* evrTimeGetFromEdef        */
-#include "evrPattern.h"       /* EDEF_MAX                  */
 #include "bsa.h"              /* prototypes in this file   */
 
 /* BSA information for one device, one EDEF */
@@ -53,7 +52,6 @@ typedef struct {
   double              val;       /* average value     */
   double              rms;       /* RMS of above      */
   int                 cnt;       /* # in average      */
-  int                 readcnt;   /* # total readouts  */
   epicsTimeStamp      time;      /* time of average   */
   unsigned long       nochange;  /* Same time stamp counter */
   unsigned long       noread;    /* Data not read counter   */
@@ -120,7 +118,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
   /* Request BSA processing for matching EDEFs */
   noAverage = ((bsaDevice_ts *)dev_ps)->noAverage;
   for (idx = 0; idx < EDEF_MAX; idx++) {
-    /* Get EDEF information. */
+    /* EDEF timestamp must match the data timestamp. */
     if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s,
                            &edefAvgDone, &edefSevr)) {
       status = -1;
@@ -138,7 +136,6 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       bsa_ps->avg    = 0.0;
       bsa_ps->var    = 0.0;
       bsa_ps->avgcnt = 0;
-      bsa_ps->readcnt= 0;
       if (bsa_ps->readFlag) bsa_ps->noread++;
       bsa_ps->readFlag = 0;
       bsa_ps->reset    = 1;
@@ -149,7 +146,6 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       bsa_ps->nochange++;
     } else {
       bsa_ps->timeData = *secnTime_ps;
-      bsa_ps->readcnt++;
     
       /* Include this value in the average if it's OK with the EDEF */
       if (secnSevr < edefSevr) {
@@ -212,7 +208,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
 
   Name: bsaSecnInit
 
-  Abs:  Beam Synchronous Acquisition Processing Initialization for a Device
+  Abs:  Beam Synchronous Acquisition Processing Initialization
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
@@ -222,7 +218,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
         
   Rem:  
       
-  Ret:  0 = OK, -1 = Mutex lock or memory allocation error
+  Ret:  0 = OK, -1 = Mutex creation or memory allocation error
 
 ==============================================================================*/
 
@@ -232,55 +228,32 @@ int bsaSecnInit(char  *secnName,
 {
   bsaDevice_ts *dev_ps = 0;
   
-  if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps))
-    return -1;
-  /* Check if device name is already registered. */
-  dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
-  while(dev_ps) {
-    if(strcmp(dev_ps->name, secnName)==0) break;
-    dev_ps = (bsaDevice_ts *)ellNext(&dev_ps->node);
+  if (!bsaRWMutex_ps) {
+    bsaRWMutex_ps = epicsMutexCreate();
+    if (bsaRWMutex_ps) ellInit(&bsaDeviceList_s);
   }
-  if (!dev_ps) {
-    dev_ps = calloc(1,sizeof(bsaDevice_ts));
-    if (dev_ps) {
-      strcpy(dev_ps->name, secnName);
-      ellAdd(&bsaDeviceList_s,&dev_ps->node);
+  if (bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) { 
+    /* Check if device name is already registered. */
+    dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
+    while(dev_ps) {
+      if(strcmp(dev_ps->name, secnName)==0) break;
+      dev_ps = (bsaDevice_ts *)ellNext(&dev_ps->node);
     }
+    if (!dev_ps) {
+      dev_ps = calloc(1,sizeof(bsaDevice_ts));
+      if (dev_ps) {
+        strcpy(dev_ps->name, secnName);
+        ellAdd(&bsaDeviceList_s,&dev_ps->node);
+      }
+    }
+    epicsMutexUnlock(bsaRWMutex_ps);
   }
-  epicsMutexUnlock(bsaRWMutex_ps);
   *dev_pps = dev_ps;
   if (dev_ps) {
     if (noAverage) dev_ps->noAverage = 1;
     return 0;
   }
   return -1;
-}
-
-/*=============================================================================
-
-  Name: bsaInit
-
-  Abs:  Beam Synchronous Acquisition Processing Global Initialization
-
-  Args: None.
-        
-  Rem:  
-      
-  Ret:  0 = OK, -1 = Mutex creation error
-
-==============================================================================*/
-
-int bsaInit()
-{
-  if (!bsaRWMutex_ps) {
-    bsaRWMutex_ps = epicsMutexCreate();
-    if (bsaRWMutex_ps) {
-      ellInit(&bsaDeviceList_s);
-    } else {
-      return -1;
-    }
-  }
-  return 0;
 }
 
 /*=============================================================================
@@ -309,12 +282,6 @@ static long read_bsa(bsaRecord *pbsa)
 
   /* Lock and update */
   if (bsa_ps && bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) {
-    if (pbsa->res) {
-      pbsa->res        = 0;
-      bsa_ps->nochange = 0;
-      bsa_ps->noread   = 0;
-      bsa_ps->readcnt  = 0;
-    }
     if (bsa_ps->readFlag) {
       bsa_ps->readFlag = 0;
       noread           = 0;
@@ -324,7 +291,6 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->time = bsa_ps->time;
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
-      pbsa->rcnt = bsa_ps->readcnt;
     }
     if (bsa_ps->reset) {
       bsa_ps->reset = 0;
