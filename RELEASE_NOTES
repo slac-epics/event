@@ -1,5 +1,23 @@
 Release Notes for the event package
 -----------------------------------
+
+event-R3-2-0: 	Build with base-R3-14-8-2-lcls6
+	      	Build with rtems-4.9.4
+
+event-R3-1-7:
+	* Added status PVs for Event Code Sequences (ecs)
+
+
+event-R3-1-6: Mar 1, 2010
+        * evrSupport/src/bsa.c and bsa.h - Changes to maximize BSA stat/sevr: 
+              bsa_ts: add data status and severity
+              bsaSecnAvg: add data status to argument list; add data status
+                and severity to average initialization section; compute running 
+                maximum of stat/sevr; 
+              read_bsa: set record alarms to maximum stat/sevr;
+              write_ao: replace dbGetTimeStamp with dbGetField to get stat/sevr
+         * README - II-(2) add data status argument 
+
 event-R3-1-5:  Build with base-R3-14-8-2-lcls5
                Build with rtems-4.9.3
 

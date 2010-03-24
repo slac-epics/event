@@ -23,6 +23,8 @@ DB += evrPatternAll.db
 DB += evrPatternTest.db
 DB += evrPatternTestBsa.db
 DB += evrMod36.db
+# Event Code Sequences
+DB += eventCodeSequenceAll.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
