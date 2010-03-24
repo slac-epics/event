@@ -1,6 +1,15 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-0-5:  Nov 18, 2009:
+	* evrSupport/src/evrPattern.c, evrPattern.h - remove evrPatternMPS 
+	  which changed other bits in modifiers 1 to 4 based on the MPS
+	  modifier.  Instead, the MPS modifier will be added to 
+	  inclusion/exclusion checks on the EVG IOC.  
+	  Change MOD5_BEAMFULL_MASK, used by BPM acquisition to know when
+	  to process data, to use a different bit which the EVG IOC will
+	  set independent of the full-rate (BR) EDEF.
+
 event-R3-0-4:  Nov 11, 2009:
 	* evrSupport/src/drvEvr.c - change evrRecord thread to run at a
 	  lower priority.  Add bsaInit.  Add MPS modifier to evrTime and 

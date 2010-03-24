@@ -41,8 +41,6 @@ extern "C" {
 /* Bits in modifier 2                                                  */
 #define MOD2_IDX                1  
 #define EVG_BURST               (0x00000040)  /*Single-shot/burst pulse*/
-#define LHTRSHUT_PERM           (0x00020000)  /* Laser heater shutter  */
-#define MECHSHUT_PERM           (0x00800000)  /* Mechanical Shutter    */
 #define KICKER_LI25             (0x10000000)  /* BXKIK trigger         */
 #define KICKER_LTU              (0x20000000)  /* BYKIK trigger         */
 #define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
@@ -72,17 +70,19 @@ extern "C" {
 #define MOD5_IDX                4  
 #define EDEF_MAX                20            /* Max # event defns   */
 #define MOD5_EDEF_MASK          (0x000FFFFF)  /* EDEF bits           */
-#define MOD5_NOEDEF_MASK        (0xFFF00000)  /* Rate and User bits    */
-#define MOD5_RATE_MASK          (0x01F00000)  /* Rate bits             */
-#define MOD5_USER_MASK          (0xFE000000)  /* User-settable bits    */
-#define MOD5_BEAM1HZ_MASK       (0x00008000)  /* Beam & 1hz            */
-#define MOD5_BEAM10HZ_MASK      (0x00010000)  /* Beam & 10hz           */
-#define MOD5_BEAMFULL_MASK      (0x00020000)  /* Beam & full rate      */
+#define MOD5_NOEDEF_MASK        (0xFFF00000)  /* Rate and User bits  */
+#define MOD5_RATE_MASK          (0x01F00000)  /* Rate bits           */
+#define MOD5_USER_MASK          (0x0E000000)  /* User-settable bits  */
+#define MOD5_ACQ_MASK           (0xF0000000)  /* Acquisition bits    */
+#define MOD5_EDEF1HZ_MASK       (0x00008000)  /* System EDEF - Beam & 1hz       */
+#define MOD5_EDEF10HZ_MASK      (0x00010000)  /* System EDEF - Beam & 10hz      */
+#define MOD5_EDEFFULL_MASK      (0x00020000)  /* System EDEF - Beam & full rate */
 #define MOD5_30HZ_MASK          (0x00100000)  /* 30hz base rate        */
 #define MOD5_10HZ_MASK          (0x00200000)  /* 10hz base rate        */
 #define MOD5_5HZ_MASK           (0x00400000)  /* 5hz  base rate        */
 #define MOD5_1HZ_MASK           (0x00800000)  /* 1hz  base rate        */
 #define MOD5_HALFHZ_MASK        (0x01000000)  /* .5hz base rate        */
+#define MOD5_BEAMFULL_MASK      (0x10000000)  /* Acquire at full rate  */
 
 /* Masks defining modifier6 (MPS modifier) */  
 #define MOD6_IDX                5  
@@ -132,7 +132,6 @@ int evrPattern     (int timeout, epicsUInt32 *mpsModifier_p);
 int evrPatternCheck(unsigned long  beamCode,    unsigned long  timeSlot,
                     evrModifier_ta inclusion_a, evrModifier_ta exclusion_a,
                     evrModifier_ta modifier_a);
-int evrPatternMPS  (evrModifier_ta modifier_a);
 #endif
   
 #ifdef __cplusplus
