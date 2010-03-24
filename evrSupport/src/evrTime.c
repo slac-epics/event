@@ -167,10 +167,11 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
         unsigned long * edefMinorMask_p   Write    EDEF minor severity mask
         unsigned long * edefMajorMask_p   Write    EDEF major severity mask
 
-  Rem:  Routine to get the epics timestamp and pattern from the evr timestamp table
-        that is populated from incoming broadcast from EVG
+  Rem:  Routine to get the epics timestamp and pattern from the evr timestamp
+        table that is populated from incoming broadcast from EVG.
+        All outputs are set to zero
 
-  Side: None/
+  Side: None.
 
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
@@ -186,12 +187,27 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
   evrTimePattern_ts *evr_ps;
   int status;
   int idx;
-  
-  if ((id > evrTimeActive) || (!evrTimeRWMutex_ps)) return epicsTimeERROR;
-  /* if the r/w mutex is valid, and we can lock with it, read requested time index */
-  if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
+
+  /* Set all outputs to zero if there is any problem locking the pipeline. */
+  if ((id > evrTimeActive) || (!evrTimeRWMutex_ps) ||
+      epicsMutexLock(evrTimeRWMutex_ps)) {
+    if (epicsTime_ps) {
+      epicsTime_ps->secPastEpoch = 0;
+      epicsTime_ps->nsec         = 0;
+    }
+    if (modifier_a) {
+      for (idx = 0; idx < MAX_EVR_MODIFIER; idx++) modifier_a[idx] = 0;
+      if (patternStatus_p  ) *patternStatus_p   = 0;
+      if (edefAvgDoneMask_p) *edefAvgDoneMask_p = 0;
+      if (edefMinorMask_p  ) *edefMinorMask_p   = 0;
+      if (edefMajorMask_p  ) *edefMajorMask_p   = 0;
+    }
+    return epicsTimeERROR;
+  }
+  /* Read requested time index */
   evr_ps = evr_aps[id];
-  status = evr_ps->timeStatus;
+  if (evr_ps->timeStatus) status = evr_ps->timeStatus;
+  else                    status = fiducialStatus;
   if (epicsTime_ps) *epicsTime_ps = evr_ps->pattern_s.time;
   if (modifier_a) {
     for (idx = 0; idx < MAX_EVR_MODIFIER; idx++)
@@ -384,8 +400,6 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].status = epicsTimeERROR;
           eventCodeTime_as[idx].count  = 0;
         }
-        evrTimeRWMutex_ps = epicsMutexCreate();
-        if (!evrTimeRWMutex_ps) return epicsTimeERROR;
   /* For IOCs that support iocClock (RTEMS and vxWorks), register
      evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
 #ifdef __rtems__
@@ -396,6 +410,8 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
                                   (pepicsTimeGetEvent)evrTimeGetSystem))
           return epicsTimeERROR;
 #endif
+        evrTimeRWMutex_ps = epicsMutexCreate();
+        if (!evrTimeRWMutex_ps) return epicsTimeERROR;
   }
   return epicsTimeOK;
 }

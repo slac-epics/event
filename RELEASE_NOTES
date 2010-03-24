@@ -4,6 +4,25 @@ Release Notes for the event package
 Note: The file called "CHANGES" has only changes in mrfApp.  This file 
 (RELEASE_NOTES) lists changes for ALL directories.
 
+event-R2-8-2: Mar 31, 2009
+	* evrSupport/src/bsa.c, bsaRecord.c, bsaRecord.dbd - 
+          Add # values readout and reset to diagnostics.
+	* evrSupport/src/drvEvr.c, evrTime.h - 
+          Make evrInitialize global and move evrTimeRegister init logic
+	  to evrInitialize.
+	* evrSupport/src/evrTime.c - return bad status for 
+	  evrTimeGetFromPipeline if the pipeline is not contiguous 
+	  (has a missing or same pulse).
+	* evrSupport/src/evrPattern.h - remove SHUTTER_PERM.
+	* evrSupport/Db/evr/evrEventAll.substitutions - replace SHUT event
+	  code with TBD1.
+	* evrSupport/Db/evr/evr.db, evrWith*Delays.db - add LINKERRCNT and
+	  LINKERR to update total # of link errors and the # of link errors
+	  in the last 2 seconds.
+	* evrIoc - various changes to support testing.
+	* README - add text for evrInitialize, evrTimeGetFromPipeline, and
+	  LINKERR.
+
 event-R2-8-1: Jan 20, 2009
 	* evrSupport/src/bsa.c - Report SOFT INVALID alarm when there's been
           no valid inputs to the average for the BSA record.

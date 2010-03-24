@@ -233,5 +233,9 @@ static void monitor(struct bsaRecord *pbsa)
                 db_post_events(pbsa,&pbsa->nore,monitor_mask|DBE_VALUE|DBE_LOG);
                 pbsa->lnor = pbsa->nore;
         }
+        if (pbsa->rcnt != pbsa->lrct) {
+                db_post_events(pbsa,&pbsa->rcnt,monitor_mask|DBE_VALUE|DBE_LOG);
+                pbsa->lrct = pbsa->rcnt;
+        }
         return;
 }
