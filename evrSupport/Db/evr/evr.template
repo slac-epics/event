@@ -100,9 +100,24 @@ record(calc, "$(EVR):LINKERR") {
   field(INPA, "$(EVR):LINKERRCNT MS")
   field(INPB, "$(EVR):LINKERR.LA")
   field(SCAN, "2 second")
-  field(CALC, "A>B?A-B:B-A")
+  field(CALC, "A<B?A:A-B")
   field(HIHI, "2")
   field(HIGH, "1")
   field(HHSV, "MAJOR")
   field(HSV,  "MINOR")
+}
+record(bo, "$(EVR):LINKERRRST") {
+  field(DESC, "EVR Err Count Reset")
+  field(OUT, "$(EVR):CTRL.RXVR PP")
+  field(PINI, "YES")
+  field(DOL, "1")
+  field(OMSL, "closed_loop")
+  field(ZNAM, "NoReset")
+  field(ONAM, "Reset")
+  field(FLNK, "$(EVR):LINKERRRSTTOD")
+}
+record(stringin, "$(EVR):LINKERRRSTTOD") {
+  field(DESC, "EVR Err Count Reset Time")
+  field(DTYP, "Soft Timestamp")
+  field(INP, "@%m/%d/%y %H:%M:%S")
 }

@@ -1,4 +1,4 @@
-Instructions for RTEMS EVR users                    Last Updated 10/05/2009
+Instructions for RTEMS EVR users                    Last Updated 11/11/2009
 --------------------------------
 
 I - Adding the event package to your IOC application:
@@ -92,6 +92,7 @@ Note that the order of the above libraries is important.
 	For each IOC:
 	<iocname>:PATTERNSTATE
 	<iocname>:FIDUCIALRATE
+	<iocname>:NTPSTATE
 	For each EVR:
 	<evrname>:LINK
 	<evrname>:LINKERR

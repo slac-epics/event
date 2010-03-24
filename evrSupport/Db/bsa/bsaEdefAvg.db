@@ -7,7 +7,7 @@ record(bsa, "$(DEV):$(SECN)$(MDID)") {
   field(DESC, "$(SECN) Avg for EDEF $(DESC)")
   field(DTYP, "BSA")
   field(SCAN, "I/O Intr")
-  field(PRIO, "LOW")
+  field(PRIO, "HIGH")
   field(INP, "@$(DEV):$(SECN)")
   field(EDEF, "$(MD)")
   field(EGU, "$(EGU)")
