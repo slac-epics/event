@@ -484,7 +484,6 @@ int evrTime(epicsUInt32 mpsModifier)
     for (idx=0;idx<evrTimeNext3;idx++) {
       evr_aps[idx] = evr_aps[idx+1];
       evr_aps[idx]->pattern_s.modifier_a[MOD6_IDX] = mpsModifier;
-          /*evrPatternMPS(evr_aps[idx]->pattern_s.modifier_a); */
     }
     evr_aps[evrTimeNext3] = evr_ps;
     evr_aps[evrTimeNext3]->timeStatus = epicsTimeERROR;
