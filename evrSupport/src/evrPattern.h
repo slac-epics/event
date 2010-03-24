@@ -46,7 +46,6 @@ extern "C" {
 #define TIMESLOT5_MASK          (0x00000010)  /* timeslot 5 mask       */
 #define TIMESLOT6_MASK          (0x00000020)  /* timeslot 6 mask       */
 /* Bits in modifier 2                                                  */
-#define SHUTTER_PERM            (0x00800000)  /* Shutter permit        */
 #define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
 /* Bits in modifier 3                                                  */
 #define POCKCEL_PERM            (0x00080000)  /* Pockels cell permit   */
