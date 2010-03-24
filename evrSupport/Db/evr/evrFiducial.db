@@ -87,6 +87,8 @@ record(mbbo, "$(DEV):PATTERNSTATE") {
   field(NISV, "MAJOR")
   field(TEST, "TIMEOUT")
   field(TESV, "MAJOR")
+  field(ELST, "ERROR")
+  field(ELSV, "INVALID")
   field(UNSV, "INVALID")
   field(OMSL, "closed_loop")
 }
