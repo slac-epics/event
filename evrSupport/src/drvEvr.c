@@ -1,7 +1,7 @@
 /*=============================================================================
  
   Name: drvEvr.c
-        evrInitialise  - EVR Data and Event Initialisation
+        evrInitialize  - EVR Data and Event Initialisation
         evrReport      - Driver Report
         evrSend        - Send EVR data to Message Queue
         evrEvent       - Process Event Codes
@@ -38,11 +38,10 @@
 #define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
 
 static int evrReport();
-static int evrInitialise();
 struct drvet drvEvr = {
   2,
   (DRVSUPFUN) evrReport, 	/* subroutine defined in this file */
-  (DRVSUPFUN) evrInitialise 	/* subroutine defined in this file */
+  (DRVSUPFUN) evrInitialize 	/* subroutine defined in this file */
 };
 epicsExportAddress(drvet, drvEvr);
 
@@ -50,6 +49,7 @@ static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
+static int evrInitialized = 0;          /* evrInitialize performed        */
 
 /* Fiducial User Functions */
 typedef struct {
@@ -147,7 +147,7 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 
   Abs:  This task performs processing for the fiducial and data.
   
-  Rem:  It's started by evrInitialise after the EVR module is configured. 
+  Rem:  It's started by evrInitialize after the EVR module is configured. 
     
 =============================================================================*/
 static int evrTask()
@@ -204,7 +204,7 @@ static int evrTask()
 
   Abs:  This task performs record processing for the fiducial and data.
   
-  Rem:  It's started by evrInitialise after the EVR module is configured. 
+  Rem:  It's started by evrInitialize after the EVR module is configured. 
     
 =============================================================================*/
 static int evrRecord()
@@ -224,15 +224,22 @@ static int evrRecord()
 
 /*=============================================================================
                                                          
-  Name: evrInitialise
+  Name: evrInitialize
 
   Abs:  Driver initialization.
   
   Rem:  Called during iocInit to initialize fiducial and data processing.
+        Can also be called before iocInit.
     
 =============================================================================*/
-static int evrInitialise()
+int evrInitialize()
 {
+  if (evrInitialized == 1) return 0;
+  if (evrInitialized) {
+    errlogPrintf("evrInitialize: error in previous call\n");
+    return -1;
+  }
+  evrInitialized = -1;
 
   /* Create space for the pattern + diagnostics */
   if (evrMessageCreate(EVR_MESSAGE_PATTERN_NAME,
@@ -246,26 +253,34 @@ static int evrInitialise()
   /* Create the semaphores used by the ISR to wake up the evr tasks */
   evrTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
   if (!evrTaskEventSem) {
-    errlogPrintf("evrInitialise: unable to create the EVR task semaphore\n");
+    errlogPrintf("evrInitialize: unable to create the EVR task semaphore\n");
     return -1;
   }
   evrRecordEventSem = epicsEventMustCreate(epicsEventEmpty);
-  if (!evrTaskEventSem) {
-    errlogPrintf("evrInitialise: unable to create the EVR record task semaphore\n");
+  if (!evrRecordEventSem) {
+    errlogPrintf("evrInitialize: unable to create the EVR record task semaphore\n");
     return -1;
   }
+
+  /* Create the fiducial function mutex and initialize link list*/
+  evrRWMutex_ps = epicsMutexCreate();
+  if (!evrRWMutex_ps) {
+    errlogPrintf("evrInitialize: unable to create the EVR fiducial function mutex\n");
+    return -1;
+  }
+  ellInit(&evrFiducialFuncList_s);
   
   /* Create the processing tasks */
   if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh+1,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
                          (EPICSTHREADFUNC)evrTask, 0)) {
-    errlogPrintf("evrInitialise: unable to create the EVR task\n");
+    errlogPrintf("evrInitialize: unable to create the EVR task\n");
     return -1;
   }
   if (!epicsThreadCreate("evrRecord", epicsThreadPriorityHigh,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
                          (EPICSTHREADFUNC)evrRecord, 0)) {
-    errlogPrintf("evrInitialise: unable to create the EVR record task\n");
+    errlogPrintf("evrInitialize: unable to create the EVR record task\n");
     return -1;
   }
   
@@ -273,7 +288,7 @@ static int evrInitialise()
   /* Get first EVR in the list */
   pCard = ErGetCardStruct(0);
   if (!pCard) {
-    errlogPrintf("evrInitialise: cannot find an EVR module\n");
+    errlogPrintf("evrInitialize: cannot find an EVR module\n");
   /* Register the ISR functions in this file with the EVR */
   } else {
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
@@ -282,7 +297,7 @@ static int evrInitialise()
     ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
   }
 #endif
-  
+  evrInitialized = 1;
   return 0;
 }
 
@@ -310,14 +325,9 @@ int evrTimeRegister(REGISTRYFUNCTION fiducialFunc)
     errlogPrintf("evrTimeRegister: invalid fiducial function argument\n");
     return -1;
   }
-  /* Create the fiducial function mutex and initialize link list*/
   if (!evrRWMutex_ps) {
-    evrRWMutex_ps = epicsMutexCreate();
-    if (!evrRWMutex_ps) {
-      errlogPrintf("evrTimeRegister: unable to create the EVR fiducial function mutex\n");
-      return -1;
-    }
-    ellInit(&evrFiducialFuncList_s);
+    errlogPrintf("evrTimeRegister: evrTimeRegister must be called after evrInitialize\n");
+    return -1;
   }
   /* Get space for this function */
   if (!(fiducialFunc_ps = calloc(1,sizeof(evrFiducialFunc_ts)))) {

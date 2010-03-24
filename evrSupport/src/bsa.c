@@ -52,6 +52,7 @@ typedef struct {
   double              val;       /* average value     */
   double              rms;       /* RMS of above      */
   int                 cnt;       /* # in average      */
+  int                 readcnt;   /* # total readouts  */
   epicsTimeStamp      time;      /* time of average   */
   unsigned long       nochange;  /* Same time stamp counter */
   unsigned long       noread;    /* Data not read counter   */
@@ -118,7 +119,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
   /* Request BSA processing for matching EDEFs */
   noAverage = ((bsaDevice_ts *)dev_ps)->noAverage;
   for (idx = 0; idx < EDEF_MAX; idx++) {
-    /* EDEF timestamp must match the data timestamp. */
+    /* Get EDEF information. */
     if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s,
                            &edefAvgDone, &edefSevr)) {
       status = -1;
@@ -136,6 +137,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       bsa_ps->avg    = 0.0;
       bsa_ps->var    = 0.0;
       bsa_ps->avgcnt = 0;
+      bsa_ps->readcnt= 0;
       if (bsa_ps->readFlag) bsa_ps->noread++;
       bsa_ps->readFlag = 0;
       bsa_ps->reset    = 1;
@@ -146,6 +148,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       bsa_ps->nochange++;
     } else {
       bsa_ps->timeData = *secnTime_ps;
+      bsa_ps->readcnt++;
     
       /* Include this value in the average if it's OK with the EDEF */
       if (secnSevr < edefSevr) {
@@ -282,6 +285,12 @@ static long read_bsa(bsaRecord *pbsa)
 
   /* Lock and update */
   if (bsa_ps && bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) {
+    if (pbsa->res) {
+      pbsa->res        = 0;
+      bsa_ps->nochange = 0;
+      bsa_ps->noread   = 0;
+      bsa_ps->readcnt  = 0;
+    }
     if (bsa_ps->readFlag) {
       bsa_ps->readFlag = 0;
       noread           = 0;
@@ -291,6 +300,7 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->time = bsa_ps->time;
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
+      pbsa->rcnt = bsa_ps->readcnt;
     }
     if (bsa_ps->reset) {
       bsa_ps->reset = 0;
