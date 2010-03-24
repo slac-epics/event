@@ -30,6 +30,7 @@ extern "C" {
 /* Definitions and typedefs shared by evrPattern.c and mpgPattern.c  */
   
 /* Masks used to decode beam code and YY from modifier1 */
+#define MOD1_IDX                0  
 #define BEAMCODE_BIT_MASK       (0x0000001F)  /* Beam code mask        */
                                               /* Left shift 8 first    */
 #define BEAMCODE(mod_a)         ((((mod_a)[0]) >> 8) & BEAMCODE_BIT_MASK)
@@ -37,6 +38,10 @@ extern "C" {
 /* Other useful bits in modifier1                       */
 #define MODULO720_MASK          (0x00008000)  /* Set to sync modulo 720*/
 #define MPG_IPLING              (0x00004000)  /* Set on MPG/EVG problem*/
+/* Bits in modifier 2                                                  */
+#define MOD2_IDX                1  
+#define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
+#define EVG_BURST               (0x00000040)  /*Single-shot/burst pulse*/
 /* Mask used to decode timeslot 1 to 6 from modifier2   */
 #define TIMESLOT_MASK           (0x0000003F)  /* timeslot   mask       */
 #define TIMESLOT1_MASK          (0x00000001)  /* timeslot 1 mask       */
@@ -45,12 +50,12 @@ extern "C" {
 #define TIMESLOT4_MASK          (0x00000008)  /* timeslot 4 mask       */
 #define TIMESLOT5_MASK          (0x00000010)  /* timeslot 5 mask       */
 #define TIMESLOT6_MASK          (0x00000020)  /* timeslot 6 mask       */
-/* Bits in modifier 2                                                  */
-#define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
 /* Bits in modifier 3                                                  */
+#define MOD3_IDX                2  
 #define POCKCEL_PERM            (0x00080000)  /* Pockels cell permit   */
 #define TCAV0_PERM              (0x80000000)  /* TCAV0                 */
 /* Mask used to get timeslot value from modifier4       */
+#define MOD4_IDX                3  
 #define TIMESLOT_VAL_MASK       (0x00000007)  /* Time slot value mask  */
                                               /* Left shift 29 first   */
 #define TIMESLOT(mod_a)         ((((mod_a)[3]) >> 29) & TIMESLOT_VAL_MASK)
@@ -59,7 +64,8 @@ extern "C" {
 #define TIMESLOT_RATE_MAX         5           /* # limited rates       */
                                               /* 30, 10, 5, 1, 0.5hz   */
 
-/* Masks defining modifier5 */
+/* Masks defining modifier5 */  
+#define MOD5_IDX                4  
 #define MOD5_EDEF_MASK          (0x000FFFFF)  /* EDEF bits             */
 #define MOD5_NOEDEF_MASK        (0xFFF00000)  /* Rate and User bits    */
 #define MOD5_RATE_MASK          (0x01F00000)  /* Rate bits             */

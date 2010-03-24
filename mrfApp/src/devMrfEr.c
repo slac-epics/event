@@ -311,6 +311,11 @@ epicsStatus ErProcess (erRecord  *pRec)
     ErSetTrg (pCard, 6, pRec->trg6);
 
    /*---------------------
+    * Set the event clock prescaler.
+    */
+    ErSetTickPre (pCard, pRec->pres);
+    
+   /*---------------------
     * Set the programmable width (OTP) output parameters (Enable, Delay, Width,and  Polarity)
     */
     ErSetOtp (pCard, 0,  pRec->otp0, pRec->ot0d, pRec->ot0w, pRec->ot0p);

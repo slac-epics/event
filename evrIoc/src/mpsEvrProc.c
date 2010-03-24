@@ -95,7 +95,7 @@ static int mpsTask()
     if (status == epicsEventWaitOK) {
       mpsTaskCounter++;
     } else if (status == epicsEventWaitTimeout) {
-      printf("MPS Task timeout\n");
+          /*printf("MPS Task timeout\n");*/
     } else return -1;
   }
   return 0;
@@ -117,7 +117,7 @@ static int mpsTask()
 
   =============================================================================*/ 
 
-static void mpsEvrFiducial(void)
+static void mpsEvrFiducial(void * arg)
 {
   evrModifier_ta modifier_a;
   unsigned long  patternStatus;
@@ -141,24 +141,24 @@ static void mpsEvrFiducial(void)
                (TIMESLOT_MASK & modifier_a[1]))) {
             printf("Same timeslot!!!\n");
             printf("%lx %lx %lx %lx %lx %lx %x %x %lx %u %d\n",
-                 modifier_a[0],
-                 modifier_a[1],
-                 modifier_a[2],
-                 modifier_a[3],
-                 modifier_a[4],
-                 modifier_a[5],
+                 (unsigned long)modifier_a[0],
+                 (unsigned long)modifier_a[1],
+                 (unsigned long)modifier_a[2],
+                 (unsigned long)modifier_a[3],
+                 (unsigned long)modifier_a[4],
+                 (unsigned long)modifier_a[5],
                  mpsPulse_as[idx].timestamp.secPastEpoch,
                  mpsPulse_as[idx].timestamp.nsec,
                  patternStatus, mpsPulse_as[idx].timeslot, timeslot_diff);
           } else if ((timeslot_diff != -1) && (timeslot_diff != 5)) {
             printf("Missed Timeslot!!!\n");
             printf("%lx %lx %lx %lx %lx %lx %x %x %lx %u %d\n",
-                 modifier_a[0],
-                 modifier_a[1],
-                 modifier_a[2],
-                 modifier_a[3],
-                 modifier_a[4],
-                 modifier_a[5],
+                 (unsigned long)modifier_a[0],
+                 (unsigned long)modifier_a[1],
+                 (unsigned long)modifier_a[2],
+                 (unsigned long)modifier_a[3],
+                 (unsigned long)modifier_a[4],
+                 (unsigned long)modifier_a[5],
                  mpsPulse_as[idx].timestamp.secPastEpoch,
                  mpsPulse_as[idx].timestamp.nsec,
                  patternStatus, mpsPulse_as[idx].timeslot, timeslot_diff);
@@ -191,7 +191,7 @@ static void mpsEvrFiducial(void)
 
   =============================================================================*/ 
 
-static void mpsEvrFiducial2(void)
+static void mpsEvrFiducial2(void * arg)
 {
   evrModifier_ta modifier_a;
   unsigned long  patternStatus;
@@ -256,8 +256,8 @@ int mpsEvrStart(int registerFiducial)
       return -1;
     }
     if (registerFiducial) {
-      evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial);
-      evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial2);
+      evrTimeRegister((FIDUCIALFUNCTION)mpsEvrFiducial, 0);
+      evrTimeRegister((FIDUCIALFUNCTION)mpsEvrFiducial2, 0);
     }
   }
   return 0;
