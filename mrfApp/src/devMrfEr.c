@@ -311,6 +311,11 @@ epicsStatus ErProcess (erRecord  *pRec)
     ErSetTrg (pCard, 6, pRec->trg6);
 
    /*---------------------
+    * Set the event clock prescaler.
+    */
+    ErSetTickPre (pCard, pRec->pres);
+    
+   /*---------------------
     * Set the programmable width (OTP) output parameters (Enable, Delay, Width,and  Polarity)
     */
     ErSetOtp (pCard, 0,  pRec->otp0, pRec->ot0d, pRec->ot0w, pRec->ot0p);
@@ -382,9 +387,14 @@ epicsStatus ErProcess (erRecord  *pRec)
 
    /*---------------------
     * Set various record fields with the status of the receive link frame error,
-    * the frame error count, and the current FPGA version.
+    * the frame error count, and the current FPGA version.  Process error count
+    * reset request.
     */
     pRec->plok = ErCheckTaxi (pCard)?0:1;
+    if (pRec->rxvr) {
+      pRec->rxvr = 0;
+      pCard->RxvioCount = 0;
+    }
     pRec->taxi = pCard->RxvioCount;
     pRec->fpgv = ErGetFpgaVersion (pCard);
  
