@@ -760,6 +760,37 @@ epicsUInt16 ErGetFpgaVersion(ErCardStruct *pCard)
 }
 
 /**************************************************************************************************
+|* ErGetSecondsSR () -- Return the Event Receiver's Unlatched Seconds Register
+|*-------------------------------------------------------------------------------------------------
+|*
+|* Read the unlatched timestamp "seconds" from the Event Receiver's SecondsSR register.
+|*
+|*-------------------------------------------------------------------------------------------------
+|* CALLING SEQUENCE:
+|*      version = ErGetSecondsSR (pCard);
+|*
+|*-------------------------------------------------------------------------------------------------
+|* INPUT PARAMETERS:
+|*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
+|* 
+|*-------------------------------------------------------------------------------------------------
+|* RETURNS:
+|*      seconds  = (epicsUInt16)    The timestamp "seconds" of the requested Event Receiver Card.
+|*
+\**************************************************************************************************/
+
+GLOBAL_RTN
+epicsUInt32 ErGetSecondsSR (ErCardStruct *pCard)
+{
+    struct MrfErRegs	*	pEr = (struct MrfErRegs *)pCard->pEr;
+	
+	/* no need for a lock, this is a read only register */
+	epicsUInt32		secondsSR = be32_to_cpu(pEr->SecondsShift);
+	return secondsSR;
+
+}/*end ErGetSecondsSR()*/
+
+/**************************************************************************************************
 |* ErGetRamStatus () -- Return the Enabled/Disabled Status of the Requested Event Mapping RAM
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:

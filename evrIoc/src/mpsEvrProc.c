@@ -53,6 +53,7 @@
 typedef struct {
   epicsTimeStamp      timestamp;
   epicsUInt32         timeslot;
+  epicsUInt32         timeslotmask;
   epicsUInt32         pulseid;
   epicsUInt32         beam;
   epicsUInt32         spare;
@@ -72,10 +73,11 @@ void mpsTaskPrint()
     for (idx=0;idx<MAX_MPS_TIME; idx++) mpsPrint_as[idx] = mpsPulse_as[idx];
     epicsMutexUnlock(mpsPulseRWMutex_ps);
     for (idx=0;idx<MAX_MPS_TIME; idx++) {
-      printf("Idx = %d, nsec = %x, sec = %u, timeslot = %d, pulseid = %x, beam =%d\n",
+      printf("Idx = %d, nsec = %x, sec = %u, timeslot = %d, timeslotmask = %d, pulseid = %x, beam =%d\n",
              idx, mpsPrint_as[idx].timestamp.nsec,
              mpsPrint_as[idx].timestamp.secPastEpoch,
              mpsPrint_as[idx].timeslot,
+             mpsPrint_as[idx].timeslotmask,
              mpsPrint_as[idx].pulseid,
              mpsPrint_as[idx].beam);
     }
@@ -93,7 +95,7 @@ static int mpsTask()
     if (status == epicsEventWaitOK) {
       mpsTaskCounter++;
     } else if (status == epicsEventWaitTimeout) {
-      printf("MPS Task timeout\n");
+          /*printf("MPS Task timeout\n");*/
     } else return -1;
   }
   return 0;
@@ -115,22 +117,55 @@ static int mpsTask()
 
   =============================================================================*/ 
 
-static void mpsEvrFiducial(void)
+static void mpsEvrFiducial(void * arg)
 {
   evrModifier_ta modifier_a;
   unsigned long  patternStatus;
   int     idx;
   
   if (mpsPulseRWMutex_ps && (!epicsMutexLock(mpsPulseRWMutex_ps))) {
-    for (idx = 0; idx < MAX_MPS_TIME-1; idx++) {
+    for (idx = 0; idx < MAX_MPS_TIME; idx++) {
       if (evrTimeGetFromPipeline(&mpsPulse_as[idx].timestamp, idx,
                                  modifier_a, &patternStatus,0,0,0)) {
         mpsPulse_as[idx].timeslot = 0;
+        mpsPulse_as[idx].timeslotmask = 0;
         mpsPulse_as[idx].pulseid  = PULSEID_INVALID;
         mpsPulse_as[idx].beam     = 1;
         mpsPulse_as[idx].spare    = 0;
       } else {
+        if ((idx == evrTimeCurrent) && (mpsPulse_as[idx].timeslot != 0)) {
+          int timeslot_diff = (int)mpsPulse_as[idx].timeslot -
+            (int)TIMESLOT(modifier_a);
+          if ((timeslot_diff == 0) || 
+              (mpsPulse_as[idx].timeslotmask ==
+               (TIMESLOT_MASK & modifier_a[1]))) {
+            printf("Same timeslot!!!\n");
+            printf("%lx %lx %lx %lx %lx %lx %x %x %lx %u %d\n",
+                 (unsigned long)modifier_a[0],
+                 (unsigned long)modifier_a[1],
+                 (unsigned long)modifier_a[2],
+                 (unsigned long)modifier_a[3],
+                 (unsigned long)modifier_a[4],
+                 (unsigned long)modifier_a[5],
+                 mpsPulse_as[idx].timestamp.secPastEpoch,
+                 mpsPulse_as[idx].timestamp.nsec,
+                 patternStatus, mpsPulse_as[idx].timeslot, timeslot_diff);
+          } else if ((timeslot_diff != -1) && (timeslot_diff != 5)) {
+            printf("Missed Timeslot!!!\n");
+            printf("%lx %lx %lx %lx %lx %lx %x %x %lx %u %d\n",
+                 (unsigned long)modifier_a[0],
+                 (unsigned long)modifier_a[1],
+                 (unsigned long)modifier_a[2],
+                 (unsigned long)modifier_a[3],
+                 (unsigned long)modifier_a[4],
+                 (unsigned long)modifier_a[5],
+                 mpsPulse_as[idx].timestamp.secPastEpoch,
+                 mpsPulse_as[idx].timestamp.nsec,
+                 patternStatus, mpsPulse_as[idx].timeslot, timeslot_diff);
+          }
+        }
         mpsPulse_as[idx].timeslot = TIMESLOT(modifier_a);
+        mpsPulse_as[idx].timeslotmask = TIMESLOT_MASK & modifier_a[1];
         mpsPulse_as[idx].pulseid  = PULSEID(mpsPulse_as[idx].timestamp);
         mpsPulse_as[idx].beam     = (modifier_a[4] & MOD5_BEAMFULL_MASK)?1:0;
         mpsPulse_as[idx].spare    = 0;
@@ -156,7 +191,7 @@ static void mpsEvrFiducial(void)
 
   =============================================================================*/ 
 
-static void mpsEvrFiducial2(void)
+static void mpsEvrFiducial2(void * arg)
 {
   evrModifier_ta modifier_a;
   unsigned long  patternStatus;
@@ -166,11 +201,13 @@ static void mpsEvrFiducial2(void)
     if (evrTimeGetFromPipeline(&mpsPulse_as[idx].timestamp, evrTimeActive,
                                modifier_a, &patternStatus, 0,0,0)) {
       mpsPulse_as[idx].timeslot = 0;
+      mpsPulse_as[idx].timeslotmask = 0;
       mpsPulse_as[idx].pulseid  = PULSEID_INVALID;
       mpsPulse_as[idx].beam     = 1;
       mpsPulse_as[idx].spare    = 0;
     } else {
       mpsPulse_as[idx].timeslot = TIMESLOT(modifier_a);
+      mpsPulse_as[idx].timeslotmask = TIMESLOT_MASK & modifier_a[1];
       mpsPulse_as[idx].pulseid  = PULSEID(mpsPulse_as[idx].timestamp);
       mpsPulse_as[idx].beam     = (modifier_a[4] & MOD5_BEAMFULL_MASK)?1:0;
       mpsPulse_as[idx].spare    = 0;
@@ -219,8 +256,8 @@ int mpsEvrStart(int registerFiducial)
       return -1;
     }
     if (registerFiducial) {
-      evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial);
-      evrTimeRegister((REGISTRYFUNCTION)mpsEvrFiducial2);
+      evrTimeRegister((FIDUCIALFUNCTION)mpsEvrFiducial, 0);
+      evrTimeRegister((FIDUCIALFUNCTION)mpsEvrFiducial2, 0);
     }
   }
   return 0;

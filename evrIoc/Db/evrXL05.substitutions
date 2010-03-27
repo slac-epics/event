@@ -9,6 +9,30 @@
 #	CARD	EVR card number starting at 0 (matches card number in ErConfigure).
 #	DELAY	Initial delay in ticks for normal delay triggers (one tick = 8.4 nsec)
 #	WIDTH	Initial pulse width in ticks
+#	Front panel triggers are set to use extended delay triggers.
+#
+# 	evrWithExtDelays.db - instantiates an EVR record with extended delay macros.
+#	  Associated display is evrDiags.edl.
+#	DEV	Name of EVR - EVR:<loca>:<unit>
+#	CARD	EVR card number starting at 0 (matches card number in ErConfigure).
+#	DELAY	Initial delay in ticks for normal delay triggers (one tick = 8.4 nsec)
+#	WIDTH	Initial pulse width in ticks
+#       STATE   Initial trigger state ("Enabled" or "Disabled")
+#       DG0C, DG1C, DG2C - Clock prescaler      for 3 extended delay triggers
+#       DG0W, DG1W, DG2W - Pulse width in ticks for 3 extended delay triggers
+#       DG0D, DG1D, DG2D - Delay in ticks       for 3 extended delay triggers
+#       DG0P, DG1P, DG2P - Polarity ("Normal", "Inverted")
+#	Front panel triggers are set to use extended delay triggers.
+#
+#	evrWithFrontPanel.db - instantiates an EVR record with front panel assignment..
+#	  Associated display is evrDiags.edl.
+#	DEV	Name of EVR - EVR:<loca>:<unit>
+#	CARD	EVR card number starting at 0 (matches card number in ErConfigure).
+#	DELAY	Initial delay in ticks for normal delay triggers (one tick = 8.4 nsec)
+#	WIDTH	Initial pulse width in ticks
+#	FP0, FP1, FP2, FP3 - Front panel trigger assignments:
+#	  0 to 3  = Extended delay triggers (channels 0 to  3)
+#	 11 to 24 = Normal   delay triggers (channels 0 to 13)
 #
 #	evrEventCtrl.db - instantiates a record for an EVR event.
 #	Associated display is evrTriggerDiags.edl.
@@ -45,10 +69,22 @@ file evr.db
 {
 #                               Default Pulse
 #	  Device         Card   Delay   Width (clock ticks)    
-pattern { DEV          , CARD , DELAY , WIDTH }
-	{ EVR:XL05:EV01,  0   ,   0   ,  12   }
-#	{ EVR:XL05:EV02,  1   ,   0   ,  12   }
-#	{ EVR:XL05:EV03,  2   ,   0   ,  12   }
+pattern { DEV          , CARD , DELAY , WIDTH}
+	{ EVR:XL05:EV01,  0   ,   8   ,  12  }
+}
+file evrWithFrontPanel.db
+{
+#                               Default Pulse
+#	  Device         Card   Delay   Width (clock ticks)    
+pattern { DEV          , CARD , DELAY , WIDTH , FP0 , FP1 , FP2 , FP3 }
+	{ EVR:XL05:EV02,  1   ,   8   ,  12   ,  0  ,  1  ,  22 , 23  }
+}
+file evrWithExtDelays.db
+{
+#                               Default Pulse
+#	  Device         Card   Delay   Width (clock ticks)    
+pattern { DEV          , CARD , DELAY , WIDTH , STATE  , DG0W , DG0D , DG0C , DG0P , DG1W , DG1D , DG1C , DG1P , DG2W , DG2D , DG2C , DG2P }
+	{ EVR:XL05:EV03,  2   ,   8   ,  12   , Enabled,  13  ,100000,  1   ,Inverted,14  ,100000,  1   ,Normal, 10   , 100  ,  119 ,Normal}
 }
 file evrEventCtrl.db
 {

@@ -762,6 +762,12 @@ recordtype(er) {
 		initial(1)
 		interest(1)
 	}
+	field(PRES,DBF_USHORT) {
+		prompt("Event Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
 	field(RXVE,DBF_MENU) {
 		prompt("RX violation IRQ Enable")
 		promptgroup(GUI_DISPLAY)
@@ -772,6 +778,11 @@ recordtype(er) {
 	field(RXVC,DBF_USHORT) {
 		prompt("RX violation counter")
 		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(RXVR,DBF_CHAR) {
+		prompt("RX violation counter reset")
 		pp(TRUE)
 		interest(1)
 	}
