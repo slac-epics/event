@@ -27,6 +27,7 @@
 #define DEBUG 1
 */
 #define DEBUG_PRINTF printf
+unsigned int	erapiDebug	= 1;
 
 int EvrOpen(struct MrfErRegs **pEr, char *device_name)
 {
@@ -391,7 +392,7 @@ int EvrDumpFIFO(volatile struct MrfErRegs *pEr)
       i = EvrGetFIFOEvent(pEr, &fe);
       if (!i)
 	{
-	  printf("Code %08lx, %08lx:%08lx\n",
+	  printf("Code %08x, %08x:%08x\n",
 		 fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
 	}
     }
@@ -419,8 +420,8 @@ int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig
   return 0;
 }
 
-int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
-		      int delay, int width)
+int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
+		      u32 delay, u32 width)
 {
   if (pulse < 0 || pulse >= EVR_MAX_PULSES)
     return -1;
@@ -428,6 +429,14 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
   pEr->Pulse[pulse].Prescaler = be32_to_cpu(presc);
   pEr->Pulse[pulse].Delay = be32_to_cpu(delay);
   pEr->Pulse[pulse].Width = be32_to_cpu(width);
+  if ( erapiDebug	>= 1 )
+  {
+	if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
+	  printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,
+		  pulse, be32_to_cpu(pEr->Pulse[pulse].Prescaler), presc );
+	else if ( presc != 0 )
+	  printf( "%s Pulse %d: Success! prescaler is now %d\n", __func__, pulse, presc );
+  }
   return 0;
 }
 
@@ -652,7 +661,7 @@ int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable)
   return 0;
 }
 
-int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, int dly0, int dly1)
+int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, u32 dly0, u32 dly1)
 {
   u32 gpio;
   int sh = 0;
@@ -856,7 +865,7 @@ int EvrSetTimestampDBus(volatile struct MrfErRegs *pEr, int enable)
   return be32_to_cpu(pEr->Control);  
 }
 
-int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, int div)
+int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, u32 div)
 {
   if (presc >= 0 && presc < EVR_MAX_PRESCALERS)
     {

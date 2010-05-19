@@ -69,6 +69,28 @@
 /*  Configuration Constants                                                                       */
 /**************************************************************************************************/
 
+
+/*
+ *  Firmware revisions
+ */
+
+/*
+ * This firmware revision has been verified to use the VME compatible
+ * register map and work with drvMrfEr.c
+ */
+#define	PMC_EVR_FIRMWARE_REV_VME1	0xF305
+
+/*
+ * These firmware revisions are known to use the modular memory map
+ * and are intended for use on linux based systems with drvLinuxEvr.c
+ */
+#define	PMC_EVR_FIRMWARE_REV_LINUX1	0x11000002
+#define	PMC_EVR_FIRMWARE_REV_LINUX2	0x11000003
+
+/**************************************************************************************************/
+/*  Configuration Constants                                                                       */
+/**************************************************************************************************/
+
 /*---------------------
  * Define the maximum number of events that can be processed from the FIFO on a single interrupt
  * (this helps prevent the interrupt service routine from getting into a major spin loop)

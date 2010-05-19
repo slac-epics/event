@@ -26,8 +26,8 @@ SOURCE_DIR := $(patsubst %../.., %., $(TOP))
 include $(TOP)/configure/CONFIG
 include $(SOURCE_DIR)/MRF_CONFIG
 
-#USR_CFLAGS += -pedantic
-USR_CFLAGS += -O0
+# Don't use -O0 for RTEMS as it generates undef references to in_be16()
+#USR_CFLAGS_Linux += -O0
 USR_CFLAGS += -DDEBUG_PRINT
 ifeq ($(BSP_SUPPORTS_PCI), YES)
     USR_CFLAGS += -DPCI
