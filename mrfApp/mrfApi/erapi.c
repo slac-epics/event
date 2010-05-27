@@ -431,7 +431,14 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
   pEr->Pulse[pulse].Width = be32_to_cpu(width);
   if ( erapiDebug	>= 1 )
   {
-	if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
+	/*
+	 * Sanity check on prescaler value (due to fixed bug in generator allocation)
+	 * Prescaler value is readable on generators 0-1
+	 * A MRF firmware bug prevents reading prescaler on generators 2-3
+	 * Generators 4-9 do not support prescaling and always read back 0
+	 */
+	if (	pulse < 2
+		&&	be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
 	  printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,
 		  pulse, be32_to_cpu(pEr->Pulse[pulse].Prescaler), presc );
 	else if ( presc != 0 )
