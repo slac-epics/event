@@ -67,8 +67,3 @@ file evrPmcEvent.template
 #{
 #	{ IOC="$(IOC)", CARD="0" }
 #}
-#
-#file beam.db
-#{
-#	{ IOC="$(IOC)", CARD="0", TRIG_BEAM="$(TRIG_BEAM)" }
-#}
