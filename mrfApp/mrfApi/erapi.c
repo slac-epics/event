@@ -437,7 +437,7 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
 	 * A MRF firmware bug prevents reading prescaler on generators 2-3
 	 * Generators 4-9 do not support prescaling and always read back 0
 	 */
-	if ( pulse < 2 )
+	if ( pulse < 3 )
 	{
 	  if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
 		printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,

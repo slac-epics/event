@@ -457,6 +457,7 @@ static int ErConfigure (
 	    break;
 	case PMC_EVR_FIRMWARE_REV_LINUX1:
 	case PMC_EVR_FIRMWARE_REV_LINUX2:
+	case PMC_EVR_FIRMWARE_REV_LINUX3:
 	    break;
 	case PMC_EVR_FIRMWARE_REV_VME1:
 	    fprintf ( stderr,
