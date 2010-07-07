@@ -118,3 +118,41 @@ record(stringout, "$(DEV):FP3L")
   field(PINI, "YES")
 }
 
+record(ai, "$(DEV):LINKERRCNT")
+{
+  field(DESC, "$(DEV) Link Errors")
+  field(INP, "$(DEV):CTRL.TAXI MS")
+  field(SCAN, "2 second")
+}
+
+record(calc, "$(DEV):LINKERR")
+{
+  field(DESC, "EVR Recent Link Errors")
+  field(INPA, "$(DEV):LINKERRCNT MS")
+  field(INPB, "$(DEV):LINKERR.LA")
+  field(SCAN, "2 second")
+  field(CALC, "A<B?A:A-B")
+  field(HIHI, "2")
+  field(HIGH, "1")
+  field(HHSV, "MAJOR")
+  field(HSV,  "MINOR")
+}
+
+record(bo, "$(DEV):LINKERRRST")
+{
+  field(DESC, "EVR Err Count Reset")
+  field(OUT, "$(DEV):CTRL.RXVR PP")
+  field(PINI, "YES")
+  field(DOL, "1")
+  field(OMSL, "closed_loop")
+  field(ZNAM, "NoReset")
+  field(ONAM, "Reset")
+  field(FLNK, "$(DEV):LINKERRRSTTOD")
+}
+
+record(stringin, "$(DEV):LINKERRRSTTOD")
+{
+  field(DESC, "EVR Err Count Reset Time")
+  field(DTYP, "Soft Timestamp")
+  field(INP, "@%m/%d/%y %H:%M:%S")
+}
