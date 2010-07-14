@@ -83,7 +83,7 @@ record(er, "$(DEV):CTRL")
 
 record(bi, "$(DEV):LINK")
 {
-  field(DESC, "$(EVR) Link Status")
+  field(DESC, "$(DEV) Link Status")
   field(DTYP, "MRF Event Receiver")
   field(INP,  "#C$(CARD) S0 @")
   field(PINI, "YES")
@@ -116,4 +116,24 @@ record(mbbi, "$(DEV):STATUS")
   field(TWST, "ON")
   field(TWSV, "NO_ALARM")
   field(UNSV, "INVALID")
+}
+
+record(ai, "$(DEV):LINKERRCNT")
+{
+  field(DESC, "$(DEV) Link Errors")
+  field(INP, "$(DEV):CTRL.TAXI MS")
+  field(SCAN, "2 second")
+}
+
+record(calc, "$(DEV):LINKERR")
+{
+  field(DESC, "EVR Recent Link Errors")
+  field(INPA, "$(DEV):LINKERRCNT MS")
+  field(INPB, "$(DEV):LINKERR.LA")
+  field(SCAN, "2 second")
+  field(CALC, "A>B?A-B:B-A")
+  field(HIHI, "2")
+  field(HIGH, "1")
+  field(HHSV, "MAJOR")
+  field(HSV,  "MINOR")
 }

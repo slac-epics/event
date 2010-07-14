@@ -433,9 +433,13 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
   {
 	/*
 	 * Sanity check on prescaler value (due to fixed bug in generator allocation)
-	 * Prescaler value is readable on generators 0-1
-	 * A MRF firmware bug prevents reading prescaler on generators 2-3
-	 * Generators 4-9 do not support prescaling and always read back 0
+	 * Firmware XXXX:
+	 *	- Prescaler value is R/W on generators 0-1
+	 *	- An MRF firmware bug prevents reading prescaler on generators 2-3
+	 *	- Generators 4-9 do not support prescaling and always read back 0
+	 * Firmware YYYY:
+	 *	- Prescaler value is R/W on generators 0-3
+	 *	- Generators 4-9 do not support prescaling and always read back 0
 	 */
 	if ( pulse < 3 )
 	{
