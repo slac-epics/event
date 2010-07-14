@@ -1,4 +1,5 @@
-record(er, "$(DEV):CTRL") {
+record(er, "$(DEV):CTRL")
+{
   field(DESC, "$(DEV) Control")
   field(DTYP, "MRF Event Receiver")
   field(OUT, "#C$(CARD) S0 @")
@@ -79,7 +80,8 @@ record(er, "$(DEV):CTRL") {
   field(DG2P, "$(DG2P)")
   field(DG3P, "Normal")
 }
-record(bi, "$(DEV):LINK") {
+record(bi, "$(DEV):LINK")
+{
   field(DESC, "$(DEV) Link Status")
   field(DTYP, "MRF Event Receiver")
   field(INP,  "#C$(CARD) S0 @")
@@ -89,12 +91,41 @@ record(bi, "$(DEV):LINK") {
   field(ZNAM, "OFF")
   field(ONAM, "ON")
 }
-record(ai, "$(DEV):LINKERRCNT") {
+
+record(calc, "$(DEV):_CALC_STATUS")
+{
+  field(DESC, "Calc evr Status")
+  field(CALC, "L=0?0:E+1")
+  field(INPL, "$(DEV):LINK CPP MS")
+  field(INPE, "$(DEV):CTRL.ENAB CPP MS")
+  field(FLNK, "$(DEV):STATUS PP MS")
+}
+
+record(mbbi, "$(DEV):STATUS")
+{
+  field(DESC, "evr Status")
+  field(INP, "$(DEV):_CALC_STATUS NPP MS")
+  field(ZRVL, "0")
+  field(ZRST, "FAIL")
+  field(ZRSV, "MAJOR")
+  field(ONVL, "1")
+  field(ONST, "OFF")
+  field(ONSV, "MINOR")
+  field(TWVL, "2")
+  field(TWST, "ON")
+  field(TWSV, "NO_ALARM")
+  field(UNSV, "INVALID")
+}
+
+record(ai, "$(DEV):LINKERRCNT")
+{
   field(DESC, "$(DEV) Link Errors")
   field(INP, "$(DEV):CTRL.TAXI MS")
   field(SCAN, "2 second")
 }
-record(calc, "$(DEV):LINKERR") {
+
+record(calc, "$(DEV):LINKERR")
+{
   field(DESC, "EVR Recent Link Errors")
   field(INPA, "$(DEV):LINKERRCNT MS")
   field(INPB, "$(DEV):LINKERR.LA")
