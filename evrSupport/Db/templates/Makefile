@@ -17,6 +17,7 @@ DB_INSTALLS += evrPmc230.template
 DB_INSTALLS += evrPmcEvent.template
 DB_INSTALLS += evrEventCtrl.template
 DB_INSTALLS += evrEventRate.template
+DB_INSTALLS += evrLabel.template
 DB_INSTALLS += evrLabels.template
 DB_INSTALLS += evrTaxi.template
 DB_INSTALLS += evr.template
