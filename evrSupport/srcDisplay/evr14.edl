@@ -3255,7 +3255,7 @@ buttonLabel "Triggers"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "lasr_neh_evrTriggerDiags.edl"
+  0 "evrTrig14.edl"
 }
 menuLabel {
   0 "Triggers"
@@ -3476,7 +3476,7 @@ buttonLabel "Events"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "lasr_neh_evrEventDiags.edl"
+  0 "evrEBeamEvents.edl"
 }
 menuLabel {
   0 "Events"
