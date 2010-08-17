@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 238
-y 82
+x 743
+y 173
 w 711
 h 631
 font "helvetica-medium-r-18.0"
@@ -264,7 +264,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Textupdate)
+# (Text Update)
 object TextupdateClass
 beginObjectProperties
 major 10
@@ -284,7 +284,7 @@ font "helvetica-bold-r-14.0"
 fontAlign "center"
 endObjectProperties
 
-# (Textupdate)
+# (Text Update)
 object TextupdateClass
 beginObjectProperties
 major 10
@@ -731,7 +731,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -777,7 +777,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -803,7 +803,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -829,7 +829,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -855,7 +855,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -881,7 +881,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -907,7 +907,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -933,7 +933,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -959,7 +959,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -985,7 +985,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1011,7 +1011,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1037,7 +1037,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1063,7 +1063,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1089,7 +1089,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1115,7 +1115,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1141,7 +1141,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1167,7 +1167,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1193,7 +1193,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1219,7 +1219,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1245,7 +1245,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1271,7 +1271,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1297,7 +1297,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1323,7 +1323,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1349,7 +1349,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1375,7 +1375,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1401,7 +1401,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1427,7 +1427,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1453,7 +1453,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1861,7 +1861,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1887,7 +1887,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1913,7 +1913,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1939,7 +1939,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1965,7 +1965,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -1991,7 +1991,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2017,7 +2017,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2393,7 +2393,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2439,7 +2439,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2527,7 +2527,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2636,7 +2636,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2662,7 +2662,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2710,7 +2710,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2758,7 +2758,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2784,7 +2784,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2832,7 +2832,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2880,7 +2880,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2906,7 +2906,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -2954,7 +2954,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -3023,7 +3023,7 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -3049,7 +3049,7 @@ newPos
 objType "controls"
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -3255,7 +3255,7 @@ buttonLabel "Triggers"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrTrig14.edl"
+  0 "evrscreens/evrTrig14.edl"
 }
 menuLabel {
   0 "Triggers"
@@ -3366,7 +3366,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Text)
+# (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
@@ -3409,7 +3409,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Textupdate)
+# (Text Update)
 object TextupdateClass
 beginObjectProperties
 major 10
@@ -3476,7 +3476,7 @@ buttonLabel "Events"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrEBeamEvents.edl"
+  0 "evrscreens/evrEBeamEvents.edl"
 }
 menuLabel {
   0 "Events"
@@ -3912,7 +3912,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Textupdate)
+# (Text Update)
 object TextupdateClass
 beginObjectProperties
 major 10
@@ -3952,7 +3952,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Textupdate)
+# (Text Update)
 object TextupdateClass
 beginObjectProperties
 major 10
@@ -3992,7 +3992,7 @@ value {
 autoSize
 endObjectProperties
 
-# (Textupdate)
+# (Text Update)
 object TextupdateClass
 beginObjectProperties
 major 10
