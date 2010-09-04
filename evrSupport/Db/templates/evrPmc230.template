@@ -55,6 +55,8 @@ record(er, "$(DEV):CTRL")
   field(DG0P, "$(DG0P)")
   field(DG1P, "$(DG1P)")
   field(DG2P, "$(DG2P)")
+
+  field(PRES, "1")
 }
 
 record(bi, "$(DEV):LINK")
