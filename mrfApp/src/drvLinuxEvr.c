@@ -323,7 +323,7 @@ void ErIrqHandler(int signal)
 				if(EvrGetFIFOEvent(pEr, &fe) < 0)
 					break;
 				if(pCard->DevEventFunc != NULL)
-					(*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
+					(*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampHigh);
 			}
 		}
 		if(flags & EVR_IRQFLAG_HEARTBEAT) {
