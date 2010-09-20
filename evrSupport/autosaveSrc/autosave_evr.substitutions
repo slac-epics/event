@@ -1,0 +1,5 @@
+#
+# EVR autosave sample substitutions file
+#
+file autosave_evr.template EVR=_IOCPVROOT_
+
