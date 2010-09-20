@@ -1,0 +1,5 @@
+#
+# EVR archive sample substitutions file
+#
+file archive_evr.template EVR=_IOCPVROOT_
+
