@@ -23,6 +23,25 @@ DB_INSTALLS += evrTaxi.template
 DB_INSTALLS += evr.template
 DB_INSTALLS += evrWithExtDelays.template
 
+#----------------------------------------------------
+# Create and install (or just install)
+# Archive request files, templates, substitutions like this
+# ARCHIVE += <file>.archive
+# ARCHIVE += <file>.substitutions
+# ARCHIVE += <file>.template
+#
+ARCHIVE += archive_evr.substitutions
+ARCHIVE += archive_evr.template
+
+#----------------------------------------------------
+# Create and install (or just install)
+# Autosave request files, templates, substitutions like this
+# REQ += <file>.req
+# REQ += <file>.substitutions
+# REQ += <file>.template
+#
+REQ += autosave_evr.substitutions
+REQ += autosave_evr.template
 
 include $(TOP)/configure/RULES
 #----------------------------------------

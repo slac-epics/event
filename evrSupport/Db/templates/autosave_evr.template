@@ -1,5 +1,4 @@
 # Event modules autosave template
-
 $(EVR):CTRL.DG0E
 $(EVR):CTRL.DG0P
 $(EVR):CTRL.DG0D

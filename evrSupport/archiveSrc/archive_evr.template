@@ -1,5 +1,0 @@
-# Event modules archive template
-# Format:
-# <PVNAME> <PERIOD> [ monitor ]
-$(EVR):STATUS  1  monitor
-$(EVR):LINK    1  monitor
