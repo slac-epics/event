@@ -24,3 +24,4 @@ ifdef T_A
  -include $(TOP)/configure/O.$(T_A)/CONFIG_APP_INCLUDE
 endif
 
+# USR_CFLAGS	+=	-DUSE_NTP
