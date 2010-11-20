@@ -6,4 +6,4 @@ DIRS += eventTestApp
 DIRS += iocBoot
 include $(TOP)/configure/RULES_TOP
 
-realclean: realuninstall
+realclean:: realuninstall
