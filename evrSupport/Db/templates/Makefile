@@ -42,6 +42,7 @@ ARCHIVE += archive_evr.template
 #
 REQ += autosave_evr.substitutions
 REQ += autosave_evr.template
+REQ += autosave_vme_evr.template
 
 include $(TOP)/configure/RULES
 #----------------------------------------
