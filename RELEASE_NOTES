@@ -1,6 +1,12 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-2-2-lcls3
+	* Fix timestamp problem on the BSA AO
+
+event-R3-2-1-lcls3
+	* branch out from R3-2-1
+
 event-R3-2-1:
 	* Made event code 162's delay < event code 140
 
