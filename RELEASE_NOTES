@@ -1,6 +1,12 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-2-2:
+	* Modify RELEASE_SITE to use base-R3-14-8-2-lcls6-p1
+	  Modify configure/RELEASE to use
+ 		GENERALTIME_MODULE_VERSION=generalTime-R2-2-1
+ 		MISCUTILS_MODULE_VERSION=miscUtils-R2-2-1
+
 event-R3-2-1:
 	* Made event code 162's delay < event code 140
 
