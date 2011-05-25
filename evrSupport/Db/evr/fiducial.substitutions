@@ -4,7 +4,7 @@
 # 	IOC=Name of the IOC
 #	CARD= EVR card #
 
-# Including this from evrEventCtrl.db appears to disable fiducials in the event module!
+# Including evrEventCtrl.db instead of evrEventCtrl.template disables fiducial processing!
 #file evrEventCtrl.db
 file evrEventCtrl.template
 {

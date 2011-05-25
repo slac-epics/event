@@ -29,7 +29,6 @@ DB += evrPatternTestBsa.db
 DB += evrMod36.db
 # LCLS templates
 DB += fiducial.db
-DB += beam.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
