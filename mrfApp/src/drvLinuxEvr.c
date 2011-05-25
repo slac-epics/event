@@ -365,7 +365,16 @@ void ErIrqHandler(int signal)
 		epicsMutexUnlock(pCard->CardLock);
 	}
 	epicsMutexUnlock(ErCardListLock);
-	errlogPrintf("%s: called but no interrupt found.\n", __func__);
+	if ( ErDebug >= 1 ) {
+		/*
+		 * None of the events tested for above were found. 
+		 * This condition appears regularly on most of our
+		 * systems with so far no known interrupt problems,
+		 * so I've changed it from always calling errlogPrintf
+		 * to a debug msg which can be enabled or disabled as needed.
+		 */
+		printf("%s: called but no interrupt found.\n", __func__);
+	}
 	return;
 }
 	
