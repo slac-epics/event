@@ -1,6 +1,12 @@
 Release Notes for the event package
 -----------------------------------
 
+
+
+Branch name: event-R3-2-2-br_generaltime
+        * Branch out from event-R3-2-2
+        * to support new epics base R3-14-12 and bundled general time
+
 event-R3-2-2:
 	* Modify RELEASE_SITE to use base-R3-14-8-2-lcls6_p1
 	  Modify configure/RELEASE to use

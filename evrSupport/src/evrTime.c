@@ -57,6 +57,7 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsTime.h"        /* epicsTimeStamp and protos */
 #include "epicsGeneralTime.h" /* generalTimeTpRegister     */
+#include "generalTimeSup.h"
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
@@ -330,6 +331,24 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   return epicsTimeOK;
 }
 
+/*===============================================
+  Wrapper function for generalTime: Temporal
+=================================================*/
+static int evrTimeGet_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    if(eventCode<0) return -1;
+
+    return evrTimeGet(epicsTime_ps, (unsigned int)eventCode);
+}
+
+static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGetSystem(epicsTime_ps, 0);
+}
+
+
+
+
 /*=============================================================================
 
   Name: evrTimeInit
@@ -404,11 +423,10 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
   /* For IOCs that support iocClock (RTEMS and vxWorks), register
      evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
 #ifdef EVR_DRIVER_SUPPORT
-        if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
-                                  (pepicsTimeGetEvent)evrTimeGet))
+        if(generalTimeRegisterEventProvider("evrTimeGet", 1000, (TIMEEVENTFUN) evrTimeGet_gtWrapper))
           return epicsTimeERROR;
-        if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
-                                  (pepicsTimeGetEvent)evrTimeGetSystem))
+
+        if(generalTimeRegisterEventProvider("evrTimeGetSystem", 2000, (TIMEEVENTFUN) evrTimeGetSystem_gtWrapper))
           return epicsTimeERROR;
 #endif
         evrTimeRWMutex_ps = epicsMutexCreate();
@@ -419,8 +437,8 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
 /* For IOCs that don't support iocClock (linux), supply a dummy
    iocClockRegister to keep the linker happy. */
 #ifndef EVR_DRIVER_SUPPORT
-void iocClockRegister(pepicsTimeGetCurrent getCurrent,
-                      pepicsTimeGetEvent   getEvent) 
+void iocClockRegister(TIMECURRENTFUN getCurrent,
+                      TIMEEVENTFUN   getEvent) 
 {
 }
 #endif

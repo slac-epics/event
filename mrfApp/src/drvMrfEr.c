@@ -3883,7 +3883,7 @@ void DiagDumpDataBuffer (ErCardStruct *pCard)
 	*/
 	for (index=0, address=0;   index < numWords;   index+=8, address+=32) {
 	    printf ("%3.3X:", address);
-	    lastIndex = min(index+8, numWords);
+            lastIndex = ((index+8)< numWords)? (index+8):numWords;
 
 	   /*---------------------
 	    * Inner loop displays individual longwords
