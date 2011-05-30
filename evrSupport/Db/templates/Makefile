@@ -32,6 +32,7 @@ DB_INSTALLS += evrWithExtDelays.template
 #
 ARCHIVE += archive_evr.substitutions
 ARCHIVE += archive_evr.template
+ARCHIVE += archive_vme_evr.template
 
 #----------------------------------------------------
 # Create and install (or just install)
