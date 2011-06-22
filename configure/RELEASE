@@ -16,7 +16,8 @@ TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 # Define location of module tree with respect to
 # EPICS_SITE_TOP
 # =============================================================
-EPICS_MODULES=$(EPICS_SITE_TOP)/modules
+#EPICS_MODULES=$(EPICS_SITE_TOP)/modules
+EPICS_MODULES=$(MODULES_SITE_TOP)
 
 # ==============================================================
 # Define the version of EPICS BASE that you will use
@@ -27,8 +28,8 @@ BASE_MODULE_VERSION=$(EPICS_BASE_VER)
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # =============================================================
-GENERALTIME_MODULE_VERSION=generalTime-R2-2-1
-MISCUTILS_MODULE_VERSION=miscUtils-R2-2-1
+GENERALTIME_MODULE_VERSION=generalTime-R2-2-0
+MISCUTILS_MODULE_VERSION=miscUtils-R2-2-0
 
 # ============================================================
 # External Support
