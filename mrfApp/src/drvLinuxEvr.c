@@ -451,7 +451,7 @@ static int ErConfigure (
 	}
 	fdEvr = EvrOpen(&pEr, strDevice);
 	if (fdEvr < 0) {
-		errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+		errlogPrintf("%s@%d(EvrOpen) Error: %s opening %s\n", __func__, __LINE__, strerror(errno), strDevice );
 		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
@@ -470,10 +470,10 @@ static int ErConfigure (
 	    break;
 	case PMC_EVR_FIRMWARE_REV_VME1:
 	    fprintf ( stderr,
-		   "\nErConfigure ERROR: This PMC EVR has firmware for a linux based system\n"
-		   "and cannot be used under RTEMS!\n" );
+		   "\nErConfigure ERROR: This PMC EVR has firmware for a RTEMS based system\n"
+		   "and needs new firmware to be used under Linux!\n" );
 	    EvrClose(fdEvr);
-	    epicsMutexUnlock(ErCardListLock);
+	    epicsMutexUnlock(ErConfigureLock);
 	    return ERROR;
 	}
 
@@ -481,7 +481,7 @@ static int ErConfigure (
 	if(( FPGAVersion >>28) != 0x1) {
 		errlogPrintf("%s: invalid hardware signature: 0x%08x.\n", __func__, FPGAVersion );
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+	    epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
 
@@ -499,7 +499,7 @@ static int ErConfigure (
 				FormFactorToString( actualFormFactor ) );
 		errlogPrintf("%s: wrong form factor %d, signature is 0x%08x.\n", __func__, FormFactor, be32_to_cpu(pEr->FPGAVersion));
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
 	
@@ -508,7 +508,7 @@ static int ErConfigure (
 	if (pLinuxErCard == NULL) {
 		errlogPrintf("%s@%d(malloc): failed.\n", __func__, __LINE__);
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
 	memset(pLinuxErCard, 0, sizeof(struct LinuxErCardStruct));
@@ -519,7 +519,7 @@ static int ErConfigure (
 		errlogPrintf("%s@%d(epicsMutexCreate): failed.\n", __func__, __LINE__);
 		free(pCard);
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
 	ellAdd (&ErCardList, &pCard->Link); 
