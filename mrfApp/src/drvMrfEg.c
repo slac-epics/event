@@ -497,7 +497,7 @@ long EgLoadRamList(EgCardStruct *pParm, long Ram) {
   egeventRecord                 *pEgevent;
   int                           RamPos = 0;
   int                           AltFlag = 0;
-  int                  			dummy; /*trick to flush bridge pipeline*/
+  volatile int         			dummy; /*trick to flush bridge pipeline*/
   int                           maxtime=0;
   double                        RamSpeed;
   volatile long origEvt;

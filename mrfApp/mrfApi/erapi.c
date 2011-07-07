@@ -23,9 +23,9 @@
 
 #include "erapi.h"
 
-/*
+#if 0	/* Enable DEBUG statements */
 #define DEBUG 1
-*/
+#endif	/* Enable DEBUG statements */
 #define DEBUG_PRINTF printf
 unsigned int	erapiDebug	= 1;
 
@@ -43,12 +43,10 @@ int EvrOpen(struct MrfErRegs **pEr, char *device_name)
       /* Memory map Event Receiver registers */
       *pEr = (struct MrfErRegs *) mmap(0, EVR_MEM_WINDOW, PROT_READ | PROT_WRITE,
 					MAP_SHARED, fd, 0);
-#ifdef DEBUG
-  DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr,
-	       errno);
-#endif
+      DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr, errno);
       if (*pEr == MAP_FAILED)
 	{
+      DEBUG_PRINTF( "mmap failed!  A firmware update may be needed!\n" );
 	  close(fd);
 	  return -1;
 	}
