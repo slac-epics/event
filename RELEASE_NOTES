@@ -1,6 +1,10 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-2-1-br_backprop-1-1
+        * Implement backward propagation for the pulse width
+          (In the last release, we implemented it for delay only, and missed the pulse width)
+
 event-R3-2-1-br_backprop-1-0
         * Implement backward propagation between high level PVs and low level Pvs 
           in the EVR
