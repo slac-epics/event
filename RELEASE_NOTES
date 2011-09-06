@@ -1,6 +1,10 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-2-1-br_backprop-2-0
+        * Implement event code invariant trigger delay
+        * reflect the extended event code sequence for the photon group
+
 event-R3-2-1-br_backprop-1-1
         * Implement backward propagation for the pulse width
           (In the last release, we implemented it for delay only, and missed the pulse width)
