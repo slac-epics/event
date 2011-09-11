@@ -91,7 +91,7 @@ static int lsubEvSel(longSubRecord *prec)
 
 static int lsubLookupOffsetInit(longSubRecord *prec)
 {
-    printf("lsubLookupOffsetInit for %s\n", prec->name);
+    /* printf("lsubLookupOffsetInit for %s\n", prec->name); */
 
     return 0;
 }
