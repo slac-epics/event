@@ -161,7 +161,10 @@ INC += drvMrfEg.h
 INC += drvMrfEr.h
 INC += devMrfEr.h
 
+INC += erapi.h
+
 INC += debugPrint.h
+
 
 #=======================================================================#
 #                               RULES                                   #
