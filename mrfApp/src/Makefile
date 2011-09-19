@@ -125,7 +125,7 @@ LIBRARY_IOC_vxWorks += mrfVme64x
 ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 LIBRARY_IOC_Linux += drvMrf
 drvMrf_OBJS_Linux += drvLinux
-drvMrf_OBJS_Linux += $(MRFAPI_DIR)/erapi.o
+drvMrf_OBJS_Linux += erapi.o
 endif
 
 mrfVme64x_OBJS_RTEMS += mrfVme64x
