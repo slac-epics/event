@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-1-2:
+        * Add support for EVR hardware running under linux
+
 event-R3-2-2-br_generaltime-1-1:
         * eliminate generalTimeNoVx.dbd to fit into R3-14-12 bundled generaltime.
 
