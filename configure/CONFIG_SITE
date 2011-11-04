@@ -15,7 +15,7 @@
 #CROSS_COMPILER_TARGET_ARCHS = RTEMS-uC5282
 #CROSS_COMPILER_TARGET_ARCHS = RTEMS-pc586
 
-CROSS_COMPILER_TARGET_ARCHS = RTEMS-beatnik rt-linux
+CROSS_COMPILER_TARGET_ARCHS = RTEMS-beatnik
 
 
 # Set this when your IOC and the host use different paths
