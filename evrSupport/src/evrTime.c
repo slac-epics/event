@@ -295,6 +295,10 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
 int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 {
   int status;
+
+  /* Hack event code to get pre-bundled general-time behavior */
+  if ( (unsigned int)epicsTimeEventBestTime == eventCode )
+	eventCode = 0;
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
@@ -336,8 +340,6 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
 =================================================*/
 static int evrTimeGet_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
 {
-    if(eventCode<0) return -1;
-
     return evrTimeGet(epicsTime_ps, (unsigned int)eventCode);
 }
 
@@ -702,7 +704,7 @@ static int evrTimeProc (longSubRecord *psub)
 
 static long evrTimeDiag (longSubRecord *psub)
 {
-  unsigned long  dummy;
+  epicsUInt32  dummy;
   
   psub->val = fiducialStatus;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */
