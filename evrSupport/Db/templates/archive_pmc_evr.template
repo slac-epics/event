@@ -1,4 +1,4 @@
-# Event modules archive template
+# EVR PMC 230 archive template
 # Format:
 # <PVNAME> <PERIOD> [ monitor ]
 
@@ -6,11 +6,8 @@
 $(EVR):LINK    1  monitor
 
 # Capture these once/sec
-#$(EVR):CTRL 1 
-#$(EVR):CTRL.ENAB 1 
 $(EVR):FIDUCIALCTRL 1 
 $(EVR):FIDUCIALDIAG 1 
-# Why 2 CTRL PV's???
 $(EVR):CTRL 1
 $(EVR):EVENT1 1
 $(EVR):EVENT10 1
@@ -58,7 +55,7 @@ $(EVR):PATTERNN-1 10
 $(EVR):PATTERNN-2 10
 $(EVR):PATTERNSTATE 10
 
-# Event counters
+# Event Counters
 $(EVR):EVENT1CNT 10
 $(EVR):EVENT2CNT 10
 $(EVR):EVENT3CNT 10
@@ -95,10 +92,6 @@ $(EVR):CTRL.ENAB 30	monitor
 $(EVR):CTRL.FPS0 30	monitor 
 $(EVR):CTRL.FPS1 30	monitor 
 $(EVR):CTRL.FPS2 30	monitor 
-$(EVR):CTRL.FPS3 30	monitor 
-$(EVR):CTRL.FPS4 30	monitor 
-$(EVR):CTRL.FPS5 30	monitor 
-$(EVR):CTRL.FPS6 30	monitor 
 $(EVR):CTRL.TAXI 30	monitor 
 $(EVR):EVENT10NAME 30	monitor
 $(EVR):EVENT11NAME 30	monitor
@@ -118,9 +111,10 @@ $(EVR):FP0L 30	monitor
 $(EVR):FP1L 30	monitor
 $(EVR):FP2L 30	monitor
 $(EVR):FP3L 30	monitor
-$(EVR):FP4L 30	monitor
-$(EVR):FP5L 30	monitor
-$(EVR):FP6L 30	monitor
+$(EVR):FP0L.DESC 30	monitor
+$(EVR):FP1L.DESC 30	monitor
+$(EVR):FP2L.DESC 30	monitor
+$(EVR):FP3L.DESC 30	monitor
 $(EVR):RESETCNT 30 monitor
 $(EVR):TREF 30 monitor
 
@@ -425,4 +419,3 @@ $(EVR):EVENT11CTRL.ENM 1 monitor
 $(EVR):EVENT12CTRL.ENM 1 monitor
 $(EVR):EVENT13CTRL.ENM 1 monitor
 $(EVR):EVENT14CTRL.ENM 1 monitor
-
