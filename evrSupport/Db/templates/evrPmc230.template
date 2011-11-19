@@ -100,24 +100,28 @@ record(stringout, "$(DEV):FP0L")
 {
   field(DESC, "$(FP0L)")
   field(PINI, "YES")
+  field(VAL,  "$(FP0L)")
 }
 
 record(stringout, "$(DEV):FP1L")
 {
   field(DESC, "$(FP1L)")
   field(PINI, "YES")
+  field(VAL,  "$(FP1L)")
 }
 
 record(stringout, "$(DEV):FP2L")
 {
   field(DESC, "$(FP2L)")
   field(PINI, "YES")
+  field(VAL,  "$(FP2L)")
 }
 
 record(stringout, "$(DEV):FP3L")
 {
   field(DESC, "$(FP3L)")
   field(PINI, "YES")
+  field(VAL,  "$(FP3L)")
 }
 
 record(ai, "$(DEV):LINKERRCNT")
