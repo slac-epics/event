@@ -29,6 +29,10 @@ DB += evrPatternTestBsa.db
 DB += evrMod36.db
 # LCLS templates
 DB += fiducial.db
+# Event Codes
+DB += evrEventCode.template
+DB += lclsEventCodes.db
+DB += lclsEventCodes.substitutions
 
 include $(TOP)/configure/RULES
 #----------------------------------------
