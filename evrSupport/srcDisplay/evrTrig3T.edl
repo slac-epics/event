@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1296
-y 338
+x 1066
+y 481
 w 776
 h 564
 font "helvetica-medium-r-18.0"
@@ -62,9 +62,9 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 0
+x 8
 y 0
-w 336
+w 280
 h 40
 font "helvetica-medium-r-12.0"
 fgColor index 14
@@ -159,7 +159,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 88
@@ -199,23 +199,26 @@ value {
 }
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 336
 y 536
 w 128
 h 24
 controlPv "$(IOC):TOD"
-precision 1
+font "helvetica-medium-r-12.0"
+fontAlign "center"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-r-12.0"
-fontAlign "right"
+useDisplayBg
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Static Text)
@@ -473,7 +476,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 120
@@ -630,7 +633,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 152
@@ -787,7 +790,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 184
@@ -944,7 +947,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 216
@@ -1101,7 +1104,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 248
@@ -1346,7 +1349,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 312
@@ -1503,7 +1506,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 280
@@ -1572,7 +1575,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 344
@@ -1729,7 +1732,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 376
@@ -1886,7 +1889,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 408
@@ -2043,7 +2046,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 440
@@ -2200,7 +2203,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 472
@@ -2357,7 +2360,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 3
+minor 2
 release 0
 x 120
 y 504
@@ -2513,47 +2516,24 @@ toggle
 font "helvetica-medium-i-10.0"
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 88
 w 112
 h 24
 controlPv "$(EVR):EVENT1CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 704
-y 88
-w 40
-h 24
-controlPv "$(EVR):EVENT1RATE"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Static Text)
@@ -2645,7 +2625,7 @@ release 0
 x 688
 y 88
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -2660,53 +2640,51 @@ release 0
 x 744
 y 88
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 120
 w 112
 h 24
 controlPv "$(EVR):EVENT2CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 120
 w 40
 h 24
 controlPv "$(EVR):EVENT2RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -2718,7 +2696,7 @@ release 0
 x 688
 y 120
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -2733,53 +2711,51 @@ release 0
 x 744
 y 120
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 152
 w 112
 h 24
 controlPv "$(EVR):EVENT3CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 152
 w 40
 h 24
 controlPv "$(EVR):EVENT3RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -2791,7 +2767,7 @@ release 0
 x 688
 y 152
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -2806,53 +2782,51 @@ release 0
 x 744
 y 152
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 184
 w 112
 h 24
 controlPv "$(EVR):EVENT4CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 184
 w 40
 h 24
 controlPv "$(EVR):EVENT4RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -2864,7 +2838,7 @@ release 0
 x 688
 y 184
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -2879,53 +2853,51 @@ release 0
 x 744
 y 184
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 216
 w 112
 h 24
 controlPv "$(EVR):EVENT5CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 216
 w 40
 h 24
 controlPv "$(EVR):EVENT5RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -2937,7 +2909,7 @@ release 0
 x 688
 y 216
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -2952,53 +2924,51 @@ release 0
 x 744
 y 216
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 248
 w 112
 h 24
 controlPv "$(EVR):EVENT6CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 248
 w 40
 h 24
 controlPv "$(EVR):EVENT6RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3010,7 +2980,7 @@ release 0
 x 688
 y 248
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3025,53 +2995,51 @@ release 0
 x 744
 y 248
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 280
 w 112
 h 24
 controlPv "$(EVR):EVENT7CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 280
 w 40
 h 24
 controlPv "$(EVR):EVENT7RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3083,7 +3051,7 @@ release 0
 x 688
 y 280
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3098,53 +3066,51 @@ release 0
 x 744
 y 280
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 312
 w 112
 h 24
 controlPv "$(EVR):EVENT8CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 312
 w 40
 h 24
 controlPv "$(EVR):EVENT8RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3156,7 +3122,7 @@ release 0
 x 688
 y 312
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3171,53 +3137,51 @@ release 0
 x 744
 y 312
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 344
 w 112
 h 24
 controlPv "$(EVR):EVENT9CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 344
 w 40
 h 24
 controlPv "$(EVR):EVENT9RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3229,7 +3193,7 @@ release 0
 x 688
 y 344
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3244,53 +3208,51 @@ release 0
 x 744
 y 344
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 376
 w 112
 h 24
 controlPv "$(EVR):EVENT10CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 376
 w 40
 h 24
 controlPv "$(EVR):EVENT10RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3302,7 +3264,7 @@ release 0
 x 688
 y 376
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3317,53 +3279,51 @@ release 0
 x 744
 y 376
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 408
 w 112
 h 24
 controlPv "$(EVR):EVENT11CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 408
 w 40
 h 24
 controlPv "$(EVR):EVENT11RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3375,7 +3335,7 @@ release 0
 x 688
 y 408
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3390,53 +3350,51 @@ release 0
 x 744
 y 408
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 440
 w 112
 h 24
 controlPv "$(EVR):EVENT12CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 440
 w 40
 h 24
 controlPv "$(EVR):EVENT12RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3448,7 +3406,7 @@ release 0
 x 688
 y 440
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3463,53 +3421,51 @@ release 0
 x 744
 y 440
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 472
 w 112
 h 24
 controlPv "$(EVR):EVENT13CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 472
 w 40
 h 24
 controlPv "$(EVR):EVENT13RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3521,7 +3477,7 @@ release 0
 x 688
 y 472
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3536,53 +3492,51 @@ release 0
 x 744
 y 472
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 576
 y 504
 w 112
 h 24
 controlPv "$(EVR):EVENT14CNT"
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 704
 y 504
 w 40
 h 24
 controlPv "$(EVR):EVENT14RATE"
-precision 1
+font "courier-medium-r-12.0"
+fontAlign "right"
 fgColor index 16
 fgAlarm
 bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "right"
-lineWidth 2
-lineAlarm
+precision 1
+nullColor index 18
+newPos
 endObjectProperties
 
 # (Rectangle)
@@ -3594,7 +3548,7 @@ release 0
 x 688
 y 504
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3609,7 +3563,7 @@ release 0
 x 744
 y 504
 w 8
-h 23
+h 24
 lineColor index 12
 fill
 fillColor index 12
@@ -3657,269 +3611,347 @@ value {
 }
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 88
 w 88
 h 24
 controlPv "$(EVR):EVENT1NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 120
 w 88
 h 24
 controlPv "$(EVR):EVENT2NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 152
 w 88
 h 24
 controlPv "$(EVR):EVENT3NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 184
 w 88
 h 24
 controlPv "$(EVR):EVENT4NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 216
 w 88
 h 24
 controlPv "$(EVR):EVENT5NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 248
 w 88
 h 24
 controlPv "$(EVR):EVENT6NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 280
 w 88
 h 24
 controlPv "$(EVR):EVENT7NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 312
 w 88
 h 24
 controlPv "$(EVR):EVENT8NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 344
 w 88
 h 24
 controlPv "$(EVR):EVENT9NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 376
 w 88
 h 24
 controlPv "$(EVR):EVENT10NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 408
 w 88
 h 24
 controlPv "$(EVR):EVENT11NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 440
 w 88
 h 24
 controlPv "$(EVR):EVENT12NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 472
 w 88
 h 24
 controlPv "$(EVR):EVENT13NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Text Monitor)
+object activeXTextDspClass:noedit
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 2
 release 0
 x 16
 y 504
 w 88
 h 24
 controlPv "$(EVR):EVENT14NAME"
+font "helvetica-medium-i-12.0"
 fgColor index 14
 fgAlarm
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 0
-lineAlarm
+useDisplayBg
+nullColor index 18
+newPos
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 312
+y 8
+w 45
+h 18
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Fiducial"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 376
+y 8
+w 76
+h 18
+controlPv "$(EVR):PATTERN.L"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 704
+y 88
+w 40
+h 24
+controlPv "$(EVR):EVENT1RATE"
+font "helvetica-medium-r-12.0"
+fontAlign "right"
+fgColor index 16
+bgColor index 12
+limitsFromDb
+nullColor index 18
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
 endObjectProperties
 
