@@ -189,7 +189,7 @@ x 180
 y 124
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.N"
+controlPv "$(EVR):FIDUCIALDIAG.N"
 precision 1
 fgColor index 16
 fgAlarm
@@ -246,7 +246,7 @@ x 180
 y 153
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.O"
+controlPv "$(EVR):FIDUCIALDIAG.O"
 precision 1
 fgColor index 16
 fgAlarm
@@ -303,7 +303,7 @@ x 180
 y 184
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.P"
+controlPv "$(EVR):FIDUCIALDIAG.P"
 precision 1
 fgColor index 16
 fgAlarm
@@ -360,7 +360,7 @@ x 180
 y 213
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.S"
+controlPv "$(EVR):FIDUCIALDIAG.S"
 precision 1
 fgColor index 16
 fgAlarm
@@ -417,7 +417,7 @@ x 180
 y 275
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.T"
+controlPv "$(EVR):FIDUCIALDIAG.T"
 precision 1
 fgColor index 16
 fgAlarm
@@ -588,7 +588,7 @@ x 180
 y 303
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.U"
+controlPv "$(EVR):FIDUCIALDIAG.U"
 precision 1
 fgColor index 16
 fgAlarm
@@ -645,7 +645,7 @@ x 180
 y 364
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.V"
+controlPv "$(EVR):FIDUCIALDIAG.V"
 precision 3
 fgColor index 16
 fgAlarm
@@ -702,7 +702,7 @@ x 180
 y 393
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.W"
+controlPv "$(EVR):FIDUCIALDIAG.W"
 precision 3
 fgColor index 16
 fgAlarm
@@ -759,7 +759,7 @@ x 180
 y 424
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.X"
+controlPv "$(EVR):FIDUCIALDIAG.X"
 precision 3
 fgColor index 16
 fgAlarm
@@ -816,7 +816,7 @@ x 180
 y 243
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.Y"
+controlPv "$(EVR):FIDUCIALDIAG.Y"
 precision 1
 fgColor index 16
 fgAlarm
@@ -873,7 +873,7 @@ x 180
 y 455
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.Z"
+controlPv "$(EVR):FIDUCIALDIAG.Z"
 precision 3
 fgColor index 16
 fgAlarm
@@ -930,7 +930,7 @@ x 180
 y 483
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.VAL"
+controlPv "$(EVR):FIDUCIALDIAG.VAL"
 precision 1
 fgColor index 16
 fgAlarm
@@ -987,7 +987,7 @@ x 180
 y 335
 w 76
 h 24
-controlPv "$(IOC):FIDUCIALDIAG.M"
+controlPv "$(EVR):FIDUCIALDIAG.M"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1036,7 +1036,7 @@ onColor index 5
 offColor index 3
 topShadowColor index 1
 botShadowColor index 14
-controlPv "$(IOC):FIDUCIALDIAG.R"
+controlPv "$(EVR):FIDUCIALDIAG.R"
 pressValue "1"
 onLabel "Resetting Counters"
 offLabel "Reset Counters"
@@ -1067,7 +1067,7 @@ x 428
 y 121
 w 76
 h 24
-controlPv "$(IOC):PATTERNSTATE"
+controlPv "$(EVR):PATTERNSTATE"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1124,7 +1124,7 @@ x 428
 y 151
 w 76
 h 24
-controlPv "$(IOC):NTPSTATE"
+controlPv "$(EVR):NTPSTATE"
 precision 1
 fgColor index 16
 fgAlarm
@@ -1181,7 +1181,7 @@ x 428
 y 181
 w 76
 h 24
-controlPv "$(IOC):PATTERNDIAG.J"
+controlPv "$(EVR):PATTERNDIAG.J"
 precision 1
 fgColor index 16
 fgAlarm
