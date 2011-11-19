@@ -2,7 +2,7 @@
 # enable everything...
 #
 # Variables:
-# 	IOC=Name of the IOC
+#	DEV        = Your EVR name
 #	TRIG_WIDTH = Width of all triggers generated.
 #	TRIG_DELAY = Delay to apply between event and trigger.
 # 		WARNING: TRIG_DELAY MUST BE NON-0 IF YOU USE DGX
@@ -23,7 +23,7 @@
 # 14 = Programmable Width Pulse 3 (OTP3)
 # 63 = Disabled
 #
-# In your IOC st.cmd you also need to include a call to ErConfigure:
+# In your st.cmd you also need to include a call to ErConfigure:
 # > # Configure EVR if it exists.
 # > # Choose the proper configuration - PMC or VME.
 # > # Note - see README_evrTest for hardware setup and instructions for PMC 
