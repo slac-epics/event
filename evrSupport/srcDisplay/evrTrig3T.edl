@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1066
-y 481
+x 571
+y 100
 w 776
 h 564
 font "helvetica-medium-r-18.0"
@@ -104,7 +104,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 696
+x 704
 y 8
 w 48
 h 24
@@ -3953,5 +3953,65 @@ smartRefresh
 useHexPrefix
 newPos
 objType "monitors"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 584
+y 8
+w 48
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "IOC"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "iocscreens/ioc_soft.edl"
+}
+menuLabel {
+  0 "IOC"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "ioc=$(IOC)"
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 640
+y 8
+w 56
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "EVR"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrscreens/evr.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+icon
 endObjectProperties
 

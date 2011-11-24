@@ -1,5 +1,30 @@
-Instructions for PCDS EVR users                  Last Updated 02/12/2010
+Instructions for PCDS EVR users                  Last Updated 11/23/2011
 --------------------------------
+
+11/23/2011
+New templates have been added that hopefully will simplify
+EVR deployments and make new releases more consistent.
+Existing templates have been preserved, however if you
+are using fiducial.db for a template, be aware that it
+now uses $(EVR) for the PV prefix instead of $(IOC).
+Also, evrPatternProc is no longer part of evrEventAll, but
+instead is now expanded by evrPatternAll.substitutions as
+they have mutual PV interdependencies.
+evrEventAll now only has the LCLS event code PV's.
+
+Recommended practice now is to not use fiducial.db,
+evrWithExtDelays.template, etc,
+but instead use either evrPmc230.substitutions or
+evrVme230.substitutions as your starting point for
+your substitutions file.
+
+The advantages of the new substitution files are less
+redundancy, easier data entry, and consistent support
+for fiducial pattern processing and front panel labels.
+Autosave and archiving are supported for both, so
+generally deployment does not require macro substitution
+for every EVR setting, as they can be done easier and
+more reliably via the GUI.
 
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
@@ -26,26 +51,11 @@ Note that the order of the above libraries is important.
    xxx_DBD += dbRestore.dbd or autosave.dbd
 
 (4) Add EVR databases to your application.  For an example, see:
-	event/<release>/evrSupport/Db/templates/basic-evr.substitutions
+	event/<release>/evrSupport/Db/templates/evrPmc230.substitutions
+	or
+	event/<release>/evrSupport/Db/templates/evrVme230.substitutions
 
-(5) For IOCs with triggered devices, add setpoints to the proper 
-    configuration file used to save and restore setpoints.  
-    The setpoint PVs include:
-	Per IOC:
-	$(IOC):FIDUCIALRATE.HIHI /LOG
-	$(IOC):FIDUCIALRATE.LOLO /LOG
-	$(IOC):TREF /LOG
-	Per triggered device:
-	$(DEV)TDES
-	$(DEV)TCON
-	$(DEV)TWID /LOG
-	$(DEV)TPOL /LOG
-	$(DEV)TCTL /LOG
-
-(6) For IOCs with triggered devices, add the trigger delays to the Channel
-     Archiver.
-
-(7) For IOCs with triggered devices which use event codes that are generated 
+(5) For IOCs with triggered devices which use event codes that are generated 
     at a "slow" rate (rate slower than beam full rate like a 10Hz event code), 
     if records for your devices process or finish processing 8.3 msec beyond
     the time of the trigger (ie, profile monitors), set the TSE field of those 
@@ -56,7 +66,7 @@ Note that the order of the above libraries is important.
     the event code IRQ for all possible TSE values is enabled in your EVR
     database.
 
-(8)	Add event code sequence PVs to your application by installing the
+(6)	Add event code sequence PVs to your application by installing the
 	event code sequence db file...
 
 Db/Makefile:
