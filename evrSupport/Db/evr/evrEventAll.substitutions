@@ -6,10 +6,6 @@
 #
 #==============================================================================
 #
-file evrPatternProc.db {
-pattern { DEV       }
-	{ $(DEVICE) }
-}
 file evrEvent.db
 {
 #                            Event  Delay in

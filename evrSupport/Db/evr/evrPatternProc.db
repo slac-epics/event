@@ -3,6 +3,12 @@
 #! DBD("../../dbd/edef.dbd")
 #! DBDEND
 
+#
+# evrPatternProc.db
+# This template is for pattern processing records
+# Most users should load evrPatternAll.db which
+# includes these records via evrPatterAll.substitution
+# 
 
 record(longSub, "$(DEV):PATTERNN-3") {
   field(DESC, "Pattern N-3")
@@ -13,6 +19,7 @@ record(longSub, "$(DEV):PATTERNN-3") {
   field(D, "16384")
 # Initialize to the invalid pulse ID (0x1FFFF)
   field(L, "131071")
+# Register this record for EVR_MESSAGE_PATTERN_NAME processing
   field(X, "1")
   field(Z, "3")
 }

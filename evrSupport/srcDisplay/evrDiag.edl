@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 2031
-y 209
+x 37
+y 100
 w 524
 h 528
 font "helvetica-medium-r-18.0"
@@ -699,7 +699,7 @@ major 10
 minor 0
 release 0
 x 180
-y 393
+y 394
 w 76
 h 24
 controlPv "$(EVR):FIDUCIALDIAG.W"
@@ -721,7 +721,7 @@ major 4
 minor 1
 release 0
 x 20
-y 393
+y 394
 w 145
 h 24
 font "helvetica-medium-r-12.0"
@@ -984,7 +984,7 @@ major 10
 minor 0
 release 0
 x 180
-y 335
+y 336
 w 76
 h 24
 controlPv "$(EVR):FIDUCIALDIAG.M"
@@ -1006,7 +1006,7 @@ major 4
 minor 1
 release 0
 x 20
-y 335
+y 336
 w 145
 h 24
 font "helvetica-medium-r-12.0"
@@ -1213,5 +1213,73 @@ endObjectProperties
 
 endGroup
 
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 356
+y 336
+w 76
+h 24
+controlPv "$(EVR):PATTERN.L"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 284
+y 336
+w 64
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Fiducial ID"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 344
+y 8
+w 60
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "EVR"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrscreens/evr.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+icon
 endObjectProperties
 
