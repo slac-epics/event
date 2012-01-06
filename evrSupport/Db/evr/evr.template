@@ -2,7 +2,7 @@ record(er, "$(EVR):CTRL") {
   field(DESC, "$(EVR) Control")
   field(DTYP, "MRF Event Receiver")
   field(OUT, "#C$(C) S0 @")
-  field(PINI, "YES")
+#  field(PINI, "YES")
   field(ENAB, "YES")
   field(PRES, "1")
   field(FPS0, "$(F0)")
