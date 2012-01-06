@@ -1,6 +1,12 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-2-1-br_backprop-2-1
+        * rebuild with
+          base-R3-14-8-2-lcls6_p1
+          miscUtils-R2-2-1
+          generalTime-R2-2-1
+
 event-R3-2-1-br_backprop-2-0
         * Implement event code invariant trigger delay
         * reflect the extended event code sequence for the photon group

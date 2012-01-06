@@ -1,34 +1,35 @@
-#RELEASE Location of external products
-# Run "gnumake clean uninstall install" in the application
-# top directory each time this file is changed.
+# "gnumake distclean install" in the top directory each time
+# EPICS_BASE, SNCSEQ, or any other external module defined
+# in the RELEASE file is rebuilt.
+#
+# Host/target specific settings can be specified in files named
+#  RELEASE.$(EPICS_HOST_ARCH).Common
+#  RELEASE.Common.$(T_A)
+#  RELEASE.$(EPICS_HOST_ARCH).$(T_A)
 
-# =============================================================
-# Define the top of the EPICS tree for your site.
-# We will build some tools/scripts that allow us to
-# change this easily when relocating software.
-# ==============================================================
+# Pickup the path to your EPICS top level directory
+# This is where EPICS lives at your site.
 include $(TOP)/RELEASE_SITE
-#EPICS_SITE_TOP=/afs/slac/g/lcls/epics
+
+
 TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 
-
 # =============================================================
-# Define location of module tree with respect to
-# EPICS_SITE_TOP
+# Define location of module tree
 # =============================================================
-EPICS_MODULES=$(EPICS_SITE_TOP)/modules
+EPICS_MODULES=$(MODULES_SITE_TOP)
 
 # ==============================================================
 # Define the version of EPICS BASE that you will use
 # =============================================================
-BASE_MODULE_VERSION=base-R3-14-8-2-lcls6
+BASE_MODULE_VERSION=$(EPICS_BASE_VER)
 
 # =============================================================
 # Define the version of modules needed by
 # IOC apps or other Support apps
 # =============================================================
-GENERALTIME_MODULE_VERSION=generalTime-R2-2-0
-MISCUTILS_MODULE_VERSION=miscUtils-R2-2-0
+GENERALTIME_MODULE_VERSION=generalTime-R2-2-1
+MISCUTILS_MODULE_VERSION=miscUtils-R2-2-1
 
 # ============================================================
 # External Support
