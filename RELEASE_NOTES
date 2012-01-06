@@ -1,11 +1,21 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-3-1:
+       * Merge from event-R3-2-2-br_facet branch to the MAIN_TRUNK
+         to take the facet db: evrEventFACET.db
+
 event-R3-3-0:
        * Merge from event-R3-2-1-br_backprop branch to the MAIN_TRUNK
          to take the following functionalities
          - backward propagation between low level and high level dealy
          - event code invariant delay
+
+event-R3-2-2-br_facet-1-1
+        * fixing configure/RELEASE file to fit into FACET environment
+
+event-R3-2-2-br_facet-1-0
+        * Add evrEventFACET.db for FACET project
 
 event-R3-2-2:
 	* Modify RELEASE_SITE to use base-R3-14-8-2-lcls6_p1
