@@ -163,6 +163,7 @@ char *	FormFactorToString( int formFactor )
 	case PMC_EVR:	pString	= "PMC_EVR";	break;
 	case CPCI_EVR:	pString	= "cPCI_EVR";	break;
 	case VME_EVR:	pString	= "VME_EVR";	break;
+	case SLAC_EVR:	pString	= "SLAC_EVR";	break;
 	}
 	return pString;
 }
@@ -177,6 +178,7 @@ int ErGetFormFactor( struct MrfErRegs	*	pEr )
 	case 0x1:	formFactor	= PMC_EVR;	break;
 	case 0x0:	formFactor	= CPCI_EVR;	break;
 	case 0x2:	formFactor	= VME_EVR;	break;
+	case 0xf:	formFactor	= SLAC_EVR;	break;
 	default:	formFactor	= -1;		break;
 	}
 	return formFactor;
@@ -225,7 +227,8 @@ int update_fp_map(struct LinuxErCardStruct *pLinuxErCard, enum transition_board_
 							channel, pLinuxErCard->tb_channel[channel] );
 				EvrSetFPOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
 			}
-			if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR)
+			if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR ||
+                           pLinuxErCard->ErCard.FormFactor == SLAC_EVR)
 				EvrSetUnivOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
 			count++;
 		}
@@ -464,6 +467,7 @@ static int ErConfigure (
 	default:
 	    printf( "ErConfigure: WARNING: Unknown firmware revision on PMC EVR!\n" );
 	    break;
+	case PMC_EVR_FIRMWARE_REV_SLAC1:
 	case PMC_EVR_FIRMWARE_REV_LINUX1:
 	case PMC_EVR_FIRMWARE_REV_LINUX2:
 	case PMC_EVR_FIRMWARE_REV_LINUX3:
@@ -1592,7 +1596,7 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 		return;
 	}
 	for(code=0; code < EVR_MAX_EVENT_CODE; code++) {
-		struct MapRamItemStruct ramloc = { 0 };
+                struct MapRamItemStruct ramloc = { 0, 0, 0, 0 };
 		int map;
 
 		if(code == 0x70)
@@ -1615,14 +1619,14 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 			if(RamBuf[code] & (1<<map)) {
 				enum outputs_mapping_id func;
 				func = pLinuxErCard->tb_channel[OTL_0+(map>>1)];
-				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9)) {
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9)) {
 					if(map & 1)
 						ramloc.PulseSet |= 1<<(func-PULSE_GENERATOR_0);
 					else
 						ramloc.PulseClear |= 1<<(func-PULSE_GENERATOR_0);
 				}
 				func = pLinuxErCard->tb_channel[OTP_DBUS_0+map];
-				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9))
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9))
 					ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				if(map < EVR_NUM_DG) {
 					func = pLinuxErCard->tb_channel[DELAYED_PULSE_0+map];
@@ -1687,6 +1691,7 @@ epicsStatus ErDrvReport (int level)
 {
 	int             NumCards = 0;       /* Number of configured cards we found                    */
 	ErCardStruct   *pCard;              /* Pointer to card structure                              */
+        int i, ram;
 
 	for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
 		pCard != NULL;
@@ -1702,8 +1707,49 @@ epicsStatus ErDrvReport (int level)
 		printf ("	%d Frame Errors\n", pCard->RxvioCount);
 		EvrDumpStatus( pEr );
 		EvrDumpPulses(		pEr, 10 );
-		EvrDumpFPOutMap(	pEr, 3 );
-		EvrDumpTBOutMap(	pEr, 3 );
+                switch(ErGetFormFactor(pEr)) {
+                case VME_EVR:
+                    EvrDumpFPOutMap(	pEr, 8 );
+                    EvrDumpUnivOutMap(	pEr, 4 );
+                    EvrDumpTBOutMap(	pEr, 16 );
+                    break;
+                case CPCI_EVR:
+                    EvrDumpUnivOutMap(	pEr, 10 );
+                    break;
+                case SLAC_EVR:
+                    EvrDumpUnivOutMap(	pEr, 12 );
+                    break;
+                }
+                if (level >= 1) {
+                    struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
+                    printf("\nSoftware cache:\n");
+                    for (i = 0; i < TOTAL_TB_CHANNELS; i++)
+                        printf("tb_channel[%2d] %02x\n", i, pLinuxErCard->tb_channel[i]);
+                    for (i = 0; i < TOTAL_FP_CHANNELS; i++)
+                        printf("fp_channel[%2d] %02x\n", i, pLinuxErCard->fp_channel[i]);
+                    printf("pulse_irq %02x\n", pLinuxErCard->pulse_irq);
+                }
+                if (level >= 2) {
+                    struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
+                    u32 ie, trig, set, clear;
+                    if (ErGetRamStatus(pCard, 1))
+                        ram = 1;
+                    else
+                        ram = 0;
+                    printf("Active ram: %d\n", ram);
+                    printf("  Index     IntEvent  Trigger     Set      Clear\n");
+                    printf("----------  --------  --------  --------  --------\n");
+                    for (i = 0; i < EVR_MAX_EVENT_CODE; i++) {
+                        ie    = be32_to_cpu(pEr->MapRam[ram][i].IntEvent);
+                        trig  = be32_to_cpu(pEr->MapRam[ram][i].PulseTrigger);
+                        set   = be32_to_cpu(pEr->MapRam[ram][i].PulseSet);
+                        clear = be32_to_cpu(pEr->MapRam[ram][i].PulseClear);
+                        if (ie || trig || set || clear) {
+                            printf("%3d (0x%02x)  %08x  %08x  %08x  %08x\n", i, i, ie, trig, set, clear);
+                        }
+                    }
+                    printf("\n");
+                }
 	}
 	if(!NumCards)
 		printf ("  No Event Receiver cards were configured\n");
