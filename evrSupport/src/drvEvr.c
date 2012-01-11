@@ -89,7 +89,8 @@ static int evrReport( int interest )
       epicsUInt32 pulseIDfromEvr = 0;
       epicsTimeStamp currentTime;
       printf("Pattern data from %s card %d\n",
-             (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":"VME",
+             (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":
+             (pCard->FormFactor==0xF)?"SLAC":"VME",
              pCard->Cardno);
       /* Get pulse ID from timestamp. */
       evrTimeGetFromPipeline(&currentTime, evrTimeCurrent, 0, 0, 0, 0, 0);

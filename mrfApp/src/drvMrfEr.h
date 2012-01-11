@@ -88,6 +88,8 @@
 #define	PMC_EVR_FIRMWARE_REV_LINUX2	0x11000003
 #define	PMC_EVR_FIRMWARE_REV_LINUX3	0x11000103
 
+#define PMC_EVR_FIRMWARE_REV_SLAC1      0x1F000000
+
 /**************************************************************************************************/
 /*  Configuration Constants                                                                       */
 /**************************************************************************************************/
@@ -293,10 +295,11 @@ typedef void (*EVENT_FUNC) (void);
 typedef void (*ERROR_FUNC) (void);
 typedef void (*DBUFF_FUNC) (void);
 
-#define VME_EVR (0)
-#define PMC_EVR (1)
+#define VME_EVR      (0)
+#define PMC_EVR      (1)
 #define EMBEDDED_EVR (2)
-#define CPCI_EVR (3)
+#define CPCI_EVR     (3)
+#define SLAC_EVR     (0xF)
 
 /*---------------------
  * Event Receiver Card Structure

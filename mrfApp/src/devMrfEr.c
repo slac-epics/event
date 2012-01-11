@@ -405,7 +405,12 @@ epicsStatus ErProcess (erRecord  *pRec)
     */
     if (pRec->enab & !ErMasterEnableGet(pCard))
         ErMasterEnableSet (pCard, epicsTrue);
-  
+
+   /*---------------------
+    * We might have changed something, so need to update!
+    */
+    ErUpdateRam (pCard, pCard->ErEventTab);
+
    /*---------------------
     * Unlock the card mutex, mark the record "processed", and return success
     */
