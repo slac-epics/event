@@ -19,6 +19,7 @@ DB += evrDevTrig.db
 # evrPattern support
 DB += evrPatternProc.db
 DB += evrEventAll.db
+DB += evrEventFACET.db
 DB += evrPatternAll.db
 DB += evrPatternTest.db
 DB += evrPatternTestBsa.db
