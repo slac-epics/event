@@ -23,9 +23,9 @@
 
 #include "erapi.h"
 
-#if 0	/* Enable DEBUG statements */
+/*
 #define DEBUG 1
-#endif	/* Enable DEBUG statements */
+*/
 #define DEBUG_PRINTF printf
 unsigned int	erapiDebug	= 1;
 
@@ -44,11 +44,11 @@ int EvrOpen(struct MrfErRegs **pEr, char *device_name)
       *pEr = (struct MrfErRegs *) mmap(0, EVR_MEM_WINDOW, PROT_READ | PROT_WRITE,
 					MAP_SHARED, fd, 0);
 #ifdef DEBUG
-      DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr, errno);
+  DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr,
+	       errno);
 #endif
       if (*pEr == MAP_FAILED)
 	{
-      DEBUG_PRINTF( "mmap failed!  A firmware update may be needed!\n" );
 	  close(fd);
 	  return -1;
 	}
@@ -433,13 +433,9 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
   {
 	/*
 	 * Sanity check on prescaler value (due to fixed bug in generator allocation)
-	 * Firmware XXXX:
-	 *	- Prescaler value is R/W on generators 0-1
-	 *	- An MRF firmware bug prevents reading prescaler on generators 2-3
-	 *	- Generators 4-9 do not support prescaling and always read back 0
-	 * Firmware YYYY:
-	 *	- Prescaler value is R/W on generators 0-3
-	 *	- Generators 4-9 do not support prescaling and always read back 0
+	 * Prescaler value is readable on generators 0-1
+	 * A MRF firmware bug prevents reading prescaler on generators 2-3
+	 * Generators 4-9 do not support prescaling and always read back 0
 	 */
 	if ( pulse < 3 )
 	{

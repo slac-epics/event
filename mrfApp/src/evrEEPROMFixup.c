@@ -1,13 +1,9 @@
 
-#ifdef	RTEMS
 #include <rtems.h>
-#endif	/* RTEMS	*/
-
 #ifdef PCI
+#include <bsp/pci.h>
 #include <plx9080_eeprom.h>
-#include <pci_mrfev.h>
-#endif	/* PCI */
-
+#endif
 #define EPICS_REGISTER
 #ifdef EPICS_REGISTER
 #include <registryFunction.h>   /* EPICS Registry support library                                 */
@@ -22,8 +18,8 @@
 #ifndef PCI_VENDOR_ID_MRF
 #define PCI_VENDOR_ID_MRF 0x1a3e
 #endif
-#ifndef PCI_DEVICE_ID_MRF_PMCEVR200
-#define PCI_DEVICE_ID_MRF_PMCEVR200 0x10c8
+#ifndef PCI_DEVICE_ID_MRF_EVR200
+#define PCI_DEVICE_ID_MRF_EVR200 0x10c8
 #endif
 
 int
@@ -42,26 +38,15 @@ int ssvid, ssdid, x;
 		fprintf(stderr,"Unable to read EEPROM\n");
 		goto bail;
 	}
-	if ( PCI_DEVICE_ID_MRF_PMCEVR200 == ssdid && PCI_VENDOR_ID_MRF == ssvid ) {
-		fprintf( stderr, "Subsystem vendor and device ID match PMC EVR-200\n" );
-		fprintf( stderr, "EVR EEPROM ID's already OK, leaving now.\n");
-		return 0;
-	}
-	if ( PCI_DEVICE_ID_MRF_PMCEVR230 == ssdid && PCI_VENDOR_ID_MRF == ssvid ) {
-		fprintf( stderr, "Subsystem vendor and device ID match PMC EVR-230\n" );
-		fprintf( stderr, "EVR EEPROM ID's already OK, leaving now.\n");
+	if ( PCI_DEVICE_ID_MRF_EVR200 == ssdid && PCI_VENDOR_ID_MRF == ssvid ) {
+		fprintf(stderr,"EVR EEPROM Contents already OK, leaving now.\n");
 		return 0;
 	}
 	if ( ssvid != PCI_VENDOR_ID_PLX || ssdid != PCI_DEVICE_ID_PLX_9030 ) {
-		fprintf(stderr,"Subsystem vendor ID 0x%04X and device ID 0x%04X in PLX9030 EEPROM\n",
-				ssvid, ssdid);
-		fprintf(stderr,"do not match known PMC EVR models.\n" );
+		fprintf(stderr,"Subsystem vendor/device ID in EEPROM has already\n");
+		fprintf(stderr,"been programmed: SSVID 0x%04x/SSDID 0x%04x.\n", ssvid, ssdid);
 		fprintf(stderr,"Is unit #%u really a PMC EVR?\n",instance);
 		goto bail; 
-	}
-	else {
-		fprintf( stderr, "Subsystem vendor and device ID match generic unflashed PMC EVR\n" );
-		fprintf(stderr, "EEPROM needs fixup ...\n");
 	}
 	fprintf(stderr, "\n> Sanity check passed...\n");
 	if ( doit ) {
@@ -70,9 +55,9 @@ int ssvid, ssdid, x;
 		if ( PCI_VENDOR_ID_MRF != x )
 			goto fatal;
 
-		fprintf(stderr, "> Writing EVR id (0x%04x) to EEPROM SSDID\n", PCI_DEVICE_ID_MRF_PMCEVR200);
-		x = plx9080_ee_write(PLX9030_EE_OFFSET_SSDID, PCI_DEVICE_ID_MRF_PMCEVR200);
-		if ( PCI_DEVICE_ID_MRF_PMCEVR200 != x )
+		fprintf(stderr, "> Writing EVR id (0x%04x) to EEPROM SSDID\n", PCI_DEVICE_ID_MRF_EVR200);
+		x = plx9080_ee_write(PLX9030_EE_OFFSET_SSDID, PCI_DEVICE_ID_MRF_EVR200);
+		if ( PCI_DEVICE_ID_MRF_EVR200 != x )
 			goto fatal;
 
 		plx9080_ee_reload();

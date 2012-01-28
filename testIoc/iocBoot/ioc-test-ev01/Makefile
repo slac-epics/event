@@ -1,4 +1,4 @@
-TOP = ../../..
+TOP = ../..
 include $(TOP)/configure/CONFIG
 ARCH = RTEMS-beatnik
 TARGETS = envPaths

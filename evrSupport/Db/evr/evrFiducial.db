@@ -2,12 +2,6 @@
 #! DBDSTART
 #! DBDEND
 
-#
-# evrFiducial.db
-# This template is for fiducial processing records
-# Most users should load evrPatternAll.db which
-# includes these records via evrPatterAll.substitution
-# 
 
 record(longSub, "$(DEV):FIDUCIAL") {
   field(DESC, "Fiducial Processing")

@@ -2,12 +2,6 @@
 #! DBDSTART
 #! DBDEND
 
-#
-# evrPattern.db
-# This template is for pattern processing records
-# Most users should load evrPatternAll.db which
-# includes these records via evrPatterAll.substitution
-# 
 
 record(longSub, "$(DEV):PATTERN$(N)") {
   field(DESC, "Pattern $(N)")

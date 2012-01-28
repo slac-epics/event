@@ -1,4 +1,4 @@
-TOP=../../..
+TOP=../..
 
 include $(TOP)/configure/CONFIG
 
@@ -14,20 +14,13 @@ eventTest_DBD += devMrfEr.dbd
 eventTest_DBD += evgData.dbd
 
 PROD_IOC_RTEMS = eventTest
-# Linux version not yet supported
-#PROD_IOC_Linux = eventTest
-
 # <name>_registerRecordDeviceDriver.cpp will be created from <name>.dbd
 eventTest_SRCS += eventTest_registerRecordDeviceDriver.cpp
 eventTest_SRCS += evgData.c
-ifeq ($(OS_CLASS),Linux)
-eventTest_SRCS += eventTestAppMain.c
-endif
 
 eventTest_LIBS += devMrfEg
 eventTest_LIBS += devMrfEr
-eventTest_LIBS += drvMrf
-eventTest_LIBS_Linux += mrfApi
+eventTest_LIBS += mrfVme64x
 eventTest_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
