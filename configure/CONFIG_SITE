@@ -15,6 +15,9 @@
 #CROSS_COMPILER_TARGET_ARCHS = RTEMS-uC5282
 #CROSS_COMPILER_TARGET_ARCHS = RTEMS-pc586
 
+CROSS_COMPILER_TARGET_ARCHS = RTEMS-beatnik
+
+
 # Set this when your IOC and the host use different paths
 # to access the application. This will be needed to boot
 # from a Microsoft FTP server or with some NFS mounts.
@@ -26,5 +29,5 @@
 # define INSTALL_LOCATION here
 #INSTALL_LOCATION=<fullpathname>
 
-EVR_DRIVER_SUPPORT_LINUX=NO
+EVR_DRIVER_SUPPORT_LINUX=YES
 
