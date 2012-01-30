@@ -1,8 +1,22 @@
 Release Notes for the event package
 -----------------------------------
 
-event-R3-2-0: 	Build with base-R3-14-8-2-lcls6
-	      	Build with rtems-4.9.4
+event-R3-2-2:
+	* Modify RELEASE_SITE to use base-R3-14-8-2-lcls6_p1
+	  Modify configure/RELEASE to use
+ 		GENERALTIME_MODULE_VERSION=generalTime-R2-2-1
+ 		MISCUTILS_MODULE_VERSION=miscUtils-R2-2-1
+        * evrSupport/Db/bsa/bsaEdefFanouts.db: 
+	    Comment out TSE field (previously set to -2) to fix 
+            timestamp bug. Merging this change onto main trunk; 
+            was previously only on event-R3-2-1-lcls3 branch
+
+event-R3-2-1:
+	* Made event code 162's delay < event code 140
+
+event-R3-2-0:
+	* Build with base-R3-14-8-2-lcls6
+	* Build with rtems-4.9.4
 
 event-R3-1-7:
 	* Added status PVs for Event Code Sequences (ecs)
