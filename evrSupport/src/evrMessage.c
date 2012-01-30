@@ -567,16 +567,16 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
   Args: Type     Name           Access     Description
         -------  -------        ---------- ----------------------------
   unsigned int   messageIdx            Read    Message Index
-  epicsUInt32   * updateCount_p        Write   # times ISR wrote a message
-  epicsUInt32   * updateCountRollover_p  Write # times above rolled over
-  epicsUInt32   * overwriteCount_p     Write   # times ISR overwrote a message
-  epicsUInt32   * noDataCount_p        Write   # times no data was available for a read
-  epicsUInt32   * writeErrorCount_p    Write   # times data not written during read
-  epicsUInt32   * checkSumErrorCount_p Write   # times message check sum error
-  epicsUInt32   * procTimeStartMin_p   Write   Min start time delta (us)
-  epicsUInt32   * procTimeStartMax_p   Write   Max start time delta (us)
-  epicsUInt32   * procTimeDeltaAvg_p   Write   Avg time for message processing (us)
-  epicsUInt32   * procTimeDeltaMax_p   Write   Max time for message processing (us)
+  unsigned long * updateCount_p        Write   # times ISR wrote a message
+  unsigned long * updateCountRollover_p  Write # times above rolled over
+  unsigned long * overwriteCount_p     Write   # times ISR overwrote a message
+  unsigned long * noDataCount_p        Write   # times no data was available for a read
+  unsigned long * writeErrorCount_p    Write   # times data not written during read
+  unsigned long * checkSumErrorCount_p Write   # times message check sum error
+  unsigned long * procTimeStartMin_p   Write   Min start time delta (us)
+  unsigned long * procTimeStartMax_p   Write   Max start time delta (us)
+  unsigned long * procTimeDeltaAvg_p   Write   Avg time for message processing (us)
+  unsigned long * procTimeDeltaMax_p   Write   Max time for message processing (us)
 
   Rem:  The diagnostics count values are filled in if the message index is valid.
   
@@ -586,16 +586,16 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
 ==============================================================================*/
 
 int evrMessageCounts    (unsigned int  messageIdx,
-                         epicsUInt32 *updateCount_p,
-                         epicsUInt32 *updateCountRollover_p,
-                         epicsUInt32 *overwriteCount_p,
-                         epicsUInt32 *noDataCount_p,
-                         epicsUInt32 *writeErrorCount_p,
-                         epicsUInt32 *checkSumErrorCount_p,
-                         epicsUInt32 *procTimeStartMin_p,
-                         epicsUInt32 *procTimeStartMax_p,
-                         epicsUInt32 *procTimeDeltaAvg_p,
-                         epicsUInt32 *procTimeDeltaMax_p)
+                         unsigned long *updateCount_p,
+                         unsigned long *updateCountRollover_p,
+                         unsigned long *overwriteCount_p,
+                         unsigned long *noDataCount_p,
+                         unsigned long *writeErrorCount_p,
+                         unsigned long *checkSumErrorCount_p,
+                         unsigned long *procTimeStartMin_p,
+                         unsigned long *procTimeStartMax_p,
+                         unsigned long *procTimeDeltaAvg_p,
+                         unsigned long *procTimeDeltaMax_p)
 {  
   evrMessage_ts *em_ps = evrMessage_as + messageIdx;
   int    idx;

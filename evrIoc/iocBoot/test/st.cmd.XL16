@@ -15,7 +15,7 @@ evr_registerRecordDeviceDriver(pdbbase)
 dbLoadRecords("db/evrXL16.db")
 dbLoadRecords("db/evrPatternXL16.db")
 dbLoadRecords("db/trigXL16.db")
-#dbLoadRecords("db/bsaXL16.db")
+dbLoadRecords("db/bsaXL16.db")
 
 # Event Code Sequence Test PVs
 #dbLoadRecords("db/ecsTest.db","IOC=ECS:TEST:EV02")
