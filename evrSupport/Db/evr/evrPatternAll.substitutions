@@ -18,10 +18,10 @@ file evrPattern.db
 #                             Input
 #     Location   ,pattern#, id      
 pattern { DEV    , N      , NINP    , TSE ,         FLNK            , SDIS }
-      {$(DEVICE) , ""     ,   4     ,  -1  , "$(DEVICE):PATTERN360HZ", ""   }
+      {$(DEVICE) , ""     ,   4     ,  0  , "$(DEVICE):PATTERN360HZ", ""   }
       {$(DEVICE) , "360HZ",   0     ,  1  , "$(DEVICE):PATTERNN-1"  , ""   }
-      {$(DEVICE) , "N-1"  ,   1     ,  -1  , "$(DEVICE):PATTERNN-2"  , ""   }
-      {$(DEVICE) , "N-2"  ,   2     ,  -1  ,  ""                     , ""   }
+      {$(DEVICE) , "N-1"  ,   1     ,  0  , "$(DEVICE):PATTERNN-2"  , ""   }
+      {$(DEVICE) , "N-2"  ,   2     ,  0  ,  ""                     , ""   }
 # Note N-3 instantiated in mpgPatternProc.db or evrPatternProc.db
 }
 
@@ -32,11 +32,11 @@ file evrPattern.db
 #                             Input
 #     Location   ,pattern#, pattern#      
 pattern { DEV    , N      , NINP    , TSE ,         FLNK             ,SDIS}
-      {$(DEVICE) , "D"    ,   4     ,  -1  , "$(DEVICE):PATTERND-0"   , "" }
-      {$(DEVICE) , "D-0"  ,   0     ,  -1  , "$(DEVICE):PATTERND-1"   , "" }
-      {$(DEVICE) , "D-1"  ,   1     ,  -1  , "$(DEVICE):PATTERND-2"   , "" }
-      {$(DEVICE) , "D-2"  ,   2     ,  -1  , "$(DEVICE):PATTERND-3"   , "" }
-      {$(DEVICE) , "D-3"  ,   3     ,  -1  , "$(DEVICE):PATTERNSTATE" , "" }
+      {$(DEVICE) , "D"    ,   4     ,  0  , "$(DEVICE):PATTERND-0"   , "" }
+      {$(DEVICE) , "D-0"  ,   0     ,  0  , "$(DEVICE):PATTERND-1"   , "" }
+      {$(DEVICE) , "D-1"  ,   1     ,  0  , "$(DEVICE):PATTERND-2"   , "" }
+      {$(DEVICE) , "D-2"  ,   2     ,  0  , "$(DEVICE):PATTERND-3"   , "" }
+      {$(DEVICE) , "D-3"  ,   3     ,  0  , "$(DEVICE):PATTERNSTATE" , "" }
 }
 
 file evrFiducial.db
@@ -46,9 +46,9 @@ pattern { DEV      ,    LNK4 ,    LNK5 ,    LNK6 ,   VAL  ,   TS1   ,   TS2   }
 	{ $(DEVICE), $(LINK4), $(LINK5), $(LINK6), $(TREF), $(TS1ST), $(TS2ND)}
 }
 
-#file generalTimeNonVx.template
-#{
-##     Location  , Unit       
-#pattern { IOC         }
-#	{ $(DEVICE) }
-#}
+file generalTimeNonVx.template
+{
+#     Location  , Unit       
+pattern { IOC         }
+	{ $(DEVICE) }
+}

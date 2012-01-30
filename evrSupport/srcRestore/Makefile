@@ -12,9 +12,6 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #
 
-# Rules for installing ChannelWatcher files:
-CFG +=  CONFIG_RESTORE
-
 RESTORES += evrDevTrig.cwConfig
 RESTORES += evrIocTrig.cwConfig
 RESTORES += evrPMXXTrig.cwConfig
