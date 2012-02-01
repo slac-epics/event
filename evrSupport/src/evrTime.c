@@ -57,6 +57,7 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsTime.h"        /* epicsTimeStamp and protos */
 #include "epicsGeneralTime.h" /* generalTimeTpRegister     */
+#include "generalTimeSup.h"
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
@@ -296,6 +297,10 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 {
   int status;
   
+  /* Hack event code to get pre-bundled general-time behavior */
+  if ( (unsigned int)epicsTimeEventBestTime == eventCode )
+	eventCode = 0;
+  
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
@@ -330,6 +335,22 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   }
   return epicsTimeOK;
 }
+
+/*===============================================
+  Wrapper function for generalTime: Temporal
+=================================================*/
+static int evrTimeGet_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGet(epicsTime_ps, (unsigned int)eventCode);
+}
+
+static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGetSystem(epicsTime_ps, 0);
+}
+
+
+
 
 /*=============================================================================
 
@@ -402,11 +423,11 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].status = epicsTimeERROR;
           eventCodeTime_as[idx].count  = 0;
         }
-        if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
-                                  (pepicsTimeGetEvent)evrTimeGet))
+
+        if(generalTimeRegisterEventProvider("evrTimeGet", 1000, (TIMEEVENTFUN) evrTimeGet_gtWrapper))
           return epicsTimeERROR;
-        if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
-                                  (pepicsTimeGetEvent)evrTimeGetSystem))
+
+        if(generalTimeRegisterEventProvider("evrTimeGetSystem", 2000, (TIMEEVENTFUN) evrTimeGetSystem_gtWrapper))
           return epicsTimeERROR;
         evrTimeRWMutex_ps = epicsMutexCreate();
         if (!evrTimeRWMutex_ps) return epicsTimeERROR;
@@ -674,7 +695,7 @@ static int evrTimeProc (longSubRecord *psub)
 
 static long evrTimeDiag (longSubRecord *psub)
 {
-  unsigned long  dummy;
+  epicsUInt32  dummy;
   
   psub->val = fiducialStatus;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */

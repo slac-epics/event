@@ -21,6 +21,7 @@ DB += evrEvent.db
 DB += evrEventCtrl.db
 DB += evrDevTrig.db
 # evrPattern support
+DB += evrPattern.db
 DB += evrPatternProc.db
 DB += evrEventAll.db
 DB += evrPatternAll.db
@@ -33,6 +34,8 @@ DB += fiducial.db
 DB += evrEventCode.template
 DB += lclsEventCodes.db
 DB += lclsEventCodes.substitutions
+# Event Code Sequences
+DB += eventCodeSequenceAll.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------

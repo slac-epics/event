@@ -30,9 +30,14 @@ DB += trigXL04.db
 DB += trigXL05.db
 DB += trigXL09.db
 DB += trigXL16.db
+
 # MPS Test
 DB += mpsEvr.db
 DB += mpsEvrPattern.db
+
+# Event Code Sequence Test
+DB += ecsTest.db
+DB_INSTALLS += $(TOP)/../db/eventCodeSequenceAll.db
 
 # BSA Test Stands
 DB += bsaXL01.db

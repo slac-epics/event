@@ -31,8 +31,8 @@
 #ifdef EVENT_CLOCK_SPEED
     #define FR_SYNTH_WORD   EVENT_CLOCK_SPEED
 #else
-    #warning EVENT_CLOCK_SPEED not defined default to 119MHz
-    #define FR_SYNTH_WORD   CLOCK_119000_MHZ
+    #warning EVENT_CLOCK_SPEED not defined default to 124.950 MHz
+    #define FR_SYNTH_WORD   CLOCK_124950_MHZ
 #endif
 
 /**************************************************************************************************/
@@ -300,6 +300,7 @@ epicsUInt16 ErEnableIrq_nolock (ErCardStruct *pCard, epicsUInt16 Mask)
 |*   it has to figure out why and who generated an interrupt
 |*
 \**************************************************************************************************/
+int irqCount = 0;
 void ErIrqHandler(int signal)
 {
 	struct ErCardStruct *pCard;
@@ -316,6 +317,9 @@ void ErIrqHandler(int signal)
 		}
 		pEr = pCard->pEr;
 		flags = EvrGetIrqFlags(pEr);
+
+  irqCount++;
+
 		if(flags & EVR_IRQFLAG_PULSE) {
 			if(pCard->DevEventFunc != NULL)
 				(*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
@@ -452,6 +456,7 @@ static int ErConfigure (
 		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
+        printf("EvrOpen, device = %s\n", strDevice);
 	fdEvr = EvrOpen(&pEr, strDevice);
 	if (fdEvr < 0) {
 		errlogPrintf("%s@%d(EvrOpen) Error: %s opening %s\n", __func__, __LINE__, strerror(errno), strDevice );

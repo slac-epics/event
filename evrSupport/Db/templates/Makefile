@@ -34,10 +34,11 @@ DB_INSTALLS += evrWithExtDelays.template
 # ARCHIVE += <file>.substitutions
 # ARCHIVE += <file>.template
 #
-ARCHIVE += archive_evr.substitutions
-ARCHIVE += archive_evr.template
-ARCHIVE += archive_pmc_evr.template
-ARCHIVE += archive_vme_evr.template
+ARCHIVE += archive_evr.archive
+ARCHIVE += archive_evr.sub-arch
+ARCHIVE += archive_evr.tpl-arch
+ARCHIVE += archive_pmc_evr.tpl-arch
+ARCHIVE += archive_vme_evr.tpl-arch
 
 #----------------------------------------------------
 # Create and install (or just install)
@@ -46,10 +47,11 @@ ARCHIVE += archive_vme_evr.template
 # REQ += <file>.substitutions
 # REQ += <file>.template
 #
-REQ += autosave_evr.substitutions
-REQ += autosave_evr.template
-REQ += autosave_pmc_evr.template
-REQ += autosave_vme_evr.template
+REQ += autosave_evr.req
+REQ += autosave_evr.sub-req
+REQ += autosave_evr.tpl-req
+REQ += autosave_pmc_evr.tpl-req
+REQ += autosave_vme_evr.tpl-req
 
 include $(TOP)/configure/RULES
 #----------------------------------------

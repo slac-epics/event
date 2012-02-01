@@ -58,8 +58,8 @@ DBD += devMrfEg.dbd
 DBD += devMrfEgEvent.dbd
 DBD += drvMrfEr.dbd
 DBD += devMrfEr.dbd
-DBD += devMrfEgLib.dbd
-DBD += devMrfErLib.dbd
+#DBD += devMrfEgLib.dbd
+#DBD += devMrfErLib.dbd
 devMrfEgLib_DBD += devMrfEg.dbd
 devMrfEgLib_DBD += devMrfEgEvent.dbd
 devMrfErLib_DBD += base.dbd
@@ -148,6 +148,7 @@ drvMrf_OBJS_vxWorks += mrfVme64x
 drvMrf_OBJS_vxWorks += $(CRCSR_PROBE_NAME)
 ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 drvMrf_OBJS_Linux	+= drvLinux
+drvMrf_OBJS_Linux += erapi.o
 drvMrfLib_LIBS_Linux+= mrfApi
 endif
 
@@ -179,6 +180,8 @@ INC += mrfVme64x.h
 INC += drvMrfEg.h
 INC += drvMrfEr.h
 INC += devMrfEr.h
+
+INC += erapi.h
 
 INC += debugPrint.h
 
