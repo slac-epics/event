@@ -57,6 +57,7 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsTime.h"        /* epicsTimeStamp and protos */
 #include "epicsGeneralTime.h" /* generalTimeTpRegister     */
+#include "generalTimeSup.h"
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
@@ -65,6 +66,7 @@
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
 #include "evrPattern.h"        
+#include <sys/time.h>
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -84,7 +86,7 @@ typedef struct {
                               /* 2nd 32 bits = # of nsecs since last sec */
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
-  int                 count;  /* # times this event happened in last 2s  */
+  int                 count;  /* # times this event has happened		 */
 } evrTime_ts;
 
 /* EDEF Timestamp table */
@@ -295,6 +297,10 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 {
   int status;
   
+  /* Hack event code to get pre-bundled general-time behavior */
+  if ( (unsigned int)epicsTimeEventBestTime == eventCode )
+	eventCode = 0;
+  
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
@@ -329,6 +335,22 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   }
   return epicsTimeOK;
 }
+
+/*===============================================
+  Wrapper function for generalTime: Temporal
+=================================================*/
+static int evrTimeGet_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGet(epicsTime_ps, (unsigned int)eventCode);
+}
+
+static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGetSystem(epicsTime_ps, 0);
+}
+
+
+
 
 /*=============================================================================
 
@@ -401,29 +423,18 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].status = epicsTimeERROR;
           eventCodeTime_as[idx].count  = 0;
         }
-  /* For IOCs that support iocClock (RTEMS and vxWorks), register
-     evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
-#ifdef EVR_DRIVER_SUPPORT
-        if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
-                                  (pepicsTimeGetEvent)evrTimeGet))
+
+        if(generalTimeRegisterEventProvider("evrTimeGet", 1000, (TIMEEVENTFUN) evrTimeGet_gtWrapper))
           return epicsTimeERROR;
-        if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
-                                  (pepicsTimeGetEvent)evrTimeGetSystem))
+
+        if(generalTimeRegisterEventProvider("evrTimeGetSystem", 2000, (TIMEEVENTFUN) evrTimeGetSystem_gtWrapper))
           return epicsTimeERROR;
-#endif
         evrTimeRWMutex_ps = epicsMutexCreate();
         if (!evrTimeRWMutex_ps) return epicsTimeERROR;
   }
   return epicsTimeOK;
 }
-/* For IOCs that don't support iocClock (linux), supply a dummy
-   iocClockRegister to keep the linker happy. */
-#ifndef EVR_DRIVER_SUPPORT
-void iocClockRegister(pepicsTimeGetCurrent getCurrent,
-                      pepicsTimeGetEvent   getEvent) 
-{
-}
-#endif
+
 
 /*=============================================================================
 
@@ -684,7 +695,7 @@ static int evrTimeProc (longSubRecord *psub)
 
 static long evrTimeDiag (longSubRecord *psub)
 {
-  unsigned long  dummy;
+  epicsUInt32  dummy;
   
   psub->val = fiducialStatus;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */
@@ -735,9 +746,10 @@ static long evrTimeRate(subRecord *psub)
 
   if ((eventCode > 0) && (eventCode <= MRF_NUM_EVENTS)) {
     if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-      psub->val = eventCodeTime_as[eventCode].count;
-      eventCodeTime_as[eventCode].count = 0;
+      psub->val	= eventCodeTime_as[eventCode].count - psub->a;
+      psub->a	= eventCodeTime_as[eventCode].count;
       epicsMutexUnlock(evrTimeRWMutex_ps);
+      if ( psub->val < 0 ) psub->val += EVR_MAX_INT;
       psub->val /= MODULO720_SECS;
       return epicsTimeOK;
     }
@@ -764,7 +776,10 @@ static long evrTimeRate(subRecord *psub)
 int evrTimeCount(unsigned int eventCode)
 {
   if ((eventCode > 0) && (eventCode <= MRF_NUM_EVENTS)) {
-    eventCodeTime_as[eventCode].count++;
+    evrTime_ts	*	pevrTime = &eventCodeTime_as[eventCode];
+    /* Rollover if value gets too big */
+    if (pevrTime->count < EVR_MAX_INT)	pevrTime->count++;
+    else                       			pevrTime->count = 1;
     return epicsTimeOK;
   }
   return epicsTimeERROR;
@@ -802,6 +817,7 @@ static long evrTimeEvent(longSubRecord *psub)
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
     eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
+    psub->val = eventCodeTime_as[psub->a].count;
     epicsMutexUnlock(evrTimeRWMutex_ps);
     return epicsTimeOK;
   }
@@ -816,14 +832,14 @@ static long evrTimeEvent(longSubRecord *psub)
 
   Abs:  Lock Mutex and Return pointer to newest pattern
 
-  Args: Type                Name        Access     Description
-        ------------------- ----------- ---------- ----------------------------
-        evrMessagePattern_ts ** pattern_pps Write  Pointer to pattern
-        unsigned long **        timeslot_pp Write  Pointer to timeslot
-        unsigned long **     patternStatus_pp Write  Pointer to status
-        epicsTimeStamp *     mod720time_pps Write  Pointer to mod720 timestamp
+  Args: Type                Name              Access     Description
+        ------------------- -----------       ---------- ----------------------------
+        evrMessagePattern_ts ** pattern_pps   Write  Pointer to pattern
+	unsigned long **     timeslot_pp      Write  Pointer to timeslot
+	unsigned long **     patternStatus_pp Write  Pointer to status
+	epicsTimeStamp *     mod720time_pps   Write  Pointer to mod720 timestamp
 
-  Rem:  The caller MUST call evrTimePatternPutEnd after the pattern is filled in.
+	Rem:  The caller MUST call evrTimePatternPutEnd after the pattern is filled in.
 
   Side: Mutex is left locked.
   

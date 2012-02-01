@@ -97,7 +97,9 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
 {
   evrMessagePattern_ts   *pattern_ps;
   evrMessageReadStatus_te evrMessageStatus;
+#ifdef	USE_NTP
   struct timex            ntp_s;
+#endif	/*	USE_NTP	*/
   epicsTimeStamp          currentTime;
   epicsTimeStamp          prevTime;
   epicsTimeStamp         *mod720time_ps;
@@ -116,9 +118,11 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
   }
   /* Get system time and check NTP status */
   epicsTimeGetCurrent(&currentTime);
+#ifdef	USE_NTP
   memset(&ntp_s, 0, sizeof(ntp_s));
   if (ntp_adjtime(&ntp_s)) ntpStatus = 1;
   else                     ntpStatus = 0;
+#endif	/*	USE_NTP	*/
   
   /* Lock the pattern table and get pointer to newest pattern data */
   if (evrTimePatternPutStart(&pattern_ps, &timeslot_p,

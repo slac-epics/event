@@ -1,16 +1,13 @@
-#==============================================================================
-#RELEASE Location of external products
-# Run "gnumake clean uninstall install" in the application
-# top directory each time this file is changed.
-
-#==============================================================================
+# =============================================================
 # Define the top of the EPICS tree for your site.
 # We will build some tools/scripts that allow us to
 # change this easily when relocating software.
-#==============================================================================
-EPICS_SITE_TOP=/usr/local/lcls/epics
-BASE_SITE_TOP=/usr/local/lcls/epics/base
-MODULES_SITE_TOP=/usr/local/lcls/epics/modules/
-IOC_SITE_TOP=/usr/local/lcls/epics/iocTop
-EPICS_BASE_VER=base-R3-14-8-2-lcls6_p1
-#==============================================================================
+# ==============================================================
+EPICS_SITE_TOP=/reg/g/pcds/package/epics/3.14
+
+# EPICS module releases are kept here
+EPICS_MODULES=$(EPICS_SITE_TOP)/modules
+
+# Use the latest version of msi to avoid dependency on the extensions version
+MSI=$(EPICS_SITE_TOP)/extensions/current/bin/linux-x86/msi
+

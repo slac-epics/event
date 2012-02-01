@@ -108,8 +108,10 @@
 #include "devLibPMC.h"          /* for epicsFindDevice */
 #endif
 #include <mrfVme64x.h>          /* VME-64X CR/CSR routines and definitions (with MRF extensions)  */
-#include <basicIoOps.h>         /* for out_le16, in_le16 */
+#include "basicIoOps.h"         /* for out_le16, in_le16 */
 #include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
+#include "pci_mrfev.h"		/* MRF PCI device id's	*/
+
 
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
@@ -338,9 +340,6 @@ Descriptor */
 #endif
 #ifndef PCI_DEVICE_ID_PLX_9030
 #define PCI_DEVICE_ID_PLX_9030 (0x9030)
-#endif
-#ifndef PCI_DEVICE_ID_MRF_EVR200
-#define PCI_DEVICE_ID_MRF_EVR200 (0x10c8) /* as per email Jukka Pietarinen to TSS, 2/7/7 */
 #endif
 #ifndef VME_AM_STD_SUP_DATA
 #define VME_AM_STD_SUP_DATA (0x3D)
@@ -841,6 +840,7 @@ int ErConfigure (
     epicsStatus            status;          /* Status return variable                             */
     epicsAddressType       addressType;     /* Address type for devRegisterAddress                */
     int                    Slot;            /* VME slot number                                    */
+    epicsUInt16		   FPGAVersion;     /* FPGA Firmware Version Number 		          */
 
     #ifdef PCI
     /* PMC-EVR only */
@@ -1080,18 +1080,17 @@ int ErConfigure (
         /*---------------------
          * Handle the PMC-EVR 
          */
-		{ int plx, unit;
+		{
 		  EpicsPciDWord	subId;
-		
-		  plx  = 0;
-		  unit = 0;
-                  DeviceId = PCI_DEVICE_ID_MRF_EVR200;
+		  epicsUInt32	subIdEvr200	= ( PCI_DEVICE_ID_MRF_PMCEVR200 << 16 ) | VendorId;
+		  epicsUInt32	subIdEvr230	= ( PCI_DEVICE_ID_MRF_PMCEVR230 << 16 ) | VendorId;
+		  int		unit = 0;
 		  do {
-			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, plx, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
+			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, unit, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
 			/* no more plx chips */
 			  DEBUGPRINT (DP_ERROR, drvMrfErFlag,
-				("ErConfigure: epicsPciFindDevice unable to find match for subsystem vendorid %d, device %d and instance #%d.\n",
-				VendorId, DeviceId, Card));
+				("ErConfigure: epicsPciFindDevice unable to find EVR's PLX9030 vendorid 0x%04X, device 0x%04X.\n",
+				VendorId, DeviceId ));
 			  epicsMutexDestroy (pCard->CardLock);
 			  free (pCard);
 			  return ERROR;
@@ -1099,9 +1098,22 @@ int ErConfigure (
 			epicsPciConfigInLong(
 			  (unsigned char) pciBusNo, (unsigned char) pciDevNo, (unsigned char) pciFuncNo,
 			  PCI_SUBSYSTEM_VENDOR_ID, &subId); 
-			plx++;
-		  } while ( (subId != ((DeviceId << 16) | VendorId)) ||
-                            (unit++ < ErPMCCount) );
+		  	if (	subId == subIdEvr200
+			    ||	subId == subIdEvr230 ) {
+			    if ( unit < ErPMCCount )
+			    	/* Skip units we've already found */
+					continue;
+
+			    /* Found PMC EVR! */
+				printf( "ErConfigure: Found PMC EVR with subsystem vendor ID 0x%04X and device ID 0x%04X.\n",
+						(subId & 0xFFFF ), (subId >> 16) );
+			    break;
+			}
+			else {
+				printf( "ErConfigure: PLX9030 found but subsystem vendor ID 0x%04X and device ID 0x%04X is not an EVR.\n",
+						(subId & 0xFFFF ), (subId >> 16) );
+			}
+		  } while ( 1 );
                   ErPMCCount++;
                 }
 
@@ -1215,6 +1227,29 @@ int ErConfigure (
         MRF_VME_REG16_WRITE(&pEr->Control,
                             (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_CONFIG_PRESERVE_MASK) |
                             EVR_CSR_CONFIG_SET_FIELDS);
+
+	/*
+	 * Check the firmware version
+	 */
+    	FPGAVersion = ErGetFpgaVersion(pCard);
+	printf( "PMC EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
+	switch ( FPGAVersion )
+	{
+	default:
+	    printf( "ErConfigure: WARNING: Unknown firmware revision on PMC EVR!\n" );
+	    break;
+	case PMC_EVR_FIRMWARE_REV_VME1:
+	    break;
+	case (PMC_EVR_FIRMWARE_REV_LINUX1 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (PMC_EVR_FIRMWARE_REV_LINUX2 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (PMC_EVR_FIRMWARE_REV_LINUX3 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	    fprintf ( stderr,
+	       "\nErConfigure ERROR: This PMC EVR has firmware for a linux\n"
+	       "based system and cannot be used under RTEMS!\n" );
+	    epicsMutexDestroy (pCard->CardLock);
+	    free (pCard);
+	    return ERROR;
+	}
 
        /*---------------------
         * Now that we know all interrupts are disabled,
@@ -3883,7 +3918,7 @@ void DiagDumpDataBuffer (ErCardStruct *pCard)
 	*/
 	for (index=0, address=0;   index < numWords;   index+=8, address+=32) {
 	    printf ("%3.3X:", address);
-	    lastIndex = min(index+8, numWords);
+            lastIndex = ((index+8)< numWords)? (index+8):numWords;
 
 	   /*---------------------
 	    * Inner loop displays individual longwords

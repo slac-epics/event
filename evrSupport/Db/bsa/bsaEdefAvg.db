@@ -16,7 +16,7 @@ record(bsa, "$(DEV):$(SECN)$(MDID)") {
   field(PREC, "$(PREC)")
   field(ADEL, "$(ADEL)")
   field(MDEL, "-1")
-  field(TSE, "-2")
+  field(TSE, "-1")
   field(FLNK, "$(DEV):$(SECN)HST$(MDID)")
   field(VRES, "$(DEV):$(SECN)HST$(MDID).RES")
   field(CRES, "$(DEV):$(SECN)CNTHST$(MDID).RES")

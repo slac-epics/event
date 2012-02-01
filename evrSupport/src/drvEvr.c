@@ -40,8 +40,14 @@
 #ifdef __rtems__
 #define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
 #else
-#define EVR_TIMEOUT     (2)     /* Timeout in sec waiting for 360hz input. */
+#define EVR_TIMEOUT     (2)  /* Timeout in sec waiting for 360hz input. */
 #endif
+
+#define MIN(a,b)        (((a)>(b))?(b):(a))
+#define MAX(a,b)        (((a)>(b))?(a):(b))
+epicsUInt32 fiducial_time_stamp[PEEK_PIPE_SIZE];
+epicsUInt32 fiducial_time_stamp_ix=0;
+epicsUInt32 event_to_peek_fiducial=40;
 
 static int evrReport();
 struct drvet drvEvr = {
@@ -83,7 +89,8 @@ static int evrReport( int interest )
       epicsUInt32 pulseIDfromEvr = 0;
       epicsTimeStamp currentTime;
       printf("Pattern data from %s card %d\n",
-             (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":"VME",
+             (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":
+             (pCard->FormFactor==0xF)?"SLAC":"VME",
              pCard->Cardno);
       /* Get pulse ID from timestamp. */
       evrTimeGetFromPipeline(&currentTime, evrTimeCurrent, 0, 0, 0, 0, 0);
@@ -149,6 +156,12 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 =============================================================================*/
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
+if(eventNum==event_to_peek_fiducial)
+        { fiducial_time_stamp[fiducial_time_stamp_ix]= timeNum;
+        fiducial_time_stamp_ix++;
+        if (fiducial_time_stamp_ix>=PEEK_PIPE_SIZE){fiducial_time_stamp_ix=0;}
+        }
+
   if (eventNum == EVENT_FIDUCIAL) {
     if (readyForFiducial) {
       readyForFiducial = 0;
@@ -160,6 +173,44 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
   }
   evrTimeCount((unsigned int)eventNum);
 }
+
+/*---------------------------------------------------------------------------
+Following finction can allow peeking at fiducial time stamp corresponding to
+a watched event.
+Argument:  next_event_to_watch...The event to watch from this call onwards
+                   when this call terminates, the event ID that was being
+                   watched thus far gets reported in this variable.
+           Ticks:  returned fiducial associated with "next_event_to_watch"
+                   from last call of thisfunction.
+           peek_pipe_size: These many previous time stamps are returned. The Ticks array
+                   in the calling program should be at least this much size.
+                   (Note: at the most PEEK_PIPE_SIZE elements are supported. For the code
+                   effeciency, keep PEEK_PIPE_SIZE to a small number.)
+---------------------------------------------------------------------------*/
+epicsUInt32 peek_fiducial(epicsUInt32* next_event_to_watch,
+        epicsUInt32 *Ticks,
+        epicsUInt32 peek_pipe_size)
+{
+
+epicsUInt32 next_event;
+int upload_size,ix,ix_start,ix_end,local_fx;
+local_fx=fiducial_time_stamp_ix;
+
+upload_size=MIN(PEEK_PIPE_SIZE,peek_pipe_size);
+ix_start=local_fx+MAX(0,PEEK_PIPE_SIZE-peek_pipe_size);
+ix_end=ix_start+upload_size-1;
+for(ix=ix_start;ix<=ix_end;ix++){
+        Ticks[ix_start-ix+upload_size-1]=fiducial_time_stamp[ix%PEEK_PIPE_SIZE];
+        }
+
+fprintf(stdout,"Were Watching %d, Commanded to watch %d\n",event_to_peek_fiducial,*next_event_to_watch);
+next_event=  *next_event_to_watch;
+*next_event_to_watch=event_to_peek_fiducial;
+event_to_peek_fiducial=next_event;
+fprintf(stdout,"Will Watch %d, Reporting Watch Value %d\n",event_to_peek_fiducial,*next_event_to_watch);
+return(upload_size);
+}
+
 
 /*=============================================================================
                                                          
@@ -318,9 +369,9 @@ int evrInitialize()
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
     ErEnableDBuff            (pCard, 1);
     ErDBuffIrq               (pCard, 1);
-    ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
+    ErRegisterEventHandler   (pCard->Cardno,    (USER_EVENT_FUNC)evrEvent);
   }
-#endif
+#endif	/* EVR_DRIVER_SUPPORT */
   evrInitialized = 1;
   return 0;
 }
@@ -370,3 +421,16 @@ int evrTimeRegister(FIDUCIALFUNCTION fiducialFunc, void * fiducialArg)
   epicsMutexUnlock(evrRWMutex_ps);
   return 0;
 }
+
+LOCAL
+registryFunctionRef peek_fiducialRef [] = {
+    {"peek_fiducial", (REGISTRYFUNCTION)peek_fiducial}
+};
+
+LOCAL_RTN
+void peek_fiducialRegistrar (void) {
+    registryFunctionRefAdd (peek_fiducialRef, NELEMENTS(peek_fiducialRef));
+}
+
+epicsExportRegistrar (peek_fiducialRegistrar);
+
