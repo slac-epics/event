@@ -815,8 +815,14 @@ static long evrTimeEvent(longSubRecord *psub)
   if ((psub->a <= 0) || (psub->a > MRF_NUM_EVENTS))
     return epicsTimeERROR;
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-    eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
-    eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
+    if (psub->scan == SCAN_PASSIVE) {
+      /*
+       * Only modify the event time if this is the FLNK of an event.
+       * We don't actually know this, but we assume it if we're passive.
+       */
+      eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
+      eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
+    }
     psub->val = eventCodeTime_as[psub->a].count;
     epicsMutexUnlock(evrTimeRWMutex_ps);
     return epicsTimeOK;
