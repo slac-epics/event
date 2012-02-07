@@ -69,31 +69,6 @@
 /*  Configuration Constants                                                                       */
 /**************************************************************************************************/
 
-
-/*
- *  Firmware revisions
- */
-
-/*
- * This firmware revision has been verified to use the VME compatible
- * register map and work with drvMrfEr.c
- */
-#define	PMC_EVR_FIRMWARE_REV_VME1	0xF305
-
-/*
- * These firmware revisions are known to use the modular memory map
- * and are intended for use on linux based systems with drvLinuxEvr.c
- */
-#define	PMC_EVR_FIRMWARE_REV_LINUX1	0x11000002
-#define	PMC_EVR_FIRMWARE_REV_LINUX2	0x11000003
-#define	PMC_EVR_FIRMWARE_REV_LINUX3	0x11000103
-
-#define PMC_EVR_FIRMWARE_REV_SLAC1      0x1F000000
-
-/**************************************************************************************************/
-/*  Configuration Constants                                                                       */
-/**************************************************************************************************/
-
 /*---------------------
  * Define the maximum number of events that can be processed from the FIFO on a single interrupt
  * (this helps prevent the interrupt service routine from getting into a major spin loop)
@@ -262,7 +237,6 @@ void           ErEventIrq (ErCardStruct*, epicsBoolean);
 void           ErFlushFifo (ErCardStruct*);
 ErCardStruct  *ErGetCardStruct (int);
 epicsUInt16    ErGetFpgaVersion (ErCardStruct*);
-epicsUInt32    ErGetSecondsSR (ErCardStruct*);
 epicsBoolean   ErGetRamStatus (ErCardStruct*, int);
 epicsStatus    ErGetTicks (int, epicsUInt32*);
 epicsBoolean   ErMasterEnableGet (ErCardStruct*);
@@ -295,11 +269,8 @@ typedef void (*EVENT_FUNC) (void);
 typedef void (*ERROR_FUNC) (void);
 typedef void (*DBUFF_FUNC) (void);
 
-#define VME_EVR      (0)
-#define PMC_EVR      (1)
-#define EMBEDDED_EVR (2)
-#define CPCI_EVR     (3)
-#define SLAC_EVR     (0xF)
+#define VME_EVR (0)
+#define PMC_EVR (1)
 
 /*---------------------
  * Event Receiver Card Structure
