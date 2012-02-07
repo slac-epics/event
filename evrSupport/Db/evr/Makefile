@@ -12,21 +12,29 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #
 # EVR databases
-DB += evr.template
-DB += evrEvent.db
+DB += evr.db
+DB += evrWithDelays.db
+DB += evrWithExtDelays.db
 DB += evrEventCtrl.db
-DB += evrDevTrig.db
 # evrPattern support
 DB += evrPatternProc.db
 DB += evrEventAll.db
 DB += evrPatternAll.db
 DB += evrPatternTest.db
-DB += evrPatternTestBsa.db
+DB += evrPatternSaaAll.db
 DB += evrMod36.db
-# Event Code Sequences
-DB += eventCodeSequenceAll.db
+# Type-Specific IOC support
+DB += evrPMXX.db
+DB += evrLSXX.db
+DB += evrBPXX.db
+DB += evrMGXX.db
+DB += evrIMXX.db
+DB += evrMCXX.db
+DB += evrAMXX.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
+include $(TOP)/configure/RULES.Db
+
 
