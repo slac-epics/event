@@ -269,7 +269,6 @@ static int evrInitialise()
     return -1;
   }
   
-#ifdef __rtems__
   /* Get first EVR in the list */
   pCard = ErGetCardStruct(0);
   if (!pCard) {
@@ -281,7 +280,6 @@ static int evrInitialise()
     ErDBuffIrq               (pCard, 1);
     ErRegisterEventHandler   (0,    (USER_EVENT_FUNC)evrEvent);
   }
-#endif
   
   return 0;
 }
