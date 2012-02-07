@@ -1,0 +1,21 @@
+# This file contain all the database entries necessary to an IOC
+# to process BEAM events (event 140) and create a trigger from it.
+# The variables are:
+# 	IOC=Name of the IOC
+#	CARD= EVR card #
+#	TRIG_BEAM= Set to 1 if you want a beam event to generate a trigger
+#	on the EVR first trigger line.
+# This file depends on you also including fiducial.substitutions
+# in your database (for EVR initialization and time processing).
+
+file evrEventCtrl.db
+{
+#	  Device     Card   <----------------------------  Event -------------------------->       
+pattern { DEV      , CARD   , NAME    , ID ,P0,P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,VME}
+	{ $(IOC)   , $(CARD), BEAM    , 140, $(TRIG_BEAM), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 0 , 0 , 0 , 1 }
+}
+
+file beam-base.db
+{
+	{ IOC = "$(IOC)", CARD = "$(CARD)" }
+}
