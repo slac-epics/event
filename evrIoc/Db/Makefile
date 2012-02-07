@@ -1,4 +1,4 @@
-TOP=..
+TOP=../..
 include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
@@ -29,10 +29,6 @@ DB += evrPatternTO20.db
 DB += trigXL04.db
 DB += trigXL05.db
 DB += trigXL09.db
-DB += trigXL16.db
-# MPS Test
-DB += mpsEvr.db
-DB += mpsEvrPattern.db
 
 # BSA Test Stands
 DB += bsaXL01.db
@@ -46,7 +42,6 @@ DB += bsaSimXL04.db
 DB += bsaXL05.db
 DB += bsaSimXL05.db
 DB += bsaXL09.db
-DB += bsaXL16.db
 DB += bsaSimXL09.db
 DB += bsaBP21.db
 DB += bsaSimBP21.db
@@ -56,4 +51,5 @@ DB += bsaSimTO20.db
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
+include $(TOP)/configure/RULES.Db
 
