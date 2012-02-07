@@ -4,9 +4,9 @@
 #! DBDEND
 
 
-record(doubSub, "$(DEV):CHECK$(MDID)") {
+record(sSub, "$(DEV):CHECK$(MDID)") {
   field(DESC, "Check if Pulse Used")
-  field(SNAM, "evrPatternSimTest")
+  field(SNAM, "bsaSimCheckTest")
   field(INPF, "$(DEV):MODIFIER4")
   field(INPP, "EDEF:$(LOCA):$(MD):INCLUSION4 CA")
   field(INPW, "$(DEV):BEAMCODE.SEVR")
