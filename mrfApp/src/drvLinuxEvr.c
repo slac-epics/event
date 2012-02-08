@@ -2,7 +2,9 @@
  *	This code is a linux implementation of the mrfApp EVR driver code
  *
  * Copyright 2010, Stanford University
- * Author: Remi Machet <rmachet@slac.stanford.edu>
+ * Authors:
+ *		Remi Machet <rmachet@slac.stanford.edu>
+ *		Bruce Hill <bhill@slac.stanford.edu>
  *
  * Released under the GPLv2 licence <http://www.gnu.org/licenses/gpl-2.0.html>
  */
@@ -152,12 +154,43 @@ static epicsMutexId ErConfigureLock;
 /*                              Private APIs                                                      */
 /*                                                                                                */
 
+char *	FormFactorToString( int formFactor )
+{
+	char	*	pString;
+	switch ( formFactor )
+	{
+	default:		pString	= "Invalid";	break;
+	case PMC_EVR:	pString	= "PMC_EVR";	break;
+	case CPCI_EVR:	pString	= "cPCI_EVR";	break;
+	case VME_EVR:	pString	= "VME_EVR";	break;
+	case SLAC_EVR:	pString	= "SLAC_EVR";	break;
+	}
+	return pString;
+}
+
+
+int ErGetFormFactor( struct MrfErRegs	*	pEr )
+{
+	int		formFactor;
+	int		id = (be32_to_cpu(pEr->FPGAVersion)>>24) & 0x0F;
+	switch ( id )
+	{
+	case 0x1:	formFactor	= PMC_EVR;	break;
+	case 0x0:	formFactor	= CPCI_EVR;	break;
+	case 0x2:	formFactor	= VME_EVR;	break;
+	case 0xf:	formFactor	= SLAC_EVR;	break;
+	default:	formFactor	= -1;		break;
+	}
+	return formFactor;
+}
+
+
 int find_free_pulsegen(struct LinuxErCardStruct *pLinuxErCard)
 {
 	enum outputs_mapping_id pulse;
 	int id;
 
-	for(pulse = PULSE_GENERATOR_0; pulse <= PULSE_GENERATOR_9; pulse++) {
+	for(pulse = PULSE_GENERATOR_4; pulse <= PULSE_GENERATOR_9; pulse++) {
 		if(pLinuxErCard->pulse_irq == pulse)
 			continue;
 		for(id = 0; id < TOTAL_TB_CHANNELS; id++)
@@ -188,8 +221,14 @@ int update_fp_map(struct LinuxErCardStruct *pLinuxErCard, enum transition_board_
 	for(fp = 0; fp < TOTAL_FP_CHANNELS; fp++) {
 		if(pLinuxErCard->fp_channel[fp] == channel) {
 			if(pLinuxErCard->ErCard.FormFactor == PMC_EVR)
+			{
+				if ( ErDebug >= 1 )
+					printf( "%s: Calling EvrSetFPOutMap for ch %d to pulse %d\n", __func__,
+							channel, pLinuxErCard->tb_channel[channel] );
 				EvrSetFPOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
-			if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR)
+			}
+			if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR ||
+                           pLinuxErCard->ErCard.FormFactor == SLAC_EVR)
 				EvrSetUnivOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
 			count++;
 		}
@@ -287,7 +326,7 @@ void ErIrqHandler(int signal)
 				if(EvrGetFIFOEvent(pEr, &fe) < 0)
 					break;
 				if(pCard->DevEventFunc != NULL)
-					(*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
+					(*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampHigh);
 			}
 		}
 		if(flags & EVR_IRQFLAG_HEARTBEAT) {
@@ -329,7 +368,16 @@ void ErIrqHandler(int signal)
 		epicsMutexUnlock(pCard->CardLock);
 	}
 	epicsMutexUnlock(ErCardListLock);
-	errlogPrintf("%s: called but no interrupt found.\n", __func__);
+	if ( ErDebug >= 1 ) {
+		/*
+		 * None of the events tested for above were found. 
+		 * This condition appears regularly on most of our
+		 * systems with so far no known interrupt problems,
+		 * so I've changed it from always calling errlogPrintf
+		 * to a debug msg which can be enabled or disabled as needed.
+		 */
+		printf("%s: called but no interrupt found.\n", __func__);
+	}
 	return;
 }
 	
@@ -364,11 +412,13 @@ static int ErConfigure (
     epicsUInt32 IrqLevel,                   /* if VME_EVR, Interrupt request level. if PMC_EVR set to zero*/
     int FormFactor)                         /* cPCI or PMC form factor                             */
 {
-	int ret, fdEvr, id;
+	int ret, fdEvr;
+	int		actualFormFactor;
 	char strDevice[strlen(DEVNODE_NAME_BASE) + 3];
 	struct LinuxErCardStruct *pLinuxErCard;
 	struct ErCardStruct *pCard;
 	struct MrfErRegs *pEr;
+    u32		FPGAVersion;
 	
 	epicsMutexLock(ErCardListLock);
 	/* If not already done, initialize the driver structures */
@@ -404,39 +454,56 @@ static int ErConfigure (
 	}
 	fdEvr = EvrOpen(&pEr, strDevice);
 	if (fdEvr < 0) {
-		errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+		errlogPrintf("%s@%d(EvrOpen) Error: %s opening %s\n", __func__, __LINE__, strerror(errno), strDevice );
 		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
+
+	/* Check the firmware version */
+	FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
+	printf( "PMC EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
+	switch ( FPGAVersion )
+	{
+	default:
+	    printf( "ErConfigure: WARNING: Unknown firmware revision on PMC EVR!\n" );
+	    break;
+	case PMC_EVR_FIRMWARE_REV_SLAC1:
+	case PMC_EVR_FIRMWARE_REV_LINUX1:
+	case PMC_EVR_FIRMWARE_REV_LINUX2:
+	case PMC_EVR_FIRMWARE_REV_LINUX3:
+	    break;
+	case PMC_EVR_FIRMWARE_REV_VME1:
+	    fprintf ( stderr,
+		   "\nErConfigure ERROR: This PMC EVR has firmware for a RTEMS based system\n"
+		   "and needs new firmware to be used under Linux!\n" );
+	    EvrClose(fdEvr);
+	    epicsMutexUnlock(ErConfigureLock);
+	    return ERROR;
+	}
+
 	/* Check the hardware signature for an EVR */
-	if((be32_to_cpu(pEr->FPGAVersion)>>28) != 0x1) {
-		errlogPrintf("%s: invalid hardware signature: 0x%08x.\n", __func__, be32_to_cpu(pEr->FPGAVersion));
+	if(( FPGAVersion >>28) != 0x1) {
+		errlogPrintf("%s: invalid hardware signature: 0x%08x.\n", __func__, FPGAVersion );
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+	    epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
+
 	ret = 0;
-	id = (be32_to_cpu(pEr->FPGAVersion)>>24) & 0x0F;
-	switch(FormFactor) {
-		case PMC_EVR:
-			if(id != 0x1)
-				ret = -1;
-			break;
-		case CPCI_EVR:
-			if(id != 0x0)
-				ret = -1;
-			break;
-		case VME_EVR:
-			if(id != 0x2)
-				ret = -1;
-			break;
-		default:
-			ret = -1;
+	actualFormFactor = ErGetFormFactor( pEr );
+	if ( FormFactor == actualFormFactor )
+	{
+		printf( "Found a %s %s\n",
+				FormFactorToString( FormFactor ), strDevice );
 	}
-	if (ret < 0) {
+	else
+	{
+		printf( "Configured for %s form factor, but %s has %s form factor.\n",
+				FormFactorToString( FormFactor ), strDevice,
+				FormFactorToString( actualFormFactor ) );
 		errlogPrintf("%s: wrong form factor %d, signature is 0x%08x.\n", __func__, FormFactor, be32_to_cpu(pEr->FPGAVersion));
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
 	
@@ -445,7 +512,7 @@ static int ErConfigure (
 	if (pLinuxErCard == NULL) {
 		errlogPrintf("%s@%d(malloc): failed.\n", __func__, __LINE__);
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
 	memset(pLinuxErCard, 0, sizeof(struct LinuxErCardStruct));
@@ -456,7 +523,7 @@ static int ErConfigure (
 		errlogPrintf("%s@%d(epicsMutexCreate): failed.\n", __func__, __LINE__);
 		free(pCard);
 		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
+		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
 	ellAdd (&ErCardList, &pCard->Link); 
@@ -753,11 +820,45 @@ epicsUInt16 ErGetFpgaVersion(ErCardStruct *pCard)
 {	
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	epicsUInt32 version;
-	
+
+	if ( pEr == NULL )
+		errlogPrintf( "%s: NULL EVR structure pointer\n", __func__ );
+
 	/* no need for a lock, this is a read only register */
 	version = be32_to_cpu(pEr->FPGAVersion);
 	return ((version >> 16) & 0xFF00) | (version & 0xFF);
 }
+
+/**************************************************************************************************
+|* ErGetSecondsSR () -- Return the Event Receiver's Unlatched Seconds Register
+|*-------------------------------------------------------------------------------------------------
+|*
+|* Read the unlatched timestamp "seconds" from the Event Receiver's SecondsSR register.
+|*
+|*-------------------------------------------------------------------------------------------------
+|* CALLING SEQUENCE:
+|*      version = ErGetSecondsSR (pCard);
+|*
+|*-------------------------------------------------------------------------------------------------
+|* INPUT PARAMETERS:
+|*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
+|* 
+|*-------------------------------------------------------------------------------------------------
+|* RETURNS:
+|*      seconds  = (epicsUInt16)    The timestamp "seconds" of the requested Event Receiver Card.
+|*
+\**************************************************************************************************/
+
+GLOBAL_RTN
+epicsUInt32 ErGetSecondsSR (ErCardStruct *pCard)
+{
+    struct MrfErRegs	*	pEr = (struct MrfErRegs *)pCard->pEr;
+	
+	/* no need for a lock, this is a read only register */
+	epicsUInt32		secondsSR = be32_to_cpu(pEr->SecondsShift);
+	return secondsSR;
+
+}/*end ErGetSecondsSR()*/
 
 /**************************************************************************************************
 |* ErGetRamStatus () -- Return the Enabled/Disabled Status of the Requested Event Mapping RAM
@@ -1016,24 +1117,24 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 	int pulse;
 
 	if ( ErDebug >= 1 )
-		printf( "%s: EVR %d-%d %s DG %d: del=%u, wid=%u, pre=%u, pol=%s.\n",
+		printf( "%s: EVR %d-%d %s DG %d: pre=%u, del=%u, wid=%u, pol=%s.\n",
 				__func__, pCard->Cardno, pCard->Slot,
 				( Enable ? "Enable" : "Disable" ),
-				Channel, Delay, Width, Prescaler,
+				Channel, Prescaler, Delay, Width,
 				( Pol ? "Nml" : "Inv" )	);
 
 	if( Channel < 0 || Channel >= EVR_NUM_DG ) {
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
 		return;
 	}
-	
+
 	epicsMutexLock(pCard->CardLock);
 	map = pLinuxErCard->tb_channel[DELAYED_PULSE_0 + Channel];
 	if(Enable) {
 		/* If the channel is already using a pulse generator we keep it 
 		   otherwise we get a new one */
 		if((map < PULSE_GENERATOR_0) || (map > PULSE_GENERATOR_9)) {
-			pulse = find_free_pulsegen(pLinuxErCard);
+			pulse = Channel; /* pulse = find_free_pulsegen(pLinuxErCard); */
 			/* Check for error */
 			if (pulse < 0) {
 				epicsMutexUnlock(pCard->CardLock);
@@ -1058,7 +1159,11 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 		EvrSetTBOutMap(pEr, DELAYED_PULSE_0 + Channel, UNUSED);
 		pLinuxErCard->tb_channel[DELAYED_PULSE_0 + Channel] = UNUSED;
 		update_fp_map(pLinuxErCard, DELAYED_PULSE_0 + Channel);
-	}		
+	}
+
+	if ( ErDebug >= 2 )
+		EvrDumpPulses( pEr, 10 );
+
 	epicsMutexUnlock(pCard->CardLock);
 	return;
 }
@@ -1386,7 +1491,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 			return;
 		}
 		map = pulse + PULSE_GENERATOR_0;
-		EvrSetPulseParams(pEr, pulse, 1, 0, 0);
+		EvrSetPulseParams(pEr, pulse, 0, 0, 0);
 		EvrSetPulseProperties(pEr, pulse, 1, 0, 0, 1, 1);
 		EvrSetTBOutMap(pEr, TRIGGER_EVENT_0 + Channel, map);
 		pLinuxErCard->tb_channel[TRIGGER_EVENT_0 + Channel] = map;
@@ -1491,7 +1596,7 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 		return;
 	}
 	for(code=0; code < EVR_MAX_EVENT_CODE; code++) {
-		struct MapRamItemStruct ramloc = { 0 };
+                struct MapRamItemStruct ramloc = { 0, 0, 0, 0 };
 		int map;
 
 		if(code == 0x70)
@@ -1514,14 +1619,14 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 			if(RamBuf[code] & (1<<map)) {
 				enum outputs_mapping_id func;
 				func = pLinuxErCard->tb_channel[OTL_0+(map>>1)];
-				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9)) {
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9)) {
 					if(map & 1)
 						ramloc.PulseSet |= 1<<(func-PULSE_GENERATOR_0);
 					else
 						ramloc.PulseClear |= 1<<(func-PULSE_GENERATOR_0);
 				}
 				func = pLinuxErCard->tb_channel[OTP_DBUS_0+map];
-				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9))
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9))
 					ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				if(map < EVR_NUM_DG) {
 					func = pLinuxErCard->tb_channel[DELAYED_PULSE_0+map];
@@ -1586,6 +1691,7 @@ epicsStatus ErDrvReport (int level)
 {
 	int             NumCards = 0;       /* Number of configured cards we found                    */
 	ErCardStruct   *pCard;              /* Pointer to card structure                              */
+        int i, ram;
 
 	for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
 		pCard != NULL;
@@ -1594,11 +1700,56 @@ epicsStatus ErDrvReport (int level)
 		NumCards++;
 
 		printf ("\n-------------------- EVR#%d Hardware Report --------------------\n", pCard->Cardno);
-		printf("	Form factor %d.\n", EvrGetFormFactor(pEr));
+		printf("	Form factor %s.\n", FormFactorToString( ErGetFormFactor(pEr) ) );
 		printf("	Firmware Version = %4.4X.\n", ErGetFpgaVersion(pCard));
 		printf ("	Address = %p.\n", pCard->pEr);
-        	printf ("	%s,  ", ErMasterEnableGet(pCard)? "Enabled" : "Disabled");
-	        printf ("	%d Frame Errors\n", pCard->RxvioCount);
+		printf ("	%s,  ", ErMasterEnableGet(pCard)? "Enabled" : "Disabled");
+		printf ("	%d Frame Errors\n", pCard->RxvioCount);
+		EvrDumpStatus( pEr );
+		EvrDumpPulses(		pEr, 10 );
+                switch(ErGetFormFactor(pEr)) {
+                case VME_EVR:
+                    EvrDumpFPOutMap(	pEr, 8 );
+                    EvrDumpUnivOutMap(	pEr, 4 );
+                    EvrDumpTBOutMap(	pEr, 16 );
+                    break;
+                case CPCI_EVR:
+                    EvrDumpUnivOutMap(	pEr, 10 );
+                    break;
+                case SLAC_EVR:
+                    EvrDumpUnivOutMap(	pEr, 12 );
+                    break;
+                }
+                if (level >= 1) {
+                    struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
+                    printf("\nSoftware cache:\n");
+                    for (i = 0; i < TOTAL_TB_CHANNELS; i++)
+                        printf("tb_channel[%2d] %02x\n", i, pLinuxErCard->tb_channel[i]);
+                    for (i = 0; i < TOTAL_FP_CHANNELS; i++)
+                        printf("fp_channel[%2d] %02x\n", i, pLinuxErCard->fp_channel[i]);
+                    printf("pulse_irq %02x\n", pLinuxErCard->pulse_irq);
+                }
+                if (level >= 2) {
+                    struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
+                    u32 ie, trig, set, clear;
+                    if (ErGetRamStatus(pCard, 1))
+                        ram = 1;
+                    else
+                        ram = 0;
+                    printf("Active ram: %d\n", ram);
+                    printf("  Index     IntEvent  Trigger     Set      Clear\n");
+                    printf("----------  --------  --------  --------  --------\n");
+                    for (i = 0; i < EVR_MAX_EVENT_CODE; i++) {
+                        ie    = be32_to_cpu(pEr->MapRam[ram][i].IntEvent);
+                        trig  = be32_to_cpu(pEr->MapRam[ram][i].PulseTrigger);
+                        set   = be32_to_cpu(pEr->MapRam[ram][i].PulseSet);
+                        clear = be32_to_cpu(pEr->MapRam[ram][i].PulseClear);
+                        if (ie || trig || set || clear) {
+                            printf("%3d (0x%02x)  %08x  %08x  %08x  %08x\n", i, i, ie, trig, set, clear);
+                        }
+                    }
+                    printf("\n");
+                }
 	}
 	if(!NumCards)
 		printf ("  No Event Receiver cards were configured\n");
@@ -1705,6 +1856,16 @@ LOCAL_RTN void ErDebugLevelCall(const iocshArgBuf * args)
 	ErDebugLevel((epicsInt32)args[0].ival);
 }
 
+/* iocsh command: ErDrvReport */
+LOCAL const iocshArg ErDrvReportArg0 = {"Level" , iocshArgInt};
+LOCAL const iocshArg *const ErDrvReportArgs[1] = {&ErDrvReportArg0};
+LOCAL const iocshFuncDef ErDrvReportDef = {"ErDrvReport", 1, ErDrvReportArgs};
+
+LOCAL_RTN void ErDrvReportCall(const iocshArgBuf * args)
+{
+	ErDrvReport((epicsInt32)args[0].ival);
+}
+
 /* Registration APIs */
 LOCAL void drvMrfErRegister()
 {
@@ -1712,7 +1873,8 @@ LOCAL void drvMrfErRegister()
 	ErCardListLock = epicsMutexCreate();
 	ErConfigureLock = epicsMutexCreate();
 	/* register APIs */
-	iocshRegister(&ErConfigureDef, ErConfigureCall);
-	iocshRegister(&ErDebugLevelDef, ErDebugLevelCall);
+	iocshRegister(	&ErConfigureDef,	ErConfigureCall );
+	iocshRegister(	&ErDebugLevelDef,	ErDebugLevelCall );
+	iocshRegister(	&ErDrvReportDef,	ErDrvReportCall );
 }
 epicsExportRegistrar(drvMrfErRegister);

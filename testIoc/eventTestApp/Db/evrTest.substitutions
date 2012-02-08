@@ -90,18 +90,18 @@ file evrEventRate.db
 {
 #	  Device               <--  Event -->       
 pattern { DEV                 , NAME    , ID }
-	{ IOC:TEST:EV01       , EVENT1  , 1  }
-	{ IOC:TEST:EV01       , EVENT2  , 2  }
-	{ IOC:TEST:EV01       , EVENT3  , 3  }
-	{ IOC:TEST:EV01       , EVENT4  , 4  }
-	{ IOC:TEST:EV01       , EVENT5  , 5  }
-	{ IOC:TEST:EV01       , EVENT6  , 6  }
-	{ IOC:TEST:EV01       , EVENT7  , 7  }
-	{ IOC:TEST:EV01       , EVENT8  , 8  }
-	{ IOC:TEST:EV01       , EVENT9  , 9  }
-	{ IOC:TEST:EV01       , EVENT10 , 10 }
-	{ IOC:TEST:EV01       , EVENT11 , 11 }
-	{ IOC:TEST:EV01       , EVENT12 , 12 }
-	{ IOC:TEST:EV01       , EVENT13 , 13 }
-	{ IOC:TEST:EV01       , EVENT14 , 14 }
+	{ EVR:TEST:EV01       , EVENT1  , 1  }
+	{ EVR:TEST:EV01       , EVENT2  , 2  }
+	{ EVR:TEST:EV01       , EVENT3  , 3  }
+	{ EVR:TEST:EV01       , EVENT4  , 4  }
+	{ EVR:TEST:EV01       , EVENT5  , 5  }
+	{ EVR:TEST:EV01       , EVENT6  , 6  }
+	{ EVR:TEST:EV01       , EVENT7  , 7  }
+	{ EVR:TEST:EV01       , EVENT8  , 8  }
+	{ EVR:TEST:EV01       , EVENT9  , 9  }
+	{ EVR:TEST:EV01       , EVENT10 , 10 }
+	{ EVR:TEST:EV01       , EVENT11 , 11 }
+	{ EVR:TEST:EV01       , EVENT12 , 12 }
+	{ EVR:TEST:EV01       , EVENT13 , 13 }
+	{ EVR:TEST:EV01       , EVENT14 , 14 }
 }

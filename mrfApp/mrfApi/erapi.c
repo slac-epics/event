@@ -23,10 +23,11 @@
 
 #include "erapi.h"
 
-/*
+#if 0	/* Enable DEBUG statements */
 #define DEBUG 1
-*/
+#endif	/* Enable DEBUG statements */
 #define DEBUG_PRINTF printf
+unsigned int	erapiDebug	= 1;
 
 int EvrOpen(struct MrfErRegs **pEr, char *device_name)
 {
@@ -43,11 +44,11 @@ int EvrOpen(struct MrfErRegs **pEr, char *device_name)
       *pEr = (struct MrfErRegs *) mmap(0, EVR_MEM_WINDOW, PROT_READ | PROT_WRITE,
 					MAP_SHARED, fd, 0);
 #ifdef DEBUG
-  DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr,
-	       errno);
+      DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr, errno);
 #endif
       if (*pEr == MAP_FAILED)
 	{
+      DEBUG_PRINTF( "mmap failed!  A firmware update may be needed!\n" );
 	  close(fd);
 	  return -1;
 	}
@@ -391,7 +392,7 @@ int EvrDumpFIFO(volatile struct MrfErRegs *pEr)
       i = EvrGetFIFOEvent(pEr, &fe);
       if (!i)
 	{
-	  printf("Code %08lx, %08lx:%08lx\n",
+	  printf("Code %08x, %08x:%08x\n",
 		 fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
 	}
     }
@@ -419,8 +420,8 @@ int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig
   return 0;
 }
 
-int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
-		      int delay, int width)
+int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
+		      u32 delay, u32 width)
 {
   if (pulse < 0 || pulse >= EVR_MAX_PULSES)
     return -1;
@@ -428,6 +429,27 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
   pEr->Pulse[pulse].Prescaler = be32_to_cpu(presc);
   pEr->Pulse[pulse].Delay = be32_to_cpu(delay);
   pEr->Pulse[pulse].Width = be32_to_cpu(width);
+  if ( erapiDebug	>= 1 )
+  {
+	/*
+	 * Sanity check on prescaler value (due to fixed bug in generator allocation)
+	 * Firmware XXXX:
+	 *	- Prescaler value is R/W on generators 0-1
+	 *	- An MRF firmware bug prevents reading prescaler on generators 2-3
+	 *	- Generators 4-9 do not support prescaling and always read back 0
+	 * Firmware YYYY:
+	 *	- Prescaler value is R/W on generators 0-3
+	 *	- Generators 4-9 do not support prescaling and always read back 0
+	 */
+	if ( pulse < 3 )
+	{
+	  if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
+		printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,
+				pulse, be32_to_cpu(pEr->Pulse[pulse].Prescaler), presc );
+	  else if ( presc != 0 )
+		printf( "%s Pulse %d: Success! prescaler is now %d\n", __func__, pulse, presc );
+	}
+  }
   return 0;
 }
 
@@ -652,7 +674,7 @@ int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable)
   return 0;
 }
 
-int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, int dly0, int dly1)
+int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, u32 dly0, u32 dly1)
 {
   u32 gpio;
   int sh = 0;
@@ -856,7 +878,7 @@ int EvrSetTimestampDBus(volatile struct MrfErRegs *pEr, int enable)
   return be32_to_cpu(pEr->Control);  
 }
 
-int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, int div)
+int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, u32 div)
 {
   if (presc >= 0 && presc < EVR_MAX_PRESCALERS)
     {

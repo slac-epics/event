@@ -300,6 +300,15 @@ epicsStatus ErProcess (erRecord  *pRec)
         ErMasterEnableSet (pCard, epicsFalse);
   
    /*---------------------
+    * Update the delayed pulse generator outputs first
+    * Set the programmable delay (DG) output parameters (Enable, Delay, Width, Prescaler, Polarity)
+    */
+    ErSetDg (pCard, 0, pRec->dg0e, pRec->dg0d, pRec->dg0w, pRec->dg0c, pRec->dg0p);
+    ErSetDg (pCard, 1, pRec->dg1e, pRec->dg1d, pRec->dg1w, pRec->dg1c, pRec->dg1p);
+    ErSetDg (pCard, 2, pRec->dg2e, pRec->dg2d, pRec->dg2w, pRec->dg2c, pRec->dg2p);
+    ErSetDg (pCard, 3, pRec->dg3e, pRec->dg3d, pRec->dg3w, pRec->dg3c, pRec->dg3p);
+  
+   /*---------------------
     * Set the trigger event output enables
     */
     ErSetTrg (pCard, 0, pRec->trg0);
@@ -357,14 +366,6 @@ epicsStatus ErProcess (erRecord  *pRec)
     ErSetOtl (pCard, 6, pRec->otl6);
 
    /*---------------------
-    * Set the programmable delay (DG) output parameters (Enable, Delay, Width, Prescaler, Polarity)
-    */
-    ErSetDg (pCard, 0, pRec->dg0e, pRec->dg0d, pRec->dg0w, pRec->dg0c, pRec->dg0p);
-    ErSetDg (pCard, 1, pRec->dg1e, pRec->dg1d, pRec->dg1w, pRec->dg1c, pRec->dg1p);
-    ErSetDg (pCard, 2, pRec->dg2e, pRec->dg2d, pRec->dg2w, pRec->dg2c, pRec->dg2p);
-    ErSetDg (pCard, 3, pRec->dg3e, pRec->dg3d, pRec->dg3w, pRec->dg3c, pRec->dg3p);
-
-   /*---------------------
     * Set the delayed interrupt parameters (Enable, Delay, Prescaler)
     */
     ErSetDirq (pCard, pRec->dvme, pRec->dvmd, pRec->dvmc);
@@ -404,7 +405,12 @@ epicsStatus ErProcess (erRecord  *pRec)
     */
     if (pRec->enab & !ErMasterEnableGet(pCard))
         ErMasterEnableSet (pCard, epicsTrue);
-  
+
+   /*---------------------
+    * We might have changed something, so need to update!
+    */
+    ErUpdateRam (pCard, pCard->ErEventTab);
+
    /*---------------------
     * Unlock the card mutex, mark the record "processed", and return success
     */
@@ -1112,7 +1118,7 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Lost Heartbeat Error
     */
     case ERROR_HEART:
-        if(ErDebug) {
+        if(ErDebug > 2) {
             epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
                            "ER Card %d Lost Heartbeat\n", Card);
             epicsInterruptContextMessage (pCard->intMsg);
