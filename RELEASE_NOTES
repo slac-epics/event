@@ -1,6 +1,13 @@
 Release Notes for the event package
 -----------------------------------
 
+PCDS Release R3.2.0-2.0.0: Feb 8, 2012
+	* Merged our R3.2.0-1.9.0 to $REPO/trunk/pcds/epics/modules/event/current
+		and did a new release.   This should be equivalent to R3.2.0-1.9.0,
+		except it was derived with clean ancestry in svn.
+		Code is the same, but some build changes and new db files were
+		picked up from LCLS that didn't get into our R3.2.0-1.9.0
+
 event-R3-2-0: 	Build with base-R3-14-8-2-lcls6
 	      	Build with rtems-4.9.4
 
