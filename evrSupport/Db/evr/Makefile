@@ -12,8 +12,10 @@ include $(TOP)/configure/CONFIG
 # databases, templates, substitutions like this
 #
 # EVR databases
-DB += evr.template
-DB += evr.template
+DB += evr.db
+DB += evr-pmc.db
+DB += evrWithDelays.db
+DB += evrWithExtDelays.db
 DB += evr.template
 DB += evrEvent.db
 DB += evrEventCtrl.db
