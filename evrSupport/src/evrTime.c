@@ -51,6 +51,7 @@
 /* c includes */
 
 #include <string.h>           /* for memset                */
+#include <sys/time.h>
 #include "subRecord.h"        /* for struct subRecord      */
 #include "longSubRecord.h"    /* for struct longSubRecord  */
 #include "registryFunction.h" /* for epicsExport           */
@@ -64,7 +65,7 @@
 #include "mrfCommon.h"        /* MRF_NUM_EVENTS */    
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
-#include <sys/time.h>
+#include "evrPattern.h"        
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -168,10 +169,11 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
         unsigned long * edefMinorMask_p   Write    EDEF minor severity mask
         unsigned long * edefMajorMask_p   Write    EDEF major severity mask
 
-  Rem:  Routine to get the epics timestamp and pattern from the evr timestamp table
-        that is populated from incoming broadcast from EVG
+  Rem:  Routine to get the epics timestamp and pattern from the evr timestamp
+        table that is populated from incoming broadcast from EVG.
+        All outputs are set to zero
 
-  Side: None/
+  Side: None.
 
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
@@ -187,12 +189,27 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
   evrTimePattern_ts *evr_ps;
   int status;
   int idx;
-  
-  if ((id > evrTimeActive) || (!evrTimeRWMutex_ps)) return epicsTimeERROR;
-  /* if the r/w mutex is valid, and we can lock with it, read requested time index */
-  if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
+
+  /* Set all outputs to zero if there is any problem locking the pipeline. */
+  if ((id > evrTimeActive) || (!evrTimeRWMutex_ps) ||
+      epicsMutexLock(evrTimeRWMutex_ps)) {
+    if (epicsTime_ps) {
+      epicsTime_ps->secPastEpoch = 0;
+      epicsTime_ps->nsec         = 0;
+    }
+    if (modifier_a) {
+      for (idx = 0; idx < MAX_EVR_MODIFIER; idx++) modifier_a[idx] = 0;
+      if (patternStatus_p  ) *patternStatus_p   = 0;
+      if (edefAvgDoneMask_p) *edefAvgDoneMask_p = 0;
+      if (edefMinorMask_p  ) *edefMinorMask_p   = 0;
+      if (edefMajorMask_p  ) *edefMajorMask_p   = 0;
+    }
+    return epicsTimeERROR;
+  }
+  /* Read requested time index */
   evr_ps = evr_aps[id];
-  status = evr_ps->timeStatus;
+  if (evr_ps->timeStatus) status = evr_ps->timeStatus;
+  else                    status = fiducialStatus;
   if (epicsTime_ps) *epicsTime_ps = evr_ps->pattern_s.time;
   if (modifier_a) {
     for (idx = 0; idx < MAX_EVR_MODIFIER; idx++)
@@ -385,18 +402,22 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].status = epicsTimeERROR;
           eventCodeTime_as[idx].count  = 0;
         }
-        evrTimeRWMutex_ps = epicsMutexCreate();
-        if (!evrTimeRWMutex_ps) return epicsTimeERROR;
+  /* For IOCs that support iocClock (RTEMS and vxWorks), register
+     evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
         if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
                                   (pepicsTimeGetEvent)evrTimeGet))
           return epicsTimeERROR;
         if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
                                   (pepicsTimeGetEvent)evrTimeGetSystem))
           return epicsTimeERROR;
+        evrTimeRWMutex_ps = epicsMutexCreate();
+        if (!evrTimeRWMutex_ps)
+			return epicsTimeERROR;
   }
   return epicsTimeOK;
 }
 
+
 /*=============================================================================
 
   Name: evrTime
@@ -413,7 +434,9 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
   Error advancing EVR timestamps - set error flag used later to disable 
     triggers (EVR) or event codes (EVG). 
 		
-  Args: None.
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        epicsUInt32         mpsModifier read       MPS pattern modifier
 
   Rem:  
 
@@ -431,7 +454,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
   Ret:  -1=Failed; 0 = Success
    
 ==============================================================================*/
-int evrTime()
+int evrTime(epicsUInt32 mpsModifier)
 {
   int idx;
   evrTimePattern_ts *evr_ps;
@@ -448,10 +471,12 @@ int evrTime()
   }
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     fiducialStatus = EVR_TIME_OK;
-    /* advance the evr pattern in the pipeline */
+    /* Advance the evr pattern in the pipeline.  Update MPS
+       information (which is not pipelined) into the pattern. */
     evr_ps = evr_aps[evrTimeCurrent];
     for (idx=0;idx<evrTimeNext3;idx++) {
       evr_aps[idx] = evr_aps[idx+1];
+      evr_aps[idx]->pattern_s.modifier_a[MOD6_IDX] = mpsModifier;
     }
     evr_aps[evrTimeNext3] = evr_ps;
     evr_aps[evrTimeNext3]->timeStatus = epicsTimeERROR;
@@ -459,7 +484,7 @@ int evrTime()
     /* Update the EDEF array for any initialized or active EDEF -
        this array is used later by BSA processing */
     if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask ||
-        evr_ps->pattern_s.modifier_a[4] & EDEF_MASK) {
+        evr_ps->pattern_s.modifier_a[MOD5_IDX] & MOD5_EDEF_MASK) {
       for (idx=0;idx<EDEF_MAX;idx++) {
         edefMask = 1 << idx;
         /* EDEF initialized? - check the newest mask so init done ASAP */
@@ -467,7 +492,7 @@ int evrTime()
           edef_as[idx].timeInit = evr_aps[evrTimeNext2]->pattern_s.time;
         }
         /* EDEF active? - set time and flags used by BSA processing later */
-        if (evr_ps->pattern_s.modifier_a[4] & edefMask) {
+        if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
           edef_as[idx].time = evr_ps->pattern_s.time;
           if    (evr_ps->pattern_s.edefAvgDoneMask & edefMask)
             edef_as[idx].avgdone = 1;
@@ -623,7 +648,7 @@ static int evrTimeProc (longSubRecord *psub)
 
   Name: evrTimeDiag
 
-  Abs:  Expose expose counters
+  Abs:  Expose counters.
         This subroutine is for status only and should update at a low
         rate like 1Hz.
   
@@ -787,7 +812,7 @@ static long evrTimeEvent(longSubRecord *psub)
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
         evrMessagePattern_ts ** pattern_pps Write  Pointer to pattern
-        unsigned long **          timeslot_pp Write  Pointer to timeslot
+        unsigned long **        timeslot_pp Write  Pointer to timeslot
         unsigned long **     patternStatus_pp Write  Pointer to status
         epicsTimeStamp *     mod720time_pps Write  Pointer to mod720 timestamp
 

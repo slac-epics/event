@@ -108,7 +108,7 @@
 #include "devLibPMC.h"          /* for epicsFindDevice */
 #endif
 #include <mrfVme64x.h>          /* VME-64X CR/CSR routines and definitions (with MRF extensions)  */
-#include <basicIoOps.h>         /* for out_le16, in_le16 */
+#include "basicIoOps.h"         /* for out_le16, in_le16 */
 #include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
 #include "pci_mrfev.h"		/* MRF PCI device id's	*/
 
@@ -2511,6 +2511,34 @@ epicsUInt16 ErGetFpgaVersion (ErCardStruct *pCard)
     return (MRF_VME_REG16_READ(&pEr->FPGAVersion));
 
 }/*end ErGetFpgaVersion()*/
+
+/**************************************************************************************************
+|* ErGetSecondsSR () -- Return the Event Receiver's Unlatched Seconds Register
+|*-------------------------------------------------------------------------------------------------
+|*
+|* Read the unlatched timestamp "seconds" from the Event Receiver's SecondsSR register.
+|*
+|*-------------------------------------------------------------------------------------------------
+|* CALLING SEQUENCE:
+|*      version = ErGetSecondsSR (pCard);
+|*
+|*-------------------------------------------------------------------------------------------------
+|* INPUT PARAMETERS:
+|*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
+|* 
+|*-------------------------------------------------------------------------------------------------
+|* RETURNS:
+|*      seconds  = (epicsUInt16)    The timestamp "seconds" of the requested Event Receiver Card.
+|*
+\**************************************************************************************************/
+
+GLOBAL_RTN
+epicsUInt32 ErGetSecondsSR (ErCardStruct *pCard)
+{
+    volatile MrfErRegs          *pEr = (MrfErRegs *)pCard->pEr;
+    return (MRF_VME_REG32_READ(&pEr->SecondsSR));
+
+}/*end ErGetSecondsSR()*/
 
 /**************************************************************************************************
 |* ErGetRamStatus () -- Return the Enabled/Disabled Status of the Requested Event Mapping RAM

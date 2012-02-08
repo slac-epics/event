@@ -66,19 +66,24 @@ devMrfErLib_DBD += base.dbd
 devMrfErLib_DBD += devMrfEr.dbd
 
 #---------------------
-# Build the Event Generator Library
+# Build the Event Generator Libraries
 #
-PROD_IOC_vxWorks += devMrfEgLib
-LIBRARY_IOC      += devMrfEg
+PROD_IOC_vxWorks    += devMrfEgLib
+LIBRARY_IOC_vxWorks += devMrfEg
+LIBRARY_IOC_RTEMS   += devMrfEg
+LIBRARY_IOC_Linux   += devMrfEg
 
 # Source code common to all platforms
 devMrfEg_OBJS += devMrfEg
 devMrfEg_OBJS += egRecord
 devMrfEg_OBJS += egeventRecord
+
 # RTEMS source
 devMrfEg_OBJS_RTEMS += drvMrfEg
+
 # VxWorks source
 devMrfEg_OBJS_vxWorks += drvMrfEg
+
 # Linux source
 devMrfEg_OBJS_Linux += drvLinuxEvg
 
@@ -90,20 +95,24 @@ OBJS_IOC_vxWorks += $(devMrfEg_OBJS)
 #---------------------
 # Build the Event Receiver Library
 #
-PROD_IOC_vxWorks += devMrfErLib
-LIBRARY_IOC      += devMrfEr
+PROD_IOC_vxWorks    += devMrfErLib
+LIBRARY_IOC_RTEMS   += devMrfEr
+LIBRARY_IOC_vxWorks += devMrfEr
+LIBRARY_IOC_Linux   += devMrfEr
 
 # Source code common to all platforms
 devMrfEr_OBJS += devMrfEr
 devMrfEr_OBJS += erRecord
 devMrfEr_OBJS += ereventRecord
+
 # RTEMS source
-devMrfEr_OBJS_RTEMS += drvMrfEr
+devMrfEr_OBJS_RTEMS   += drvMrfEr
 ifeq ($(BSP_SUPPORTS_PCI), YES)
-devMrfEr_OBJS_RTEMS += devLibPMC
-devMrfEr_OBJS_RTEMS += plx9080_eeprom.c
-devMrfEr_OBJS_RTEMS += evrEEPROMFixup
+devMrfEr_OBJS_RTEMS   += devLibPMC
+devMrfEr_OBJS_RTEMS   += plx9080_eeprom.c
+devMrfEr_OBJS_RTEMS   += evrEEPROMFixup
 endif
+
 # VxWorks source
 devMrfEr_OBJS_vxWorks += drvMrfEr
 ifeq ($(BSP_SUPPORTS_PCI), YES)
@@ -111,6 +120,7 @@ devMrfEr_OBJS_vxWorks += devLibPMC
 devMrfEr_OBJS_vxWorks += plx9080_eeprom.c
 devMrfEr_OBJS_vxWorks += evrEEPROMFixup
 endif
+
 # Linux source
 devMrfEr_OBJS_Linux += drvLinuxEvr
 # Direct EEPROM access not yet supported in linux
@@ -123,22 +133,30 @@ devMrfErLib_SRCS += devMrfErLib_registerRecordDeviceDriver.cpp
 OBJS_IOC_vxWorks += $(devMrfEr_OBJS)
 
 #---------------------
-# Build the Library for Accessing VME-64X CR/CSR space
+# Build the vxWorks Library for Accessing VME-64X CR/CSR space
 #
-PROD_IOC_vxWorks  += drvMrfLib
-LIBRARY_IOC      += drvMrf
+PROD_IOC_vxWorks       += mrfVme64xLib
+LIBRARY_IOC_vxWorks    += mrfVme64x
+mrfVme64x_OBJS_vxWorks += mrfVme64x
+mrfVme64x_OBJS_vxWorks += $(CRCSR_PROBE_NAME)
+OBJS_IOC_vxWorks       += $(drvMrf_OBJS)
 
-drvMrf_OBJS_RTEMS += mrfVme64x
-drvMrf_OBJS_RTEMS += $(CRCSR_PROBE_NAME)
-drvMrf_OBJS_vxWorks += mrfVme64x
-drvMrf_OBJS_vxWorks += $(CRCSR_PROBE_NAME)
-drvMrf_OBJS_Linux += drvLinux
+#---------------------
+# Build the RTEMS Library for Accessing VME-64X CR/CSR space
+#
+LIBRARY_IOC_RTEMS      += mrfVme64x
+mrfVme64x_OBJS_RTEMS   += mrfVme64x
+mrfVme64x_OBJS_RTEMS   += $(CRCSR_PROBE_NAME)
 
-drvMrfLib_OBJS += $(drvMrf_OBJS)
+mrfVme64xLib_OBJS      += $(mrfVme64x_OBJS)
 
-OBJS_IOC_vxWorks  += $(drvMrf_OBJS)
-
-drvMrfLib_LIBS_Linux	+= mrfApi
+#---------------------
+# Build the Library for the linux driver
+#
+LIBRARY_IOC_Linux    += drvMrf
+drvMrf_OBJS_Linux    += drvLinux
+drvMrfLib_OBJS       += $(drvMrf_OBJS)
+drvMrfLib_LIBS_Linux += mrfApi
 
 #---------------------
 # Testing
