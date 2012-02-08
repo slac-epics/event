@@ -261,8 +261,6 @@ IV - Hardware Setup:
 
 (1) Installation instructions for the PMC EVR are here:
     http://www.slac.stanford.edu/grp/lcls/controls/global/subsystems/timing/PMC-EVR_install_inst_v1d0.pdf
-	Also see the following site for PCDS instructions including linux installation:
-	http://confluence.slac.stanford.edu/display/PCDS/Adding+an+EVR+to+your+IOC
 
 (2) For VME EVRs, at times, the white tab in the IEEE handle does not pop out
     all the way and the module blue light remains on and the module will not 

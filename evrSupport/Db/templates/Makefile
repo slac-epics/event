@@ -13,15 +13,43 @@ include $(TOP)/configure/CONFIG
 #
 # XTOD templates
 DB_INSTALLS += basic-evr.substitutions
+DB_INSTALLS += evrPmc230.substitutions
 DB_INSTALLS += evrPmc230.template
 DB_INSTALLS += evrPmcEvent.template
+DB_INSTALLS += evrVme230.substitutions
+DB_INSTALLS += evrVme230.template
+DB_INSTALLS += evrVmeEvent.template
 DB_INSTALLS += evrEventCtrl.template
 DB_INSTALLS += evrEventRate.template
+DB_INSTALLS += evrLabel.template
 DB_INSTALLS += evrLabels.template
 DB_INSTALLS += evrTaxi.template
 DB_INSTALLS += evr.template
 DB_INSTALLS += evrWithExtDelays.template
 
+#----------------------------------------------------
+# Create and install (or just install)
+# Archive request files, templates, substitutions like this
+# ARCHIVE += <file>.archive
+# ARCHIVE += <file>.substitutions
+# ARCHIVE += <file>.template
+#
+ARCHIVE += archive_evr.substitutions
+ARCHIVE += archive_evr.template
+ARCHIVE += archive_pmc_evr.template
+ARCHIVE += archive_vme_evr.template
+
+#----------------------------------------------------
+# Create and install (or just install)
+# Autosave request files, templates, substitutions like this
+# REQ += <file>.req
+# REQ += <file>.substitutions
+# REQ += <file>.template
+#
+REQ += autosave_evr.substitutions
+REQ += autosave_evr.template
+REQ += autosave_pmc_evr.template
+REQ += autosave_vme_evr.template
 
 include $(TOP)/configure/RULES
 #----------------------------------------

@@ -26,8 +26,8 @@ SOURCE_DIR := $(patsubst %../.., %., $(TOP))
 include $(TOP)/configure/CONFIG
 include $(SOURCE_DIR)/MRF_CONFIG
 
-#USR_CFLAGS += -pedantic
-USR_CFLAGS += -O0
+# Don't use -O0 for RTEMS as it generates undef references to in_be16()
+#USR_CFLAGS_Linux += -O0
 USR_CFLAGS += -DDEBUG_PRINT
 ifeq ($(BSP_SUPPORTS_PCI), YES)
     USR_CFLAGS += -DPCI
@@ -87,6 +87,7 @@ devMrfEg_OBJS_vxWorks += drvMrfEg
 # Linux source
 devMrfEg_OBJS_Linux += drvLinuxEvg
 
+
 devMrfEgLib_OBJS += $(devMrfEg_OBJS)
 devMrfEgLib_SRCS += devMrfEgLib_registerRecordDeviceDriver.cpp
 
@@ -100,10 +101,11 @@ LIBRARY_IOC_RTEMS   += devMrfEr
 LIBRARY_IOC_vxWorks += devMrfEr
 LIBRARY_IOC_Linux   += devMrfEr
 
-# Source code common to all platforms
-devMrfEr_OBJS += devMrfEr
-devMrfEr_OBJS += erRecord
-devMrfEr_OBJS += ereventRecord
+# Source objects for Event Receiver Library
+devMrfEr_OBJS       += devMrfEr
+devMrfEr_OBJS       += erRecord
+devMrfEr_OBJS       += ereventRecord
+
 
 # RTEMS source
 devMrfEr_OBJS_RTEMS   += drvMrfEr
@@ -122,10 +124,9 @@ devMrfEr_OBJS_vxWorks += evrEEPROMFixup
 endif
 
 # Linux source
+ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 devMrfEr_OBJS_Linux += drvLinuxEvr
-# Direct EEPROM access not yet supported in linux
-#devMrfEr_OBJS_Linux += evrEEPROMFixup
-#devMrfEr_OBJS_Linux += plx9080_eeprom
+endif
 
 devMrfErLib_OBJS += $(devMrfEr_OBJS)
 devMrfErLib_SRCS += devMrfErLib_registerRecordDeviceDriver.cpp

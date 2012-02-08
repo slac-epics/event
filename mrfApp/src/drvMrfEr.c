@@ -112,6 +112,7 @@
 #include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
 #include "pci_mrfev.h"		/* MRF PCI device id's	*/
 
+
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
 /**************************************************************************************************/
@@ -839,6 +840,7 @@ int ErConfigure (
     epicsStatus            status;          /* Status return variable                             */
     epicsAddressType       addressType;     /* Address type for devRegisterAddress                */
     int                    Slot;            /* VME slot number                                    */
+    epicsUInt16		   FPGAVersion;     /* FPGA Firmware Version Number 		          */
 
     #ifdef PCI
     /* PMC-EVR only */
@@ -1087,8 +1089,8 @@ int ErConfigure (
 			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, unit, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
 			/* no more plx chips */
 			  DEBUGPRINT (DP_ERROR, drvMrfErFlag,
-				("ErConfigure: epicsPciFindDevice unable to find match for subsystem vendorid %d, device %d and instance #%d.\n",
-				VendorId, DeviceId, Card));
+				("ErConfigure: epicsPciFindDevice unable to find EVR's PLX9030 vendorid 0x%04X, device 0x%04X.\n",
+				VendorId, DeviceId ));
 			  epicsMutexDestroy (pCard->CardLock);
 			  free (pCard);
 			  return ERROR;
@@ -1096,11 +1098,22 @@ int ErConfigure (
 			epicsPciConfigInLong(
 			  (unsigned char) pciBusNo, (unsigned char) pciDevNo, (unsigned char) pciFuncNo,
 			  PCI_SUBSYSTEM_VENDOR_ID, &subId); 
-		  	if ( subId == subIdEvr200 )
-				break;
-		  	if ( subId == subIdEvr230 )
-				break;
-		  } while ( unit++ < ErPMCCount );
+		  	if (	subId == subIdEvr200
+			    ||	subId == subIdEvr230 ) {
+			    if ( unit < ErPMCCount )
+			    	/* Skip units we've already found */
+					continue;
+
+			    /* Found PMC EVR! */
+				printf( "ErConfigure: Found PMC EVR with subsystem vendor ID 0x%04X and device ID 0x%04X.\n",
+						(subId & 0xFFFF ), (subId >> 16) );
+			    break;
+			}
+			else {
+				printf( "ErConfigure: PLX9030 found but subsystem vendor ID 0x%04X and device ID 0x%04X is not an EVR.\n",
+						(subId & 0xFFFF ), (subId >> 16) );
+			}
+		  } while ( 1 );
                   ErPMCCount++;
                 }
 
@@ -1214,6 +1227,29 @@ int ErConfigure (
         MRF_VME_REG16_WRITE(&pEr->Control,
                             (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_CONFIG_PRESERVE_MASK) |
                             EVR_CSR_CONFIG_SET_FIELDS);
+
+	/*
+	 * Check the firmware version
+	 */
+    	FPGAVersion = ErGetFpgaVersion(pCard);
+	printf( "PMC EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
+	switch ( FPGAVersion )
+	{
+	default:
+	    printf( "ErConfigure: WARNING: Unknown firmware revision on PMC EVR!\n" );
+	    break;
+	case PMC_EVR_FIRMWARE_REV_VME1:
+	    break;
+	case (PMC_EVR_FIRMWARE_REV_LINUX1 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (PMC_EVR_FIRMWARE_REV_LINUX2 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (PMC_EVR_FIRMWARE_REV_LINUX3 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	    fprintf ( stderr,
+	       "\nErConfigure ERROR: This PMC EVR has firmware for a linux\n"
+	       "based system and cannot be used under RTEMS!\n" );
+	    epicsMutexDestroy (pCard->CardLock);
+	    free (pCard);
+	    return ERROR;
+	}
 
        /*---------------------
         * Now that we know all interrupts are disabled,

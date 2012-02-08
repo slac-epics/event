@@ -5,6 +5,7 @@
 
 #ifdef PCI
 #include <plx9080_eeprom.h>
+#include <pci_mrfev.h>
 #endif	/* PCI */
 
 #define EPICS_REGISTER
@@ -42,14 +43,25 @@ int ssvid, ssdid, x;
 		goto bail;
 	}
 	if ( PCI_DEVICE_ID_MRF_PMCEVR200 == ssdid && PCI_VENDOR_ID_MRF == ssvid ) {
-		fprintf(stderr,"EVR EEPROM Contents already OK, leaving now.\n");
+		fprintf( stderr, "Subsystem vendor and device ID match PMC EVR-200\n" );
+		fprintf( stderr, "EVR EEPROM ID's already OK, leaving now.\n");
+		return 0;
+	}
+	if ( PCI_DEVICE_ID_MRF_PMCEVR230 == ssdid && PCI_VENDOR_ID_MRF == ssvid ) {
+		fprintf( stderr, "Subsystem vendor and device ID match PMC EVR-230\n" );
+		fprintf( stderr, "EVR EEPROM ID's already OK, leaving now.\n");
 		return 0;
 	}
 	if ( ssvid != PCI_VENDOR_ID_PLX || ssdid != PCI_DEVICE_ID_PLX_9030 ) {
-		fprintf(stderr,"Subsystem vendor/device ID in EEPROM has already\n");
-		fprintf(stderr,"been programmed: SSVID 0x%04x/SSDID 0x%04x.\n", ssvid, ssdid);
+		fprintf(stderr,"Subsystem vendor ID 0x%04X and device ID 0x%04X in PLX9030 EEPROM\n",
+				ssvid, ssdid);
+		fprintf(stderr,"do not match known PMC EVR models.\n" );
 		fprintf(stderr,"Is unit #%u really a PMC EVR?\n",instance);
 		goto bail; 
+	}
+	else {
+		fprintf( stderr, "Subsystem vendor and device ID match generic unflashed PMC EVR\n" );
+		fprintf(stderr, "EEPROM needs fixup ...\n");
 	}
 	fprintf(stderr, "\n> Sanity check passed...\n");
 	if ( doit ) {

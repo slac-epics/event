@@ -13,6 +13,8 @@ include $(TOP)/configure/CONFIG
 #
 # EVR databases
 DB += evr.template
+DB += evr.template
+DB += evr.template
 DB += evrEvent.db
 DB += evrEventCtrl.db
 DB += evrDevTrig.db
@@ -26,7 +28,10 @@ DB += evrMod36.db
 
 # LCLS templates
 DB += fiducial.db
-DB += beam.db
+# Event Codes
+DB += evrEventCode.template
+DB += lclsEventCodes.db
+DB += lclsEventCodes.substitutions
 
 # Event Code Sequences
 DB += eventCodeSequenceAll.db

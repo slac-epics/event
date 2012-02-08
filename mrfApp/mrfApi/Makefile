@@ -16,7 +16,8 @@ SOURCE_DIR := $(patsubst %../.., %., $(TOP))
 include $(TOP)/configure/CONFIG
 
 USR_CFLAGS += -g
-USR_CFLAGS += -O0
+# Don't use -O0 for RTEMS as it generates undef references to in_be16()
+#USR_CFLAGS_Linux += -O0
 USR_CFLAGS += -fPIC
 USR_CFLAGS += -std=gnu99
 

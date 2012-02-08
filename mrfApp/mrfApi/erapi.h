@@ -280,8 +280,8 @@ int EvrSetPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig,
 		   int set, int clear);
 int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig,
 		   int set, int clear);
-int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
-		      int delay, int width);
+int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
+		      u32 delay, u32 width);
 void EvrDumpPulses(volatile struct MrfErRegs *pEr, int pulses);
 int EvrSetPulseProperties(volatile struct MrfErRegs *pEr, int pulse, int polarity,
 			  int map_reset_ena, int map_set_ena, int map_trigger_ena,
@@ -302,7 +302,7 @@ void EvrClearDiagCounters(volatile struct MrfErRegs *pEr);
 void EvrEnableDiagCounters(volatile struct MrfErRegs *pEr, int enable);
 u32 EvrGetDiagCounter(volatile struct MrfErRegs *pEr, int idx);
 int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable);
-int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, int dly0, int dly1);
+int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, u32 dly0, u32 dly1);
 void EvrDumpHex(volatile struct MrfErRegs *pEr);
 int EvrSetFracDiv(volatile struct MrfErRegs *pEr, int fracdiv);
 int EvrGetFracDiv(volatile struct MrfErRegs *pEr);
@@ -316,7 +316,7 @@ int EvrGetSecondsCounter(volatile struct MrfErRegs *pEr);
 int EvrGetTimestampLatch(volatile struct MrfErRegs *pEr);
 int EvrGetSecondsLatch(volatile struct MrfErRegs *pEr);
 int EvrSetTimestampDBus(volatile struct MrfErRegs *pEr, int enable);
-int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, int div);
+int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, u32 div);
 int EvrSetExtEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int enable);
 int EvrSetBackEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int enable);
 int EvrSetBackDBus(volatile struct MrfErRegs *pEr, int ttlin, int dbus);

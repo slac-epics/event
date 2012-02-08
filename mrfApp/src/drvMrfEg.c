@@ -497,7 +497,7 @@ long EgLoadRamList(EgCardStruct *pParm, long Ram) {
   egeventRecord                 *pEgevent;
   int                           RamPos = 0;
   int                           AltFlag = 0;
-  int                  			dummy; /*trick to flush bridge pipeline*/
+  volatile int         			dummy; /*trick to flush bridge pipeline*/
   int                           maxtime=0;
   double                        RamSpeed;
   volatile long origEvt;
@@ -546,6 +546,7 @@ long EgLoadRamList(EgCardStruct *pParm, long Ram) {
                 dummy = MRF_VME_DUMMY_READ(pAddr);
                 MRF_VME_REG32_WRITE(pTime, pEgevent->apos);
                 MRF_VME_REG16_WRITE(pData, pEgevent->enm);
+
                 /* Remember where the last event went into the RAM */
                 RamPos++;
               }
@@ -1717,6 +1718,7 @@ long EgEnableVme(EgCardStruct *pParm, int state)
 long EgGenerateVmeEvent(EgCardStruct *pParm, int Event)
 {
   volatile MrfEVGRegs  *pEg = pParm->pEg;
+
   MRF_VME_REG16_WRITE(&pEg->VmeEvent, Event);
   return(0);
 }
@@ -1816,11 +1818,17 @@ int EgWriteSeqRam(EgCardStruct *pParm, int channel, unsigned char *pBuf)
   else
     return(-1);
 
+#ifdef EG_DEBUG
+  printf("ready to download ram\n");
+#endif
   for(j=0;j<MRF_MAX_SEQ_SIZE; j++) {
     MRF_VME_REG16_WRITE(pSeqAddr, j);
     MRF_VME_REG16_WRITE(pSeqData, pBuf[j]);
   }
   
+#ifdef EG_DEBUG
+  printf("sequence ram downloaded\n");
+#endif
   return(0);
 }
 

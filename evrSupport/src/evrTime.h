@@ -9,7 +9,38 @@
   Auth: 17 NOV-2006, drogind created 
  
 -----------------------------------------------------------------------------*/
-#include "copyright_SLAC.h"    
+/* Following are contets of "copyright_SLAC.h" */
+
+#ifndef COPYRIGHT_SLAC_H
+#define COPYRIGHT_SLAC_H
+/*
+**
+**                                Copyright 2004
+**                                      by
+**                         The Board of Trustees of the
+**                       Leland Stanford Junior University.
+**                              All rights reserved.
+**
+**         Work supported by the U.S. Department of Energy under contract
+**       DE-AC03-76SF00515.
+**
+**                               Disclaimer Notice
+**
+**        The items furnished herewith were developed under the sponsorship
+**   of the U.S. Government.  Neither the U.S., nor the U.S. D.O.E., nor the
+**   Leland Stanford Junior University, nor their employees, makes any war-
+**   ranty, express or implied, or assumes any liability or responsibility
+**   for accuracy, completeness or usefulness of any information, apparatus,
+**   product or process disclosed, or represents that its use will not in-
+**   fringe privately-owned rights.  Mention of any product, its manufactur-
+**   er, or suppliers shall not, nor is it intended to, imply approval, dis-
+**   approval, or fitness for any particular use.  The U.S. and the Univer-
+**   sity at all times retain the right to use and disseminate the furnished
+**   items for any purpose whatsoever.                       Notice 91 02 01
+**
+*/
+#endif
+
 /*----------------------------------------------------------------------------- 
   Mod:  (newest to oldest)  
         DD-MMM-YYYY, My Name:
@@ -99,6 +130,25 @@ int evrTimePatternPutStart(evrMessagePattern_ts **pattern_pps,
                            epicsTimeStamp       **mod720time_pps);
 int evrTimePatternPutEnd  (int modulo720Flag);
 #endif
+/*  Following function can be called by other Epics modules to get a fast
+   access to event time stamp.
+---------------------------------------------------------------------------
+Following finction can allow peeking at fiducial time stamp corresponding to
+a watched event.
+Argument:  next_event_to_watch...The event to watch from this call onwards
+                   when this call terminates, the event ID that was being
+                   watched thus far gets reported in this variable.
+           Ticks:  returned fiducial associated with "next_event_to_watch"
+                   from last call of thisfunction.
+           peek_pipe_size: These many previous time stamps are returned. The Ticks array
+                   in the calling program should be at least this much size.
+                   (Note: at the most PEEK_PIPE_SIZE elements are supported. For the code
+                   effeciency, keep PEEK_PIPE_SIZE to a small number.)
+---------------------------------------------------------------------------
+*/
+#define PEEK_PIPE_SIZE  10
+epicsUInt32 peek_fiducial (epicsUInt32*next_event_to_watch,epicsUInt32 *Ticks,epicsUInt32 );
+
 
 #ifdef __cplusplus
 }
