@@ -2,6 +2,7 @@
  
   Name: evrPattern.c
            evrPattern          - 360Hz Pattern Processing
+           evrPatternCheck     - Pattern Check
            evrPatternProcInit  - Pattern Record Processing Initialization
            evrPatternProc      - 360Hz Pattern Record Processing
            evrPatternState     - Pattern Record Processing State and Diagnostics
@@ -39,6 +40,11 @@
  
 =============================================================================*/
 
+#ifdef __rtems__
+#include <rtems.h>            /* required for timex.h      */
+#endif
+#include <string.h>
+#include <sys/timex.h>        /* for ntp_adjtime           */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "longSubRecord.h"    /* for struct longSubRecord  */
@@ -48,6 +54,7 @@
 #include "evrPattern.h"       /* for PATTERN* defines      */
 #include "alarm.h"            /* INVALID_ALARM             */
 
+
 #define  MAX_PATTERN_DELTA_TIME  10 /* sec */
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
@@ -55,11 +62,13 @@ static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_IN
 static unsigned long patternErrCount  = TIMESLOT_DIFF;
                                            /* # PATTERN errors in-a-row */
 static unsigned long invalidErrCount  = 0; /* # bad PATTERN waveforms   */
+static unsigned long invalidMPSCount  = 0; /* # bad MPS modifiers       */
 static unsigned long syncErrCount     = 0; /* # out-of-sync patterns    */
 static unsigned long invalidTimeCount = 0; /* # invalid timestamps      */
 static unsigned long timeoutCount     = 0; /* # timeouts                */
 static unsigned long deltaTimeMax     = 0; /* Max diff between event and sys
                                               times in # seconds since reset */
+static unsigned long ntpStatus        = 0; /* NTP status, 0 = OK, 1 = error */
 unsigned long        evrDeltaTimeMax  = MAX_PATTERN_DELTA_TIME;
                                            /* Max allowed diff between event
                                               and sys times in # seconds     */
@@ -74,6 +83,7 @@ unsigned long        evrDeltaTimeMax  = MAX_PATTERN_DELTA_TIME;
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
         int                 timeout     read       timeout flag
+        epicsUInt32 *     mpsModifier_p write       MPS pattern modifier
 
   Rem:  None
 
@@ -83,10 +93,13 @@ unsigned long        evrDeltaTimeMax  = MAX_PATTERN_DELTA_TIME;
   
 =============================================================================*/ 
 
-int evrPattern(int timeout)
+int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
 {
   evrMessagePattern_ts   *pattern_ps;
   evrMessageReadStatus_te evrMessageStatus;
+#ifdef	USE_NTP
+  struct timex            ntp_s;
+#endif	/*	USE_NTP	*/
   epicsTimeStamp          currentTime;
   epicsTimeStamp          prevTime;
   epicsTimeStamp         *mod720time_ps;
@@ -103,8 +116,14 @@ int evrPattern(int timeout)
     msgRolloverCount++;
     msgCount = 0;
   }
-  /* Get system time */
+  /* Get system time and check NTP status */
   epicsTimeGetCurrent(&currentTime);
+#ifdef	USE_NTP
+  memset(&ntp_s, 0, sizeof(ntp_s));
+  if (ntp_adjtime(&ntp_s)) ntpStatus = 1;
+  else                     ntpStatus = 0;
+#endif	/*	USE_NTP	*/
+  
   /* Lock the pattern table and get pointer to newest pattern data */
   if (evrTimePatternPutStart(&pattern_ps, &timeslot_p,
                              &patternStatus_p, &mod720time_ps))
@@ -137,12 +156,16 @@ int evrPattern(int timeout)
       else
         deltaTime = currentTime.secPastEpoch - pattern_ps->time.secPastEpoch;
       if (deltaTime > deltaTimeMax) deltaTimeMax = deltaTime;
+      /* Time is very different.  Update a counter but don't set invalid
+         if NTP is no good. */
       if (deltaTime >= evrDeltaTimeMax) {
-        if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
         invalidTimeCount++;
-        *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
-      } else {
-        patternErrCount = 0;
+        if (ntpStatus) {
+          patternErrCount = 0;
+        } else {
+          if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
+          *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
+        }
       }
   } else {
     patternErrCount = 0;
@@ -152,7 +175,7 @@ int evrPattern(int timeout)
   if (patternErrCount) {
     for (idx = 0; idx < EVR_MODIFIER_MAX; idx++)
       pattern_ps->modifier_a[idx] = 0;
-    pattern_ps->modifier_a[0] = MPG_IPLING;
+    pattern_ps->modifier_a[MOD1_IDX] = MPG_IPLING;
     *timeslot_p               = 0;
     pattern_ps->edefInitMask  = 0;
     /* Set timestamp invalid if the last 3 pulses had an error too -
@@ -164,10 +187,10 @@ int evrPattern(int timeout)
     }
     evrTimePutPulseID(&pattern_ps->time, PULSEID_INVALID);
     if (epicsTimeDiffInSeconds(&currentTime, mod720time_ps) > MODULO720_SECS)
-      pattern_ps->modifier_a[0] |= MODULO720_MASK;
+      pattern_ps->modifier_a[MOD1_IDX] |= MODULO720_MASK;
   } else {
     /* Check if EVG reporting a problem  */
-    if (pattern_ps->modifier_a[0] & MPG_IPLING) {
+    if (pattern_ps->modifier_a[MOD1_IDX] & MPG_IPLING) {
       *patternStatus_p = PATTERN_MPG_IPLING;
       syncErrCount++;
     } else {
@@ -176,11 +199,68 @@ int evrPattern(int timeout)
     /* Set timeslot */
     *timeslot_p = TIMESLOT(pattern_ps->modifier_a);
   }
+  /* Update MPS information */
+  *mpsModifier_p = pattern_ps->modifier_a[MOD6_IDX];
+  if (!(pattern_ps->modifier_a[MOD6_IDX] & MPS_VALID)) invalidMPSCount++;
+  
   /* modulo720 decoded from modifier 1*/
-  if (pattern_ps->modifier_a[0] & MODULO720_MASK) modulo720Flag = 1;
-  else                                            modulo720Flag = 0;
+  if (pattern_ps->modifier_a[MOD1_IDX] & MODULO720_MASK) modulo720Flag = 1;
+  else                                                   modulo720Flag = 0;
+    
   /* Unlock pattern data and post MOD720 events if needed */
   return (evrTimePatternPutEnd(modulo720Flag));
+}
+
+/*=============================================================================
+
+  Name: evrPatternCheck
+
+  Abs:  Pattern Check. Check modifier array for a match with the beam code,
+        time slot, inclusion masks, and exclusion masks.
+		
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        unsigned long       beamCode    read       Desired Beam Code
+                                                   (0 = use any beam code)
+        unsigned long       timeSlot    read       Desired Time Slot
+                                                   (0 = desired time slot
+                                                    encoded in inclusion/
+                                                    exclusion masks)
+        evrModifier_ta      inclusion_a read       Inclusion Masks*
+        evrModifier_ta      exclusion_a read       Exclusion Masks*
+        evrModifier_ta      modifier_a  read       Pattern Modifiers*
+        First value in the array is ignored.
+
+  Rem:  None.
+
+  Side: None.
+
+  Ret:  0 = no match, 1 = match
+  
+=============================================================================*/ 
+
+int evrPatternCheck(unsigned long  beamCode,    unsigned long  timeSlot,
+                    evrModifier_ta inclusion_a, evrModifier_ta exclusion_a,
+                    evrModifier_ta modifier_a)
+{
+  unsigned long beamCodeInp = BEAMCODE(modifier_a);
+  unsigned long timeSlotInp = TIMESLOT(modifier_a);
+  int           matches = 0;
+  int           midx;
+
+  if (((beamCode == 0) || (beamCodeInp == beamCode)) &&
+      ((timeSlot == 0) || (timeSlotInp == timeSlot))) {
+    matches = 1;
+    /* check inclusion and exclusion masks */
+    for (midx = 1; midx < EVR_MODIFIER_MAX; midx++) {
+      if (((modifier_a[midx] & inclusion_a[midx]) != inclusion_a[midx]) ||
+          (modifier_a[midx] & exclusion_a[midx])) {
+        matches = 0;
+        break;
+      }
+    }
+  }
+  return (matches);
 }
 
 /*=============================================================================
@@ -197,16 +277,27 @@ int evrPattern(int timeout)
 
   Side: None.
   
+  Sub Inputs/ Outputs:
+   Inputs:
+    X - Data source (0=PNET, 1=PATTERN)
+  
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/ 
 
 static int evrPatternProcInit(longSubRecord *psub)
 {
   /* Register this record for the start of fiducial processing */
-  if (evrMessageRegister(EVR_MESSAGE_PATTERN_NAME,
-                         sizeof(evrMessagePattern_ts),
-                         (dbCommon *)psub) < 0)
-    return -1;  
+  if        (psub->x == EVR_MESSAGE_PNET) {
+    if (evrMessageRegister(EVR_MESSAGE_PNET_NAME,
+                           sizeof(evrMessagePnet_ts),
+                           (dbCommon *)psub) < 0) return -1;
+  } else if (psub->x == EVR_MESSAGE_PATTERN) {
+    if (evrMessageRegister(EVR_MESSAGE_PATTERN_NAME,
+                           sizeof(evrMessagePattern_ts),
+                           (dbCommon *)psub) < 0) return -1;
+  } else {
+    return -1;
+  }
   return 0;
 }
 
@@ -226,6 +317,7 @@ static int evrPatternProcInit(longSubRecord *psub)
 
   Sub Inputs/ Outputs:
    Inputs:
+    X - Data source (0=PNET, 1=PATTERN), used only by evrPatternProcInit.
     Z - Time ID (see evrTimeId_e in evrTime.h, 0=Current,
                  1=Next1, 2=Next2, 3=Next3)
     
@@ -262,7 +354,8 @@ static long evrPatternProc(longSubRecord *psub)
 
   psub->val = PATTERN_INVALID_TIMESTAMP;
   status = evrTimeGetFromPipeline(&currentTime, (evrTimeId_te)psub->z,
-                                  &psub->d, &psub->val, &psub->k,
+                                  (epicsUInt32 *)&psub->d, &psub->val,
+                                  &psub->k,
                                   &psub->a, &psub->b);
   /* Parse out beamcode, timeslot, and pulse ID */
   psub->j = BEAMCODE(&psub->d);
@@ -308,7 +401,10 @@ static long evrPatternProc(longSubRecord *psub)
        M - Number of check sum errors
        N - abs(Event - System Time Diff) (# nsec)
        O - Number of timeouts
-       P to U - Spares
+       P - Spare
+       Q - Number of invalid MPS modifiers
+       R - NTP status, 0 = OK, 1 = Error
+       S to U - Spares
        V - Minimum Pattern Delta Start Time (us)
        W - Maximum Pattern Delta Start Time (us)
        X - Average Data Processing Time     (us)
@@ -331,6 +427,8 @@ static long evrPatternState(longSubRecord *psub)
   psub->j = invalidTimeCount;
   psub->n = deltaTimeMax;
   psub->o = timeoutCount;
+  psub->q = invalidMPSCount;
+  psub->r = ntpStatus;
   evrMessageCounts(EVR_MESSAGE_PATTERN,
                    &psub->g,&psub->h,&psub->i,&psub->k,&psub->l,
                    &psub->m,&psub->v,&psub->w,&psub->x,&psub->z);
@@ -343,6 +441,7 @@ static long evrPatternState(longSubRecord *psub)
     invalidTimeCount      = 0;
     deltaTimeMax          = 0;
     timeoutCount          = 0;
+    invalidMPSCount       = 0;
     evrMessageCountReset(EVR_MESSAGE_PATTERN);
   }
   return 0;
@@ -415,9 +514,9 @@ static long evrPatternSim(longSubRecord *psub)
   pattern_s.header_s.version  = EVR_MESSAGE_PATTERN_VERSION;
   for (idx = 0; idx < EVR_MODIFIER_MAX; idx++)
     pattern_s.modifier_a[idx] = (&psub->d)[idx];
-  pattern_s.modifier_a[0]    |= ((psub->j << 8) & 0x1F00);
-  pattern_s.modifier_a[0]    |= ( psub->k & YY_BIT_MASK);
-  pattern_s.modifier_a[3]    |= ((psub->c << 29) & 0xE0000000);
+  pattern_s.modifier_a[MOD1_IDX] |= ((psub->j << 8) & 0x1F00);
+  pattern_s.modifier_a[MOD1_IDX] |= ( psub->k & YY_BIT_MASK);
+  pattern_s.modifier_a[MOD4_IDX] |= ((psub->c << 29) & 0xE0000000);
   pattern_s.edefAvgDoneMask   = 0;
   pattern_s.edefMinorMask     = 0;
   pattern_s.edefMajorMask     = 0;
@@ -494,12 +593,12 @@ static long evrPatternSimTest(longSubRecord *psub)
   psub->c = psub->i * psub->j;
   /* now check this pulse */
   /* check inclusion mask */
-  if ( (unsigned long)psub->u ) psub->p = 10; /* force one hertz processing */
+  if (psub->u) psub->p = 10; /* force one hertz processing */
   /* set modifier 4 to 10; assuming evg sim counts 1 to 10 */
-  if ( (unsigned long)psub->v ) psub->p = 0 ; /* force 10  hertz processing */	 
+  if (psub->v) psub->p = 0 ; /* force 10  hertz processing */	 
   
-  if (  (((unsigned long)psub->f & (unsigned long)psub->p)==(unsigned long)psub->p)
-		/*		&&(((unsigned long)psub->g & (unsigned long)psub->q)==(unsigned long)psub->q)*/) 
+  if (  ((psub->f & psub->p)==psub->p)
+		/*		&&((psub->g & psub->q)==psub->q)*/) 
 	{
 		psub->val = 1;
 	

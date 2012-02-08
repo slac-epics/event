@@ -25,5 +25,5 @@
 # If you don't want to install into $(TOP) then
 # define INSTALL_LOCATION here
 #INSTALL_LOCATION=<fullpathname>
-INSTALL_LOCATION=/nfs/slac/g/lcls/build/epics/iocTop/EventTest/work
+#INSTALL_LOCATION=/nfs/slac/g/lcls/build/epics/iocTop/EventTest/work
 

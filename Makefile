@@ -6,5 +6,7 @@ DIRS += configure
 DIRS += mrfApp
 DIRS += evrSupport
 DIRS += testIoc
+#DIRS += testIoc
+#DIRS += testIoc
 
 include $(TOP)/configure/RULES_TOP
