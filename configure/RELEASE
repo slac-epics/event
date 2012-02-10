@@ -11,7 +11,7 @@ EPICS_BASE=$(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)
 # ===============================================================
 # Define the version(s) of any other needed modules 
 # ===============================================================
-GENERALTIME_MODULE_VERSION=R1.2.2.2-1.0.0
+#GENERALTIME_MODULE_VERSION=R1.2.2.2-1.0.0
 MISCUTILS_MODULE_VERSION=R1.0.2.1-1.1.0
 
 # ============================================================
@@ -27,7 +27,6 @@ MISCUTILS_MODULE_VERSION=R1.0.2.1-1.1.0
 #
 # If your build fails, look for these paths in your build output
 # ============================================================
-# Example: IPAC=$(EPICS_MODULES)/ipac/$(IPAC_MODULE_VERSION)
-GENERALTIME=$(EPICS_MODULES)/generalTime/$(GENERALTIME_MODULE_VERSION)
+#GENERALTIME=$(EPICS_MODULES)/generalTime/$(GENERALTIME_MODULE_VERSION)
 MISCUTILS=$(EPICS_MODULES)/miscUtils/$(MISCUTILS_MODULE_VERSION)
 
