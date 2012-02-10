@@ -135,7 +135,7 @@ struct LinuxErCardStruct
 #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
 #endif
 #define ercard_to_linuxercard(pCard) \
-				((struct LinuxErCardStruct *)(((char *)pCard) - offsetof(struct LinuxErCardStruct, ErCard)))
+    ((struct LinuxErCardStruct *)(((char *)pCard) - offsetof(struct LinuxErCardStruct, ErCard)))
 
 #define EVR_IRQ_OFF      0x0000         /* Turn off All Interrupts                                */
 #define EVR_IRQ_ALL      0x001f         /* Enable All Interrupts                                  */
@@ -326,7 +326,7 @@ void ErIrqHandler(int signal)
 				if(EvrGetFIFOEvent(pEr, &fe) < 0)
 					break;
 				if(pCard->DevEventFunc != NULL)
-					(*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampHigh);
+					(*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
 			}
 		}
 		if(flags & EVR_IRQFLAG_HEARTBEAT) {
@@ -380,7 +380,7 @@ void ErIrqHandler(int signal)
 	}
 	return;
 }
-	
+ 
 
 /**************************************************************************************************
 |* ErConfigure () -- Event Receiver Card Configuration Routine
@@ -419,7 +419,7 @@ static int ErConfigure (
 	struct ErCardStruct *pCard;
 	struct MrfErRegs *pEr;
     u32		FPGAVersion;
-	
+
 	epicsMutexLock(ErCardListLock);
 	/* If not already done, initialize the driver structures */
 	if (!bErCardListInitDone) {
@@ -433,7 +433,7 @@ static int ErConfigure (
 		errlogPrintf("%s: driver does not support %d cards (max is %d).\n", __func__, Card, EVR_MAX_CARDS);
 		return ERROR;
 	}
-	
+
 	epicsMutexLock(ErConfigureLock);
 	for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
 		pCard != NULL;
@@ -458,6 +458,7 @@ static int ErConfigure (
 		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
+	printf("EvrOpen, device = %s\n", strDevice);
 
 	/* Check the firmware version */
 	FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
