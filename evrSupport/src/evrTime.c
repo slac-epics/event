@@ -301,6 +301,10 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   if ( (unsigned int)epicsTimeEventBestTime == eventCode )
 	eventCode = 0;
   
+  /* Hack event code to get pre-bundled general-time behavior */
+  if ( (unsigned int)epicsTimeEventBestTime == eventCode )
+	eventCode = 0;
+  
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
@@ -423,8 +427,9 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].status = epicsTimeERROR;
           eventCodeTime_as[idx].count  = 0;
         }
-  /* For IOCs that support iocClock (RTEMS and vxWorks), register
-     evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
+
+		/* For IOCs that support iocClock (RTEMS and vxWorks), register
+		   evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
         if(generalTimeRegisterEventProvider("evrTimeGet", 1000, (TIMEEVENTFUN) evrTimeGet_gtWrapper))
           return epicsTimeERROR;
 
@@ -817,8 +822,14 @@ static long evrTimeEvent(longSubRecord *psub)
   if ((psub->a <= 0) || (psub->a > MRF_NUM_EVENTS))
     return epicsTimeERROR;
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-    eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
-    eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
+    if (psub->scan == SCAN_PASSIVE) {
+      /*
+       * Only modify the event time if this is the FLNK of an event.
+       * We don't actually know this, but we assume it if we're passive.
+       */
+      eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
+      eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
+    }
     psub->val = eventCodeTime_as[psub->a].count;
     epicsMutexUnlock(evrTimeRWMutex_ps);
     return epicsTimeOK;

@@ -149,15 +149,21 @@ LIBRARY_IOC_RTEMS      += mrfVme64x
 mrfVme64x_OBJS_RTEMS   += mrfVme64x
 mrfVme64x_OBJS_RTEMS   += $(CRCSR_PROBE_NAME)
 
+# Add mrfVme64x objects to all mrfVme64x libraries
 mrfVme64xLib_OBJS      += $(mrfVme64x_OBJS)
 
+
 #---------------------
-# Build the Library for the linux driver
+# Build the drvMrf library for the linux driver
 #
 LIBRARY_IOC_Linux    += drvMrf
 drvMrf_OBJS_Linux    += drvLinux
-drvMrfLib_OBJS       += $(drvMrf_OBJS)
+
+# Include the mrfApi library in drvMrf
 drvMrfLib_LIBS_Linux += mrfApi
+
+# Add drvMrf objects to all drvMrf libraries
+drvMrfLib_OBJS       += $(drvMrf_OBJS)
 
 #---------------------
 # Testing
