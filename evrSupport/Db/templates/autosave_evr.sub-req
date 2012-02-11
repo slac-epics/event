@@ -1,7 +1,7 @@
 #
 # EVR autosave sample substitutions file
 #
-file autosave_evr.template
+file autosave_evr.tpl-req
 {
 	{	IOC	= $(IOC),	EVR	= $(EVR)	}
 }

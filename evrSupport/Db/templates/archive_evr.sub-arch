@@ -1,7 +1,7 @@
 #
 # EVR archive sample substitutions file
 #
-file archive_evr.template
+file archive_evr.tpl-arch
 {
 	{	IOC	= $(IOC),	EVR	= $(EVR)	}
 }
