@@ -2,6 +2,13 @@
 #
 # Abs:  LCLS EVR Event Records
 #
+# Original LCLS Accelerator group list of event codes
+# with original naming
+#
+# For PCDS, please use pcdsEventCodes.substitutions
+# which adds support for photon group event codes
+# and unifies the naming.
+#
 # Name: evrEventAll.substitutions
 #
 #==============================================================================

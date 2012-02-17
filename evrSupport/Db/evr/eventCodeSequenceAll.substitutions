@@ -2,6 +2,11 @@
 #
 # Abs:  EVR Event Records for Event Code Sequences
 #
+# LCLS Event Code Sequencer support
+#
+# PCDS please use pcdsEventCodes.substitutions
+# instead of this file.
+#
 # Name: eventCodeSequenceAll.substitutions
 #
 #==============================================================================

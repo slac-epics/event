@@ -1,8 +1,15 @@
 #==============================================================================
 #
-# Abs:  LCLS EVR Event Codes: Names, Delays, Count, Rate
+# Abs:  PCDS EVR Event Codes: Names, Delays, Count, Rate
 #
-# Name: evrEventNum.substitutions
+# This file creates the records needed to support each of the
+# following event codes.   Include one instance below for each
+# event code that your EVR will need to support.
+#
+# This list was derived from LCLS group's evrEventAll.db along
+# with event codes needed for the event code sequencer support.
+#
+# Name: pcdsEventCodes.substitutions
 #
 #==============================================================================
 #

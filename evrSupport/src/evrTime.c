@@ -816,9 +816,21 @@ int evrTimeCount(unsigned int eventCode)
 ==============================================================================*/
 static long evrTimeEvent(longSubRecord *psub)
 {
+#if 0
   /* Rollover if value gets too big */
   if (psub->val < EVR_MAX_INT) psub->val++;
   else                         psub->val = 1;
+  /*
+   * I disabled this code for two reasons
+   *	1. psub-val gets overridden by the event
+   *		code count for normal operation.
+   *	2. If there is a problem in evrTimeInit(),
+   *		this routine returns an error code,
+   *		but these few lines could make you
+   *		think the EVR was still working.
+   *	bhill - 2/15/12
+   */
+#endif
   if ((psub->a <= 0) || (psub->a > MRF_NUM_EVENTS))
     return epicsTimeERROR;
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
