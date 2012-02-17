@@ -32,8 +32,8 @@ DB += evrMod36.db
 DB += evrEventCode.template
 
 # LCLS templates
-DB += lclsEventCodes.db
-DB += lclsEventCodes.substitutions
+DB += pcdsEventCodes.db
+DB += pcdsEventCodes.substitutions
 
 # PCDS Event Sequencer Codes
 DB += eventCodeSequenceAll.db
