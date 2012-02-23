@@ -67,7 +67,7 @@ file evrPmcEvent.template
 file fiducialTimestamp.db
 {
     {
-        DEVICE=$(EVR),
+        DEV=$(EVR),
     }
 }
 
