@@ -69,9 +69,9 @@ file evrVmeEvent.template
     { $(EVR),   0,      EVENT14, 46,  0, 0, 0, 0, "0.5Hz"           }
 }
 
-# Need one instance of fiducial.db for
+# Need one instance of fiducialTimestamp.db for
 # pattern processing and fiduicial ID timestamping
-file fiducial.db
+file fiducialTimestamp.db
 {
     {
         DEVICE=$(EVR),

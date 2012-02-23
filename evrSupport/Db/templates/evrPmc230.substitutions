@@ -67,9 +67,9 @@ file evrPmcEvent.template
 }
 
 
-# Need one instance of fiducial.db for
+# Need one instance of fiducialTimestamp.db for
 # pattern processing and fiduicial ID timestamping
-file fiducial.db
+file fiducialTimestamp.db
 {
     {
         DEVICE=$(EVR),

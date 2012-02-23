@@ -27,16 +27,18 @@ DB += evrPatternProc.db
 DB += evrEventAll.db
 DB += evrPatternAll.db
 DB += evrMod36.db
+# fiducialTimestamp timestamp support (includes patterns)
+DB += fiducialTimestamp.db
 
 # Event Codes
 DB += evrEventCode.template
 
-# LCLS templates
+# Event Sequencer Codes
+DB += eventCodeSequenceAll.db
+
+# PCDS Event Code List
 DB += pcdsEventCodes.db
 DB += pcdsEventCodes.substitutions
-
-# PCDS Event Sequencer Codes
-DB += eventCodeSequenceAll.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
