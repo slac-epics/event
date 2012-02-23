@@ -4,6 +4,7 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 USR_VPATH += ../../bsa
 USR_VPATH += ../../templates
+USR_VPATH += $(COMMON_DIR)
 
 #----------------------------------------------------
 #  Optimization of db files using dbst (DEFAULT: NO)
