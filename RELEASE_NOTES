@@ -32,22 +32,12 @@ event-R3-2-2:
 event-R3-2-1:
 	* Made event code 162's delay < event code 140
 
-event-R?-?-?: Mar 23, 2010
-	* mrfApp/src/drvLinux.c -
-		Ported updates from Steve's 3.0.1 Event module:
-			Modified front panel output map code to handle CPCI or PMC FormFactor
-				(FormFactor is last parameter of ErConfigure() call)
-			Lock IRQ before calling EvrIrqAssignHandler()
-		Added diagnostic code enabled via ErDebugLevel( 1 )
-		Improved error message when find_free_pulsegen() fails
-	* Added README_LINUX for linux EVR installation procedure
-	* Added new template files evrPmc230.template and evrPmcEvent.template
-	* Modifed basic-evr.substitutions to use new templates to fix prior
-		deficiencies and to configure only the pulse generators
-		supported by the PMC EVR.
-	* Moved basic-evr.substitutions into evrSupport/Db/templates where
-		it belongs, as it is a sample substitution file where other files
-		in evrSupport/Db/ioc are specific to lcls IOC's.
+PCDS Release R3.2.0-2.0.0: Feb 8, 2012
+	* Merged our R3.2.0-1.9.0 to $REPO/trunk/pcds/epics/modules/event/current
+		and did a new release.   This should be equivalent to R3.2.0-1.9.0,
+		except it was derived with clean ancestry in svn.
+		Code is the same, but some build changes and new db files were
+		picked up from LCLS that didn't get into our R3.2.0-1.9.0
 
 event-R3-2-0:
 	* Build with base-R3-14-8-2-lcls6
@@ -180,6 +170,23 @@ event-R2-8-2: Mar 31, 2009
 	* evrIoc - various changes to support testing.
 	* README - add text for evrInitialize, evrTimeGetFromPipeline, and
 	  LINKERR.
+
+PCDS Release R2.8.1-0.6.0: Mar 23, 2010
+	* mrfApp/src/drvLinux.c -
+		Ported updates from Steve's 3.0.1 Event module:
+			Modified front panel output map code to handle CPCI or PMC FormFactor
+				(FormFactor is last parameter of ErConfigure() call)
+			Lock IRQ before calling EvrIrqAssignHandler()
+		Added diagnostic code enabled via ErDebugLevel( 1 )
+		Improved error message when find_free_pulsegen() fails
+	* Added README_LINUX for linux EVR installation procedure
+	* Added new template files evrPmc230.template and evrPmcEvent.template
+	* Modifed basic-evr.substitutions to use new templates to fix prior
+		deficiencies and to configure only the pulse generators
+		supported by the PMC EVR.
+	* Moved basic-evr.substitutions into evrSupport/Db/templates where
+		it belongs, as it is a sample substitution file where other files
+		in evrSupport/Db/ioc are specific to lcls IOC's.
 
 event-R2-8-1: Jan 20, 2009
 	* evrSupport/src/bsa.c - Report SOFT INVALID alarm when there's been

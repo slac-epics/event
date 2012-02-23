@@ -2,6 +2,9 @@ TOP=../../..
 include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
+USR_VPATH += ../../bsa
+USR_VPATH += ../../templates
+USR_VPATH += $(COMMON_DIR)
 
 #----------------------------------------------------
 #  Optimization of db files using dbst (DEFAULT: NO)
@@ -16,7 +19,6 @@ DB += evr.db
 DB += evr-pmc.db
 DB += evrWithDelays.db
 DB += evrWithExtDelays.db
-DB += evr.template
 DB += evrEvent.db
 DB += evrEventCtrl.db
 DB += evrDevTrig.db
@@ -25,17 +27,19 @@ DB += evrPattern.db
 DB += evrPatternProc.db
 DB += evrEventAll.db
 DB += evrPatternAll.db
-DB += evrPatternTest.db
-DB += evrPatternTestBsa.db
 DB += evrMod36.db
-# LCLS templates
-DB += fiducial.db
+# fiducialTimestamp timestamp support (includes patterns)
+DB += fiducialTimestamp.db
+
 # Event Codes
 DB += evrEventCode.template
-DB += lclsEventCodes.db
-DB += lclsEventCodes.substitutions
-# Event Code Sequences
+
+# Event Sequencer Codes
 DB += eventCodeSequenceAll.db
+
+# PCDS Event Code List
+DB += pcdsEventCodes.db
+DB += pcdsEventCodes.substitutions
 
 include $(TOP)/configure/RULES
 #----------------------------------------

@@ -40,7 +40,7 @@
 #ifdef __rtems__
 #define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
 #else
-#define EVR_TIMEOUT     (2)  /* Timeout in sec waiting for 360hz input. */
+#define EVR_TIMEOUT     (2)     /* Timeout in sec waiting for 360hz input. */
 #endif
 
 #define MIN(a,b)        (((a)>(b))?(b):(a))
@@ -96,9 +96,7 @@ static int evrReport( int interest )
       evrTimeGetFromPipeline(&currentTime, evrTimeCurrent, 0, 0, 0, 0, 0);
       pulseIDfromTime = PULSEID(currentTime);
       /* Get pulse ID from EVR seconds register. */
-#ifdef EVR_DRIVER_SUPPORT
       pulseIDfromEvr = ErGetSecondsSR(pCard);
-#endif
       printf("Pulse ID from Data = %lu, from EVR: %lu\n",
              (unsigned long)pulseIDfromTime, (unsigned long)pulseIDfromEvr);
     }
@@ -359,7 +357,6 @@ int evrInitialize()
     return -1;
   }
   
-#ifdef EVR_DRIVER_SUPPORT
   /* Get first EVR in the list */
   pCard = ErGetCardStruct(0);
   if (!pCard) {
@@ -371,7 +368,6 @@ int evrInitialize()
     ErDBuffIrq               (pCard, 1);
     ErRegisterEventHandler   (pCard->Cardno,    (USER_EVENT_FUNC)evrEvent);
   }
-#endif	/* EVR_DRIVER_SUPPORT */
   evrInitialized = 1;
   return 0;
 }

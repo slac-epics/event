@@ -26,8 +26,9 @@ endif
 
 eventTest_LIBS += devMrfEg
 eventTest_LIBS += devMrfEr
-eventTest_LIBS += drvMrf
-eventTest_LIBS_Linux += mrfApi
+eventTest_LIBS_RTEMS   += mrfVme64x
+eventTest_LIBS_vxWorks += mrfVme64x
+eventTest_LIBS_Linux   += mrfApi
 eventTest_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================

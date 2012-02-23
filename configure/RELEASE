@@ -11,8 +11,6 @@ EPICS_BASE=$(EPICS_SITE_TOP)/base/$(BASE_MODULE_VERSION)
 # ===============================================================
 # Define the version(s) of any other needed modules 
 # ===============================================================
-# Example: IPAC_MODULE_VERSION=R2.8.4-0.2.0
-AUTOSAVE_MODULE_VERSION=R4.2.1.2-2.7.0
 MISCUTILS_MODULE_VERSION=R2.2.2-0.3.0
 
 # ============================================================
@@ -28,6 +26,4 @@ MISCUTILS_MODULE_VERSION=R2.2.2-0.3.0
 #
 # If your build fails, look for these paths in your build output
 # ============================================================
-# Example: IPAC=$(EPICS_MODULES)/ipac/$(IPAC_MODULE_VERSION)
-AUTOSAVE=$(EPICS_MODULES)/autosave/$(AUTOSAVE_MODULE_VERSION)
 MISCUTILS=$(EPICS_MODULES)/miscUtils/$(MISCUTILS_MODULE_VERSION)
