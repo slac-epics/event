@@ -62,21 +62,8 @@ file evrPmcEvent.template
 	{ $(EVR),	0,		EVENT14, 46,   0, 0, 0, 0, "0.5Hz"         }
 }
 
-# Need one instance of fiducialTimestamp.db for
-# pattern processing and fiduicial ID timestamping
-file fiducialTimestamp.db
-{
-    {
-        DEVICE=$(EVR),
-    }
-}
 
-
-#
-# Creates records to support PCDS's standard set of
-# event codes for the LCLS accelerator and PCDS experiments
-file pcdsEventCodes.db
-{
-   { DEV="$(EVR)", CARD="0" }
-}
-
+#file fiducial.db
+#{
+#	{ DEV=$(EVR), CARD="0" }
+#}

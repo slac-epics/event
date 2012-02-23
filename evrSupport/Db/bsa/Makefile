@@ -20,9 +20,6 @@ DB += bsaProcTestAll.db
 # Device edef records
 DB += bsaATTREdef.db
 
-DB += evrPatternTest.db
-DB += evrPatternTestBsa.db
-
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE

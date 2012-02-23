@@ -2,8 +2,6 @@ TOP=../../..
 include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
-USR_VPATH += ../../bsa
-USR_VPATH += ../../bsa/O.Common
 
 #----------------------------------------------------
 #  Optimization of db files using dbst (DEFAULT: NO)
