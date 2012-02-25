@@ -75,6 +75,8 @@ file fiducialTimestamp.db
 {
     {
         DEV=$(EVR),
+		LINK4="",
+		LINK5=""
     }
 }
 
