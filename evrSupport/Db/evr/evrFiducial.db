@@ -30,7 +30,6 @@ record(fanout, "$(DEV):PATTERNFO") {
 record( longin, "$(DEV):Fiducial")
 {
   field( DESC, "Fiducial ID" )
-  field( DOL,  "closed_loop" )
   field( INP,  "$(DEV):PATTERN.L NPP MS" )
 }
 
