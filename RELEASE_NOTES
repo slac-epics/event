@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-1: (KHKIM) 02-29-2012
+        * Merge from head of event-R3-2-2-br_facet to get suppring FACET.
+        * Add evrEventXTA.db to support XTA project
+
 event-R3-3-2-br_generaltime-2-0: (KHKIM) 01-24-2012
         * Merge from MAIN_TRUK: evnet-R3-3-1
 
@@ -32,6 +36,12 @@ event-R3-3-0:
          to take the following functionalities
          - backward propagation between low level and high level dealy
          - event code invariant delay
+
+event-R3-2-2-br_facet-1-1
+        * fixing configure/RELEASE file to fit into FACET environment
+
+event-R3-2-2-br_facet-1-0
+        * Add evrEventFACET.db for FACET project
 
 event-R3-2-2-br_facet-1-1
         * fixing configure/RELEASE file to fit into FACET environment
