@@ -3,6 +3,7 @@ Release Notes for the event package
 event-R3-2-2-br_generaltime-2-1: (KHKIM) 02-29-2012
         * Merge from head of event-R3-2-2-br_facet to get suppring FACET.
         * Add evrEventXTA.db to support XTA project
+        * Add mrfApi for the linux platform
 
 event-R3-3-2-br_generaltime-2-0: (KHKIM) 01-24-2012
         * Merge from MAIN_TRUK: evnet-R3-3-1
