@@ -366,3 +366,67 @@ each display next to your IOC name (all channels must be connected):
     properly restored on reboot.
 (9) Check that the Channel Archiver is recording all your trigger delays and
     that there are no disconnected channels.
+
+
+V - Consideration for the multiple beam program
+------------------------------------------------
+
+Now, we have mulitple beam programs. Each beam program has different event configuration.
+Thus, ioc engineer needs to choose correct evrEvent database for thier own application.
+And, ioc engineer also need to choose correct timeslots for the each beam program.
+Please, look at the following tables.
+
+	------------	-----------------	---------------------
+	Beam program	evrEvent database	Active Time Slots
+						TS1ST		TS2ND
+	------------	-----------------	-----		-----
+	LCLS		evrEventAll.db		1		4
+	FACET		evrEventFACET.db	2		5
+	XTA		evrEventXTA.db		3(or 0)*	6
+	------------	-----------------	---------------------
+
+Please, reflect above table into your <application>pattern.substitutions
+
+(Remark *) The XTA beam has maximum rate 10 Hz. If you really don't need 120 Hz timestamp,
+           you can drop one of active timeslot which should be timeslot 3.
+           Becuase, the beam runs on the timeslot 6.
+
+
+Each beam program has different event code and different concern about the timeslot.
+For example FACET has 3 own event code, inject-201, scavenger-202, and beam event-203 (**).
+These should be refleced on the trigger configuration in the individual application.
+Please, update your <application>evr.substitutions file. You can find "file evrEventCtrl.db" section
+in the file and look at the "ID" macro which means the event number.
+
+You also need to reflect the different concern about the timeslot.
+FACET beam runs on the timeslot 5 instead of the timeslot 4.
+So, you may need to change each 4x event numbers to 5x.
+
+Same considerations are required for the XTA. The XTA own event codes are the followings.
+RF full rate - 201, Beam full rate -202, Beam rate limited - 203 (**)
+You may want to use event number 6x for the XTA due to the beam runs on timeslot 6.
+
+(Remark **) If you want to see the entire event list for the each beam program,
+            Please, look at the following subsitutitions file in this module.
+	
+		LCLS	evrEventAll.substitutions
+		FACET	evrEventFACET.substitutions
+		XTA	evrEventXTA.substitutions
+
+
+
+IV - Consideration to use the event invariant delay
+---------------------------------------------------
+
+We have made changes on the evrDevTrg.db. This database has new macros: TOUT and ACTV.
+We need to put those two macros into the section for the evrDevTrig.db  
+in the "<application>trig.subsititutions" file.
+
+The TOUT macro provides mapping between the output channel and the event invariant logic.
+We can use OUT0, OUT1, ..., OUTA, OUTB, OUTC to describe the output channel.
+Actually, front panel trigger outputs share the events with the real panel triggers.
+So, you can use, OUT0, OUT1, OUT2 for the front panel.
+
+The ACTV macro enables/disables the event code invariant delay.
+If you don't like to use this new feature, you can put 0, other then, you can put 1.
+
