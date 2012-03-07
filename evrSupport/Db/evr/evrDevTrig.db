@@ -25,6 +25,8 @@ record(bo, "$(DEV)TCTL") {
   field(ONAM, "Enabled")
   field(OMSL, "supervisory")
   field(VAL, "$(CTL)")
+  field(PINI, "YES")
+  info(autosaveFields_pass0, "VAL")
 }
 
 record(bo, "$(DEV)TPOL") {
@@ -35,6 +37,8 @@ record(bo, "$(DEV)TPOL") {
   field(ONAM, "Inverted")
   field(OMSL, "supervisory")
   field(VAL, "$(POL)")
+  field(PINI, "YES")
+  info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(DEV)TWID") {
@@ -49,6 +53,8 @@ record(ao, "$(DEV)TWID") {
   field(VAL, "$(WID)")
   field(MDEL, "-1")
   field(FLNK, "$(DEV):BW_DIS2")
+  field(PINI, "YES")
+  info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(DEV)TDES") {
@@ -66,6 +72,7 @@ record(ao, "$(DEV)TDES") {
   field(VAL, "$(DES)")
   field(MDEL, "-1")
   field(PINI, "YES")
+  info(autosaveFields_pass0, "VAL")
 }
 
 record(ao, "$(DEV)TCON") {
@@ -77,6 +84,7 @@ record(ao, "$(DEV)TCON") {
   field(DRVL, "$(DRVL)")
   field(PINI, "YES")
   field(MDEL, "-1")
+  info(autosaveFields_pass0, "VAL")
 }
 
 record(calc, "$(DEV)TDLYCALC") {
