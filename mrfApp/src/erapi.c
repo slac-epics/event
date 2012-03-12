@@ -27,7 +27,7 @@
 #define DEBUG 1
 */
 #define DEBUG_PRINTF printf
-unsigned int	erapiDebug	= 1;
+unsigned int	erapiDebug	= 0;
 
 int EvrOpen(struct MrfErRegs **pEr, char *device_name)
 {
