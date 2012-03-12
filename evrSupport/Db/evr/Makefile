@@ -13,6 +13,7 @@ include $(TOP)/configure/CONFIG
 #
 # EVR databases
 DB += evr.template
+DB += evrPmc.template
 DB += evrEvent.db
 DB += evrEventCtrl.db
 DB += evrDevTrig.db
