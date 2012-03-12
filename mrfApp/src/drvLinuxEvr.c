@@ -1343,7 +1343,7 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	if(Enable) {
 		/* If the channel is already using a pulse generator we keep it 
 		   otherwise we get a new one */
-		if((map >= PULSE_GENERATOR_0) && (map < PULSE_GENERATOR_9)) {
+		if((map >= PULSE_GENERATOR_0) && (map <= PULSE_GENERATOR_9)) {
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
@@ -1472,7 +1472,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	if(Enable) {
 		/* If the channel is already using a pulse generator we keep it 
 		   otherwise we get a new one */
-		if((map >= PULSE_GENERATOR_0) && (map < PULSE_GENERATOR_9)) {
+		if((map >= PULSE_GENERATOR_0) && (map <= PULSE_GENERATOR_9)) {
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
@@ -1612,18 +1612,18 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 			if(RamBuf[code] & (1<<map)) {
 				enum outputs_mapping_id func;
 				func = pLinuxErCard->tb_channel[OTL_0+(map>>1)];
-				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9)) {
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9)) {
 					if(map & 1)
 						ramloc.PulseSet |= 1<<(func-PULSE_GENERATOR_0);
 					else
 						ramloc.PulseClear |= 1<<(func-PULSE_GENERATOR_0);
 				}
 				func = pLinuxErCard->tb_channel[OTP_DBUS_0+map];
-				if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9))
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9))
 					ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				if(map < EVR_NUM_DG) {
 					func = pLinuxErCard->tb_channel[DELAYED_PULSE_0+map];
-					if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9))
+					if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9))
 						ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				}
 			}
