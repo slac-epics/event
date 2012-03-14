@@ -53,6 +53,7 @@
 
 #include <epicsStdlib.h>        /* EPICS Standard C library support routines                      */
 #include <epicsStdio.h>         /* EPICS Standard C I/O support routines                          */
+#include <epicsStdioRedirect.h>
 #include <epicsTypes.h>         /* EPICS Architecture-independent type definitions                */
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
 #include <iocsh.h>              /* EPICS iocsh support library                                    */

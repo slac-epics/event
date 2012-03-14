@@ -10,6 +10,7 @@
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
 #include <registryFunction.h>   /* EPICS Registry support library                                 */
 #include <epicsStdio.h>
+#include <epicsStdioRedirect.h>
 #include <drvSup.h>
 
 /*** Records and variables ***/

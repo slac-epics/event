@@ -11,6 +11,7 @@
 #include <registryFunction.h>   /* EPICS Registry support library                                 */
 #include <iocsh.h>              /* EPICS iocsh support library                                    */
 #include <epicsStdio.h>
+#include <epicsStdioRedirect.h>
 
 /**************************************************************************************************/
 /*                              EPICS iocsh extension                                             */

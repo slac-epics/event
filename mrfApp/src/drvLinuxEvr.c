@@ -17,6 +17,7 @@
 #include <epicsStdio.h>
 #include <epicsExit.h>
 #include <epicsStdlib.h>        /* EPICS Standard C library support routines                      */
+#include <epicsStdioRedirect.h>
 #include <errlog.h>
 #include <iocsh.h>              /* EPICS iocsh support library                                    */
 #include <drvSup.h>

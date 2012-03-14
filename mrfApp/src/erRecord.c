@@ -56,6 +56,7 @@ DEVELOPMENT CENTER AT ARGONNE NATIONAL LABORATORY (708-252-2000).
  */
 
 #include        <epicsStdio.h>  
+#include        <epicsStdioRedirect.h>
 #include        <dbDefs.h>
 #include        <epicsPrint.h>
 #include	<alarm.h>
