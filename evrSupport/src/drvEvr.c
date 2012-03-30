@@ -156,11 +156,11 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 =============================================================================*/
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
-if(eventNum==event_to_peek_fiducial)
-        { fiducial_time_stamp[fiducial_time_stamp_ix]= timeNum;
-        fiducial_time_stamp_ix++;
-        if (fiducial_time_stamp_ix>=PEEK_PIPE_SIZE){fiducial_time_stamp_ix=0;}
-        }
+  if(eventNum==event_to_peek_fiducial) {
+    fiducial_time_stamp[fiducial_time_stamp_ix]= timeNum;
+    fiducial_time_stamp_ix++;
+    if (fiducial_time_stamp_ix>=PEEK_PIPE_SIZE){fiducial_time_stamp_ix=0;}
+  }
 
   if (eventNum == EVENT_FIDUCIAL) {
     if (readyForFiducial) {
@@ -175,7 +175,7 @@ if(eventNum==event_to_peek_fiducial)
 }
 
 /*---------------------------------------------------------------------------
-Following finction can allow peeking at fiducial time stamp corresponding to
+Following function can allow peeking at fiducial time stamp corresponding to
 a watched event.
 Argument:  next_event_to_watch...The event to watch from this call onwards
                    when this call terminates, the event ID that was being

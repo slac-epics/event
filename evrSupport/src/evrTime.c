@@ -86,7 +86,7 @@ typedef struct {
                               /* 2nd 32 bits = # of nsecs since last sec */
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
-  int                 count;  /* # times this event has happened		 */
+  int                 count;  /* # times this event has happened	 */
 } evrTime_ts;
 
 /* EDEF Timestamp table */
@@ -778,8 +778,10 @@ int evrTimeCount(unsigned int eventCode)
   if ((eventCode > 0) && (eventCode <= MRF_NUM_EVENTS)) {
     evrTime_ts	*	pevrTime = &eventCodeTime_as[eventCode];
     /* Rollover if value gets too big */
-    if (pevrTime->count < EVR_MAX_INT)	pevrTime->count++;
-    else                       			pevrTime->count = 1;
+    if (pevrTime->count < EVR_MAX_INT)
+	pevrTime->count++;
+    else
+        pevrTime->count = 1;
     return epicsTimeOK;
   }
   return epicsTimeERROR;
