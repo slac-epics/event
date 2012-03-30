@@ -972,7 +972,7 @@ int EvrSendTxDBuf(volatile struct MrfErRegs *pEr, char *dbuf, int size)
   int stat;
 
   stat = EvrGetTxDBufStatus(pEr);
-  //  printf("EvgSendDBuf: stat %08x\n", stat);
+  /*  printf("EvgSendDBuf: stat %08x\n", stat); */
   /* Check that DBUF mode enabled */
   if (!(stat & (1 << C_EVR_TXDATABUF_MODE)))
     return -1;
@@ -988,13 +988,13 @@ int EvrSendTxDBuf(volatile struct MrfErRegs *pEr, char *dbuf, int size)
   /* Enable and set size */
   stat &= ~((EVR_MAX_BUFFER-1) | (1 << C_EVR_TXDATABUF_TRIGGER));
   stat |= (1 << C_EVR_TXDATABUF_ENA) | size;
-  //  printf("EvgSendDBuf: stat %08x\n", stat);
+  /*  printf("EvgSendDBuf: stat %08x\n", stat); */
   pEr->TxDataBufControl = be32_to_cpu(stat);
-  //  printf("EvgSendDBuf: stat %08x\n", be32_to_cpu(pEr->DataBufControl));
+  /*  printf("EvgSendDBuf: stat %08x\n", be32_to_cpu(pEr->DataBufControl)); */
 
   /* Trigger */
   pEr->TxDataBufControl = be32_to_cpu(stat | (1 << C_EVR_TXDATABUF_TRIGGER));
-  //  printf("EvgSendDBuf: stat %08x\n", be32_to_cpu(pEr->DataBufControl));
+  /*  printf("EvgSendDBuf: stat %08x\n", be32_to_cpu(pEr->DataBufControl)); */
 
   return size;
 }
