@@ -116,6 +116,10 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
                            epicsEnum16     *edefSevr_p);
 int evrTimeGet            (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     eventCode);
+int evrTimeGetFifo        (epicsTimeStamp  *epicsTime_ps,
+                           unsigned int     eventCode,
+                           int             *idx,
+                           int              incr);
 int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     pulseID);
 /* Routines used only by event module and Mpg application */
@@ -123,7 +127,7 @@ int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
 int evrTimeInit           (epicsInt32   firstTimeSlotIn,
                            epicsInt32   secondTimeSlotIn);
 int evrTime               (epicsUInt32  mpsModifier);
-int evrTimeCount          (unsigned int eventCode);
+int evrTimeCount          (unsigned int eventCode, unsigned int fiducial);
 int evrTimePatternPutStart(evrMessagePattern_ts **pattern_pps,
                            unsigned long        **timeslot_pp,
                            unsigned long        **patternStatus_pp,
