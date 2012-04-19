@@ -18,6 +18,9 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , L
 	{$(DEVICE) , INJECT  , 201,11900      , LOW  , 30.5, 30.5,  -1 ,  -1 , "Inject Rate"    }
 	{$(DEVICE) , SCAV    , 202,11901      , LOW  , 30.5, 30.5,  -1 ,  -1 , "Scavenger"      }
 	{$(DEVICE) , BEAM    , 203,11902      , LOW  , 30.5, 30.5,  -1 ,  -1 , "Beam"           }
+#
+	{$(DEVICE) , RFACC   , 211,11910      , LOW  , 30.5, 30.5,  -1 ,  -1 , "RF Accel"     }
+	{$(DEVICE) , RFSTBY  , 212,11911      , LOW  , 30.5, 30.5,  -1 ,  -1 , "RF Standby"   }
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 ,12950      , LOW  ,360.5,360.5,359.5,359.5, "360Hz"        }

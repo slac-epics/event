@@ -1,5 +1,10 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-2: (KHKIM) 04-18-2012
+        * bug fixing in linux driver
+        * add FACET events: ACC STDBY
+        * add up more information into README
+
 event-R3-2-2-br_generaltime-2-1: (KHKIM) 02-29-2012
         * Merge from head of event-R3-2-2-br_facet to get suppring FACET.
         * Add evrEventXTA.db to support XTA project
