@@ -48,6 +48,8 @@
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "longSubRecord.h"    /* for struct longSubRecord  */
+#include "erRecord.h"         /* for struct erRecord       */
+#include "drvMrfEr.h"
 
 #include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*  */
 #include "evrTime.h"          /* evrTime* prototypes       */
@@ -614,8 +616,55 @@ static long evrPatternSimTest(longSubRecord *psub)
 return 0;
 }
 
+/*
+ * Input:
+ *     X - Card number
+ * Output:
+ *     A-D - Event number causing this output to trigger, 0 = no trigger,
+ *           512 = multiple triggers, 1024 = misconfigure (no IRQ).
+ */
+static int evrTriggerInit(longSubRecord *psub)
+{
+    return 0;
+}
+
+static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard)
+{
+    int i, j = -1;
+    if (!enable)
+        return 0;
+    for (i = 0; i < EVR_NUM_EVENTS; i++) {
+        if ((pCard->ErEventTab[i] & mask) == mask) {
+            if (j < 0)
+                j = i;
+            else
+                return 512; /* Found two triggers! */
+        }
+    }
+    if (j < 0)
+        return 512;
+    return (pCard->ErEventTab[j] & EVR_MAP_INTERRUPT) ? j : 1024;
+}
+
+static int evrTriggerProc(longSubRecord *psub)
+{
+    ErCardStruct  *pCard = ErGetCardStruct(psub->x);
+    erRecord *pRec;
+
+    if (!pCard)
+        return 0;
+    pRec = (erRecord *)pCard->pRec;
+    psub->a = find_trigger(pRec->dg0e, EVR_MAP_CHAN_0, pCard);
+    psub->b = find_trigger(pRec->dg1e, EVR_MAP_CHAN_1, pCard);
+    psub->c = find_trigger(pRec->dg2e, EVR_MAP_CHAN_2, pCard);
+    psub->d = find_trigger(pRec->dg3e, EVR_MAP_CHAN_3, pCard);
+    return 0;
+}
+
 epicsRegisterFunction(evrPatternProcInit);
 epicsRegisterFunction(evrPatternProc);
 epicsRegisterFunction(evrPatternState);
 epicsRegisterFunction(evrPatternSim);
 epicsRegisterFunction(evrPatternSimTest);
+epicsRegisterFunction(evrTriggerInit);
+epicsRegisterFunction(evrTriggerProc);

@@ -20,6 +20,7 @@ DB += evr.template
 DB += evrEvent.db
 DB += evrEventCtrl.db
 DB += evrDevTrig.db
+DB += evrTrigger.db
 # evrPattern support
 DB += evrPattern.db
 DB += evrPatternProc.db

@@ -106,6 +106,7 @@ record(er, "$(DEV):CTRL")
   field(DG2P, "$(DG2P)")
 
   field(PRES, "1")
+  field(FLNK, "$(EVRFLNK)")
 }
 
 record(bi, "$(DEV):LINK")

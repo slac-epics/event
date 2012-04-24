@@ -23,4 +23,5 @@ record(erevent, "$(DEV):$(NAME)CTRL") {
   field(SDIS, "$(DEV):$(NAME)CTRL.ENM")
   field(DISV, "1")
   field(DISS, "INVALID")
+  field(FLNK, "$(EVRFLNK)")
 }
