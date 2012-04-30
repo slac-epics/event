@@ -168,7 +168,9 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
           if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
           *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
         }
-      }
+      } else
+        patternErrCount = 0; /* It's different, but close enough for government work. */
+      
   } else {
     patternErrCount = 0;
   }
