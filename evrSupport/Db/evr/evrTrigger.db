@@ -8,4 +8,5 @@ record(longSub, "$(EVR):Triggers") {
   field(C, "0")
   field(D, "0")
   field(X, "$(CARD)")
+  field(Z, "0")
 }

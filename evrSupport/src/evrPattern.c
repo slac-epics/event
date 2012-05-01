@@ -660,6 +660,7 @@ static int evrTriggerProc(longSubRecord *psub)
     psub->b = find_trigger(pRec->dg1e, EVR_MAP_CHAN_1, pCard);
     psub->c = find_trigger(pRec->dg2e, EVR_MAP_CHAN_2, pCard);
     psub->d = find_trigger(pRec->dg3e, EVR_MAP_CHAN_3, pCard);
+    psub->z++; /* Just change as a generation counter! */
     return 0;
 }
 
