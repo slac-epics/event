@@ -624,6 +624,7 @@ return 0;
  * Output:
  *     A-D - Event number causing this output to trigger, 0 = no trigger,
  *           512 = multiple triggers, 1024 = misconfigure (no IRQ).
+ *     E-H - Change counters for A-D, respectively.
  */
 static int evrTriggerInit(longSubRecord *psub)
 {
@@ -660,7 +661,14 @@ static int evrTriggerProc(longSubRecord *psub)
     psub->b = find_trigger(pRec->dg1e, EVR_MAP_CHAN_1, pCard);
     psub->c = find_trigger(pRec->dg2e, EVR_MAP_CHAN_2, pCard);
     psub->d = find_trigger(pRec->dg3e, EVR_MAP_CHAN_3, pCard);
-    psub->z++; /* Just change as a generation counter! */
+    if (psub->a != psub->la)
+        psub->e++;
+    if (psub->b != psub->lb)
+        psub->f++;
+    if (psub->c != psub->lc)
+        psub->g++;
+    if (psub->d != psub->ld)
+        psub->h++;
     return 0;
 }
 
