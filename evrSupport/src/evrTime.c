@@ -89,12 +89,11 @@ typedef struct {
                               /* 2nd 32 bits = # of nsecs since last sec */
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
-#define TSCNT 50
-  epicsTimeStamp      fifotime[TSCNT];
-  int                 fifostatus[TSCNT];
+  epicsTimeStamp      fifotime[MAX_TS_QUEUE];
+  int                 fifostatus[MAX_TS_QUEUE];
   int                 idx;
   int                 count;         /* # times this event has happened	 */
-  int                 fidq[TSCNT];
+  int                 fidq[MAX_TS_QUEUE];
   int                 fidR;
   int                 fidW;
 } evrTime_ts;
@@ -356,9 +355,9 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, int *
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps) || epicsMutexLock(evrTimeRWMutex_ps))
     return epicsTimeERROR;
   if (*idx == -1)
-      *idx = (eventCodeTime_as[eventCode].idx + TSCNT - 1) % TSCNT;
+      *idx = (eventCodeTime_as[eventCode].idx + MAX_TS_QUEUE - 1) % MAX_TS_QUEUE;
   else
-      *idx = (*idx + incr) % TSCNT;
+      *idx = (*idx + incr) % MAX_TS_QUEUE;
   *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx];
   status = eventCodeTime_as[eventCode].fifostatus[*idx];
   epicsMutexUnlock(evrTimeRWMutex_ps);
@@ -457,7 +456,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         /* init timestamp structures to invalid status & system time*/
         for (idx=0; idx<=MRF_NUM_EVENTS; idx++) {
           int idx2;
-          for (idx2 = 0; idx2 < TSCNT; idx2++) {
+          for (idx2 = 0; idx2 < MAX_TS_QUEUE; idx2++) {
               eventCodeTime_as[idx].fifotime[idx2] = mod720time;
               eventCodeTime_as[idx].fifostatus[idx2] = epicsTimeERROR;
           }
@@ -828,7 +827,7 @@ int evrTimeCount(unsigned int eventCode, unsigned int fiducial)
     else
       pevrTime->count = 1;
     pevrTime->fidq[pevrTime->fidW] = fiducial;
-    if (++pevrTime->fidW == TSCNT)
+    if (++pevrTime->fidW == MAX_TS_QUEUE)
         pevrTime->fidW = 0;
     return epicsTimeOK;
   }
@@ -897,7 +896,7 @@ static long evrTimeEvent(longSubRecord *psub)
         int newfid;
 
         newfid = pevrTime->fidq[pevrTime->fidR];
-        if (++pevrTime->fidR == TSCNT)  /* This is assuming we never overrun */
+        if (++pevrTime->fidR == MAX_TS_QUEUE)  /* This is assuming we never overrun */
             pevrTime->fidR = 0;
 
         if (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK && 
@@ -1017,7 +1016,7 @@ static long evrTimeEvent(longSubRecord *psub)
         int idx = pevrTime->idx;
         pevrTime->fifotime[idx]   = *newts;
         pevrTime->fifostatus[idx] = pevrTime->status;
-        if (++pevrTime->idx == TSCNT)
+        if (++pevrTime->idx == MAX_TS_QUEUE)
             pevrTime->idx = 0;
     }
 
