@@ -91,7 +91,7 @@ typedef struct {
   int                 status; /* 0=OK; -1=invalid                        */
   epicsTimeStamp      fifotime[MAX_TS_QUEUE];
   int                 fifostatus[MAX_TS_QUEUE];
-  int                 idx;
+  unsigned int        idx;
   int                 count;         /* # times this event has happened	 */
   int                 fidq[MAX_TS_QUEUE];
   int                 fidR;
@@ -348,18 +348,34 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
 
-int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, int *idx, int incr)
+int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned int *idx, int incr)
 {
   int status;
+  static int cnt;
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps) || epicsMutexLock(evrTimeRWMutex_ps))
     return epicsTimeERROR;
   if (incr == MAX_TS_QUEUE)
-      *idx = (eventCodeTime_as[eventCode].idx + MAX_TS_QUEUE - 1) % MAX_TS_QUEUE;
+      *idx = eventCodeTime_as[eventCode].idx - 1;
   else
-      *idx = (*idx + MAX_TS_QUEUE + incr) % MAX_TS_QUEUE;
-  *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx];
-  status = eventCodeTime_as[eventCode].fifostatus[*idx];
+      *idx += incr;
+  if (*idx >= eventCodeTime_as[eventCode].idx) {
+      struct timespec req = {0, 1000000}; /* 1 ms */
+      epicsMutexUnlock(evrTimeRWMutex_ps);
+      for (status = 1; status < 10; status++) {
+          nanosleep(&req, NULL);
+          if (*idx < eventCodeTime_as[eventCode].idx)
+              break;
+      }
+      if (status == 10) {
+          printf("Failed to recover uninitialized timestamp: index %d (event index %d)\n",
+                 *idx, eventCodeTime_as[eventCode].idx);
+          fflush(stdout);
+      }
+      epicsMutexLock(evrTimeRWMutex_ps);
+  }
+  *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx & MAX_TS_QUEUE_MASK];
+  status = eventCodeTime_as[eventCode].fifostatus[*idx & MAX_TS_QUEUE_MASK];
   epicsMutexUnlock(evrTimeRWMutex_ps);
   
   return status; 
@@ -1013,11 +1029,9 @@ static long evrTimeEvent(longSubRecord *psub)
         }
 
         /* Add the timestamp to the queue as well. */
-        int idx = pevrTime->idx;
+        unsigned int idx = (pevrTime->idx++) & MAX_TS_QUEUE_MASK;
         pevrTime->fifotime[idx]   = *newts;
         pevrTime->fifostatus[idx] = pevrTime->status;
-        if (++pevrTime->idx == MAX_TS_QUEUE)
-            pevrTime->idx = 0;
     }
 
     /*

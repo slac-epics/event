@@ -80,6 +80,8 @@ extern "C" {
 
 #define MAX_TS_QUEUE            64              /* # timestamps queued per event */
 #define MAX_TS_QUEUE_MASK       63
+
+extern int lastfid;                             /* The last known fiducial, set by interrupt handler */
   
 /* For time ID */
 typedef enum {
@@ -121,7 +123,7 @@ int evrTimeGet            (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     eventCode);
 int evrTimeGetFifo        (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     eventCode,
-                           int             *idx,
+                           unsigned int    *idx,
                            int              incr);
 int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     pulseID);
