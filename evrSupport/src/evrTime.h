@@ -78,7 +78,8 @@ extern "C" {
 #define TIMESLOT_MAX            6               /* Maximum time slot   */
 #define TIMESLOT_DIFF           3               /* Timeslot difference */
 
-#define MAX_TS_QUEUE            50              /* # timestamps queued per event */
+#define MAX_TS_QUEUE            64              /* # timestamps queued per event */
+#define MAX_TS_QUEUE_MASK       63
   
 /* For time ID */
 typedef enum {

@@ -333,8 +333,8 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 	                                  0,1=time associated w this pulse
                                           (event code 1 = fiducial)
                                           1 to 255 = EVR event codes
-  int            * idx          read/write The last fifo index we read (-1 to initialize to the current time)
-  int            incr           read       How far to move ahead (usually 1, for the next time)
+  int            * idx          read/write The last fifo index we read
+  int            incr           read       How far to move ahead (MAX_TS_QUEUE if idx is uninitialized)
 
   Rem:  Routine to get the epics timestamp from a queue of timestamps.  This must
         be called no faster than timestamps come in, as there is no checking for bounds.
@@ -354,10 +354,10 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, int *
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps) || epicsMutexLock(evrTimeRWMutex_ps))
     return epicsTimeERROR;
-  if (*idx == -1)
+  if (incr == MAX_TS_QUEUE)
       *idx = (eventCodeTime_as[eventCode].idx + MAX_TS_QUEUE - 1) % MAX_TS_QUEUE;
   else
-      *idx = (*idx + incr) % MAX_TS_QUEUE;
+      *idx = (*idx + MAX_TS_QUEUE + incr) % MAX_TS_QUEUE;
   *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx];
   status = eventCodeTime_as[eventCode].fifostatus[*idx];
   epicsMutexUnlock(evrTimeRWMutex_ps);
