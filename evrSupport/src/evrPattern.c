@@ -631,22 +631,38 @@ static int evrTriggerInit(longSubRecord *psub)
     return 0;
 }
 
-static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard)
+static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard, unsigned long last,
+                        unsigned long *gen)
 {
-    int i, j = -1;
-    if (!enable)
-        return 0;
-    for (i = 0; i < EVR_NUM_EVENTS; i++) {
-        if ((pCard->ErEventTab[i] & mask) == mask) {
-            if (j < 0)
-                j = i;
-            else
-                return 512; /* Found two triggers! */
+    int i, j = -1, result = 0;
+
+    if (enable) {
+        for (i = 0; i < EVR_NUM_EVENTS; i++) {
+            if ((pCard->ErEventTab[i] & mask) == mask) {
+                if (j < 0)
+                    j = i;
+                else {
+                    j = -2;
+                    break; /* Found two triggers! */
+                }
+            }
+        }
+        switch (j) {
+        case -2:
+            result = 512;
+            break;
+        case -1:
+            result = 0;
+            break;
+        default:
+            result = (pCard->ErEventTab[j] & EVR_MAP_INTERRUPT) ? j : 1024;
+            break;
         }
     }
-    if (j < 0)
-        return 512;
-    return (pCard->ErEventTab[j] & EVR_MAP_INTERRUPT) ? j : 1024;
+ done:
+    if (result != last)
+        (*gen)++;
+    return result;
 }
 
 static int evrTriggerProc(longSubRecord *psub)
@@ -657,18 +673,10 @@ static int evrTriggerProc(longSubRecord *psub)
     if (!pCard)
         return 0;
     pRec = (erRecord *)pCard->pRec;
-    psub->a = find_trigger(pRec->dg0e, EVR_MAP_CHAN_0, pCard);
-    psub->b = find_trigger(pRec->dg1e, EVR_MAP_CHAN_1, pCard);
-    psub->c = find_trigger(pRec->dg2e, EVR_MAP_CHAN_2, pCard);
-    psub->d = find_trigger(pRec->dg3e, EVR_MAP_CHAN_3, pCard);
-    if (psub->a != psub->la)
-        psub->e++;
-    if (psub->b != psub->lb)
-        psub->f++;
-    if (psub->c != psub->lc)
-        psub->g++;
-    if (psub->d != psub->ld)
-        psub->h++;
+    psub->a = find_trigger(pRec->dg0e, EVR_MAP_CHAN_0, pCard, psub->la, &psub->e);
+    psub->b = find_trigger(pRec->dg1e, EVR_MAP_CHAN_1, pCard, psub->lb, &psub->f);
+    psub->c = find_trigger(pRec->dg2e, EVR_MAP_CHAN_2, pCard, psub->lc, &psub->g);
+    psub->d = find_trigger(pRec->dg3e, EVR_MAP_CHAN_3, pCard, psub->ld, &psub->h);
     return 0;
 }
 
