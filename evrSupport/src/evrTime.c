@@ -350,8 +350,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 
 int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned int *idx, int incr)
 {
-  int status;
-  static int cnt;
+  int status = 0, i;
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps) || epicsMutexLock(evrTimeRWMutex_ps))
     return epicsTimeERROR;
@@ -362,19 +361,18 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
   if (*idx >= eventCodeTime_as[eventCode].idx) {
       struct timespec req = {0, 1000000}; /* 1 ms */
       epicsMutexUnlock(evrTimeRWMutex_ps);
-      for (status = 1; status < 10; status++) {
+#define TO_LIM 4
+      for (i = 1; i < TO_LIM; i++) {
           nanosleep(&req, NULL);
           if (*idx < eventCodeTime_as[eventCode].idx)
               break;
       }
-      if (status == 10) {
-          printf("Failed to recover uninitialized timestamp: index %d (event index %d)\n",
-                 *idx, eventCodeTime_as[eventCode].idx);
-          fflush(stdout);
-      }
+      if (i == TO_LIM)
+          status = 0x1ffff; /* We missed, so at least flag this as invalid! */
       epicsMutexLock(evrTimeRWMutex_ps);
   }
   *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx & MAX_TS_QUEUE_MASK];
+  epicsTime_ps->nsec |= status;
   status = eventCodeTime_as[eventCode].fifostatus[*idx & MAX_TS_QUEUE_MASK];
   epicsMutexUnlock(evrTimeRWMutex_ps);
   
