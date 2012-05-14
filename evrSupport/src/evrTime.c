@@ -12,6 +12,7 @@
            evrTimeGetFromPipeline - Get Timestamp from Pipeline
            evrTimeGetFromEdef     - Get Timestamp from EDEF
            evrTimeGet        - Get Timestamp for an Event
+           evrTimeGetFifo    - Get Timestamp from an Event FIFO
            evrTimePutPulseID - Encode Pulse ID into a Timestamp
            evrTimeGetSystem  - Get System Time with Encoded Invalid Pulse ID
            evrTimePatternPutStart - Start New Time/Pattern Update
@@ -339,7 +340,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   Rem:  Routine to get the epics timestamp from a queue of timestamps.  This must
         be called no faster than timestamps come in, as there is no checking for bounds.
         
-        "idx = -1; evrTimeGetFifo(&ts, event, &idx, 1)" and "evrTimeGet(&ts, event)" return
+        "evrTimeGetFifo(&ts, event, &idx, MAX_TS_QUEUE)" and "evrTimeGet(&ts, event)" return
         identical timestamps.
         
 
@@ -358,7 +359,11 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
       *idx = eventCodeTime_as[eventCode].idx - 1;
   else
       *idx += incr;
-  if (*idx >= eventCodeTime_as[eventCode].idx) {
+  if (*idx + MAX_TS_QUEUE < eventCodeTime_as[eventCode].idx) {
+      /* Ow.  This is a *very* old timestamp! */
+      epicsMutexUnlock(evrTimeRWMutex_ps);
+      return epicsTimeERROR;
+  } else if (*idx >= eventCodeTime_as[eventCode].idx) {
       struct timespec req = {0, 1000000}; /* 1 ms */
       epicsMutexUnlock(evrTimeRWMutex_ps);
 #define TO_LIM 4
@@ -367,8 +372,12 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
           if (*idx < eventCodeTime_as[eventCode].idx)
               break;
       }
-      if (i == TO_LIM)
+      if (i == TO_LIM) {
+#if 0
+          printf("ETGF!\n");fflush(stdout);
+#endif
           status = 0x1ffff; /* We missed, so at least flag this as invalid! */
+      }
       epicsMutexLock(evrTimeRWMutex_ps);
   }
   *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx & MAX_TS_QUEUE_MASK];
@@ -983,6 +992,9 @@ static long evrTimeEvent(longSubRecord *psub)
                  */
                 *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
                 newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
+#if 0
+                printf("ETE1!\n");fflush(stdout);
+#endif
                 pevrTime->status = epicsTimeERROR;
                 last_good = NULL;
             } else {
@@ -1023,6 +1035,9 @@ static long evrTimeEvent(longSubRecord *psub)
              */
             *newts   = evr_aps[evrTimeCurrent]->pattern_s.time;
             newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
+#if 0
+            printf("ETE2!\n");fflush(stdout);
+#endif
             pevrTime->status = epicsTimeERROR;
         }
 

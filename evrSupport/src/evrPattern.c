@@ -190,6 +190,9 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
       pattern_ps->time = prevTime;
     }
     evrTimePutPulseID(&pattern_ps->time, PULSEID_INVALID);
+#if 0
+    printf("EP!\n");fflush(stdout);
+#endif
     if (epicsTimeDiffInSeconds(&currentTime, mod720time_ps) > MODULO720_SECS)
       pattern_ps->modifier_a[MOD1_IDX] |= MODULO720_MASK;
   } else {
