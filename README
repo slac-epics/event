@@ -330,8 +330,8 @@ NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
 VI - Checkout Instructions
 --------------------------
 
-(1) Errors when loading event databases, contact drogind.
-(2) Errors from ErConfigure, contact saa.
+(1) Errors when loading event databases, contact khkim.
+(2) Errors from ErConfigure, contact khkim.
 (3) ErConfigure is successful but EVR has red LEDs, contact jedu to make 
 sure your fiber is connected properly from EVG through fanout modules to
 your EVR.
@@ -368,7 +368,82 @@ each display next to your IOC name (all channels must be connected):
     that there are no disconnected channels.
 
 
-V - Consideration for the multiple beam program
+
+V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues
+------------------------------------------------------------------------------------
+
+(1) Pick a correct event module
+
+    Recommend event-R3-2-2-br_generaltime-2-2 or later version
+    Edit configure/RELEASE file to use the latest event module
+    Please, check up the module dependency also.
+
+(2) Edit *evr.substitutions file for the er record instance
+    We can use the following database templates which have been used from old version of event module
+    for the er record instance.
+    . evr.db, evrWithDelays.db, evrWithExtDelays.db, evrWithFrontPanel.db
+
+    The new event module also provides new template for the Linux PMC platform
+    . evrPmc.db, evrWithDelayPmc.db, evrWithExtDelaysPmc.db, evrWithFronPanelPmc.db
+    If you are planing to use the Linux PMC EVR, please choose these template
+
+    (Remark) Please, find more details in the slides: 'How to use Tming System as a Client'.
+
+(3) Edit *evr.substitutions file for the trigger/event configuration
+
+    Please, use evrEventCtrl.db template for the trigger/event configuration
+    Need to need to describe a list of event number which will be used for the trigger,
+    and also need to put initial trigger configuration.
+    But, it can be changed at runtime if we need.
+
+    (Remark) the trigger/event cofniguration part was not changed from the previous version,
+    but, need to consider for each beam program. Each beam program has different event list.
+
+(4) Edit *pattern.substitutions file to choose proper timeslots, and propoer event list for each beam program
+
+    Put correct active timeslots for the macors: ST1ST, and TS2ND for the evrPatternAll.db.
+    The evrPatternAll.db is a common template for all of beam programs.
+
+    Please, put a correct evrEvent*.db template. Each beam program has own template
+
+    (Remark) Please, look at 'consideration for the multiple beam program' section in this file
+             and also look at the slies: 'How to use Timing System as a Client'.
+
+(5) Edit *trig.substitutions file for the event code invariant delay and, the automatic generating EDM screen
+
+    Put new macros: TOUT and ACTV for the evrDevTrig.db template. It is for the event code invariant delay.
+    Please, find more detialed information in the 'consideration to use the event invariant delay' section in this file.
+    Also, can find an example in the slides: 'How to use Timing System as a Client'.
+
+
+    Put new comment tags in the evrDevTrig.db section in the substitutions file. It is for the automatic generating EDM screen.
+    Please, find more detailed information and example in the slides: 'How to use Timing System as a Client'.
+
+
+(6) Edit Makefile in the src/Db directory for the automatic generating EDM screen
+
+    Need to put new target to generate the EDM screen from the *trig.substitutions file
+
+	example)
+
+		gen_trig_edl:
+			create_edm_event_msi.py   IOC-XT01-IM01trig.substitutions
+
+    The *trig.substitutions file name should be matched with yours.
+
+
+(7) Misc.
+
+    - Please, look at the section for the 'Consideration for the autusave' in this file
+    - Recommend to use high level delay and width PVs for the save-restore
+    - Need to use save-restore for the er record setting
+    - Please, do not use the pre-scaler for the extended delay
+      . the event code invariant delay does not work properly with the pre-scaler
+      . EVR provides enough range for the delay without the pre-scaler
+
+
+
+Consideration for the multiple beam program
 ------------------------------------------------
 
 Now, we have mulitple beam programs. Each beam program has different event configuration.
@@ -415,7 +490,7 @@ You may want to use event number 6x for the XTA due to the beam runs on timeslot
 
 
 
-IV - Consideration to use the event invariant delay
+Consideration to use the event invariant delay
 ---------------------------------------------------
 
 We have made changes on the evrDevTrg.db. This database has new macros: TOUT and ACTV.
@@ -429,6 +504,9 @@ So, you can use, OUT0, OUT1, OUT2 for the front panel.
 
 The ACTV macro enables/disables the event code invariant delay.
 If you don't like to use this new feature, you can put 0, other then, you can put 1.
+
+
+Please, make sure your TEC macros which should be defined in your evrEvent*.db template
 
 
 
@@ -461,8 +539,6 @@ The event module support two ways to use the autosave.
 	# Set monitoring for autosave
 	create_monitor_set("info_positions.req", 5, "DEV=<<EVR_NAME>>")
 	# create_monitor_set("info_settings.req", 30, "DEV=<<EVR_NAME>>") ## We only have INFO field for VAL, thus, we dont need this line ##
-
-
 
 
 
