@@ -6,6 +6,7 @@
 
 record(longout, "$(DEV)EVENTCTRL") {
   field(DESC, "$(DESC)")
+  field(PINI, "YES")
 }
 
 record(fanout, "$(DEV)TINI") {
