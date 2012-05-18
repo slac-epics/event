@@ -55,6 +55,10 @@
 #include "alarm.h"            /* INVALID_ALARM             */
 
 
+#ifdef linux
+#define ntp_adjtime(TIMEX)   adjtimex((TIMEX))   /* consideration for the ulibc */
+#endif
+
 #define  MAX_PATTERN_DELTA_TIME  10 /* sec */
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
