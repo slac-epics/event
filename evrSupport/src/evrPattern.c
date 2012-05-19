@@ -55,8 +55,8 @@
 #include "alarm.h"            /* INVALID_ALARM             */
 
 
-#ifdef linux
-#define ntp_adjtime(TIMEX)   adjtimex((TIMEX))   /* consideration for the ulibc */
+#if defined(__linux__) && !defined(ntp_adjtime)
+#define ntp_adjtime(arg) adjtimex((arg))
 #endif
 
 #define  MAX_PATTERN_DELTA_TIME  10 /* sec */
