@@ -324,6 +324,23 @@ void ErIrqHandler(int signal)
 			if(pCard->DevEventFunc != NULL)
 				(*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
 		}
+#ifdef NO_DBUF_IRQ
+                /* This should always be here 2ms before the fiducial event */
+		if(flags & EVR_IRQFLAG_DATABUF) {
+			int databuf_sts = EvrGetDBufStatus(pEr);
+			if(databuf_sts & (1<<C_EVR_DATABUF_CHECKSUM))
+				if (pCard->DevErrorFunc != NULL)
+					(*pCard->DevErrorFunc)(pCard, ERROR_DBUF_CHECKSUM);
+			if (pCard->DevDBuffFunc != NULL) {
+				pCard->DBuffSize = (databuf_sts & ((1<<(C_EVR_DATABUF_SIZEHIGH+1))-1));
+				for (i=0;  i < pCard->DBuffSize>>2;  i++)
+					pCard->DataBuffer[i] = be32_to_cpu(pEr->Databuf[i]);
+				EvrReceiveDBuf(pEr, 1);	/* That means we only re-enable it if 
+							   someone cares (DevDBuffFunc set) */
+				(*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
+			}
+		}
+#endif
 		if(flags & EVR_IRQFLAG_EVENT) {
 			struct FIFOEvent fe;
 			for(i=0; i < EVR_FIFO_EVENT_LIMIT; i++) {
@@ -348,6 +365,7 @@ void ErIrqHandler(int signal)
 			if (pCard->DevErrorFunc != NULL)
 				(*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
 		}
+#ifndef NO_DBUF_IRQ
 		if(flags & EVR_IRQFLAG_DATABUF) {
 			int databuf_sts = EvrGetDBufStatus(pEr);
 			if(databuf_sts & (1<<C_EVR_DATABUF_CHECKSUM))
@@ -362,6 +380,7 @@ void ErIrqHandler(int signal)
 				(*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
 			}
 		}
+#endif
 		if(flags) {
 			EvrClearIrqFlags(pEr, flags);
 			EvrIrqHandled(pCard->Slot);
@@ -1867,6 +1886,19 @@ LOCAL_RTN void ErDrvReportCall(const iocshArgBuf * args)
 	ErDrvReport((epicsInt32)args[0].ival);
 }
 
+/* iocsh command: fiddbg */
+LOCAL const iocshArg fiddbgArg0 = {"Level" , iocshArgInt};
+LOCAL const iocshArg *const fiddbgArgs[1] = {&fiddbgArg0};
+LOCAL const iocshFuncDef fiddbgDef = {"fiddbg", 1, fiddbgArgs};
+int fiddbg = 0;
+
+LOCAL_RTN void fiddbgCall(const iocshArgBuf * args)
+{
+    fiddbg = args[0].ival;
+    printf("Fiducial debugging is %s.\n", fiddbg ? "on" : "off");
+    fflush(stdout);
+}
+
 /* Registration APIs */
 LOCAL void drvMrfErRegister()
 {
@@ -1877,5 +1909,6 @@ LOCAL void drvMrfErRegister()
 	iocshRegister(	&ErConfigureDef,	ErConfigureCall );
 	iocshRegister(	&ErDebugLevelDef,	ErDebugLevelCall );
 	iocshRegister(	&ErDrvReportDef,	ErDrvReportCall );
+	iocshRegister(	&fiddbgDef,	        fiddbgCall );
 }
 epicsExportRegistrar(drvMrfErRegister);

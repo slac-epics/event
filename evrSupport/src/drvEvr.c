@@ -369,7 +369,9 @@ int evrInitialize()
   } else {
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
     ErEnableDBuff            (pCard, 1);
+#ifndef NO_DBUF_IRQ
     ErDBuffIrq               (pCard, 1);
+#endif
     ErRegisterEventHandler   (pCard->Cardno,    (USER_EVENT_FUNC)evrEvent);
   }
 #endif	/* EVR_DRIVER_SUPPORT */

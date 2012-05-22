@@ -466,8 +466,12 @@ static long write_ao(aoRecord *pao)
   if (!paddr) status = -1;
   else if (dbGetField(paddr, DBR_DOUBLE, &options_s, &options, &nrequest, 0)) {
     status = -1;
+    if (pao->tse == epicsTimeEventDeviceTime) /* We need to timestamp it somehow! */
+        epicsTimeGetCurrent(&pao->time);
   } else {
     status = bsaSecnAvg(&options_s.time, pao->val, options_s.status, options_s.severity, 0, pao->dpvt);
+    if (pao->tse == epicsTimeEventDeviceTime)
+        pao->time = options_s.time;
   }
 
   if (status) recGblSetSevr(pao,WRITE_ALARM,INVALID_ALARM);

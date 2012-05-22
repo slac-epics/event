@@ -172,6 +172,7 @@ Argument:  next_event_to_watch...The event to watch from this call onwards
 #define PEEK_PIPE_SIZE  10
 epicsUInt32 peek_fiducial (epicsUInt32*next_event_to_watch,epicsUInt32 *Ticks,epicsUInt32 );
 
+extern int fiddbg; /* Temporary fiducial debug variable. */
 
 #ifdef __cplusplus
 }

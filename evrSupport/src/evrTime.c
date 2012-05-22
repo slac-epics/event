@@ -373,9 +373,9 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
               break;
       }
       if (i == TO_LIM) {
-#if 0
-          printf("ETGF!\n");fflush(stdout);
-#endif
+          if (fiddbg) {
+              printf("ETGF!\n");fflush(stdout);
+          }
           status = 0x1ffff; /* We missed, so at least flag this as invalid! */
       }
       epicsMutexLock(evrTimeRWMutex_ps);
@@ -944,7 +944,8 @@ static long evrTimeEvent(longSubRecord *psub)
                    psub->a, newts->secPastEpoch, newts->nsec);
             fflush(stdout);
 #endif
-        } else if (last_good || evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK) {
+        } else if (last_good || (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK &&
+                                 (evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff) != 0x1ffff)) {
             /*
              * OK, we are out of sync, but we have a good time basis!  We will
              * construct a timestamp from this that will be close to the EVG time,
@@ -992,9 +993,9 @@ static long evrTimeEvent(longSubRecord *psub)
                  */
                 *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
                 newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-#if 0
-                printf("ETE1!\n");fflush(stdout);
-#endif
+                if (fiddbg) {
+                    printf("ETE1!\n");fflush(stdout);
+                }
                 pevrTime->status = epicsTimeERROR;
                 last_good = NULL;
             } else {
@@ -1035,9 +1036,9 @@ static long evrTimeEvent(longSubRecord *psub)
              */
             *newts   = evr_aps[evrTimeCurrent]->pattern_s.time;
             newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-#if 0
-            printf("ETE2!\n");fflush(stdout);
-#endif
+            if (fiddbg) {
+                printf("ETE2!\n");fflush(stdout);
+            }
             pevrTime->status = epicsTimeERROR;
         }
 
