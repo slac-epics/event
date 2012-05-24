@@ -359,22 +359,31 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
       *idx = eventCodeTime_as[eventCode].idx - 1;
   else
       *idx += incr;
-  if (*idx + MAX_TS_QUEUE < eventCodeTime_as[eventCode].idx) {
-      /* Ow.  This is a *very* old timestamp! */
+  /*
+   * eventCodeTime_as[eventCode].idx is the monotonically increasing location for the *next*
+   * timestamp... it isn't valid yet!  Since there are MAX_TS_QUEUE entries, this means that
+   * the valid entries are between eventCodeTime_as[eventCode].idx - MAX_TS_QUEUE and 
+   * eventCodeTime_as[eventCode].idx - 1.
+   *
+   * If we're here *slightly* early (eventCodeTime_as[eventCode].idx == *idx), we'll wait.
+   * Otherwise, we report an error.
+   */
+  if (*idx + MAX_TS_QUEUE < eventCodeTime_as[eventCode].idx ||
+      *idx > eventCodeTime_as[eventCode].idx) {
       epicsMutexUnlock(evrTimeRWMutex_ps);
       return epicsTimeERROR;
-  } else if (*idx >= eventCodeTime_as[eventCode].idx) {
-      struct timespec req = {0, 1000000}; /* 1 ms */
+  } else if (*idx == eventCodeTime_as[eventCode].idx) {
       epicsMutexUnlock(evrTimeRWMutex_ps);
 #define TO_LIM 4
       for (i = 1; i < TO_LIM; i++) {
+          struct timespec req = {0, 1000000}; /* 1 ms */
           nanosleep(&req, NULL);
           if (*idx < eventCodeTime_as[eventCode].idx)
               break;
       }
       if (i == TO_LIM) {
           if (fiddbg) {
-              printf("ETGF!\n");fflush(stdout);
+              printf("ETGF %d %d!\n", *idx, eventCodeTime_as[eventCode].idx);fflush(stdout);
           }
           status = 0x1ffff; /* We missed, so at least flag this as invalid! */
       }
