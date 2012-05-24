@@ -1,5 +1,12 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-3: (KHKIM)
+        * put a variable into RELEASE_SITE file to recognize the beam program
+          need to put the following into RELEASE_SITE after did eco
+          SITE_FACILITY = [LCLS | FACET | XTA]
+
+        * change info field to use info_settings.req 
+
 event-R3-2-2-br_generaltime-2-2: (KHKIM) 04-18-2012
         * bug fixing in linux driver
         * add FACET events: ACC STDBY
