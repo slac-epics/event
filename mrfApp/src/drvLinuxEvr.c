@@ -1899,6 +1899,17 @@ LOCAL_RTN void fiddbgCall(const iocshArgBuf * args)
     fflush(stdout);
 }
 
+static const iocshArg		mcbtimeArg0	= { "min",	iocshArgInt };
+static const iocshArg		mcbtimeArg1	= { "max",	iocshArgInt };
+static const iocshArg	*	mcbtimeArgs[2]	= { &mcbtimeArg0, &mcbtimeArg1 };
+static const iocshFuncDef   mcbtimeFuncDef	= { "mcbtime", 2, mcbtimeArgs };
+extern void mcbtime(int arg1, int arg2);
+static int  mcbtimeCall( const iocshArgBuf * args )
+{
+    mcbtime(args[0].ival, args[1].ival);
+    return 0;
+}
+
 /* Registration APIs */
 LOCAL void drvMrfErRegister()
 {
@@ -1910,5 +1921,6 @@ LOCAL void drvMrfErRegister()
 	iocshRegister(	&ErDebugLevelDef,	ErDebugLevelCall );
 	iocshRegister(	&ErDrvReportDef,	ErDrvReportCall );
 	iocshRegister(	&fiddbgDef,	        fiddbgCall );
+	iocshRegister(  &mcbtimeFuncDef,        mcbtimeCall );
 }
 epicsExportRegistrar(drvMrfErRegister);

@@ -135,10 +135,10 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
                            epicsEnum16     *edefSevr_p);
 int evrTimeGet            (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     eventCode);
-int evrTimeGetFifo        (epicsTimeStamp  *epicsTime_ps,
-                           unsigned int     eventCode,
-                           unsigned int    *idx,
-                           int              incr);
+int evrTimeGetFifo        (epicsTimeStamp     *epicsTime_ps,
+                           unsigned int        eventCode,
+                           unsigned long long *idx,
+                           int                 incr);
 int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     pulseID);
 /* Routines used only by event module and Mpg application */

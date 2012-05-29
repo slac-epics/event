@@ -92,7 +92,7 @@ typedef struct {
   int                 status; /* 0=OK; -1=invalid                        */
   epicsTimeStamp      fifotime[MAX_TS_QUEUE];
   int                 fifostatus[MAX_TS_QUEUE];
-  unsigned int        idx;
+  unsigned long long  idx;
   int                 count;         /* # times this event has happened	 */
   int                 fidq[MAX_TS_QUEUE];
   int                 fidR;
@@ -334,7 +334,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 	                                  0,1=time associated w this pulse
                                           (event code 1 = fiducial)
                                           1 to 255 = EVR event codes
-  int            * idx          read/write The last fifo index we read
+  unsigned long long * idx      read/write The last fifo index we read
   int            incr           read       How far to move ahead (MAX_TS_QUEUE if idx is uninitialized)
 
   Rem:  Routine to get the epics timestamp from a queue of timestamps.  This must
@@ -349,7 +349,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
 
-int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned int *idx, int incr)
+int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned long long *idx, int incr)
 {
   int status = 0, i;
   
@@ -496,7 +496,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].time    = mod720time;
           eventCodeTime_as[idx].status  = epicsTimeERROR;
           eventCodeTime_as[idx].count   = 0;
-          eventCodeTime_as[idx].fidR    = 0;
+          eventCodeTime_as[idx].fidR    = -1;
           eventCodeTime_as[idx].fidW    = 0;
         }
         if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
@@ -927,6 +927,9 @@ static long evrTimeEvent(longSubRecord *psub)
         epicsTimeStamp *newts = &pevrTime->time;
         int newfid;
 
+        if (pevrTime->fidR < 0) {
+            pevrTime->fidR = (pevrTime->fidW + MAX_TS_QUEUE - 1) & MAX_TS_QUEUE_MASK;
+        }
         newfid = pevrTime->fidq[pevrTime->fidR];
         if (++pevrTime->fidR == MAX_TS_QUEUE)  /* This is assuming we never overrun */
             pevrTime->fidR = 0;
@@ -1175,3 +1178,22 @@ epicsRegisterFunction(evrTimeDiag);
 epicsRegisterFunction(evrTimeRate);
 epicsRegisterFunction(evrTimeEvent);
 epicsRegisterFunction(evrTimeGetFiducial);
+
+void mcbtime(int arg1, int arg2)
+{
+    do {
+        int idx = eventCodeTime_as[arg1].idx;
+        int fidx = idx & MAX_TS_QUEUE_MASK;
+        int lidx = (idx + MAX_TS_QUEUE - 1) & MAX_TS_QUEUE_MASK;
+        printf("Event Code %d:\n", arg1);
+        printf("    idx = %d\n", idx);
+        printf("    first time = %08x.%08x\n", eventCodeTime_as[arg1].fifotime[fidx].secPastEpoch,
+               eventCodeTime_as[arg1].fifotime[fidx].nsec);
+        printf("    last time  = %08x.%08x\n", eventCodeTime_as[arg1].fifotime[lidx].secPastEpoch,
+               eventCodeTime_as[arg1].fifotime[lidx].nsec);
+        printf("    lastfid    = %05x\n", lastfid);
+        printf("    fidW = %d, fidR = %d\n", eventCodeTime_as[arg1].fidW, eventCodeTime_as[arg1].fidR);
+        arg1++;
+    } while (arg1 <= arg2);
+    fflush(stdout);
+}
