@@ -15,7 +15,7 @@ record(er, "$(EVR):CTRL") {
   field(TRG3, "Enabled")
   field(TRG4, "Enabled")
   field(TRG5, "Enabled")
-  field(TRG6, "Enabled")
+# field(TRG6, "Enabled")
   field(OTP0, "$(OTP)")
   field(OTP1, "$(OTP)")
   field(OTP2, "$(OTP)")

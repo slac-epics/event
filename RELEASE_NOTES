@@ -1,6 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R3-3-2:
+       * Sync with event-R3-2-2-br_generaltime-2-3
+
 event-R3-3-1:
        * Merge from event-R3-2-2-br_facet branch to the MAIN_TRUNK
          to take the facet db: evrEventFACET.db

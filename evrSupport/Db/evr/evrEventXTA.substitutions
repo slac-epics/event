@@ -15,13 +15,9 @@ file evrEvent.db
 #                            Event  Delay in
 #	 Location            Code   Clock Ticks Priority   Alarm Limits        Long Name
 pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , LNAME          }
-	{$(DEVICE) , INJECT  , 201,11900      , LOW  , 30.5, 30.5,  -1 ,  -1 , "Inject Rate"    }
-	{$(DEVICE) , SCAV    , 202,11901      , LOW  , 30.5, 30.5,  -1 ,  -1 , "Scavenger"      }
-	{$(DEVICE) , BEAM    , 203,11902      , LOW  , 30.5, 30.5,  -1 ,  -1 , "Beam"           }
-#
-	{$(DEVICE) , RFACC   , 211,11910      , LOW  , 30.5, 30.5,  -1 ,  -1 , "RF Accel"     }
-	{$(DEVICE) , RFSTBY  , 212,11911      , LOW  , 30.5, 30.5,  -1 ,  -1 , "RF Standby"   }
-	{$(DEVICE) , PROF    , 213,11912      , LOW  , 10.5, 10.5,  -1 ,  -1 , "Profile"      }
+	{$(DEVICE) , RFFULL  , 201,11900      , LOW  , 60.5, 60.5,  -1 ,  -1 , "RF Full Rate"}
+	{$(DEVICE) , BEAMFULL, 202,11901      , LOW  , 10.5, 10.5,  -1 ,  -1 , "Beam Full Rate" }
+	{$(DEVICE) , BEAMLMT , 203,11902      , LOW  ,  1.5,  1.5,  -1 ,  -1 , "Beam Rate Limit"}
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 ,12950      , LOW  ,360.5,360.5,359.5,359.5, "360Hz"        }

@@ -17,6 +17,20 @@ USR_CFLAGS_Linux += -DEVR_DRIVER_SUPPORT
 endif
 
 
+ifeq ($(SITE_FACILITY), LCLS)
+USR_CFLAGS += -DLCLS
+endif
+
+ifeq ($(SITE_FACILITY), FACET)
+USR_CFLAGS += -DFACET
+endif
+
+ifeq ($(SITE_FACILITY), XTA)
+USR_CFLAGS += -DXTA
+endif
+
+
+
 SRC_DIRS += $(TOP)/mrfApp/src
 
 INC+=evrTime.h
