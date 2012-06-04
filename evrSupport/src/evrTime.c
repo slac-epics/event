@@ -1181,6 +1181,11 @@ epicsRegisterFunction(evrTimeGetFiducial);
 
 void mcbtime(int arg1, int arg2)
 {
+    int doreset = 0;
+    if (arg1 < 0) {
+        arg1 = -arg1;
+        doreset = 1;
+    }
     do {
         int idx = eventCodeTime_as[arg1].idx;
         int fidx = idx & MAX_TS_QUEUE_MASK;
@@ -1193,6 +1198,8 @@ void mcbtime(int arg1, int arg2)
                eventCodeTime_as[arg1].fifotime[lidx].nsec);
         printf("    lastfid    = %05x\n", lastfid);
         printf("    fidW = %d, fidR = %d\n", eventCodeTime_as[arg1].fidW, eventCodeTime_as[arg1].fidR);
+        if (do_reset)
+            eventCodeTime_as[arg1].fidR = -1;
         arg1++;
     } while (arg1 <= arg2);
     fflush(stdout);
