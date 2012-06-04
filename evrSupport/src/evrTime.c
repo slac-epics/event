@@ -1198,7 +1198,7 @@ void mcbtime(int arg1, int arg2)
                eventCodeTime_as[arg1].fifotime[lidx].nsec);
         printf("    lastfid    = %05x\n", lastfid);
         printf("    fidW = %d, fidR = %d\n", eventCodeTime_as[arg1].fidW, eventCodeTime_as[arg1].fidR);
-        if (do_reset)
+        if (doreset)
             eventCodeTime_as[arg1].fidR = -1;
         arg1++;
     } while (arg1 <= arg2);
