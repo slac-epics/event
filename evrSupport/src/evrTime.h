@@ -103,6 +103,9 @@ typedef enum {
 } evrTimeId_te;
 #define MAX_EVR_TIME  4
 
+#define MAX_EDEF_TIME      8
+#define MAX_EDEF_TIME_MASK 7
+
 /* For modifier array */
 #define MAX_EVR_MODIFIER  6
 typedef epicsUInt32 evrModifier_ta[MAX_EVR_MODIFIER];
@@ -129,6 +132,11 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            unsigned long   *edefMinorMask_p,
                            unsigned long   *edefMajorMask_p);
 int evrTimeGetFromEdef    (unsigned int     edefIdx,
+                           epicsTimeStamp  *edefTime_ps,
+                           epicsTimeStamp  *edefTimeInit_ps,
+                           int             *edefAvgDone_p,
+                           epicsEnum16     *edefSevr_p);
+int evrTimeGetFromEdefTime(unsigned int     edefIdx,
                            epicsTimeStamp  *edefTime_ps,
                            epicsTimeStamp  *edefTimeInit_ps,
                            int             *edefAvgDone_p,

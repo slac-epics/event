@@ -11,6 +11,7 @@
            evrTimeEvent      - Update Timestamp for an Event (Event Rate)
            evrTimeGetFromPipeline - Get Timestamp from Pipeline
            evrTimeGetFromEdef     - Get Timestamp from EDEF
+           evrTimeGetFromEdefTime - Get Timestamp from EDEF and timestamp
            evrTimeGet        - Get Timestamp for an Event
            evrTimeGetFifo    - Get Timestamp from an Event FIFO
            evrTimePutPulseID - Encode Pulse ID into a Timestamp
@@ -118,7 +119,8 @@ extern unsigned long evrFiducialTime;
 unsigned long evrActiveFiducialTime = 0;
 
 /* Event definition (BSA) patterns */
-static evrTimeEdef_ts      edef_as[EDEF_MAX];
+static evrTimeEdef_ts      edef_as[EDEF_MAX][MAX_EDEF_TIME];
+static int                 edef_idx[EDEF_MAX];     /* The next write location! */
 
 /* Event code timestamps */
 static evrTime_ts          eventCodeTime_as[MRF_NUM_EVENTS+1];
@@ -264,18 +266,93 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
                            epicsTimeStamp  *edefTimeInit_ps,
                            int             *edefAvgDone_p,
                            epicsEnum16     *edefSevr_p)
-{  
+{
+  int idx; 
+  evrTimeEdef_ts *edef;
+
   if ((edefIdx >= EDEF_MAX) || (!evrTimeRWMutex_ps)) return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
   if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
-  *edefTime_ps     = edef_as[edefIdx].time;
-  *edefTimeInit_ps = edef_as[edefIdx].timeInit;
-  *edefAvgDone_p   = edef_as[edefIdx].avgdone;
-  *edefSevr_p      = edef_as[edefIdx].sevr;
+
+  idx = (edef_idx[edefIdx] - 1) & MAX_EDEF_TIME_MASK; /* Back one == last written! */
+  edef = &edef_as[edefIdx][idx];
+
+  *edefTime_ps     = edef->time;
+  *edefTimeInit_ps = edef->timeInit;
+  *edefAvgDone_p   = edef->avgdone;
+  *edefSevr_p      = edef->sevr;
   epicsMutexUnlock(evrTimeRWMutex_ps);
   
   return epicsTimeOK;
 }
+
+/*=============================================================================
+
+  Name: evrTimeGetFromEdefTime
+
+  Abs:  Get the evr epics timestamp from EDEF, defined as:
+        1st integer = number of seconds since 1990  
+        2nd integer = number of nsecs since last sec, except lower 17 bits=pulsid
+		
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        unsigned int        edefIdx       Read     EDEF Index (0 to EDEF_MAX-1)
+        epicsTimeStamp *    edefTime_ps   Read     EDEF active timestamp to match
+        epicsTimeStamp *    edefTimeInit_ps Write  EDEF init   timestamp
+        int *               edefAvgDone_p Write    EDEF average-done flag
+        epicsEnum16  *      edefSevr_p    Write    EDEF severity
+
+  Rem:  Routine to get the epics timestamp and flags from the EDEF timestamp
+        table that is populated from incoming broadcast from EVG.
+
+        This is used when we are processing data that potentially has an old
+        timestamp.  We search backwards until we find an edef that hopefully
+        matches but at least predates the data.
+
+  Side: None
+
+  Ret:  -1=Failed; 0 = Success
+==============================================================================*/
+
+int evrTimeGetFromEdefTime(unsigned int     edefIdx,
+                           epicsTimeStamp  *edefTime_ps,
+                           epicsTimeStamp  *edefTimeInit_ps,
+                           int             *edefAvgDone_p,
+                           epicsEnum16     *edefSevr_p)
+{
+  int idx, i; 
+  evrTimeEdef_ts *edef;
+
+  if ((edefIdx >= EDEF_MAX) || (!evrTimeRWMutex_ps)) return epicsTimeERROR;
+  /* if the r/w mutex is valid, and we can lock with it, read requested time index */
+  if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
+
+  idx = (edef_idx[edefIdx] - 1) & MAX_EDEF_TIME_MASK; /* Back one == last written! */
+  edef = &edef_as[edefIdx][idx];
+
+  for (i = 0; i < MAX_EDEF_TIME - 2; i++) {
+      if ((edef->time.secPastEpoch == edefTime_ps->secPastEpoch) &&
+          (edef->time.nsec == edefTime_ps->nsec)) {
+          *edefTime_ps     = edef->time;
+          *edefTimeInit_ps = edef->timeInit;
+          *edefAvgDone_p   = edef->avgdone;
+          *edefSevr_p      = edef->sevr;
+          epicsMutexUnlock(evrTimeRWMutex_ps);
+          return epicsTimeOK;
+      } else if ((edef->time.secPastEpoch < edefTime_ps->secPastEpoch) ||
+                 ((edef->time.secPastEpoch == edefTime_ps->secPastEpoch) &&
+                  (edef->time.nsec < edefTime_ps->nsec))) {
+          break;
+      } else {
+          idx = (idx - 1) & MAX_EDEF_TIME_MASK;
+          edef = &edef_as[edefIdx][idx];
+      }
+  }
+
+  epicsMutexUnlock(evrTimeRWMutex_ps);
+  return epicsTimeERROR; /* No match! */
+}
+
 
 /*=============================================================================
 
@@ -453,7 +530,7 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
 ==============================================================================*/ 
 int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
 {
-  int idx;
+  int idx, idx2;
   int timeslotDiff;
 
   if ((firstTimeSlotIn  >= 0) && (secondTimeSlotIn >= 0) &&
@@ -481,9 +558,11 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         }
         /* Init EDEF pattern array */
         for (idx=0; idx<EDEF_MAX; idx++) {
-          memset(&edef_as[idx], 0, sizeof(evrTimeEdef_ts));
-          edef_as[idx].timeInit = mod720time;
-          edef_as[idx].sevr = INVALID_ALARM;
+          memset(&edef_as[idx], 0, MAX_EDEF_TIME * sizeof(evrTimeEdef_ts));
+          for (idx2=0; idx2<MAX_EDEF_TIME; idx2++) {
+              edef_as[idx][idx2].timeInit = mod720time;
+              edef_as[idx][idx2].sevr = INVALID_ALARM;
+          }
         }
         /* init timestamp structures to invalid status & system time*/
         for (idx=0; idx<=MRF_NUM_EVENTS; idx++) {
@@ -581,23 +660,31 @@ int evrTime(epicsUInt32 mpsModifier)
         evr_ps->pattern_s.modifier_a[MOD5_IDX] & MOD5_EDEF_MASK) {
       for (idx=0;idx<EDEF_MAX;idx++) {
         edefMask = 1 << idx;
-        /* EDEF initialized? - check the newest mask so init done ASAP */
-        if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) {
-          edef_as[idx].timeInit = evr_aps[evrTimeNext2]->pattern_s.time;
-        }
-        /* EDEF active? - set time and flags used by BSA processing later */
-        if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
-          edef_as[idx].time = evr_ps->pattern_s.time;
-          if    (evr_ps->pattern_s.edefAvgDoneMask & edefMask)
-            edef_as[idx].avgdone = 1;
-          else
-            edef_as[idx].avgdone = 0;
-          if      (evr_ps->pattern_s.edefMinorMask & edefMask)
-            edef_as[idx].sevr = MINOR_ALARM;
-          else if (evr_ps->pattern_s.edefMajorMask & edefMask)
-            edef_as[idx].sevr = MAJOR_ALARM;
-          else
-            edef_as[idx].sevr = INVALID_ALARM;
+        if (!(evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) &&
+            !(evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask))
+          continue;
+        else {
+          int idx2 = edef_idx[idx]++ & MAX_EDEF_TIME_MASK;
+          evrTimeEdef_ts *edef = &edef_as[idx][idx2];
+          *edef = edef_as[idx][(idx2 - 1) & MAX_EDEF_TIME_MASK]; /* Init from previous! */
+          /* EDEF initialized? - check the newest mask so init done ASAP */
+          if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) {
+            edef->timeInit = evr_aps[evrTimeNext2]->pattern_s.time;
+          }
+          /* EDEF active? - set time and flags used by BSA processing later */
+          if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
+            edef->time = evr_ps->pattern_s.time;
+            if (evr_ps->pattern_s.edefAvgDoneMask & edefMask)
+              edef->avgdone = 1;
+            else
+              edef->avgdone = 0;
+            if (evr_ps->pattern_s.edefMinorMask & edefMask)
+              edef->sevr = MINOR_ALARM;
+            else if (evr_ps->pattern_s.edefMajorMask & edefMask)
+              edef->sevr = MAJOR_ALARM;
+            else
+              edef->sevr = INVALID_ALARM;
+            }
         }
       }
     }
