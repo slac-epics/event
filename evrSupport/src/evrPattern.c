@@ -55,6 +55,10 @@
 #include "alarm.h"            /* INVALID_ALARM             */
 
 
+#if defined(__linux__) && !defined(ntp_adjtime)
+#define ntp_adjtime(arg) adjtimex((arg))
+#endif
+
 #define  MAX_PATTERN_DELTA_TIME  10 /* sec */
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
