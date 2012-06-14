@@ -1,11 +1,29 @@
-Instructions for RTEMS EVR users                    Last Updated 3/1/2010
+Instructions for RTEMS EVR users                    Last Updated 6/6/2012
 --------------------------------
+These instructions are for EVENT module event-R3-2-2-br_generaltime branch or later
+and include instructions for updating to epics-R2-14-12. Before starting please read
+the sections
+ 'V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
+ 'Consideration for Autosave', and
+ 'Adding Timing Display autogen to your application'
+which is included near the end of this README
+
+If you are still using an older EVENT module please use the README for that specific
+module version
+
 
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
 
-(1) Add EVENT, GENERALTIME, and RESTORE or AUTOSAVE to configure/RELEASE and 
-clean/rebuild configure.
+(1) Add EVENT and AUTOSAVE to configure/RELEASE and 
+clean/rebuild configure. If this is a move to epics-R3-14-12 you will need
+to remove the GENERALTIME and RESTORE modules, update all other modules
+in your RELEASE file to those built for epics-R3-14-12, and use AUTOSAVE
+instead of RESTORE. Before proceeding please read the AUTOSAVE module README file, and
+the sections of this README
+  'V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
+  'Consideration for Autosave' 
+which are included near the end of this README file.
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
 
@@ -13,7 +31,7 @@ clean/rebuild configure.
    xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
    xxx_LIBS += mrfVme64x
-   xxx_LIBS += restore or autosave
+   xxx_LIBS += autosave
 
 Note that the order of the above libraries is important.
 
@@ -22,7 +40,7 @@ Note that the order of the above libraries is important.
 
    xxx_DBD += evrSupport.dbd
    xxx_DBD += devMrfEr.dbd
-   xxx_DBD += dbRestore.dbd or autosave.dbd
+   xxx_DBD += autosave.dbd
 
 (4) Add EVR databases to your application.  For an example, see:
 	event/<release>/evrIoc/Db/evrXL05.substitutions
@@ -32,7 +50,9 @@ Note that the order of the above libraries is important.
 
 (6) For IOCs with triggered devices, add trigger databases to your application.
     For an example, see:
-	event/<release>/evrIoc/Db/trigXL05.substitutions
+	event/<release>/evrIoc/Db/trigXL05.substitutions. Also add event EDM display
+    auto-generation to your trigger database file. See section 'Adding Timing Display
+    autogen to your application'.
 
 (7) For IOCs with beam-synchronous acquisition (BSA), add BSA databases to 
     your application.  For an example, see:
@@ -44,25 +64,9 @@ Note that the order of the above libraries is important.
     Consult with the HLA group to determine the proper values of <dev> and
     <secn> for your application.
 
-(9) For IOCs with triggered devices, add setpoints to the proper 
-    configuration file used to save and restore setpoints.  
-    The setpoint PVs include:
-	Per IOC:
-	$(IOC):FIDUCIALRATE.HIHI /LOG
-	$(IOC):FIDUCIALRATE.LOLO /LOG
-	$(IOC):TREF /LOG
-	Per triggered device:
-	$(DEV)TDES
-	$(DEV)TCON
-	$(DEV)TWID /LOG
-	$(DEV)TPOL /LOG
-	$(DEV)TCTL /LOG
-
-(9a) If the IOC is using ChannelWatcher to save setpoints, add the above 
-     setpoints to the IOC's ChannelWatcher configuration file.  
-     The .cwConfig file can be created from a .cwsubstitutions file.  
-     For an example, see:
-	event/<release>/evrIoc/srcRestore/trigXL05.cwsubstitutions
+(9) For IOCs with triggered devices, see below section 
+    'Consideration for Autosave' for instructions on setting up
+    autosave of your trigger save/restore setpoints.
 
 (10) For IOCs with triggered devices, add the trigger delays to the Channel
      Archiver.
@@ -417,7 +421,8 @@ V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) iss
 
 
     Put new comment tags in the evrDevTrig.db section in the substitutions file. It is for the automatic generating EDM screen.
-    Please, find more detailed information and example in the slides: 'How to use Timing System as a Client'.
+    Please read below section Adding Timing Display autogen to your application'.
+    Also, please find more detailed information and example in the slides: 'How to use Timing System as a Client'.
 
 
 (6) Edit Makefile in the src/Db directory for the automatic generating EDM screen
@@ -546,3 +551,51 @@ Consideration for the Linux PMC EVR
 ------------------------------------
 
 We are using new firmware for the Linux PMC EVR. It supports a new register map (modular register map) 
+
+
+
+Adding Timing Display autogen to your application
+------------------------------------------------------
+ IOC Engineer steps:
+ 1) Add the following comment tags to your *trig*.substitutions file:
+
+          <snip>
+    file evrDevTrig.db 
+    {
+    #EVR EVR:XT01:IM01
+    #FILE evnt_xt01_im01
+    #CONTROLPV1 SIOC:SYS6:AL00:MODE
+    #CONTROLPV2 SIOC:SYS6:AL00:TOD 
+         <snip>
+  where #EVR is your EVR device name, #FILE is the output evnt*.edl filename,
+  and CONTROLPV* indicates the PV names for mode and time of day at screen bottom,
+  (indicating PRODUCTION or DEVELOPMENT, and Time of Day) from approproate IOC. 
+  Note that the ":SYS*:" area will change depending on the machine.
+  Note that if CONTROLPV* tags are omitted, the PVs default to "SYS0" for LCLS
+  Note that FACET maps to SYS1 and acctest maps to SYS6
+
+ 2) Add to your Db/Makefile
+    gen_trig_edl:
+	   <TAB>create_edm_event_msi.py <*trig*.substitutions1 file>
+      <TAB>create_edm_event_msi.py <*trig*.substitutions2 file>
+              ....
+ Note:
+ $TOOLS/script contains the create_edm_event_msi.py script used
+ $EDM/templates contain the edm template files used by create_edm_event_msi.py 
+ $EDM/install is the area to which generated screens are copied
+
+ Example: See /afs/slac/g/acctest/epics/iocTop/R3-14-12/BeamCharge/MAIN_TRUNK/BeamChargeApp/Db/xta
+ inspect IOC-XT01-IM01trig.substitutions and Makefile
+
+ Note that the following example output from create_edm_event_msi.py is normal:
+[drogind@cdlx08 xta]$ make gen_trig_edl
+ create_edm_event_msi.py IOC-XT01-IM01trig.substitutions
+ channel count =  1
+ System as determined from CONTROLPV1  SYS6
+ Done generating  evnt_xt01_im01_msi.substitution
+ EDM templates from /afs/slac/g/acctest/tools/edm/display/templates
+ Generating EDL file /afs/slac/g/acctest/tools/edm/display/install/evnt_xt01_im01.edl
+ Warning: unexpanded macros in ouput
+
+ For any other errors, please consult with Murali or Debbie
+ -------------------------------------------------------------

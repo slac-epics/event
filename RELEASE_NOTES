@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+event=R3-2-2-br_generaltime-2-4: (KHKIM)
+        * update README file 
+
 event-R3-2-2-br_generaltime-2-3: (KHKIM)
         * put a variable into RELEASE_SITE file to recognize the beam program
           need to put the following into RELEASE_SITE after did eco
