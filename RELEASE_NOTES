@@ -1,8 +1,19 @@
 Release Notes for the event package
 -----------------------------------
-event=R3-2-2-br_generaltime-2-4: (KHKIM)
+event-R3-2-2-br_generaltime-2-4: (KHKIM)
         * update README file
         * fix configure/RELEASE file: EPICS_MODULES=$(MODULES_SITE_TOP)
+        * explicitly describe the target platforms
+        * include linuxRT as a target platform
+          configure/CONFIG_SITE
+           CROSS_COMPILER_TARGET_ARCHS = RTEMS-beatnik  RTEMS-uC5282 linuxRT-x86
+        * fix linux ISR handling issues to avoid missing interrupts
+          - fix interrupt ACK
+          - re-organize the task level handler
+          This change should affect on the linux and linuxRT targets.
+        * fix the fidcuial processing diagnostics for the intel x86 platform
+        * put more diagnostics for the linux-x86 and x86 base linuxRT platform
+          - to measure the evrTask delay due to the epicsEventSignal(semaphore)
 
 event-R3-2-2-br_generaltime-2-3: (KHKIM)
         * put a variable into RELEASE_SITE file to recognize the beam program
