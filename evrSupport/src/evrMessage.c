@@ -41,11 +41,12 @@
 #endif
 
 #include "dbAccess.h"           /* dbProcess,dbScan* protos    */
+#include "epicsThread.h"        /* epicsThreadSleep()          */
 #include "epicsTime.h"          /* epicsTimeStamp              */
 #include "errlog.h"             /* errlogPrintf                */
 #include "evrMessage.h"         /* prototypes in this file     */
 
-#define MAX_DELTA_TIME 1000000
+#define MAX_DELTA_TIME 400000000
 
 unsigned long evrFiducialTime = 0;
 
@@ -65,11 +66,15 @@ typedef struct
   unsigned long       noDataCount;
   unsigned long       checkSumErrorCount;
   unsigned long       procTimeStart;
+  unsigned long       procTimeLap;
   unsigned long       procTimeEnd;
   unsigned long       procTimeDeltaStartMax;
   unsigned long       procTimeDeltaStartMin;
   unsigned long       procTimeDeltaMax;
   unsigned long       procTimeDeltaCount;
+  unsigned long       procTimeDelayMin;
+  unsigned long       procTimeDelayMax;
+  unsigned long       procTimeDelay;
   unsigned long       procTimeDelta_a[MODULO720_COUNT];
   
 } evrMessage_ts;
@@ -98,9 +103,42 @@ static double        evrTicksPerUsec = 1;
 #define MFTB(var) (var)=Read_timer()
 #endif
 #endif
-#ifdef linux
+#if defined(linux) && !defined(_X86_)
 #define MFTB(var)  ((var)=1) /* make compiler happy */
 #endif
+
+/*
+ *
+ * from Kukhee Kim: 
+ *
+ */
+
+#ifdef _X86_
+__inline__ static unsigned long long int rdtsc(void)
+{
+        unsigned long long int x;
+        __asm__ volatile (".byte 0x0f, 0x31": "=A" (x));
+        return x;
+}
+static double evrTicksPerUsec = 1.5E+3;  /* need to fix it to avoid hardcoding */
+#define MFTB(var)  ((var)=(unsigned long) rdtsc())
+
+void  Get_evrTickPerUsec_for_X86(void)
+{
+    unsigned long start, stop;
+
+    do {
+      MFTB(start);
+      epicsThreadSleep(1.);
+      MFTB(stop);
+    } while(!(stop>start));
+
+    evrTicksPerUsec = (double)(stop-start) * 1.E-6;
+}
+#endif
+
+
+
 
 /*=============================================================================
 
@@ -438,6 +476,30 @@ int evrMessageStart(unsigned int messageIdx)
   }
   return 0;
 }
+
+int evrMessageLap(unsigned int messageIdx)
+{
+    unsigned long delayTime;
+
+    if(messageIdx == EVR_MESSAGE_FIDUCIAL) {
+        MFTB(evrMessage_as[messageIdx].procTimeLap);
+        delayTime = evrMessage_as[messageIdx].procTimeLap - evrMessage_as[messageIdx].procTimeStart;
+        evrMessage_as[messageIdx].procTimeDelay = delayTime;
+        
+        if(delayTime < MAX_DELTA_TIME) {
+            if(evrMessage_as[messageIdx].procTimeDelayMax < delayTime) 
+                evrMessage_as[messageIdx].procTimeDelayMax = delayTime;
+            if(evrMessage_as[messageIdx].procTimeDelayMin > delayTime)
+                evrMessage_as[messageIdx].procTimeDelayMin = delayTime;
+        }
+    }
+
+    
+
+    return 0;   
+}
+
+
 
 /*=============================================================================
 
@@ -474,6 +536,7 @@ int evrMessageEnd(unsigned int messageIdx)
     em_ps->procTimeDeltaMax =
       em_ps->procTimeDelta_a[em_ps->procTimeDeltaCount];
   }
+
   em_ps->procTimeDeltaCount++;
   if (em_ps->procTimeDeltaCount >= MODULO720_COUNT) {
     em_ps->procTimeDeltaCount = MODULO720_COUNT-1;
@@ -524,7 +587,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
          evrMessage_as[messageIdx].writeErrorCount);
   printf("Number of check sum errors: %lu\n",
          evrMessage_as[messageIdx].checkSumErrorCount);
-#ifdef __PPC__
+#if defined(__PPC__) || defined(_X86_)
   printf("Maximum proc time delta (us) = %lf\n",
          (double)evrMessage_as[messageIdx].procTimeDeltaMax/evrTicksPerUsec);
   printf("Max/Min proc start time deltas (us) = %lf/%lf\n",
@@ -544,7 +607,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
     if (interest > 2) count = MODULO720_COUNT;
     printf("Last %d proc time deltas (us):\n", count);
     for (idx=0; idx<count; idx++) {
-#ifdef __PPC__
+#if defined(__PPC__) || defined(_X86_)
       printf("  %d: %lf\n", idx,
              (double)evrMessage_as[messageIdx].procTimeDelta_a[idx]/
              evrTicksPerUsec);
@@ -611,7 +674,7 @@ int evrMessageCounts    (unsigned int  messageIdx,
   *procTimeStartMax_p    = em_ps->procTimeDeltaStartMax;
   *procTimeDeltaMax_p    = em_ps->procTimeDeltaMax;
 /* Nearest microsecond for PPC */
-#ifdef __PPC__
+#if defined(__PPC__) || defined(_X86_)
   *procTimeStartMin_p    = (unsigned long)
     (((double)(*procTimeStartMin_p)/evrTicksPerUsec) + 0.5);
   *procTimeStartMax_p    = (unsigned long)
@@ -626,7 +689,7 @@ int evrMessageCounts    (unsigned int  messageIdx,
     for (idx = 0; idx < em_ps->procTimeDeltaCount; idx++) {
       *procTimeDeltaAvg_p += em_ps->procTimeDelta_a[idx];
     }
-#ifdef __PPC__
+#if defined(__PPC__) || defined(_X86_)
     *procTimeDeltaAvg_p    = (unsigned long)
       ((((double)(*procTimeDeltaAvg_p)/
          (double)em_ps->procTimeDeltaCount)/
@@ -637,6 +700,32 @@ int evrMessageCounts    (unsigned int  messageIdx,
     em_ps->procTimeDeltaCount = 0;
   }
   return 0;
+}
+
+
+int evrMessageCountsFiducial(unsigned int messageIdx,
+                             epicsUInt32 *procTimeDelay_p,
+                             epicsUInt32 *procTimeDelayMin_p,
+                             epicsUInt32 *procTimeDelayMax_p)
+{
+   evrMessage_ts *em_ps = evrMessage_as + messageIdx;
+
+   if(messageIdx != EVR_MESSAGE_FIDUCIAL) return -1;
+
+    *procTimeDelay_p    = em_ps->procTimeDelay;
+    *procTimeDelayMin_p = em_ps->procTimeDelayMin;
+    *procTimeDelayMax_p = em_ps->procTimeDelayMax;
+
+#if defined(__PPC__) || defined(_X86_)
+    *procTimeDelay_p = (unsigned long) 
+        (((double)(*procTimeDelay_p)/evrTicksPerUsec) + 0.5);
+    *procTimeDelayMin_p = (unsigned long)
+        (((double)(*procTimeDelayMin_p)/evrTicksPerUsec) + 0.5);
+    *procTimeDelayMax_p = (unsigned long)
+        (((double)(*procTimeDelayMax_p)/evrTicksPerUsec) + 0.5);
+#endif
+
+    return 0;
 }
 /*=============================================================================
 
@@ -669,6 +758,8 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].procTimeDeltaStartMax = 0;
   evrMessage_as[messageIdx].procTimeDeltaStartMin = MAX_DELTA_TIME;
   evrMessage_as[messageIdx].procTimeDeltaCount    = 0;
+  evrMessage_as[messageIdx].procTimeDelayMax      = 0;
+  evrMessage_as[messageIdx].procTimeDelayMin      = MAX_DELTA_TIME;
   /* Save counter reset time for reporting purposes */
   epicsTimeGetCurrent(&evrMessage_as[messageIdx].resetTime_s);
   return 0;

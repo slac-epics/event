@@ -50,6 +50,10 @@ extern "C" {
 
 /* Defines for MODULO720 (2 second) Processing */
 #define MODULO720_COUNT 720   /* # of expected pulses for MOD720RESYNC */
+
+#ifdef _X86_
+void Get_evrTicksPerUsec_for_X86(void);
+#endif
   
 /* Waveform header in waveform sent by the EVG and received by the EVR */
 typedef struct {
@@ -99,6 +103,7 @@ evrMessageReadStatus_te
 int evrMessageWrite     (unsigned int  messageIdx, evrMessage_tu *message_pu);
 int evrMessageProcess   (unsigned int  messageIdx);
 int evrMessageStart     (unsigned int  messageIdx);
+int evrMessageLap       (unsigned int  messageIdx);
 int evrMessageEnd       (unsigned int  messageIdx);
 int evrMessageReport    (unsigned int  messageIdx, char *messageName_a,
                          int interest);
@@ -113,6 +118,10 @@ int evrMessageCounts    (unsigned int  messageIdx,
                          epicsUInt32 *procTimeStartMax_p,
                          epicsUInt32 *procTimeDeltaAvg_p,
                          epicsUInt32 *procTimeDeltaMax_p);
+int evrMessageCountsFiducial(unsigned int messageIdx,
+                         epicsUInt32 *procTimeDelay_p,
+                         epicsUInt32 *procTimeDelayMin_p,
+                         epicsUInt32 *procTimeDelayMax_p);
 int evrMessageCountReset   (unsigned int messageIdx);
 int evrMessageCheckSumError(unsigned int messageIdx);
 int evrMessageNoDataError  (unsigned int messageIdx);
