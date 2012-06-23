@@ -151,6 +151,7 @@ static epicsBoolean bErCardListInitDone = epicsFalse;
 static epicsMutexId ErCardListLock;
 static epicsMutexId ErConfigureLock;
 
+
 /**************************************************************************************************/
 /*                              Private APIs                                                      */
 /*                                                                                                */
@@ -316,37 +317,11 @@ void ErIrqHandler(int signal)
   }
   pEr = pCard->pEr;
   flags = EvrGetIrqFlags(pEr);
+  if(flags & ~EVR_IRQFLAG_FIFOFULL) EvrClearIrqFlags(pEr, (flags & ~EVR_IRQFLAG_FIFOFULL)); 
 
   irqCount++;
 
-  if(flags & EVR_IRQFLAG_PULSE) {
-   if(pCard->DevEventFunc != NULL)
-    (*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
-  }
-  if(flags & EVR_IRQFLAG_EVENT) {
-   struct FIFOEvent fe;
-   for(i=0; i < EVR_FIFO_EVENT_LIMIT; i++) {
-    if(EvrGetFIFOEvent(pEr, &fe) < 0)
-     break;
-    if(pCard->DevEventFunc != NULL)
-     (*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
-   }
-  }
-  if(flags & EVR_IRQFLAG_HEARTBEAT) {
-   if (pCard->DevErrorFunc != NULL)
-    (*pCard->DevErrorFunc)(pCard, ERROR_HEART);
-  }
-  if(flags & EVR_IRQFLAG_FIFOFULL) {
-   /* Clear and re-enable the FIFO and if applicable report the error */
-   EvrClearFIFO(pEr);
-   if (pCard->DevErrorFunc != NULL)
-    (*pCard->DevErrorFunc)(pCard, ERROR_LOST);
-  }
-  if(flags & EVR_IRQFLAG_VIOLATION) {
-   pCard->RxvioCount++;
-   if (pCard->DevErrorFunc != NULL)
-    (*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
-  }
+
   if(flags & EVR_IRQFLAG_DATABUF) {
    int databuf_sts = EvrGetDBufStatus(pEr);
    if(databuf_sts & (1<<C_EVR_DATABUF_CHECKSUM))
@@ -356,14 +331,48 @@ void ErIrqHandler(int signal)
     pCard->DBuffSize = (databuf_sts & ((1<<(C_EVR_DATABUF_SIZEHIGH+1))-1));
     for (i=0;  i < pCard->DBuffSize>>2;  i++)
      pCard->DataBuffer[i] = be32_to_cpu(pEr->Databuf[i]);
-    EvrReceiveDBuf(pEr, 1); /* That means we only re-enable it if 
+    EvrReceiveDBuf(pEr, 1); /* That means we only re-enable it if
           someone cares (DevDBuffFunc set) */
     (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
    }
   }
+
+
+
+  if(flags & EVR_IRQFLAG_EVENT) {
+   struct FIFOEvent fe;
+   for(i=0; i < EVR_FIFO_EVENT_LIMIT; i++) {
+    if(EvrGetFIFOEvent(pEr, &fe) < 0)
+     break;
+    if(pCard->DevEventFunc != NULL)
+     (*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
+   }
+  }
+
+
+  if(flags & EVR_IRQFLAG_PULSE) {
+   if(pCard->DevEventFunc != NULL)
+    (*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
+  }
+  if(flags & EVR_IRQFLAG_HEARTBEAT) {
+   if (pCard->DevErrorFunc != NULL)
+    (*pCard->DevErrorFunc)(pCard, ERROR_HEART);
+  }
+  if(flags & EVR_IRQFLAG_FIFOFULL) {
+   /* Clear and re-enable the FIFO and if applicable report the error */
+   EvrClearFIFO(pEr); EvrClearIrqFlags(pEr, EVR_IRQFLAG_FIFOFULL);
+   if (pCard->DevErrorFunc != NULL)
+    (*pCard->DevErrorFunc)(pCard, ERROR_LOST);
+  }
+  if(flags & EVR_IRQFLAG_VIOLATION) {
+   pCard->RxvioCount++;
+   if (pCard->DevErrorFunc != NULL)
+    (*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
+  }
+
   if(flags) {
-   EvrClearIrqFlags(pEr, flags);
-   EvrIrqHandled(pCard->Slot);
+   /* EvrClearIrqFlags(pEr, flags); */
+   EvrIrqHandled(pCard->Slot); 
    epicsMutexUnlock(pCard->CardLock);
    epicsMutexUnlock(ErCardListLock);
    return;
@@ -1686,6 +1695,7 @@ epicsStatus ErDrvReport (int level)
 	int             NumCards = 0;       /* Number of configured cards we found                    */
 	ErCardStruct   *pCard;              /* Pointer to card structure                              */
 
+
 	for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
 		pCard != NULL;
 		pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
@@ -1705,6 +1715,8 @@ epicsStatus ErDrvReport (int level)
 	}
 	if(!NumCards)
 		printf ("  No Event Receiver cards were configured\n");
+
+
 	return OK;
 }
 
