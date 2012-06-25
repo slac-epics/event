@@ -123,7 +123,7 @@ __inline__ static unsigned long long int rdtsc(void)
 static double evrTicksPerUsec = 1.5E+3;  /* need to fix it to avoid hardcoding */
 #define MFTB(var)  ((var)=(unsigned long) rdtsc())
 
-void  Get_evrTickPerUsec_for_X86(void)
+void  Get_evrTicksPerUsec_for_X86(void)
 {
     unsigned long start, stop;
 
