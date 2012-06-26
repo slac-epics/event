@@ -8,6 +8,12 @@
  *
  * Released under the GPLv2 licence <http://www.gnu.org/licenses/gpl-2.0.html>
  */
+/*
+ * NOTE: This code supports *only* PMC, cPCI, and SLAC EVRs!  (The issue is that the PMC has front
+ * panel outputs and cPCI and SLAC have universal outputs, and there is code that sets one in favor
+ * of the other.  Other flavors are not tested for, and the VME64x card would be problematic anyway
+ * in that it has *both*.)
+ */
 
 #define  EVR_DRIVER_SUPPORT_MODULE   /* Indicates we are in the driver support module environment */
 #include "drvMrfEr.h"
@@ -39,8 +45,13 @@
 /*                              Private types                                                     */
 /*                                                                                                */
 
-#define TOTAL_EVR_PULSES	10
-enum outputs_mapping_id
+#define TOTAL_EVR_PULSES	12
+#define MAX_FP_CHANNELS         12
+#define TOTAL_FP_CHANNELS	((pLinuxErCard->ErCard.FormFactor == SLAC_EVR) ? 12 : 8)
+#define TOTAL_TB_CHANNELS	32
+#define MAX_DG                  ((pLinuxErCard->ErCard.FormFactor == SLAC_EVR) ? EVR_NUM_DG : 4)
+
+enum outputs_mapping_id            /* See Table 1 in EVR document */
 {
 	PULSE_GENERATOR_0 = 0,
 	PULSE_GENERATOR_1 = 1,
@@ -52,6 +63,8 @@ enum outputs_mapping_id
 	PULSE_GENERATOR_7 = 7,
 	PULSE_GENERATOR_8 = 8,
 	PULSE_GENERATOR_9 = 9,
+	PULSE_GENERATOR_10 = 10,
+	PULSE_GENERATOR_11 = 11,
 	DBUS_0 = 32,
 	DBUS_1 = 33,
 	DBUS_2 = 34,
@@ -68,46 +81,52 @@ enum outputs_mapping_id
 	UNUSED = 63,
 };
 
-#define TOTAL_FP_CHANNELS	8
-#define TOTAL_TB_CHANNELS	32
+/* This *was* a hardware definition: See EVR-TREF-005. It isn't now, so we will insert DELAYED_PULSE_[4-11] */
 enum transition_board_channel
 {
 	DELAYED_PULSE_0 = 0,
 	DELAYED_PULSE_1 = 1,
 	DELAYED_PULSE_2 = 2,
 	DELAYED_PULSE_3 = 3,
-	TRIGGER_EVENT_0 = 4,
-	TRIGGER_EVENT_1 = 5,
-	TRIGGER_EVENT_2 = 6,
-	TRIGGER_EVENT_3 = 7,
-	TRIGGER_EVENT_4 = 8,
-	TRIGGER_EVENT_5 = 9,
-	TRIGGER_EVENT_6 = 10,
-	OTP_DBUS_0 = 11,
-	OTP_DBUS_1 = 12,
-	OTP_DBUS_2 = 13,
-	OTP_DBUS_3 = 14,
-	OTP_DBUS_4 = 15,
-	OTP_DBUS_5 = 16,
-	OTP_DBUS_6 = 17,
-	OTP_DBUS_7 = 18,
-	OTP_8 = 19,
-	OTP_9 = 20,
-	OTP_10 = 21,
-	OTP_11 = 22,
-	OTP_12 = 23,
-	OTP_13 = 24,
-	OTL_0 = 25,
-	OTL_1 = 26,
-	OTL_2 = 27,
-	OTL_3 = 28,
-	OTL_4 = 29,
-	OTL_5 = 30,
-	OTL_6 = 31,
+	DELAYED_PULSE_4 = 4,
+	DELAYED_PULSE_5 = 5,
+	DELAYED_PULSE_6 = 6,
+	DELAYED_PULSE_7 = 7,
+	DELAYED_PULSE_8 = 8,
+	DELAYED_PULSE_9 = 9,
+	DELAYED_PULSE_10 = 10,
+	DELAYED_PULSE_11 = 11,
+	TRIGGER_EVENT_0 = 12,
+	TRIGGER_EVENT_1 = 13,
+	TRIGGER_EVENT_2 = 14,
+	TRIGGER_EVENT_3 = 15,
+	TRIGGER_EVENT_4 = 16,
+	TRIGGER_EVENT_5 = 17,
+	TRIGGER_EVENT_6 = 18,
+	OTP_DBUS_0 = 19,
+	OTP_DBUS_1 = 20,
+	OTP_DBUS_2 = 21,
+	OTP_DBUS_3 = 22,
+	OTP_DBUS_4 = 23,
+	OTP_DBUS_5 = 24,
+	OTP_DBUS_6 = 25,
+	OTP_DBUS_7 = 26,
+	OTP_8 = 27,
+	OTP_9 = 28,
+	OTP_10 = 29,
+	OTP_11 = 30,
+	OTP_12 = 31,
+	OTP_13 = 32,
+	OTL_0 = 33,
+	OTL_1 = 34,
+	OTL_2 = 35,
+	OTL_3 = 36,
+	OTL_4 = 37,
+	OTL_5 = 38,
+	OTL_6 = 39,
+        INVALID_TBC = 40, 
 	UNUSED_CH = 255,
 };
-
-#define TOTAL_PULSE_GENERATORS	10
 
 struct PulseInfo
 {
@@ -120,13 +139,13 @@ struct PulseInfo
 
 struct LinuxErCardStruct
 {
-	struct ErCardStruct				ErCard;
+	struct ErCardStruct			ErCard;
 	/* Backplane channels on the old firmware, those now share
 	   a common set of resources, we need to keep track of them */
-	struct PulseInfo				OTP[EVR_NUM_OTP];
+	struct PulseInfo			OTP[EVR_NUM_OTP];
 	/* we cache the Map for each channel to go faster */
 	enum outputs_mapping_id			tb_channel[TOTAL_TB_CHANNELS];
-	enum transition_board_channel	fp_channel[TOTAL_FP_CHANNELS];
+	enum transition_board_channel         	fp_channel[MAX_FP_CHANNELS];
 	enum outputs_mapping_id			pulse_irq;
 };
 #ifdef __compiler_offsetof
@@ -190,9 +209,11 @@ int find_free_pulsegen(struct LinuxErCardStruct *pLinuxErCard)
 	enum outputs_mapping_id pulse;
 	int id;
 
-	for(pulse = PULSE_GENERATOR_4; pulse <= PULSE_GENERATOR_9; pulse++) {
+	for(pulse = PULSE_GENERATOR_4; pulse <= PULSE_GENERATOR_11; pulse++) {
 		if(pLinuxErCard->pulse_irq == pulse)
 			continue;
+                if (pulse > PULSE_GENERATOR_9 && pLinuxErCard->ErCard.FormFactor != SLAC_EVR)
+                        break;
 		for(id = 0; id < TOTAL_TB_CHANNELS; id++)
 			if(pLinuxErCard->tb_channel[id] == pulse)
 				break;
@@ -216,7 +237,7 @@ int update_fp_map(struct LinuxErCardStruct *pLinuxErCard, enum transition_board_
 	
 	/* just in case someone would call this API with a value
 	   that is valid for FP but has no meaning as a TB output */
-	if(channel >= 32)
+	if(channel >= INVALID_TBC)
 		return 0;
 	for(fp = 0; fp < TOTAL_FP_CHANNELS; fp++) {
 		if(pLinuxErCard->fp_channel[fp] == channel) {
@@ -1094,7 +1115,11 @@ void ErResetAll(ErCardStruct *pCard)
 	EvrSetTimestampDivider(pEr, 0);
 	for(i=0; i < TOTAL_FP_CHANNELS; i++) {
 		pLinuxErCard->fp_channel[i] = UNUSED_CH;
-		EvrSetFPOutMap(pEr, i, pLinuxErCard->fp_channel[i]);
+                if(pLinuxErCard->ErCard.FormFactor == PMC_EVR)
+                    EvrSetFPOutMap(pEr, i, pLinuxErCard->fp_channel[i]);
+                else if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR ||
+                        pLinuxErCard->ErCard.FormFactor == SLAC_EVR)
+                    EvrSetUnivOutMap(pEr, i, pLinuxErCard->fp_channel[i]);
 	}
 	EvrReceiveDBuf(pEr, 0);
 	EvrSetDBufMode(pEr, 0);
@@ -1145,15 +1170,17 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 
 	if( Channel < 0 || Channel >= EVR_NUM_DG ) {
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
-		return;
+                return;
 	}
+        if ( Channel >= MAX_DG ) /* Don't complain if SLAC-valid channel but we aren't SLAC! */
+            return;
 
 	epicsMutexLock(pCard->CardLock);
 	map = pLinuxErCard->tb_channel[DELAYED_PULSE_0 + Channel];
 	if(Enable) {
 		/* If the channel is already using a pulse generator we keep it 
 		   otherwise we get a new one */
-		if((map < PULSE_GENERATOR_0) || (map > PULSE_GENERATOR_9)) {
+		if((map < PULSE_GENERATOR_0) || (map > PULSE_GENERATOR_11)) {
 			pulse = Channel; /* pulse = find_free_pulsegen(pLinuxErCard); */
 			/* Check for error */
 			if (pulse < 0) {
@@ -1220,7 +1247,7 @@ void ErSetDirq(ErCardStruct *pCard, epicsBoolean Enable, epicsUInt16 Delay, epic
 
 	epicsMutexLock(pCard->CardLock);
 	if(Enable) {
-		if((pLinuxErCard->pulse_irq < PULSE_GENERATOR_0) || (pLinuxErCard->pulse_irq > PULSE_GENERATOR_9)) {
+		if((pLinuxErCard->pulse_irq < PULSE_GENERATOR_0) || (pLinuxErCard->pulse_irq > PULSE_GENERATOR_11)) {
 			pulse = find_free_pulsegen(pLinuxErCard);
 			/* Check for error */
 			if (pulse < 0) {
@@ -1284,12 +1311,16 @@ epicsStatus ErSetFPMap(ErCardStruct *pCard, int Port, epicsUInt16 Map)
 	   was just a way to redirect one of the backplane channel on 
 	   the front panel, so we use this approach here too */
 	pLinuxErCard->fp_channel[Port] = Map;
-	if(Map < 32) {
-		/* Maps under 32 are copies of TB output on the old firmware */
+	if(Map < INVALID_TBC) {
+		/* Maps under INVALID_TBC are copies of TB output on the old firmware */
 		update_fp_map(pLinuxErCard, DELAYED_PULSE_0 + Map);
 	} else {
-		/* Maps after 32 are the same on both firmware */
-		EvrSetFPOutMap(pEr, Port, Map);
+		/* Maps after INVALID_TBC are the same on both firmware. */
+                if(pLinuxErCard->ErCard.FormFactor == PMC_EVR)
+                    EvrSetFPOutMap(pEr, Port, Map);
+                else if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR ||
+                        pLinuxErCard->ErCard.FormFactor == SLAC_EVR)
+                    EvrSetUnivOutMap(pEr, Port, Map);
 	}
 	epicsMutexUnlock(pCard->CardLock);
 	return OK;
@@ -1370,7 +1401,7 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	if(Enable) {
 		/* If the channel is already using a pulse generator we keep it 
 		   otherwise we get a new one */
-		if((map >= PULSE_GENERATOR_0) && (map < PULSE_GENERATOR_9)) {
+		if((map >= PULSE_GENERATOR_0) && (map < PULSE_GENERATOR_11)) {
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
@@ -1439,12 +1470,12 @@ void ErSetOtp(
 	pLinuxErCard->OTP[Channel].Width = Width;
 	pLinuxErCard->OTP[Channel].Pol = Pol;
 	
-	if(pLinuxErCard->OTP[Channel].DBusEnable == epicsTrue) {
+	if(pLinuxErCard->OTP[Channel].DBusEnable != epicsTrue) {
 		map = pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel];
 		if(Enable) {
 			/* If the channel is already using a pulse generator we keep it 
 			   otherwise we get a new one */
-			if((map < PULSE_GENERATOR_0) || (map > PULSE_GENERATOR_9)) {
+			if((map < PULSE_GENERATOR_0) || (map > PULSE_GENERATOR_11)) {
 				pulse = find_free_pulsegen(pLinuxErCard);
 				/* Check for error */
 				if (pulse < 0) {
@@ -1499,7 +1530,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	if(Enable) {
 		/* If the channel is already using a pulse generator we keep it 
 		   otherwise we get a new one */
-		if((map >= PULSE_GENERATOR_0) && (map < PULSE_GENERATOR_9)) {
+		if((map >= PULSE_GENERATOR_0) && (map < PULSE_GENERATOR_11)) {
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
@@ -1639,18 +1670,18 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 			if(RamBuf[code] & (1<<map)) {
 				enum outputs_mapping_id func;
 				func = pLinuxErCard->tb_channel[OTL_0+(map>>1)];
-				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9)) {
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_11)) {
 					if(map & 1)
 						ramloc.PulseSet |= 1<<(func-PULSE_GENERATOR_0);
 					else
 						ramloc.PulseClear |= 1<<(func-PULSE_GENERATOR_0);
 				}
 				func = pLinuxErCard->tb_channel[OTP_DBUS_0+map];
-				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9))
+				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_11))
 					ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				if(map < EVR_NUM_DG) {
 					func = pLinuxErCard->tb_channel[DELAYED_PULSE_0+map];
-					if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_9))
+					if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_11))
 						ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
 				}
 			}

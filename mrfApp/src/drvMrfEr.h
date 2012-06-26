@@ -125,7 +125,7 @@
 /*  Event Receiver Hardware Limits                                                                */
 /**************************************************************************************************/
 
-#define EVR_NUM_DG       4      /* Number of Programmable Delay (DG) channels                     */
+#define EVR_NUM_DG      12      /* Number of Programmable Delay (DG) channels                     */
 #define EVR_NUM_TRG      7      /* Number of Trigger Event (TRG) channels                         */
 #define EVR_NUM_OTL      7      /* Number of Level Output (OTL) channels                          */
 #define EVR_NUM_OTP     14      /* Number of Programmable Width (OTP) channels                    */

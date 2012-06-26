@@ -13,6 +13,7 @@ include $(TOP)/configure/CONFIG
 #
 # XTOD templates
 DB_INSTALLS += basic-evr.substitutions
+DB_INSTALLS += evrSLAC.template
 DB_INSTALLS += evrPmc230.substitutions
 DB_INSTALLS += evrPmc230.template
 DB_INSTALLS += evrPmcEvent.template

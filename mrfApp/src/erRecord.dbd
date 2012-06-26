@@ -742,6 +742,278 @@ recordtype(er) {
 		interest(1)
 		menu(erOPP)
 	}
+	field(DG4E,DBF_MENU) {
+		prompt("DG 4 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DG4D,DBF_ULONG) {
+		prompt("DG 4 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DG4W,DBF_ULONG) {
+		prompt("DG 4 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DG4C,DBF_USHORT) {
+		prompt("DG 4 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DG4P,DBF_MENU) {
+		prompt("DG 4 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
+	field(DG5E,DBF_MENU) {
+		prompt("DG 5 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DG5D,DBF_ULONG) {
+		prompt("DG 5 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DG5W,DBF_ULONG) {
+		prompt("DG 5 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DG5C,DBF_USHORT) {
+		prompt("DG 5 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DG5P,DBF_MENU) {
+		prompt("DG 5 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
+	field(DG6E,DBF_MENU) {
+		prompt("DG 6 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DG6D,DBF_ULONG) {
+		prompt("DG 6 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DG6W,DBF_ULONG) {
+		prompt("DG 6 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DG6C,DBF_USHORT) {
+		prompt("DG 6 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DG6P,DBF_MENU) {
+		prompt("DG 6 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
+	field(DG7E,DBF_MENU) {
+		prompt("DG 7 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DG7D,DBF_ULONG) {
+		prompt("DG 7 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DG7W,DBF_ULONG) {
+		prompt("DG 7 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DG7C,DBF_USHORT) {
+		prompt("DG 7 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DG7P,DBF_MENU) {
+		prompt("DG 7 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
+	field(DG8E,DBF_MENU) {
+		prompt("DG 8 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DG8D,DBF_ULONG) {
+		prompt("DG 8 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DG8W,DBF_ULONG) {
+		prompt("DG 8 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DG8C,DBF_USHORT) {
+		prompt("DG 8 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DG8P,DBF_MENU) {
+		prompt("DG 8 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
+	field(DG9E,DBF_MENU) {
+		prompt("DG 9 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DG9D,DBF_ULONG) {
+		prompt("DG 9 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DG9W,DBF_ULONG) {
+		prompt("DG 9 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DG9C,DBF_USHORT) {
+		prompt("DG 9 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DG9P,DBF_MENU) {
+		prompt("DG 9 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
+	field(DGAE,DBF_MENU) {
+		prompt("DG 10 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DGAD,DBF_ULONG) {
+		prompt("DG 10 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DGAW,DBF_ULONG) {
+		prompt("DG 10 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DGAC,DBF_USHORT) {
+		prompt("DG 10 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DGAP,DBF_MENU) {
+		prompt("DG 10 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
+	field(DGBE,DBF_MENU) {
+		prompt("DG 11 Enable")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erTRG0)
+	}
+	field(DGBD,DBF_ULONG) {
+		prompt("DG 11 Delay")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(DGBW,DBF_ULONG) {
+		prompt("DG 11 Width")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(5)
+		interest(1)
+	}
+	field(DGBC,DBF_USHORT) {
+		prompt("DG 11 Clock prescaler")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		initial(1)
+		interest(1)
+	}
+	field(DGBP,DBF_MENU) {
+		prompt("DG 11 Parity")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+		menu(erOPP)
+	}
 	field(DVME,DBF_MENU) {
 		prompt("Delayed IRQ Enable")
 		promptgroup(GUI_DISPLAY)
@@ -835,7 +1107,36 @@ recordtype(er) {
 		pp(TRUE)
 		interest(1)
 	}
-
+	field(FPS7,DBF_USHORT) {
+		prompt("Front Panel output 7 select")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(FPS8,DBF_USHORT) {
+		prompt("Front Panel output 8 select")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(FPS9,DBF_USHORT) {
+		prompt("Front Panel output 9 select")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(FPSA,DBF_USHORT) {
+		prompt("Front Panel output 10 select")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
+	field(FPSB,DBF_USHORT) {
+		prompt("Front Panel output 11 select")
+		promptgroup(GUI_DISPLAY)
+		pp(TRUE)
+		interest(1)
+	}
 }
 
 
