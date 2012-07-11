@@ -125,6 +125,7 @@ LIBRARY_IOC_vxWorks += mrfVme64x
 ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 LIBRARY_IOC_Linux += drvMrf
 drvMrf_OBJS_Linux += drvLinux
+drvMrf_OBJS_Linux += evrIrqHandlerThread
 drvMrf_OBJS_Linux += erapi.o
 endif
 
