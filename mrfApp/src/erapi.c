@@ -23,6 +23,8 @@
 
 #include "erapi.h"
 
+void EvrIrqHandlerThreadCreate(void(*handler)(int));
+
 /*
 #define DEBUG 1
 */
@@ -580,16 +582,33 @@ void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
   int oflags;
   int result;
 
+
+  /*
+   * The signal handling has been removed to use synchronous method
+   * instead of the asynchornous method....
+   */
+
+  /*
   act.sa_handler = handler;
   sigemptyset(&act.sa_mask);
   act.sa_flags = 0;
 
   result = sigaction(SIGIO, &act, NULL);
   printf("sigaction returned %d\n", result);
+  */
+
+
+  /* create epics thread to handle the signal (EVR Irq) with
+   * with synchronous method.
+   */
+  EvrIrqHandlerThreadCreate(handler);
+
   fcntl(fd, F_SETOWN, getpid());
   oflags = fcntl(fd, F_GETFL);
   fcntl(fd, F_SETFL, oflags | FASYNC);
   /* Now enable handler */
+
+
   EvrIrqHandled(fd);
 }
 
