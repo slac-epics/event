@@ -41,6 +41,7 @@
 #endif
 
 #include "dbAccess.h"           /* dbProcess,dbScan* protos    */
+#include "epicsMutex.h"
 #include "epicsThread.h"        /* epicsThreadSleep()          */
 #include "epicsTime.h"          /* epicsTimeStamp              */
 #include "errlog.h"             /* errlogPrintf                */
@@ -56,9 +57,8 @@ typedef struct
   dbCommon           *record_ps;     /* Record that processes the message */
   epicsTimeStamp      resetTime_s;   /* Time when counters reset          */
   unsigned long       notRead_a[2];  /* Message not-yet read flag         */
-  long                readingIdx; /* Message currently being read, -1 = none */ 
-  unsigned long       newestIdx;     /* Index in double buffer of newest msg */
-  unsigned long       fiducialIdx;   /* Index at the time of the fiducial */
+  unsigned long       newData_a[2];  /* New data flag */
+  unsigned long       flgRead_a[2];
   unsigned long       updateCount;   
   unsigned long       updateCountRollover;
   unsigned long       overwriteCount;
@@ -76,7 +76,9 @@ typedef struct
   unsigned long       procTimeDelayMax;
   unsigned long       procTimeDelay;
   unsigned long       procTimeDelta_a[MODULO720_COUNT];
-  
+
+  epicsMutexId        lock;
+
 } evrMessage_ts;
 
 /* Maintain 4 messages - PNET, PATTERN, DATA (future), FIDUCIAL */
@@ -225,13 +227,15 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
   if (messageIdx < 0) return -1;
 
   memset(&evrMessage_as[messageIdx], sizeof(evrMessage_ts), 0);
-  evrMessage_as[messageIdx].record_ps          = 0;
-  evrMessage_as[messageIdx].notRead_a[0]       = 0;
-  evrMessage_as[messageIdx].notRead_a[1]       = 0;
-  evrMessage_as[messageIdx].readingIdx         = -1;
-  evrMessage_as[messageIdx].newestIdx          = 0;
-  evrMessage_as[messageIdx].fiducialIdx        = 0;
-  evrMessage_as[messageIdx].procTimeDeltaCount = 0;
+
+#if defined(linux)
+  /* probably, we don't need mutex for linux. Let's try without the mutex */
+  /*  evrMessage_as[messageIdx].lock = epicsMutexMustCreate();  */
+  evrMessage_as[messageIdx].lock = 0;
+#else 
+  evrMessage_as[messageIdx].lock = 0;
+#endif
+
   evrMessageCountReset(messageIdx);
   return messageIdx;
 }
@@ -302,33 +306,35 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
 
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 
+  if(evrMessage_as[messageIdx].lock) epicsMutexLock(evrMessage_as[messageIdx].lock);
+
+
   /* Double buffer message if not PNET - first find a free message */
-  idx = 0;
-  if (evrMessage_as[messageIdx].notRead_a[idx] &&
-      (messageIdx != EVR_MESSAGE_PNET)) {
-    idx = 1;
-    if (evrMessage_as[messageIdx].notRead_a[idx]) {
-      /* No message is free.  If a message is being read, overwrite the
-         other one.  Otherwise, overwrite the message after the fiducial. */
-      if (evrMessage_as[messageIdx].readingIdx >= 0)
-        idx = evrMessage_as[messageIdx].readingIdx?0:1;
-      else
-        idx = evrMessage_as[messageIdx].fiducialIdx?0:1;
-    } /* end both messages not free */
-  }   /* end message 0 is not free  */
+  idx = 0;  /* Let's start from buffer0 */
   
-  /* Update a message only if it's not currently being read. */
-  if (idx != evrMessage_as[messageIdx].readingIdx) {
-    /* Update message in holding array */
-    evrMessage_as[messageIdx].message_au[idx] = *message_pu;
-    evrMessage_as[messageIdx].newestIdx       = idx;
-    if (evrMessage_as[messageIdx].notRead_a[idx])
-      evrMessage_as[messageIdx].overwriteCount++;
-    else
-      evrMessage_as[messageIdx].notRead_a[idx] = 1;
-  } else {
-    evrMessage_as[messageIdx].writeErrorCount++;
+  if(messageIdx != EVR_MESSAGE_PNET) {
+    if(evrMessage_as[messageIdx].newData_a[0]) idx = 1; /* if it used up the buffer0, then switch to buffer 1 */
   }
+
+  /* if this buffer is being read out by the evrMessageRead, then we got trouble */
+  if(evrMessage_as[messageIdx].flgRead_a[idx]) {
+      evrMessage_as[messageIdx].writeErrorCount++;
+      goto bail;
+  }
+ 
+  /* everthing looks good, let's update the buffer */ 
+  evrMessage_as[messageIdx].message_au[idx] = *message_pu;
+  evrMessage_as[messageIdx].newData_a[idx] = 1;      /* now, this buffer has new data */
+  evrMessage_as[messageIdx].newData_a[idx?0:1] = 0;  /* the previous one is old now */
+
+  if (evrMessage_as[messageIdx].notRead_a[idx])      /* Oh! I update, before read out, It is overwitten */
+     evrMessage_as[messageIdx].overwriteCount++;
+  else
+     evrMessage_as[messageIdx].notRead_a[idx] = 1;   /* This buffer is not read out yet */
+
+  bail:
+  if(evrMessage_as[messageIdx].lock) epicsMutexUnlock(evrMessage_as[messageIdx].lock);
+
   return 0;
 }
 
@@ -385,18 +391,35 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
                                        evrMessage_tu *message_pu)
 {
   evrMessageReadStatus_te status;
-  volatile int idx;
+  int idx;
   
   if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
-
-  /* Read the message marked by the fiducial. */
-  idx = evrMessage_as[messageIdx].fiducialIdx;
-  if (!evrMessage_as[messageIdx].notRead_a[idx]) {
+  
+ 
+  if(evrMessage_as[messageIdx].lock) epicsMutexLock(evrMessage_as[messageIdx].lock);
+  
+  /* check up if there is no data available */
+  if (!evrMessage_as[messageIdx].notRead_a[0] && 
+      !evrMessage_as[messageIdx].notRead_a[1]) {
     status = evrMessageDataNotAvail;
     evrMessage_as[messageIdx].noDataCount++;
   } else {
+    /* yes! we have new data */
     status = evrMessageOK;
-    evrMessage_as[messageIdx].readingIdx = idx;
+
+    if(evrMessage_as[messageIdx].newData_a[0]) idx =0; /* new data is at buffer0 */
+    else                                       idx =1; /* new data is at buffer1 */
+
+    /* check up if fiducial is delayed. If both buffer have not been read, then we can assume
+       the delayed fiducial */
+    if(evrMessage_as[messageIdx].notRead_a[0] && evrMessage_as[messageIdx].notRead_a[1]) {
+        idx = idx?0:1;  /* for the delayed fiducial, we need to read the old data instead of new one */
+    }
+
+    if(messageIdx == EVR_MESSAGE_PNET) idx = 0; /* for the PNET, we only use buffer0 */
+
+    evrMessage_as[messageIdx].flgRead_a[idx] = 1; /* I am reading now, don't change anything on my buffer */
+
     switch (messageIdx) {
       case EVR_MESSAGE_PNET:
         message_pu->pnet_s    = evrMessage_as[messageIdx].message_au[idx].pnet_s;
@@ -411,9 +434,13 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
         status = evrMessageInpError;
         break;
     }
-    evrMessage_as[messageIdx].readingIdx = -1;
-    evrMessage_as[messageIdx].notRead_a[idx] = 0;
+
+    evrMessage_as[messageIdx].flgRead_a[idx] = 0; /* done to read */
+    evrMessage_as[messageIdx].notRead_a[idx] = 0; /* I have read out this buffer */
   }
+
+  if(evrMessage_as[messageIdx].lock) epicsMutexUnlock(evrMessage_as[messageIdx].lock);
+
   return status;
 }
 
@@ -463,17 +490,7 @@ int evrMessageStart(unsigned int messageIdx)
     evrMessage_as[messageIdx].updateCount = 0;
   }
   
-  /* Special processing for the fiducial - set PATTERN message to read
-     and throw away any old PATTERN messages */
-  if (messageIdx == EVR_MESSAGE_FIDUCIAL) {
-    evrFiducialTime = evrMessage_as[messageIdx].procTimeStart;
-    idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx;
-    evrMessage_as[EVR_MESSAGE_PATTERN].fiducialIdx = idx;
-    oldidx = idx?0:1;
-    if (evrMessage_as[EVR_MESSAGE_PATTERN].readingIdx != oldidx) {
-      evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[oldidx] = 0;
-    }
-  }
+
   return 0;
 }
 
