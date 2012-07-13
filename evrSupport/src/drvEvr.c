@@ -125,6 +125,7 @@ static int evrReport( int interest )
 =============================================================================*/
 void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 {
+  epicsUInt32 evrClockCounter;
   unsigned int messageType = ((evrMessageHeader_ts *)message)->type;
 
   /* Look for error from the driver or the wrong message size */
@@ -134,6 +135,7 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
   } else {
     if (evrMessageWrite(messageType, (evrMessage_tu *)message))
       evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
+    else ErGetTicks(0, &evrClockCounter);
 
   }
 }
@@ -150,9 +152,12 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 =============================================================================*/
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
-  if (eventNum == EVENT_FIDUCIAL) {
+  epicsUInt32 evrClockCounter;
+
+  if (eventNum == EVENT_FIDUCIAL) { 
     if (readyForFiducial) {
       readyForFiducial = 0;
+      ErGetTicks(0, &evrClockCounter);
       evrMessageStart(EVR_MESSAGE_FIDUCIAL);
       epicsEventSignal(evrTaskEventSem);
     } else {
@@ -185,6 +190,7 @@ static int evrTask()
   {
     readyForFiducial = 1;
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
+
     evrMessageLap(EVR_MESSAGE_FIDUCIAL);
     if (status == epicsEventWaitOK) {
       evrPattern(0, &mpsModifier);/* N-3           */
