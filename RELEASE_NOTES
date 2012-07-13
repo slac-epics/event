@@ -14,6 +14,9 @@ event-R3-2-2-br_generaltime-2-4: (KHKIM)
         * fix the fidcuial processing diagnostics for the intel x86 platform
         * put more diagnostics for the linux-x86 and x86 base linuxRT platform
           - to measure the evrTask delay due to the epicsEventSignal(semaphore)
+        * switch the signal handling mechanism from ansynchronous way to synchronous way
+        * re-write the double buffer algorithm for the data buffer handling (evrMessage*)
+          
 
 event-R3-2-2-br_generaltime-2-3: (KHKIM)
         * put a variable into RELEASE_SITE file to recognize the beam program
