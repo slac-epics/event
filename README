@@ -495,6 +495,22 @@ You may want to use event number 6x for the XTA due to the beam runs on timeslot
 
 
 
+The event module itself need to know, what is the beam program for it.
+So, we have added new variable in the RELEASE_SITE file as the followings.
+When build/re-build the event module, we need to describe the beam program 
+with the new variable.
+
+For LCLS,
+SITE_FACILITY=LCLS
+
+For FACET,
+SITE_FACILITY=FACET
+
+For XTA
+SITE_FACILITY=XTA
+
+
+
 Consideration to use the event invariant delay
 ---------------------------------------------------
 
@@ -550,7 +566,45 @@ The event module support two ways to use the autosave.
 Consideration for the Linux PMC EVR
 ------------------------------------
 
-We are using new firmware for the Linux PMC EVR. It supports a new register map (modular register map) 
+1) Synchornous signal catch for the EVR interrupt
+The linux driver generates signal (SIGIO) when the interrupt is occured.
+In the prvious version, the signal is proceeded by _MAIN_ thread with
+the registered signal handler. But, the _MAIN_ thread does not have RT priority,
+it drags the real-timer performance for the interrupt handling. As a result,
+it makes many issues on processing on the evrTask and the evrRecord.
+To avoid this issue, we added highest RT priority thread and the new thread handles 
+the signal synchornousely. To use this new feature, we need to add the followings
+in the <application>Main.cpp file to block the signal for the _MAIN_ thread.
+
+
+int main(int argc,char *argv[])
+{
+    sigset_t set;
+
+    /*
+     * if it is possible, proceed the memory locking 
+     * to avoid real-time peformance dragg do to swapping.
+     */
+    #if _POSIX_MEMLOCK > 0
+    if(mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
+        printf("Fatal error: memory locking fail\n");
+        return -1;
+    }
+    #endif
+
+    /* Blocking SIGIO signal for the _MAIN_ thread */
+    sigemptyset(&set);
+    sigaddset(&set, SIGIO);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
+
+    if(argc>=2) {
+        iocsh(argv[1]);
+        epicsThreadSleep(.2);
+    }
+    iocsh(NULL);
+    epicsExit(0);
+    return(0);
+}
 
 
 
