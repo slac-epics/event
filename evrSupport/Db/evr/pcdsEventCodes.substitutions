@@ -43,8 +43,10 @@ pattern { DEV,  ID,  DELY, HIHI,  HIGH,  LOW, LOLO, DESC     }
 	{ $(DEV),  161, 11921, 120.5, 120.5,  -1,   -1,  "LI25 Kicker (BXKIK)" }
 	{ $(DEV),  162, 11922, 120.5, 120.5,  -1,   -1,  "LTU  Kicker (BYKIK)" }
 # Beam-Independent Time Slot Triggers
+#   Fiducial (360Hz)
+	{ $(DEV),    1,     0, 360.5, 360.5, 359.5, 359.5, "Fiducial"    }
 #   360Hz
-	{ $(DEV),  9, 12950,   360.5, 360.5, 359.5, 359.5, "360Hz"        }
+	{ $(DEV),    9, 12950, 360.5, 360.5, 359.5, 359.5, "360Hz"       }
 #   Modulo36 base event code
 	{ $(DEV),  201, 13000, 10.5, 10.5,  9.5,  9.5, "Modulo 36"    }
 #   120Hz
