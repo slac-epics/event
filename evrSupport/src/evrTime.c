@@ -11,6 +11,7 @@
            evrTimeEvent      - Update Timestamp for an Event (Event Rate)
            evrTimeGetFromPipeline - Get Timestamp from Pipeline
            evrTimeGetFromEdef     - Get Timestamp from EDEF
+           evrTimeGetFromEdefTime - Get Timestamp from EDEF and timestamp
            evrTimeGet        - Get Timestamp for an Event
            evrTimeGetFifo    - Get Timestamp from an Event FIFO
            evrTimePutPulseID - Encode Pulse ID into a Timestamp
@@ -93,7 +94,7 @@ typedef struct {
   int                 status; /* 0=OK; -1=invalid                        */
   epicsTimeStamp      fifotime[MAX_TS_QUEUE];
   int                 fifostatus[MAX_TS_QUEUE];
-  unsigned int        idx;
+  unsigned long long  idx;
   int                 count;         /* # times this event has happened	 */
   int                 fidq[MAX_TS_QUEUE];
   int                 fidR;
@@ -119,7 +120,8 @@ extern unsigned long evrFiducialTime;
 unsigned long evrActiveFiducialTime = 0;
 
 /* Event definition (BSA) patterns */
-static evrTimeEdef_ts      edef_as[EDEF_MAX];
+static evrTimeEdef_ts      edef_as[EDEF_MAX][MAX_EDEF_TIME];
+static int                 edef_idx[EDEF_MAX];     /* The next write location! */
 
 /* Event code timestamps */
 static evrTime_ts          eventCodeTime_as[MRF_NUM_EVENTS+1];
@@ -265,18 +267,93 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
                            epicsTimeStamp  *edefTimeInit_ps,
                            int             *edefAvgDone_p,
                            epicsEnum16     *edefSevr_p)
-{  
+{
+  int idx; 
+  evrTimeEdef_ts *edef;
+
   if ((edefIdx >= EDEF_MAX) || (!evrTimeRWMutex_ps)) return epicsTimeERROR;
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
   if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
-  *edefTime_ps     = edef_as[edefIdx].time;
-  *edefTimeInit_ps = edef_as[edefIdx].timeInit;
-  *edefAvgDone_p   = edef_as[edefIdx].avgdone;
-  *edefSevr_p      = edef_as[edefIdx].sevr;
+
+  idx = (edef_idx[edefIdx] - 1) & MAX_EDEF_TIME_MASK; /* Back one == last written! */
+  edef = &edef_as[edefIdx][idx];
+
+  *edefTime_ps     = edef->time;
+  *edefTimeInit_ps = edef->timeInit;
+  *edefAvgDone_p   = edef->avgdone;
+  *edefSevr_p      = edef->sevr;
   epicsMutexUnlock(evrTimeRWMutex_ps);
   
   return epicsTimeOK;
 }
+
+/*=============================================================================
+
+  Name: evrTimeGetFromEdefTime
+
+  Abs:  Get the evr epics timestamp from EDEF, defined as:
+        1st integer = number of seconds since 1990  
+        2nd integer = number of nsecs since last sec, except lower 17 bits=pulsid
+		
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        unsigned int        edefIdx       Read     EDEF Index (0 to EDEF_MAX-1)
+        epicsTimeStamp *    edefTime_ps   Read     EDEF active timestamp to match
+        epicsTimeStamp *    edefTimeInit_ps Write  EDEF init   timestamp
+        int *               edefAvgDone_p Write    EDEF average-done flag
+        epicsEnum16  *      edefSevr_p    Write    EDEF severity
+
+  Rem:  Routine to get the epics timestamp and flags from the EDEF timestamp
+        table that is populated from incoming broadcast from EVG.
+
+        This is used when we are processing data that potentially has an old
+        timestamp.  We search backwards until we find an edef that hopefully
+        matches but at least predates the data.
+
+  Side: None
+
+  Ret:  -1=Failed; 0 = Success
+==============================================================================*/
+
+int evrTimeGetFromEdefTime(unsigned int     edefIdx,
+                           epicsTimeStamp  *edefTime_ps,
+                           epicsTimeStamp  *edefTimeInit_ps,
+                           int             *edefAvgDone_p,
+                           epicsEnum16     *edefSevr_p)
+{
+  int idx, i; 
+  evrTimeEdef_ts *edef;
+
+  if ((edefIdx >= EDEF_MAX) || (!evrTimeRWMutex_ps)) return epicsTimeERROR;
+  /* if the r/w mutex is valid, and we can lock with it, read requested time index */
+  if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
+
+  idx = (edef_idx[edefIdx] - 1) & MAX_EDEF_TIME_MASK; /* Back one == last written! */
+  edef = &edef_as[edefIdx][idx];
+
+  for (i = 0; i < MAX_EDEF_TIME - 2; i++) {
+      if ((edef->time.secPastEpoch == edefTime_ps->secPastEpoch) &&
+          (edef->time.nsec == edefTime_ps->nsec)) {
+          *edefTime_ps     = edef->time;
+          *edefTimeInit_ps = edef->timeInit;
+          *edefAvgDone_p   = edef->avgdone;
+          *edefSevr_p      = edef->sevr;
+          epicsMutexUnlock(evrTimeRWMutex_ps);
+          return epicsTimeOK;
+      } else if ((edef->time.secPastEpoch < edefTime_ps->secPastEpoch) ||
+                 ((edef->time.secPastEpoch == edefTime_ps->secPastEpoch) &&
+                  (edef->time.nsec < edefTime_ps->nsec))) {
+          break;
+      } else {
+          idx = (idx - 1) & MAX_EDEF_TIME_MASK;
+          edef = &edef_as[edefIdx][idx];
+      }
+  }
+
+  epicsMutexUnlock(evrTimeRWMutex_ps);
+  return epicsTimeERROR; /* No match! */
+}
+
 
 /*=============================================================================
 
@@ -343,7 +420,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 	                                  0,1=time associated w this pulse
                                           (event code 1 = fiducial)
                                           1 to 255 = EVR event codes
-  int            * idx          read/write The last fifo index we read
+  unsigned long long * idx      read/write The last fifo index we read
   int            incr           read       How far to move ahead (MAX_TS_QUEUE if idx is uninitialized)
 
   Rem:  Routine to get the epics timestamp from a queue of timestamps.  This must
@@ -358,7 +435,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
 
-int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned int *idx, int incr)
+int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned long long *idx, int incr)
 {
   int status = 0, i;
   
@@ -368,23 +445,32 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
       *idx = eventCodeTime_as[eventCode].idx - 1;
   else
       *idx += incr;
-  if (*idx + MAX_TS_QUEUE < eventCodeTime_as[eventCode].idx) {
-      /* Ow.  This is a *very* old timestamp! */
+  /*
+   * eventCodeTime_as[eventCode].idx is the monotonically increasing location for the *next*
+   * timestamp... it isn't valid yet!  Since there are MAX_TS_QUEUE entries, this means that
+   * the valid entries are between eventCodeTime_as[eventCode].idx - MAX_TS_QUEUE and 
+   * eventCodeTime_as[eventCode].idx - 1.
+   *
+   * If we're here *slightly* early (eventCodeTime_as[eventCode].idx == *idx), we'll wait.
+   * Otherwise, we report an error.
+   */
+  if (*idx + MAX_TS_QUEUE < eventCodeTime_as[eventCode].idx ||
+      *idx > eventCodeTime_as[eventCode].idx) {
       epicsMutexUnlock(evrTimeRWMutex_ps);
       return epicsTimeERROR;
-  } else if (*idx >= eventCodeTime_as[eventCode].idx) {
-      struct timespec req = {0, 1000000}; /* 1 ms */
+  } else if (*idx == eventCodeTime_as[eventCode].idx) {
       epicsMutexUnlock(evrTimeRWMutex_ps);
 #define TO_LIM 4
       for (i = 1; i < TO_LIM; i++) {
+          struct timespec req = {0, 1000000}; /* 1 ms */
           nanosleep(&req, NULL);
           if (*idx < eventCodeTime_as[eventCode].idx)
               break;
       }
       if (i == TO_LIM) {
-#if 0
-          printf("ETGF!\n");fflush(stdout);
-#endif
+          if (fiddbg) {
+              printf("ETGF %d %d!\n", *idx, eventCodeTime_as[eventCode].idx);fflush(stdout);
+          }
           status = 0x1ffff; /* We missed, so at least flag this as invalid! */
       }
       epicsMutexLock(evrTimeRWMutex_ps);
@@ -469,7 +555,7 @@ static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCod
 ==============================================================================*/ 
 int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
 {
-  int idx;
+  int idx, idx2;
   int timeslotDiff;
 
   if ((firstTimeSlotIn  >= 0) && (secondTimeSlotIn >= 0) &&
@@ -497,9 +583,11 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         }
         /* Init EDEF pattern array */
         for (idx=0; idx<EDEF_MAX; idx++) {
-          memset(&edef_as[idx], 0, sizeof(evrTimeEdef_ts));
-          edef_as[idx].timeInit = mod720time;
-          edef_as[idx].sevr = INVALID_ALARM;
+          memset(&edef_as[idx], 0, MAX_EDEF_TIME * sizeof(evrTimeEdef_ts));
+          for (idx2=0; idx2<MAX_EDEF_TIME; idx2++) {
+              edef_as[idx][idx2].timeInit = mod720time;
+              edef_as[idx][idx2].sevr = INVALID_ALARM;
+          }
         }
         /* init timestamp structures to invalid status & system time*/
         for (idx=0; idx<=MRF_NUM_EVENTS; idx++) {
@@ -512,7 +600,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].time    = mod720time;
           eventCodeTime_as[idx].status  = epicsTimeERROR;
           eventCodeTime_as[idx].count   = 0;
-          eventCodeTime_as[idx].fidR    = 0;
+          eventCodeTime_as[idx].fidR    = -1;
           eventCodeTime_as[idx].fidW    = 0;
         }
 
@@ -600,23 +688,31 @@ int evrTime(epicsUInt32 mpsModifier)
         evr_ps->pattern_s.modifier_a[MOD5_IDX] & MOD5_EDEF_MASK) {
       for (idx=0;idx<EDEF_MAX;idx++) {
         edefMask = 1 << idx;
-        /* EDEF initialized? - check the newest mask so init done ASAP */
-        if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) {
-          edef_as[idx].timeInit = evr_aps[evrTimeNext2]->pattern_s.time;
-        }
-        /* EDEF active? - set time and flags used by BSA processing later */
-        if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
-          edef_as[idx].time = evr_ps->pattern_s.time;
-          if    (evr_ps->pattern_s.edefAvgDoneMask & edefMask)
-            edef_as[idx].avgdone = 1;
-          else
-            edef_as[idx].avgdone = 0;
-          if      (evr_ps->pattern_s.edefMinorMask & edefMask)
-            edef_as[idx].sevr = MINOR_ALARM;
-          else if (evr_ps->pattern_s.edefMajorMask & edefMask)
-            edef_as[idx].sevr = MAJOR_ALARM;
-          else
-            edef_as[idx].sevr = INVALID_ALARM;
+        if (!(evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) &&
+            !(evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask))
+          continue;
+        else {
+          int idx2 = edef_idx[idx]++ & MAX_EDEF_TIME_MASK;
+          evrTimeEdef_ts *edef = &edef_as[idx][idx2];
+          *edef = edef_as[idx][(idx2 - 1) & MAX_EDEF_TIME_MASK]; /* Init from previous! */
+          /* EDEF initialized? - check the newest mask so init done ASAP */
+          if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) {
+            edef->timeInit = evr_aps[evrTimeNext2]->pattern_s.time;
+          }
+          /* EDEF active? - set time and flags used by BSA processing later */
+          if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
+            edef->time = evr_ps->pattern_s.time;
+            if (evr_ps->pattern_s.edefAvgDoneMask & edefMask)
+              edef->avgdone = 1;
+            else
+              edef->avgdone = 0;
+            if (evr_ps->pattern_s.edefMinorMask & edefMask)
+              edef->sevr = MINOR_ALARM;
+            else if (evr_ps->pattern_s.edefMajorMask & edefMask)
+              edef->sevr = MAJOR_ALARM;
+            else
+              edef->sevr = INVALID_ALARM;
+            }
         }
       }
     }
@@ -960,6 +1056,9 @@ static long evrTimeEvent(longSubRecord *psub)
         epicsTimeStamp *newts = &pevrTime->time;
         int newfid;
 
+        if (pevrTime->fidR < 0) {
+            pevrTime->fidR = (pevrTime->fidW + MAX_TS_QUEUE - 1) & MAX_TS_QUEUE_MASK;
+        }
         newfid = pevrTime->fidq[pevrTime->fidR];
         if (++pevrTime->fidR == MAX_TS_QUEUE)  /* This is assuming we never overrun */
             pevrTime->fidR = 0;
@@ -986,7 +1085,8 @@ static long evrTimeEvent(longSubRecord *psub)
                    psub->a, newts->secPastEpoch, newts->nsec);
             fflush(stdout);
 #endif
-        } else if (last_good || evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK) {
+        } else if (last_good || (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK &&
+                                 (evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff) != 0x1ffff)) {
             /*
              * OK, we are out of sync, but we have a good time basis!  We will
              * construct a timestamp from this that will be close to the EVG time,
@@ -1034,9 +1134,9 @@ static long evrTimeEvent(longSubRecord *psub)
                  */
                 *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
                 newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-#if 0
-                printf("ETE1!\n");fflush(stdout);
-#endif
+                if (fiddbg) {
+                    printf("ETE1!\n");fflush(stdout);
+                }
                 pevrTime->status = epicsTimeERROR;
                 last_good = NULL;
             } else {
@@ -1077,9 +1177,9 @@ static long evrTimeEvent(longSubRecord *psub)
              */
             *newts   = evr_aps[evrTimeCurrent]->pattern_s.time;
             newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-#if 0
-            printf("ETE2!\n");fflush(stdout);
-#endif
+            if (fiddbg) {
+                printf("ETE2!\n");fflush(stdout);
+            }
             pevrTime->status = epicsTimeERROR;
         }
 
@@ -1207,3 +1307,29 @@ epicsRegisterFunction(evrTimeDiag);
 epicsRegisterFunction(evrTimeRate);
 epicsRegisterFunction(evrTimeEvent);
 epicsRegisterFunction(evrTimeGetFiducial);
+
+void mcbtime(int arg1, int arg2)
+{
+    int doreset = 0;
+    if (arg1 < 0) {
+        arg1 = -arg1;
+        doreset = 1;
+    }
+    do {
+        int idx = eventCodeTime_as[arg1].idx;
+        int fidx = idx & MAX_TS_QUEUE_MASK;
+        int lidx = (idx + MAX_TS_QUEUE - 1) & MAX_TS_QUEUE_MASK;
+        printf("Event Code %d:\n", arg1);
+        printf("    idx = %d\n", idx);
+        printf("    first time = %08x.%08x\n", eventCodeTime_as[arg1].fifotime[fidx].secPastEpoch,
+               eventCodeTime_as[arg1].fifotime[fidx].nsec);
+        printf("    last time  = %08x.%08x\n", eventCodeTime_as[arg1].fifotime[lidx].secPastEpoch,
+               eventCodeTime_as[arg1].fifotime[lidx].nsec);
+        printf("    lastfid    = %05x\n", lastfid);
+        printf("    fidW = %d, fidR = %d\n", eventCodeTime_as[arg1].fidW, eventCodeTime_as[arg1].fidR);
+        if (doreset)
+            eventCodeTime_as[arg1].fidR = -1;
+        arg1++;
+    } while (arg1 <= arg2);
+    fflush(stdout);
+}

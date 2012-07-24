@@ -103,6 +103,9 @@ typedef enum {
 } evrTimeId_te;
 #define MAX_EVR_TIME  4
 
+#define MAX_EDEF_TIME      8
+#define MAX_EDEF_TIME_MASK 7
+
 /* For modifier array */
 #define MAX_EVR_MODIFIER  6
 typedef epicsUInt32 evrModifier_ta[MAX_EVR_MODIFIER];
@@ -133,12 +136,17 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
                            epicsTimeStamp  *edefTimeInit_ps,
                            int             *edefAvgDone_p,
                            epicsEnum16     *edefSevr_p);
+int evrTimeGetFromEdefTime(unsigned int     edefIdx,
+                           epicsTimeStamp  *edefTime_ps,
+                           epicsTimeStamp  *edefTimeInit_ps,
+                           int             *edefAvgDone_p,
+                           epicsEnum16     *edefSevr_p);
 int evrTimeGet            (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     eventCode);
-int evrTimeGetFifo        (epicsTimeStamp  *epicsTime_ps,
-                           unsigned int     eventCode,
-                           unsigned int    *idx,
-                           int              incr);
+int evrTimeGetFifo        (epicsTimeStamp     *epicsTime_ps,
+                           unsigned int        eventCode,
+                           unsigned long long *idx,
+                           int                 incr);
 int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
                            unsigned int     pulseID);
 /* Routines used only by event module and Mpg application */
@@ -172,6 +180,7 @@ Argument:  next_event_to_watch...The event to watch from this call onwards
 #define PEEK_PIPE_SIZE  10
 epicsUInt32 peek_fiducial (epicsUInt32*next_event_to_watch,epicsUInt32 *Ticks,epicsUInt32 );
 
+extern int fiddbg; /* Temporary fiducial debug variable. */
 
 #ifdef __cplusplus
 }
