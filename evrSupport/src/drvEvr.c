@@ -154,11 +154,11 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 =============================================================================*/
 void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
-if(eventNum==event_to_peek_fiducial)
-        { fiducial_time_stamp[fiducial_time_stamp_ix]= timeNum;
-        fiducial_time_stamp_ix++;
-        if (fiducial_time_stamp_ix>=PEEK_PIPE_SIZE){fiducial_time_stamp_ix=0;}
-        }
+  if(eventNum==event_to_peek_fiducial) {
+    fiducial_time_stamp[fiducial_time_stamp_ix]= timeNum;
+    fiducial_time_stamp_ix++;
+    if (fiducial_time_stamp_ix>=PEEK_PIPE_SIZE){fiducial_time_stamp_ix=0;}
+  }
 
   if (eventNum == EVENT_FIDUCIAL) {
     if (readyForFiducial) {
@@ -169,11 +169,11 @@ if(eventNum==event_to_peek_fiducial)
       evrMessageNoDataError(EVR_MESSAGE_FIDUCIAL);
     }
   }
-  evrTimeCount((unsigned int)eventNum);
+  evrTimeCount((unsigned int)eventNum, (unsigned int) timeNum);
 }
 
 /*---------------------------------------------------------------------------
-Following finction can allow peeking at fiducial time stamp corresponding to
+Following function can allow peeking at fiducial time stamp corresponding to
 a watched event.
 Argument:  next_event_to_watch...The event to watch from this call onwards
                    when this call terminates, the event ID that was being
@@ -186,27 +186,26 @@ Argument:  next_event_to_watch...The event to watch from this call onwards
                    effeciency, keep PEEK_PIPE_SIZE to a small number.)
 ---------------------------------------------------------------------------*/
 epicsUInt32 peek_fiducial(epicsUInt32* next_event_to_watch,
-        epicsUInt32 *Ticks,
-        epicsUInt32 peek_pipe_size)
+                          epicsUInt32 *Ticks,
+                          epicsUInt32 peek_pipe_size)
 {
+    epicsUInt32 next_event;
+    int upload_size,ix,ix_start,ix_end,local_fx;
+    local_fx=fiducial_time_stamp_ix;
 
-epicsUInt32 next_event;
-int upload_size,ix,ix_start,ix_end,local_fx;
-local_fx=fiducial_time_stamp_ix;
-
-upload_size=MIN(PEEK_PIPE_SIZE,peek_pipe_size);
-ix_start=local_fx+MAX(0,PEEK_PIPE_SIZE-peek_pipe_size);
-ix_end=ix_start+upload_size-1;
-for(ix=ix_start;ix<=ix_end;ix++){
+    upload_size=MIN(PEEK_PIPE_SIZE,peek_pipe_size);
+    ix_start=local_fx+MAX(0,PEEK_PIPE_SIZE-peek_pipe_size);
+    ix_end=ix_start+upload_size-1;
+    for(ix=ix_start;ix<=ix_end;ix++){
         Ticks[ix_start-ix+upload_size-1]=fiducial_time_stamp[ix%PEEK_PIPE_SIZE];
-        }
+    }
 
-fprintf(stdout,"Were Watching %d, Commanded to watch %d\n",event_to_peek_fiducial,*next_event_to_watch);
-next_event=  *next_event_to_watch;
-*next_event_to_watch=event_to_peek_fiducial;
-event_to_peek_fiducial=next_event;
-fprintf(stdout,"Will Watch %d, Reporting Watch Value %d\n",event_to_peek_fiducial,*next_event_to_watch);
-return(upload_size);
+    fprintf(stdout,"Were Watching %d, Commanded to watch %d\n",event_to_peek_fiducial,*next_event_to_watch);
+    next_event=  *next_event_to_watch;
+    *next_event_to_watch=event_to_peek_fiducial;
+    event_to_peek_fiducial=next_event;
+    fprintf(stdout,"Will Watch %d, Reporting Watch Value %d\n",event_to_peek_fiducial,*next_event_to_watch);
+    return(upload_size);
 }
 
 

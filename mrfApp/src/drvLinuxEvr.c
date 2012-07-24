@@ -307,7 +307,6 @@ void ErIrqHandler(int signal)
 	struct MrfErRegs *pEr;
 	int flags, i;
 
-	irqCount++;
 	epicsMutexLock(ErCardListLock);
 	for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
 		pCard != NULL;
@@ -319,6 +318,7 @@ void ErIrqHandler(int signal)
 		}
 		pEr = pCard->pEr;
 		flags = EvrGetIrqFlags(pEr);
+		irqCount++;
 
 		if(flags & EVR_IRQFLAG_PULSE) {
 			if(pCard->DevEventFunc != NULL)
@@ -365,9 +365,6 @@ void ErIrqHandler(int signal)
 		if(flags) {
 			EvrClearIrqFlags(pEr, flags);
 			EvrIrqHandled(pCard->Slot);
-			epicsMutexUnlock(pCard->CardLock);
-			epicsMutexUnlock(ErCardListLock);
-			return;
 		}
 		epicsMutexUnlock(pCard->CardLock);
 	}
@@ -457,7 +454,6 @@ static int ErConfigure (
 		return ERROR;
 	}
 
-	printf("EvrOpen, device = %s\n", strDevice);
 	fdEvr = EvrOpen(&pEr, strDevice);
 	if (fdEvr < 0) {
 		errlogPrintf("%s@%d(EvrOpen) Error: %s opening %s\n", __func__, __LINE__, strerror(errno), strDevice );
