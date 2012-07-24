@@ -62,6 +62,9 @@
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
+#include <dbAccess.h>         /* for dbNameToAddr          */
+#include <genSubRecord.h>
+#include <stdlib.h>
 
 #include "mrfCommon.h"        /* MRF_NUM_EVENTS */    
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
@@ -87,12 +90,14 @@ typedef struct {
                               /* 2nd 32 bits = # of nsecs since last sec */
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
-#define TSCNT 10
+#define TSCNT 50
   epicsTimeStamp      fifotime[TSCNT];
   int                 fifostatus[TSCNT];
   int                 idx;
   int                 count;         /* # times this event has happened	 */
-  int                 lastfid;       
+  int                 fidq[TSCNT];
+  int                 fidR;
+  int                 fidW;
 } evrTime_ts;
 
 /* EDEF Timestamp table */
@@ -357,11 +362,8 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, int *
 {
   int status;
   
-  if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
+  if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps) || epicsMutexLock(evrTimeRWMutex_ps))
     return epicsTimeERROR;
-  /* if the r/w mutex is valid, and we can lock with it, read requested time index */
-  }
-  if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
   if (*idx == -1)
       *idx = (eventCodeTime_as[eventCode].idx + TSCNT - 1) % TSCNT;
   else
@@ -484,10 +486,12 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
               eventCodeTime_as[idx].fifotime[idx2] = mod720time;
               eventCodeTime_as[idx].fifostatus[idx2] = epicsTimeERROR;
           }
-          eventCodeTime_as[idx].idx    = 0;
-          eventCodeTime_as[idx].time   = mod720time;
-          eventCodeTime_as[idx].status = epicsTimeERROR;
-          eventCodeTime_as[idx].count  = 0;
+          eventCodeTime_as[idx].idx     = 0;
+          eventCodeTime_as[idx].time    = mod720time;
+          eventCodeTime_as[idx].status  = epicsTimeERROR;
+          eventCodeTime_as[idx].count   = 0;
+          eventCodeTime_as[idx].fidR    = 0;
+          eventCodeTime_as[idx].fidW    = 0;
         }
 
 		/* For IOCs that support iocClock (RTEMS and vxWorks), register
@@ -851,7 +855,9 @@ int evrTimeCount(unsigned int eventCode, unsigned int fiducial)
 	pevrTime->count++;
     else
         pevrTime->count = 1;
-    pevrTime->lastfid = fiducial;
+    pevrTime->fidq[pevrTime->fidW] = fiducial;
+    if (++pevrTime->fidW == TSCNT)
+        pevrTime->fidW = 0;
     return epicsTimeOK;
   }
   return epicsTimeERROR;
@@ -879,69 +885,191 @@ int evrTimeCount(unsigned int eventCode, unsigned int fiducial)
   Ret:  -1=Failed; 0 = Success
 
 ==============================================================================*/
+#define DEBUG_TIME_CORRECTION 0
 static long evrTimeEvent(longSubRecord *psub)
 {
+    /*
+     * If it's a bad event or we can't lock the time mutex, just
+     * fake the count and go home!
+     */
+	/*
+	 * I disabled fake count for two reasons
+	 *	1. psub-val gets overridden by the event
+	 *		code count for normal operation.
+	 *	2. If there is a problem in evrTimeInit(),
+	 *		this routine returns an error code,
+	 *		but these few lines could make you
+	 *		think the EVR was still working.
+	 *	bhill - 2/15/12
+	 */
+    if ((psub->a <= 0) || (psub->a > MRF_NUM_EVENTS)) {
 #if 0
-  /* Rollover if value gets too big */
-  if (psub->val < EVR_MAX_INT) psub->val++;
-  else                         psub->val = 1;
-  /*
-   * I disabled this code for two reasons
-   *	1. psub-val gets overridden by the event
-   *		code count for normal operation.
-   *	2. If there is a problem in evrTimeInit(),
-   *		this routine returns an error code,
-   *		but these few lines could make you
-   *		think the EVR was still working.
-   *	bhill - 2/15/12
-   */
+        if (psub->val < EVR_MAX_INT)
+            psub->val++;
+        else
+            psub->val = 1;
 #endif
-  if ((psub->a <= 0) || (psub->a > MRF_NUM_EVENTS))
-    return epicsTimeERROR;
-  if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-    if (psub->scan == SCAN_PASSIVE) {
-      /*
-       * Only modify the event time if this is the FLNK of an event.
-       * We don't actually know this, but we assume it if we're passive.
-       * But first make sure our timestamp is correct!
-       */
-      int tmp = evr_aps[evrTimeCurrent]->pattern_s.time.nsec;
-      int nxtfid = (tmp + 1) & 0x1ffff;
-      if (nxtfid == 0x1ffe0)
-          nxtfid = 0;
-      while (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK && 
-             (nxtfid == eventCodeTime_as[psub->a].lastfid)) {
-          /* We're lagging a little... the *next* fiducial is ours, not this one! */
-          struct timespec req = { 0, 10000 }; /* Wishful thinking.  1ms is really the minimum. */
-
-          epicsMutexUnlock(evrTimeRWMutex_ps);
-
-          /* Wait until the time changes! */
-          while (evr_aps[evrTimeCurrent]->pattern_s.time.nsec == tmp)
-              nanosleep(&req, NULL);
-
-          epicsMutexLock(evrTimeRWMutex_ps);
-
-          tmp = evr_aps[evrTimeCurrent]->pattern_s.time.nsec;
-          nxtfid = (tmp + 1) & 0x1ffff;
-          if (nxtfid == 0x1ffe0)
-              nxtfid = 0;
-      }
-      eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
-      eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
-      tmp = eventCodeTime_as[psub->a].idx;
-      eventCodeTime_as[psub->a].fifotime[tmp]   = evr_aps[evrTimeCurrent]->pattern_s.time;
-      eventCodeTime_as[psub->a].fifostatus[tmp] = evr_aps[evrTimeCurrent]->timeStatus;
-      if (++eventCodeTime_as[psub->a].idx == TSCNT)
-          eventCodeTime_as[psub->a].idx = 0;
+        return epicsTimeERROR;
     }
+    if (!evrTimeRWMutex_ps || epicsMutexLock(evrTimeRWMutex_ps)) {
+#if 0
+        if (psub->val < EVR_MAX_INT)
+            psub->val++;
+        else
+            psub->val = 1;
+#endif
+        eventCodeTime_as[psub->a].status = epicsTimeERROR;
+        return epicsTimeERROR;
+    }
+
+    /*
+     * Only modify the event time if this is the FLNK of an event.
+     * We don't actually know this, but we assume it if we're passive.
+     */
+    if (psub->scan == SCAN_PASSIVE) {
+        /*
+         * First, make sure our timestamp is correct!
+         *
+         * The fiducial in the fidq is passed with the event and
+         * is always correct, so we force the timestamp to match it!
+         */
+        static epicsTimeStamp *last_good = NULL;
+        evrTime_ts	   *pevrTime = &eventCodeTime_as[psub->a];
+        epicsTimeStamp *newts = &pevrTime->time;
+        int newfid;
+
+        newfid = pevrTime->fidq[pevrTime->fidR];
+        if (++pevrTime->fidR == TSCNT)  /* This is assuming we never overrun */
+            pevrTime->fidR = 0;
+
+        if (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK && 
+            newfid == (evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff)) {
+            /*
+             * We're perfectly in sync.  Yay us.
+             */
+            *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
+            pevrTime->status = epicsTimeOK;
+            last_good = newts;
+        } else if (evr_aps[evrTimeNext1]->timeStatus == epicsTimeOK && 
+                   newfid == (evr_aps[evrTimeNext1]->pattern_s.time.nsec & 0x1ffff)) {
+            /*
+             * We're here a little early, and the other thread hasn't rotated
+             * the pattern buffers yet.  We can grab the next pattern anyway.
+             */
+            *newts   = evr_aps[evrTimeNext1]->pattern_s.time;
+            pevrTime->status = epicsTimeOK;
+            last_good = newts;
+#if DEBUG_TIME_CORRECTION
+            printf("evrTimeEvent(%d) arrived early at %08x:%08x.\n",
+                   psub->a, newts->secPastEpoch, newts->nsec);
+            fflush(stdout);
+#endif
+        } else if (last_good || evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK) {
+            /*
+             * OK, we are out of sync, but we have a good time basis!  We will
+             * construct a timestamp from this that will be close to the EVG time,
+             * and will have the correct fiducial.
+             */
+            int oldfid, delta;
+            const int ROLLOVER_CHECK_LIMIT = 0x200;
+
+            /*
+             * Use the current time, if it looks good.  Otherwise, use the
+             * time from the last successful call to this routine.
+             */
+            if (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK &&
+                (evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff) != 0x1ffff)
+                last_good = &evr_aps[evrTimeCurrent]->pattern_s.time;
+            oldfid = last_good->nsec & 0x1ffff;
+#if DEBUG_TIME_CORRECTION
+            printf("evrTimeEvent(%d) needs correction for fiducial 0x%x at time %08x:%08x (good=%08x:%08x).\n",
+                   psub->a, newfid, 
+                   evr_aps[evrTimeCurrent]->pattern_s.time.secPastEpoch,
+                   evr_aps[evrTimeCurrent]->pattern_s.time.nsec,
+                   last_good->secPastEpoch, last_good->nsec);
+#endif
+            /*
+             * We start by calculating the time delta in terms of fiducials.
+             * We need to deal with both forward and backward changes, where
+             * *either* value could have rolled over the maximum fiducial.
+             * We arbitrarily define ROLLOVER_CHECK_LIMIT to be the numbers
+             * "close" to the rollover region.
+             */
+            if (oldfid < ROLLOVER_CHECK_LIMIT && newfid > 0x1ffe0 - ROLLOVER_CHECK_LIMIT) {
+                /* oldfid has rolled over, but newfid has not! */
+                delta = newfid - (0x1ffe0 + oldfid);
+            } else if (oldfid > 0x1ffe0 - ROLLOVER_CHECK_LIMIT && newfid < ROLLOVER_CHECK_LIMIT) {
+                /* newfid has rolled over, but oldfid has not! */
+                delta = (newfid + 0x1ffe0) - oldfid;
+            } else {
+                /* No one has rolled over! */
+                delta = newfid - oldfid;
+            }
+            if (abs(delta) > 750) {
+                /*
+                 * We haven't seen a fiducial for over 2 seconds?
+                 * This is hopeless, just give up.
+                 */
+                *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
+                newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
+                pevrTime->status = epicsTimeERROR;
+                last_good = NULL;
+            } else {
+                *newts = *last_good;        /* Start from the last good time */
+                delta *= 2777778;           /* Scale the delta to ns */
+#if DEBUG_TIME_CORRECTION
+                printf("Delta = %d ns (0x%08x)\n", delta, delta);
+#endif
+                newts->nsec &= 0xfffe0000;  /* Clear the fiducial */
+                while (-delta > (int)newts->nsec) { /* Borrow! */
+                    newts->secPastEpoch--;
+                    delta += 1000000000;
+                }
+                newts->nsec += delta;       /* Add in the delta */
+                while (newts->nsec > 1000000000) { /* Carry! */
+                    newts->secPastEpoch++;
+                    newts->nsec -= 1000000000;
+                }
+                if (newts->nsec & 0x10000)  /* Round up! */
+                    newts->nsec += 0x10000;
+                newts->nsec &= 0xfffe0000;
+                newts->nsec |= newfid;      /* Insert the fiducial */
+                pevrTime->status = epicsTimeOK;
+#if DEBUG_TIME_CORRECTION
+                printf("evrTimeEvent(%d) corrected to %08x:%08x.\n",
+                       psub->a, newts->secPastEpoch, newts->nsec);
+                fflush(stdout);
+#endif
+                /*
+                 * Next time we need to construct a time, we'll start with this!
+                 */
+                last_good = newts;
+            }
+        } else {
+            /*
+             * Bah.  Bad pattern *and* we've never seen a good one?
+             * Just give up...
+             */
+            *newts   = evr_aps[evrTimeCurrent]->pattern_s.time;
+            newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
+            pevrTime->status = epicsTimeERROR;
+        }
+
+        /* Add the timestamp to the queue as well. */
+        int idx = pevrTime->idx;
+        pevrTime->fifotime[idx]   = *newts;
+        pevrTime->fifostatus[idx] = pevrTime->status;
+        if (++pevrTime->idx == TSCNT)
+            pevrTime->idx = 0;
+    }
+
+    /*
+     * Update the count and timestamp, unlock the mutex, and go home!
+     */
     psub->val = eventCodeTime_as[psub->a].count;
+    psub->time = eventCodeTime_as[psub->a].time;
     epicsMutexUnlock(evrTimeRWMutex_ps);
     return epicsTimeOK;
-  }
-  /* invalid mutex id or lock error - must set status to invalid for the caller */
-  eventCodeTime_as[psub->a].status = epicsTimeERROR;
-  return epicsTimeERROR;
 }
 
 /*=============================================================================
@@ -1014,9 +1142,42 @@ int evrTimePatternPutEnd(int modulo720Flag)
   }
   return epicsTimeERROR;
 }
+
+/*=============================================================================
+
+  Name: evrTimeGetFiducial
+
+  Abs:  Used in a genSub record to extract the fiducial from a record's timestamp.
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        struct genSubRecord* psub       read/write The genSub record.
+
+  Rem:  INPA should be a DBLINK to the NAME field of the record with the desired
+        timestamp.  The name is extracted into psub->a as a string, from which we
+        then find the database record and store into psub->dpvt for quick access.
+
+  Ret:  Fiducial number, to be put into VAL field of genSub.
+
+==============================================================================*/
+
+long evrTimeGetFiducial(struct genSubRecord *psub)
+{
+    struct dbCommon *precord;
+    if (!psub->dpvt) {
+        struct dbAddr addr;
+        if (dbNameToAddr((char *)psub->a, &addr))
+            return 0x1ffff;
+        else
+            psub->dpvt = addr.precord;
+    }
+    precord = (struct dbCommon *)psub->dpvt;
+    return precord->time.nsec & 0x1ffff;
+}
 
 epicsRegisterFunction(evrTimeProcInit);
 epicsRegisterFunction(evrTimeProc);
 epicsRegisterFunction(evrTimeDiag);
 epicsRegisterFunction(evrTimeRate);
 epicsRegisterFunction(evrTimeEvent);
+epicsRegisterFunction(evrTimeGetFiducial);

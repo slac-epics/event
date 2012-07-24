@@ -21,6 +21,7 @@ record( erevent, "$(DEV):$(NAME)CTRL" )
   field( OUTC, "$(P12=0)" )
   field( OUTD, "$(P13=0)" )
   field( VME,  "$(IRQ=0)" )
+  field(FLNK, "$(EVRFLNK)")
 }
 
 record( event, "$(DEV):$(NAME)" )

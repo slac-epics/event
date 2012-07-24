@@ -1,0 +1,11 @@
+record(longSub, "$(EVR):Triggers") {
+  field(DESC, "Event Triggers")
+  field(INAM, "evrTriggerInit")
+  field(SNAM, "evrTriggerProc")
+  field(BRSV, "INVALID")
+  field(A, "0")
+  field(B, "0")
+  field(C, "0")
+  field(D, "0")
+  field(X, "$(CARD)")
+}
