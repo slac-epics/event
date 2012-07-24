@@ -13,6 +13,7 @@ record(longSub, "$(DEV):$(NAME)CNT") {
   field(SNAM, "evrTimeEvent")
   field(BRSV, "INVALID")
   field(INPA, "$(ID)")
+  field(TSE,  "-2")
 }
 
 record(sub, "$(DEV):$(NAME)RATE") {
