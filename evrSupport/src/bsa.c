@@ -142,7 +142,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
                int             noAveraging,
                void           *dev_ps)
 {
-  epicsTimeStamp  edefTimeInit_s, edefTime_s;
+  epicsTimeStamp  edefTimeInit_s;
   int             edefAvgDone;
   int             noAverage;
   int             idx;
@@ -156,14 +156,10 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
   noAverage = ((bsaDevice_ts *)dev_ps)->noAverage;
   for (idx = 0; idx < EDEF_MAX; idx++) {
     /* Get EDEF information. */
-    if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s,
-                           &edefAvgDone, &edefSevr)) {
-      status = -1;
+    if (evrTimeGetFromEdefTime(idx, secnTime_ps, &edefTimeInit_s,
+                               &edefAvgDone, &edefSevr)) {
       continue;
     }
-    /* EDEF timestamp must match the data timestamp. */
-    if ((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
-        (secnTime_ps->nsec         != edefTime_s.nsec)) continue;
     
     bsa_ps = &((bsaDevice_ts *)dev_ps)->bsa_as[idx];
     /* Check if the EDEF has initialized and wipe out old values if it has */
@@ -466,8 +462,12 @@ static long write_ao(aoRecord *pao)
   if (!paddr) status = -1;
   else if (dbGetField(paddr, DBR_DOUBLE, &options_s, &options, &nrequest, 0)) {
     status = -1;
+    if (pao->tse == epicsTimeEventDeviceTime) /* We need to timestamp it somehow! */
+        epicsTimeGetCurrent(&pao->time);
   } else {
     status = bsaSecnAvg(&options_s.time, pao->val, options_s.status, options_s.severity, 0, pao->dpvt);
+    if (pao->tse == epicsTimeEventDeviceTime)
+        pao->time = options_s.time;
   }
 
   if (status) recGblSetSevr(pao,WRITE_ALARM,INVALID_ALARM);

@@ -10,7 +10,7 @@ record(ao, "$(DEV):EF$(SECN)") {
   field(PREC, "$(PREC)")
   field(ADEL, "$(ADEL)")
   field(MDEL, "-1")
-  field(TSE,  "-1")
+  field(TSE,  "-2")
   field(FLNK, "$(FLNK)")
 }
 

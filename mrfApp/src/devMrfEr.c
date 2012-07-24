@@ -307,6 +307,14 @@ epicsStatus ErProcess (erRecord  *pRec)
     ErSetDg (pCard, 1, pRec->dg1e, pRec->dg1d, pRec->dg1w, pRec->dg1c, pRec->dg1p);
     ErSetDg (pCard, 2, pRec->dg2e, pRec->dg2d, pRec->dg2w, pRec->dg2c, pRec->dg2p);
     ErSetDg (pCard, 3, pRec->dg3e, pRec->dg3d, pRec->dg3w, pRec->dg3c, pRec->dg3p);
+    ErSetDg (pCard, 4, pRec->dg4e, pRec->dg4d, pRec->dg4w, pRec->dg4c, pRec->dg4p);
+    ErSetDg (pCard, 5, pRec->dg5e, pRec->dg5d, pRec->dg5w, pRec->dg5c, pRec->dg5p);
+    ErSetDg (pCard, 6, pRec->dg6e, pRec->dg6d, pRec->dg6w, pRec->dg6c, pRec->dg6p);
+    ErSetDg (pCard, 7, pRec->dg7e, pRec->dg7d, pRec->dg7w, pRec->dg7c, pRec->dg7p);
+    ErSetDg (pCard, 8, pRec->dg8e, pRec->dg8d, pRec->dg8w, pRec->dg8c, pRec->dg8p);
+    ErSetDg (pCard, 9, pRec->dg9e, pRec->dg9d, pRec->dg9w, pRec->dg9c, pRec->dg9p);
+    ErSetDg (pCard, 10, pRec->dgae, pRec->dgad, pRec->dgaw, pRec->dgac, pRec->dgap);
+    ErSetDg (pCard, 11, pRec->dgbe, pRec->dgbd, pRec->dgbw, pRec->dgbc, pRec->dgbp);
   
    /*---------------------
     * Set the trigger event output enables
@@ -380,6 +388,11 @@ epicsStatus ErProcess (erRecord  *pRec)
     ErSetFPMap (pCard, 4, pRec->fps4);
     ErSetFPMap (pCard, 5, pRec->fps5);
     ErSetFPMap (pCard, 6, pRec->fps6);
+    ErSetFPMap (pCard, 7, pRec->fps7);
+    ErSetFPMap (pCard, 8, pRec->fps8);
+    ErSetFPMap (pCard, 9, pRec->fps9);
+    ErSetFPMap (pCard, 10, pRec->fpsa);
+    ErSetFPMap (pCard, 11, pRec->fpsb);
 
    /*---------------------
     * Enable or Disable Receive Link Frame Error Interrupts
