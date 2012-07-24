@@ -67,6 +67,7 @@
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
 #include "evrPattern.h"        
+#include <time.h>
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -86,7 +87,12 @@ typedef struct {
                               /* 2nd 32 bits = # of nsecs since last sec */
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
-  int                 count;  /* # times this event has happened		 */
+#define TSCNT 10
+  epicsTimeStamp      fifotime[TSCNT];
+  int                 fifostatus[TSCNT];
+  int                 idx;
+  int                 count;         /* # times this event has happened	 */
+  int                 lastfid;       
 } evrTime_ts;
 
 /* EDEF Timestamp table */
@@ -319,6 +325,56 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 
 /*=============================================================================
 
+  Name: evrTimeGetFifo
+
+  Abs:  Get the epics timestamp associated with an event code from the fifo, defined as:
+        1st integer = number of seconds since 1990  
+        2nd integer = number of nsecs since last sec, except lower 17 bits=pulsid
+		
+  Args: Type     Name           Access	   Description
+        -------  -------	---------- ----------------------------
+  epicsTimeStamp * epicsTime_ps write  ptr to epics timestamp to be returned
+  unsigned int   eventCode      read   Event code 0 to 255.
+	                                  0,1=time associated w this pulse
+                                          (event code 1 = fiducial)
+                                          1 to 255 = EVR event codes
+  int            * idx          read/write The last fifo index we read (-1 to initialize to the current time)
+  int            incr           read       How far to move ahead (usually 1, for the next time)
+
+  Rem:  Routine to get the epics timestamp from a queue of timestamps.  This must
+        be called no faster than timestamps come in, as there is no checking for bounds.
+        
+        "idx = -1; evrTimeGetFifo(&ts, event, &idx, 1)" and "evrTimeGet(&ts, event)" return
+        identical timestamps.
+        
+
+  Side: 
+
+  Ret:  -1=Failed; 0 = Success
+==============================================================================*/
+
+int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, int *idx, int incr)
+{
+  int status;
+  
+  if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
+    return epicsTimeERROR;
+  /* if the r/w mutex is valid, and we can lock with it, read requested time index */
+  }
+  if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
+  if (*idx == -1)
+      *idx = (eventCodeTime_as[eventCode].idx + TSCNT - 1) % TSCNT;
+  else
+      *idx = (*idx + incr) % TSCNT;
+  *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx];
+  status = eventCodeTime_as[eventCode].fifostatus[*idx];
+  epicsMutexUnlock(evrTimeRWMutex_ps);
+  
+  return status; 
+}
+
+/*=============================================================================
+
   Name: evrTimePutPulseID
 
   Abs:  Puts pulse ID in the lower 17 bits of the nsec field
@@ -423,6 +479,12 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         }
         /* init timestamp structures to invalid status & system time*/
         for (idx=0; idx<=MRF_NUM_EVENTS; idx++) {
+          int idx2;
+          for (idx2 = 0; idx2 < TSCNT; idx2++) {
+              eventCodeTime_as[idx].fifotime[idx2] = mod720time;
+              eventCodeTime_as[idx].fifostatus[idx2] = epicsTimeERROR;
+          }
+          eventCodeTime_as[idx].idx    = 0;
           eventCodeTime_as[idx].time   = mod720time;
           eventCodeTime_as[idx].status = epicsTimeERROR;
           eventCodeTime_as[idx].count  = 0;
@@ -780,13 +842,16 @@ static long evrTimeRate(subRecord *psub)
   Ret:  -1=Failed; 0 = Success
 
 ==============================================================================*/
-int evrTimeCount(unsigned int eventCode)
+int evrTimeCount(unsigned int eventCode, unsigned int fiducial)
 {
   if ((eventCode > 0) && (eventCode <= MRF_NUM_EVENTS)) {
     evrTime_ts	*	pevrTime = &eventCodeTime_as[eventCode];
     /* Rollover if value gets too big */
-    if (pevrTime->count < EVR_MAX_INT)	pevrTime->count++;
-    else                       			pevrTime->count = 1;
+    if (pevrTime->count < EVR_MAX_INT)
+	pevrTime->count++;
+    else
+        pevrTime->count = 1;
+    pevrTime->lastfid = fiducial;
     return epicsTimeOK;
   }
   return epicsTimeERROR;
@@ -838,9 +903,37 @@ static long evrTimeEvent(longSubRecord *psub)
       /*
        * Only modify the event time if this is the FLNK of an event.
        * We don't actually know this, but we assume it if we're passive.
+       * But first make sure our timestamp is correct!
        */
+      int tmp = evr_aps[evrTimeCurrent]->pattern_s.time.nsec;
+      int nxtfid = (tmp + 1) & 0x1ffff;
+      if (nxtfid == 0x1ffe0)
+          nxtfid = 0;
+      while (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK && 
+             (nxtfid == eventCodeTime_as[psub->a].lastfid)) {
+          /* We're lagging a little... the *next* fiducial is ours, not this one! */
+          struct timespec req = { 0, 10000 }; /* Wishful thinking.  1ms is really the minimum. */
+
+          epicsMutexUnlock(evrTimeRWMutex_ps);
+
+          /* Wait until the time changes! */
+          while (evr_aps[evrTimeCurrent]->pattern_s.time.nsec == tmp)
+              nanosleep(&req, NULL);
+
+          epicsMutexLock(evrTimeRWMutex_ps);
+
+          tmp = evr_aps[evrTimeCurrent]->pattern_s.time.nsec;
+          nxtfid = (tmp + 1) & 0x1ffff;
+          if (nxtfid == 0x1ffe0)
+              nxtfid = 0;
+      }
       eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
       eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
+      tmp = eventCodeTime_as[psub->a].idx;
+      eventCodeTime_as[psub->a].fifotime[tmp]   = evr_aps[evrTimeCurrent]->pattern_s.time;
+      eventCodeTime_as[psub->a].fifostatus[tmp] = evr_aps[evrTimeCurrent]->timeStatus;
+      if (++eventCodeTime_as[psub->a].idx == TSCNT)
+          eventCodeTime_as[psub->a].idx = 0;
     }
     psub->val = eventCodeTime_as[psub->a].count;
     epicsMutexUnlock(evrTimeRWMutex_ps);
