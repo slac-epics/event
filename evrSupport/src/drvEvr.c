@@ -62,6 +62,7 @@ static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
 static int evrInitialized = 0;          /* evrInitialize performed        */
+int lastfid = -1;                       /* Last fiducial seen             */
 
 /* Fiducial User Function List */
 typedef struct {
@@ -161,6 +162,7 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
   }
 
   if (eventNum == EVENT_FIDUCIAL) {
+    lastfid = timeNum;
     if (readyForFiducial) {
       readyForFiducial = 0;
       evrMessageStart(EVR_MESSAGE_FIDUCIAL);

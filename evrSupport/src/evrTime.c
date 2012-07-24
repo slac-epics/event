@@ -12,6 +12,7 @@
            evrTimeGetFromPipeline - Get Timestamp from Pipeline
            evrTimeGetFromEdef     - Get Timestamp from EDEF
            evrTimeGet        - Get Timestamp for an Event
+           evrTimeGetFifo    - Get Timestamp from an Event FIFO
            evrTimePutPulseID - Encode Pulse ID into a Timestamp
            evrTimeGetSystem  - Get System Time with Encoded Invalid Pulse ID
            evrTimePatternPutStart - Start New Time/Pattern Update
@@ -90,12 +91,11 @@ typedef struct {
                               /* 2nd 32 bits = # of nsecs since last sec */
                               /*           except lower 17 bits = pulsid */
   int                 status; /* 0=OK; -1=invalid                        */
-#define TSCNT 50
-  epicsTimeStamp      fifotime[TSCNT];
-  int                 fifostatus[TSCNT];
-  int                 idx;
+  epicsTimeStamp      fifotime[MAX_TS_QUEUE];
+  int                 fifostatus[MAX_TS_QUEUE];
+  unsigned int        idx;
   int                 count;         /* # times this event has happened	 */
-  int                 fidq[TSCNT];
+  int                 fidq[MAX_TS_QUEUE];
   int                 fidR;
   int                 fidW;
 } evrTime_ts;
@@ -343,13 +343,13 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 	                                  0,1=time associated w this pulse
                                           (event code 1 = fiducial)
                                           1 to 255 = EVR event codes
-  int            * idx          read/write The last fifo index we read (-1 to initialize to the current time)
-  int            incr           read       How far to move ahead (usually 1, for the next time)
+  int            * idx          read/write The last fifo index we read
+  int            incr           read       How far to move ahead (MAX_TS_QUEUE if idx is uninitialized)
 
   Rem:  Routine to get the epics timestamp from a queue of timestamps.  This must
         be called no faster than timestamps come in, as there is no checking for bounds.
         
-        "idx = -1; evrTimeGetFifo(&ts, event, &idx, 1)" and "evrTimeGet(&ts, event)" return
+        "evrTimeGetFifo(&ts, event, &idx, MAX_TS_QUEUE)" and "evrTimeGet(&ts, event)" return
         identical timestamps.
         
 
@@ -358,18 +358,40 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   Ret:  -1=Failed; 0 = Success
 ==============================================================================*/
 
-int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, int *idx, int incr)
+int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned int *idx, int incr)
 {
-  int status;
+  int status = 0, i;
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps) || epicsMutexLock(evrTimeRWMutex_ps))
     return epicsTimeERROR;
-  if (*idx == -1)
-      *idx = (eventCodeTime_as[eventCode].idx + TSCNT - 1) % TSCNT;
+  if (incr == MAX_TS_QUEUE)
+      *idx = eventCodeTime_as[eventCode].idx - 1;
   else
-      *idx = (*idx + incr) % TSCNT;
-  *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx];
-  status = eventCodeTime_as[eventCode].fifostatus[*idx];
+      *idx += incr;
+  if (*idx + MAX_TS_QUEUE < eventCodeTime_as[eventCode].idx) {
+      /* Ow.  This is a *very* old timestamp! */
+      epicsMutexUnlock(evrTimeRWMutex_ps);
+      return epicsTimeERROR;
+  } else if (*idx >= eventCodeTime_as[eventCode].idx) {
+      struct timespec req = {0, 1000000}; /* 1 ms */
+      epicsMutexUnlock(evrTimeRWMutex_ps);
+#define TO_LIM 4
+      for (i = 1; i < TO_LIM; i++) {
+          nanosleep(&req, NULL);
+          if (*idx < eventCodeTime_as[eventCode].idx)
+              break;
+      }
+      if (i == TO_LIM) {
+#if 0
+          printf("ETGF!\n");fflush(stdout);
+#endif
+          status = 0x1ffff; /* We missed, so at least flag this as invalid! */
+      }
+      epicsMutexLock(evrTimeRWMutex_ps);
+  }
+  *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[*idx & MAX_TS_QUEUE_MASK];
+  epicsTime_ps->nsec |= status;
+  status = eventCodeTime_as[eventCode].fifostatus[*idx & MAX_TS_QUEUE_MASK];
   epicsMutexUnlock(evrTimeRWMutex_ps);
   
   return status; 
@@ -482,7 +504,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
         /* init timestamp structures to invalid status & system time*/
         for (idx=0; idx<=MRF_NUM_EVENTS; idx++) {
           int idx2;
-          for (idx2 = 0; idx2 < TSCNT; idx2++) {
+          for (idx2 = 0; idx2 < MAX_TS_QUEUE; idx2++) {
               eventCodeTime_as[idx].fifotime[idx2] = mod720time;
               eventCodeTime_as[idx].fifostatus[idx2] = epicsTimeERROR;
           }
@@ -856,7 +878,7 @@ int evrTimeCount(unsigned int eventCode, unsigned int fiducial)
     else
         pevrTime->count = 1;
     pevrTime->fidq[pevrTime->fidW] = fiducial;
-    if (++pevrTime->fidW == TSCNT)
+    if (++pevrTime->fidW == MAX_TS_QUEUE)
         pevrTime->fidW = 0;
     return epicsTimeOK;
   }
@@ -939,7 +961,7 @@ static long evrTimeEvent(longSubRecord *psub)
         int newfid;
 
         newfid = pevrTime->fidq[pevrTime->fidR];
-        if (++pevrTime->fidR == TSCNT)  /* This is assuming we never overrun */
+        if (++pevrTime->fidR == MAX_TS_QUEUE)  /* This is assuming we never overrun */
             pevrTime->fidR = 0;
 
         if (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK && 
@@ -1012,6 +1034,9 @@ static long evrTimeEvent(longSubRecord *psub)
                  */
                 *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
                 newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
+#if 0
+                printf("ETE1!\n");fflush(stdout);
+#endif
                 pevrTime->status = epicsTimeERROR;
                 last_good = NULL;
             } else {
@@ -1052,15 +1077,16 @@ static long evrTimeEvent(longSubRecord *psub)
              */
             *newts   = evr_aps[evrTimeCurrent]->pattern_s.time;
             newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
+#if 0
+            printf("ETE2!\n");fflush(stdout);
+#endif
             pevrTime->status = epicsTimeERROR;
         }
 
         /* Add the timestamp to the queue as well. */
-        int idx = pevrTime->idx;
+        unsigned int idx = (pevrTime->idx++) & MAX_TS_QUEUE_MASK;
         pevrTime->fifotime[idx]   = *newts;
         pevrTime->fifostatus[idx] = pevrTime->status;
-        if (++pevrTime->idx == TSCNT)
-            pevrTime->idx = 0;
     }
 
     /*
