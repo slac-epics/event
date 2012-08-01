@@ -148,6 +148,7 @@ drvMrf_OBJS_vxWorks += mrfVme64x
 drvMrf_OBJS_vxWorks += $(CRCSR_PROBE_NAME)
 ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 drvMrf_OBJS_Linux	+= drvLinux
+drvMrf_OBJS_Linux += evrIrqHandlerThread
 drvMrf_OBJS_Linux += erapi.o
 drvMrfLib_LIBS_Linux+= mrfApi
 endif

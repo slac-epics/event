@@ -338,14 +338,14 @@ void ErIrqHandler(int signal)
 		}
 		pEr = pCard->pEr;
 		flags = EvrGetIrqFlags(pEr);
+                /*
+                 * Acknowledge immediately!
+                 */
+                if(flags & ~EVR_IRQFLAG_FIFOFULL)
+                    EvrClearIrqFlags(pEr, (flags & ~EVR_IRQFLAG_FIFOFULL)); 
 
                 irqCount++;
 
-		if(flags & EVR_IRQFLAG_PULSE) {
-			if(pCard->DevEventFunc != NULL)
-				(*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
-		}
-#ifdef NO_DBUF_IRQ
                 /* This should always be here 2ms before the fiducial event */
 		if(flags & EVR_IRQFLAG_DATABUF) {
 			int databuf_sts = EvrGetDBufStatus(pEr);
@@ -361,7 +361,7 @@ void ErIrqHandler(int signal)
 				(*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
 			}
 		}
-#endif
+
 		if(flags & EVR_IRQFLAG_EVENT) {
 			struct FIFOEvent fe;
 			for(i=0; i < EVR_FIFO_EVENT_LIMIT; i++) {
@@ -371,13 +371,19 @@ void ErIrqHandler(int signal)
 					(*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampHigh);
 			}
 		}
+
+		if(flags & EVR_IRQFLAG_PULSE) {
+			if(pCard->DevEventFunc != NULL)
+				(*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
+		}
 		if(flags & EVR_IRQFLAG_HEARTBEAT) {
 			if (pCard->DevErrorFunc != NULL)
 				(*pCard->DevErrorFunc)(pCard, ERROR_HEART);
 		}
 		if(flags & EVR_IRQFLAG_FIFOFULL) {
 			/* Clear and re-enable the FIFO and if applicable report the error */
-			EvrClearFIFO(pEr);
+                        EvrClearFIFO(pEr);
+                        EvrClearIrqFlags(pEr, EVR_IRQFLAG_FIFOFULL);
 			if (pCard->DevErrorFunc != NULL)
 				(*pCard->DevErrorFunc)(pCard, ERROR_LOST);
 		}
@@ -386,39 +392,12 @@ void ErIrqHandler(int signal)
 			if (pCard->DevErrorFunc != NULL)
 				(*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
 		}
-#ifndef NO_DBUF_IRQ
-		if(flags & EVR_IRQFLAG_DATABUF) {
-			int databuf_sts = EvrGetDBufStatus(pEr);
-			if(databuf_sts & (1<<C_EVR_DATABUF_CHECKSUM))
-				if (pCard->DevErrorFunc != NULL)
-					(*pCard->DevErrorFunc)(pCard, ERROR_DBUF_CHECKSUM);
-			if (pCard->DevDBuffFunc != NULL) {
-				pCard->DBuffSize = (databuf_sts & ((1<<(C_EVR_DATABUF_SIZEHIGH+1))-1));
-				for (i=0;  i < pCard->DBuffSize>>2;  i++)
-					pCard->DataBuffer[i] = be32_to_cpu(pEr->Databuf[i]);
-				EvrReceiveDBuf(pEr, 1);	/* That means we only re-enable it if 
-							   someone cares (DevDBuffFunc set) */
-				(*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
-			}
-		}
-#endif
 		if(flags) {
-			EvrClearIrqFlags(pEr, flags);
 			EvrIrqHandled(pCard->Slot);
 		}
 		epicsMutexUnlock(pCard->CardLock);
 	}
 	epicsMutexUnlock(ErCardListLock);
-	if ( ErDebug >= 1 ) {
-		/*
-		 * None of the events tested for above were found. 
-		 * This condition appears regularly on most of our
-		 * systems with so far no known interrupt problems,
-		 * so I've changed it from always calling errlogPrintf
-		 * to a debug msg which can be enabled or disabled as needed.
-		 */
-		printf("%s: called but no interrupt found.\n", __func__);
-	}
 	return;
 }
 	
@@ -1930,16 +1909,6 @@ LOCAL_RTN void fiddbgCall(const iocshArgBuf * args)
     fflush(stdout);
 }
 
-static const iocshArg		mcbtimeArg0	= { "min",	iocshArgInt };
-static const iocshArg		mcbtimeArg1	= { "max",	iocshArgInt };
-static const iocshArg	*	mcbtimeArgs[2]	= { &mcbtimeArg0, &mcbtimeArg1 };
-static const iocshFuncDef   mcbtimeFuncDef	= { "mcbtime", 2, mcbtimeArgs };
-extern void mcbtime(int arg1, int arg2);
-static int  mcbtimeCall( const iocshArgBuf * args )
-{
-    mcbtime(args[0].ival, args[1].ival);
-    return 0;
-}
 
 /* Registration APIs */
 LOCAL void drvMrfErRegister()
@@ -1952,6 +1921,5 @@ LOCAL void drvMrfErRegister()
 	iocshRegister(	&ErDebugLevelDef,	ErDebugLevelCall );
 	iocshRegister(	&ErDrvReportDef,	ErDrvReportCall );
 	iocshRegister(	&fiddbgDef,	        fiddbgCall );
-	iocshRegister(  &mcbtimeFuncDef,        mcbtimeCall );
 }
 epicsExportRegistrar(drvMrfErRegister);

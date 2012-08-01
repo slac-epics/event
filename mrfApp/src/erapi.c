@@ -576,9 +576,23 @@ void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs)
 void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 			 void (*handler)(int))
 {
-  struct sigaction act;
   int oflags;
+  static int have_thread = 0;
+  static void (*h)(int) = NULL;
+
+  /*
+   * The New Regime: We create a separate handler that waits for the signal.
+   */
+  h = handler;
+  if (!have_thread)
+      EvrIrqHandlerThreadCreate(&h);
+
+#if 0
+  /*
+   * The Old Regime.
+   */
   int result;
+  struct sigaction act;
 
   act.sa_handler = handler;
   sigemptyset(&act.sa_mask);
@@ -586,6 +600,8 @@ void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 
   result = sigaction(SIGIO, &act, NULL);
   printf("sigaction returned %d\n", result);
+#endif
+
   fcntl(fd, F_SETOWN, getpid());
   oflags = fcntl(fd, F_GETFL);
   fcntl(fd, F_SETFL, oflags | FASYNC);

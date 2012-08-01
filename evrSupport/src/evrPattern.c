@@ -57,7 +57,7 @@
 #include "alarm.h"            /* INVALID_ALARM             */
 
 
-#define  MAX_PATTERN_DELTA_TIME  10 /* sec */
+#define  MAX_PATTERN_DELTA_TIME  100 /* sec */
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 

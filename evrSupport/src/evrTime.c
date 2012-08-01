@@ -837,7 +837,11 @@ static int evrTimeProc (longSubRecord *psub)
   R - Counter Reset Flag
 
   Outputs:
-  A - L Spare
+  A  Fiducial Delay Time (us) - due to the epicsEventSignal
+  B  Minimum of Fiducial Delay Time (us)
+  C  Minimum of Fiducial Delay Time (us)
+ 
+  D - L Spare
   M  fiducial counter
   N  Number of times M has rolled over
   O  Number of same pulses
@@ -869,6 +873,9 @@ static long evrTimeDiag (longSubRecord *psub)
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
                    &psub->t,&psub->u,&dummy  ,&psub->y,&dummy,
                    &dummy,  &psub->v,&psub->w,&psub->x,&psub->z);
+  evrMessageCountsFiducial(EVR_MESSAGE_FIDUCIAL,
+                           &psub->a, &psub->b, &psub->c);
+
   if (psub->r > 0) {
     psub->r           = 0;
     msgCount          = 0;
