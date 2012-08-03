@@ -685,9 +685,12 @@ static int evrTimeProc (longSubRecord *psub)
   Outputs:
   A  Fiducial Delay Time (us) - due to the epicsEventSignal
   B  Minimum of Fiducial Delay Time (us)
-  C  Minimum of Fiducial Delay Time (us)
- 
-  D - L Spare
+  C  Maximum of Fiducial Delay Time (us)
+  D  Absolute Fiducial Delay (us) - based on the evr clock outer
+  E  Minimum of Absolute Fiducial Delay (us)
+  F  Maximum of Absolute Fiducial Delay (us) 
+
+  G - L Spare
 
   M  fiducial counter
   N  Number of times M has rolled over

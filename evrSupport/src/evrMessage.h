@@ -102,6 +102,7 @@ evrMessageReadStatus_te
     evrMessageRead      (unsigned int  messageIdx, evrMessage_tu *message_pu);
 int evrMessageWrite     (unsigned int  messageIdx, evrMessage_tu *message_pu);
 int evrMessageProcess   (unsigned int  messageIdx);
+int evrMessageClockCounter(unsigned int messageIdx, epicsUInt32 evrClockCounter);
 int evrMessageStart     (unsigned int  messageIdx);
 int evrMessageLap       (unsigned int  messageIdx);
 int evrMessageEnd       (unsigned int  messageIdx);

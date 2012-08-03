@@ -128,6 +128,8 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
   epicsUInt32 evrClockCounter;
   unsigned int messageType = ((evrMessageHeader_ts *)message)->type;
 
+  ErGetTicks(0, &evrClockCounter);
+
   /* Look for error from the driver or the wrong message size */
   if ((pCard && ((ErCardStruct *)pCard)->DBuffError) ||
       (messageSize != sizeof(evrMessagePattern_ts))) {
@@ -135,8 +137,7 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
   } else {
     if (evrMessageWrite(messageType, (evrMessage_tu *)message))
       evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
-    else ErGetTicks(0, &evrClockCounter);
-
+    else evrMessageClockCounter(EVR_MESSAGE_PATTERN, evrClockCounter);
   }
 }
 
@@ -158,6 +159,7 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
     if (readyForFiducial) {
       readyForFiducial = 0;
       ErGetTicks(0, &evrClockCounter);
+      evrMessageClockCounter(EVR_MESSAGE_FIDUCIAL, evrClockCounter);
       evrMessageStart(EVR_MESSAGE_FIDUCIAL);
       epicsEventSignal(evrTaskEventSem);
     } else {

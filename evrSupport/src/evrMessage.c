@@ -76,6 +76,9 @@ typedef struct
   unsigned long       procTimeDelayMax;
   unsigned long       procTimeDelay;
   unsigned long       procTimeDelta_a[MODULO720_COUNT];
+  unsigned long       absoluteStartTime;
+  unsigned long       absoluteStartTimeMin;
+  unsigned long       absoluteStartTimeMax;
 
   epicsMutexId        lock;
 
@@ -444,6 +447,21 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
   return status;
 }
 
+int evrMessageClockCounter(unsigned int messageIdx, epicsUInt32 evrClockCounter)
+{
+    if(messageIdx >= EVR_MESSAGE_MAX) return -1;
+
+    evrClockCounter += 33;  printf("%ul - %ul\n", messageIdx, evrClockCounter);
+
+    evrMessage_as[messageIdx].absoluteStartTime = evrClockCounter;
+    if(evrMessage_as[messageIdx].absoluteStartTimeMin > evrClockCounter)
+        evrMessage_as[messageIdx].absoluteStartTimeMin = evrClockCounter;
+    if(evrMessage_as[messageIdx].absoluteStartTimeMax < evrClockCounter) 
+        evrMessage_as[messageIdx].absoluteStartTimeMax = evrClockCounter;
+
+    return 0;
+}
+
 /*=============================================================================
 
   Name: evrMessageStart
@@ -724,6 +742,7 @@ int evrMessageCountsFiducial(unsigned int messageIdx,
                              epicsUInt32 *procTimeDelay_p,
                              epicsUInt32 *procTimeDelayMin_p,
                              epicsUInt32 *procTimeDelayMax_p)
+
 {
    evrMessage_ts *em_ps = evrMessage_as + messageIdx;
 
@@ -777,6 +796,9 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].procTimeDeltaCount    = 0;
   evrMessage_as[messageIdx].procTimeDelayMax      = 0;
   evrMessage_as[messageIdx].procTimeDelayMin      = MAX_DELTA_TIME;
+  evrMessage_as[messageIdx].absoluteStartTime     = 0;
+  evrMessage_as[messageIdx].absoluteStartTimeMax  = 0;
+  evrMessage_as[messageIdx].absoluteStartTimeMin  = MAX_DELTA_TIME;
   /* Save counter reset time for reporting purposes */
   epicsTimeGetCurrent(&evrMessage_as[messageIdx].resetTime_s);
   return 0;
