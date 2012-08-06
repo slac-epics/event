@@ -686,9 +686,14 @@ static int evrTimeProc (longSubRecord *psub)
   A  Fiducial Delay Time (us) - due to the epicsEventSignal
   B  Minimum of Fiducial Delay Time (us)
   C  Maximum of Fiducial Delay Time (us)
+
   D  Absolute Fiducial Delay (us) - based on the evr clock outer
   E  Minimum of Absolute Fiducial Delay (us)
   F  Maximum of Absolute Fiducial Delay (us) 
+
+  G  Absolute start time for the data buffer handling (us)  
+  H  Minimum of the start time for the data buffer handling (us)
+  I  Maximum of the start time for the data buffer handling (us)
 
   G - L Spare
 
@@ -725,6 +730,10 @@ static long evrTimeDiag (longSubRecord *psub)
                    &dummy,  &psub->v,&psub->w,&psub->x,&psub->z);
   evrMessageCountsFiducial(EVR_MESSAGE_FIDUCIAL,
                            &psub->a, &psub->b, &psub->c);
+  evrMessageCountsClockCounter(EVR_MESSAGE_FIDUCIAL,
+                               &psub->d, &psub->e, &psub->f);
+  evrMessageCountsClockCounter(EVR_MESSAGE_PATTERN,
+                               &psub->g, &psub->h, &psub->i);
 
   if (psub->r > 0) {
     psub->r           = 0;

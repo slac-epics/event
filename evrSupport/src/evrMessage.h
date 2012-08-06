@@ -123,6 +123,10 @@ int evrMessageCountsFiducial(unsigned int messageIdx,
                          epicsUInt32 *procTimeDelay_p,
                          epicsUInt32 *procTimeDelayMin_p,
                          epicsUInt32 *procTimeDelayMax_p);
+int evrMessageCountsClockCounter(unsigned int messageIdx,
+                         epicsUInt32 *absoluteStartTime_p,
+                         epicsUInt32 *absoluteStartTimeMin_p,
+                         epicsUInt32 *absoluteStartTimeMax_p);
 int evrMessageCountReset   (unsigned int messageIdx);
 int evrMessageCheckSumError(unsigned int messageIdx);
 int evrMessageNoDataError  (unsigned int messageIdx);

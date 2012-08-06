@@ -451,7 +451,7 @@ int evrMessageClockCounter(unsigned int messageIdx, epicsUInt32 evrClockCounter)
 {
     if(messageIdx >= EVR_MESSAGE_MAX) return -1;
 
-    evrClockCounter += 33;  printf("%ul - %ul\n", messageIdx, evrClockCounter);
+    evrClockCounter += 33; 
 
     evrMessage_as[messageIdx].absoluteStartTime = evrClockCounter;
     if(evrMessage_as[messageIdx].absoluteStartTimeMin > evrClockCounter)
@@ -772,13 +772,13 @@ int evrMessageCountsClockCounter(unsigned int messageIdx,
 {
 
     evrMessage_ts *em_ps = evrMessage_as + messageIdx;
-    if(messageIdx != EVR_MESSAGE_FIDUCIAL) return -1;
+    if(messageIdx >= EVR_MESSAGE_MAX) return -1;
 
     *absoluteStartTime_p    = em_ps->absoluteStartTime;
     *absoluteStartTimeMin_p = em_ps->absoluteStartTimeMin;
     *absoluteStartTimeMax_p = em_ps->absoluteStartTimeMax;
 
-    #define CALC_FUNC(A)  (*A) = (unsigned long)(((double)(*A)*(1000./119.))+0.5)
+    #define CALC_FUNC(A)  (*A) = (unsigned long)(((double)(*A)*(1./119.))+0.5)
 
     CALC_FUNC(absoluteStartTime_p);
     CALC_FUNC(absoluteStartTimeMin_p);
