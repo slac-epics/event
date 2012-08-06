@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-5: (KHKIM)
+        * add new diagnostic to measure the abolute time (interrupt delay)
+          for the fiducial processing and the data buffer handling
+
 event-R3-2-2-br_generaltime-2-4: (KHKIM)
         * update README file
         * fix configure/RELEASE file: EPICS_MODULES=$(MODULES_SITE_TOP)
