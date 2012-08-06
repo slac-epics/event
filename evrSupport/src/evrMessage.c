@@ -763,6 +763,33 @@ int evrMessageCountsFiducial(unsigned int messageIdx,
 
     return 0;
 }
+
+
+int evrMessageCountsClockCounter(unsigned int messageIdx,
+                                 epicsUInt32 *absoluteStartTime_p,
+                                 epicsUInt32 *absoluteStartTimeMin_p,
+                                 epicsUInt32 *absoluteStartTimeMax_p)
+{
+
+    evrMessage_ts *em_ps = evrMessage_as + messageIdx;
+    if(messageIdx != EVR_MESSAGE_FIDUCIAL) return -1;
+
+    *absoluteStartTime_p    = em_ps->absoluteStartTime;
+    *absoluteStartTimeMin_p = em_ps->absoluteStartTimeMin;
+    *absoluteStartTimeMax_p = em_ps->absoluteStartTimeMax;
+
+    #define CALC_FUNC(A)  (*A) = (unsigned long)(((double)(*A)*(1000./119.))+0.5)
+
+    CALC_FUNC(absoluteStartTime_p);
+    CALC_FUNC(absoluteStartTimeMin_p);
+    CALC_FUNC(absoluteStartTimeMax_p);
+
+    #undef CALC_FUNC
+
+    return 0; 
+}
+
+
 /*=============================================================================
 
   Name: evrMessageCountReset
