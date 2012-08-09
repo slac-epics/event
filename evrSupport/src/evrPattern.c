@@ -162,6 +162,8 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
          if NTP is no good. */
       if (deltaTime >= evrDeltaTimeMax) {
         invalidTimeCount++;
+        if (invalidTimeCount % 10000 == 0)
+            printf("Delta Time = %d, > %d\n", deltaTime, evrDeltaTimeMax);
         if (ntpStatus) {
           patternErrCount = 0;
         } else {
