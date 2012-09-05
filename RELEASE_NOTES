@@ -3,6 +3,9 @@ Release Notes for the event package
 event-R3-2-2-br_generaltime-2-5: (KHKIM)
         * add new diagnostic to measure the abolute time (interrupt delay)
           for the fiducial processing and the data buffer handling
+        * fix confliction in evrEventAll.substitution file
+          - EVG delay for event number 163, 164 were not matched with the mpgEventAll in the EVG application
+          - Add new event (event number 163) for the A-line kicker
 
 event-R3-2-2-br_generaltime-2-4: (KHKIM)
         * update README file
