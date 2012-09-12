@@ -146,8 +146,8 @@ typedef struct MrfErRegs
    /*---------------------
     * Timestamp registers
     */
-    epicsUInt16  EventCounterLo;        /* 00C: Timestamp Event Counter (LSW)                     */
-    epicsUInt16  EventCounterHi;        /* 00E: Timestamp Event Counter (MSW)                     */
+    epicsUInt16  EventCounterHi;        /* 00C: Timestamp Event Counter (MSW)                     */
+    epicsUInt16  EventCounterLo;        /* 00E: Timestamp Event Counter (LSW)                     */
     epicsUInt16  TimeStampLo;           /* 010: Timestamp Latch (LSW)                             */
     epicsUInt16  TimeStampHi;           /* 012: Timestamp Latch (MSW)                             */
 
