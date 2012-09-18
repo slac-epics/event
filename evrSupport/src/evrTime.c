@@ -1263,6 +1263,8 @@ long evrTimeGetFiducial(struct genSubRecord *psub)
             psub->dpvt = addr.precord;
     }
     precord = (struct dbCommon *)psub->dpvt;
+    if (psub->tse == epicsTimeEventDeviceTime)
+        psub->time = precord->time;
     return precord->time.nsec & 0x1ffff;
 }
 
