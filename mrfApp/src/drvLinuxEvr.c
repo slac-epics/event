@@ -924,9 +924,9 @@ epicsStatus ErGetTicks(int Card, epicsUInt32 *Ticks)
 	if(pCard == NULL)
 		return ERROR;
 	pEr = (struct MrfErRegs *)pCard->pEr;
-	epicsMutexLock(pCard->CardLock);
+	/* epicsMutexLock(pCard->CardLock); */
 	*Ticks = (epicsUInt32)EvrGetTimestampCounter(pEr);
-	epicsMutexUnlock(pCard->CardLock);
+	/* epicsMutexUnlock(pCard->CardLock); */
 	return OK;
 }
 
