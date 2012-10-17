@@ -112,6 +112,10 @@ typedef struct {
                                  used in Beam Synchronous Acquisition    */
 } evrTimeEdef_ts;
 
+#ifdef BSA_DEBUG
+int bsa_debug_mask = 0; /* BSA debugging mask */
+#endif
+
 /* Pattern and timestamp pipeline */
 static evrTimePattern_ts   evr_as[MAX_EVR_TIME+1];
 static evrTimePattern_ts  *evr_aps[MAX_EVR_TIME+1];
@@ -237,6 +241,14 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
   return status;
 }
 
+#if 0
+/*
+ * OK, now to win a race in evrTimeGetFromEdefTime, we are looking ahead and
+ * putting the latest result we've received into the queue.  The problem is
+ * that perhaps we've gotten ahead of ourselves and need to go back *two*
+ * entries.  However, I don't think anyone is using this routine at this point,
+ * so I'm not going to fix this right now.
+ */
 /*=============================================================================
 
   Name: evrTimeGetFromEdef
@@ -285,6 +297,7 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
   
   return epicsTimeOK;
 }
+#endif
 
 /*=============================================================================
 
@@ -333,23 +346,41 @@ int evrTimeGetFromEdefTime(unsigned int     edefIdx,
   for (i = 0; i < MAX_EDEF_TIME - 2; i++) {
       if ((edef->time.secPastEpoch == edefTime_ps->secPastEpoch) &&
           (edef->time.nsec == edefTime_ps->nsec)) {
-          *edefTime_ps     = edef->time;
           *edefTimeInit_ps = edef->timeInit;
           *edefAvgDone_p   = edef->avgdone;
           *edefSevr_p      = edef->sevr;
           epicsMutexUnlock(evrTimeRWMutex_ps);
+#ifdef BSA_DEBUG
+          if ((1 << edefIdx) & bsa_debug_mask)
+              printf("%08x:%08x BSA%d, slot %d.\n", edefTime_ps->secPastEpoch, edefTime_ps->nsec, edefIdx, idx);
+#endif
           return epicsTimeOK;
       } else if ((edef->time.secPastEpoch < edefTime_ps->secPastEpoch) ||
                  ((edef->time.secPastEpoch == edefTime_ps->secPastEpoch) &&
                   (edef->time.nsec < edefTime_ps->nsec))) {
-          break;
+          epicsMutexUnlock(evrTimeRWMutex_ps);
+#ifdef BSA_DEBUG
+          if ((1 << edefIdx) & bsa_debug_mask) {
+              int idx2 = (edef_idx[edefIdx] - 1) & MAX_EDEF_TIME_MASK; /* Back one == last written! */
+              evrTimeEdef_ts *edef2 = &edef_as[edefIdx][idx2];
+
+              printf("%08x:%08x BSA%d, not found, slot %d %08x:%08x, current %d %08x:%08x.\n", edefTime_ps->secPastEpoch,
+                     edefTime_ps->nsec, edefIdx,
+                     idx, edef->time.secPastEpoch, edef->time.nsec,
+                     idx2, edef2->time.secPastEpoch, edef2->time.nsec);
+          }
+#endif
+          return epicsTimeERROR; /* No match! */
       } else {
           idx = (idx - 1) & MAX_EDEF_TIME_MASK;
           edef = &edef_as[edefIdx][idx];
       }
   }
-
   epicsMutexUnlock(evrTimeRWMutex_ps);
+#ifdef BSA_DEBUG
+  if ((1 << edefIdx) & bsa_debug_mask)
+      printf("%08x:%08x BSA%d not found.\n", edefTime_ps->secPastEpoch, edefTime_ps->nsec, edefIdx);
+#endif
   return epicsTimeERROR; /* No match! */
 }
 
@@ -460,7 +491,7 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
       }
       if (i == TO_LIM) {
           if (fiddbg) {
-              printf("ETGF %d %d!\n", *idx, eventCodeTime_as[eventCode].idx);fflush(stdout);
+              printf("ETGF %lld %lld!\n", *idx, eventCodeTime_as[eventCode].idx);fflush(stdout);
           }
           status = 0x1ffff; /* We missed, so at least flag this as invalid! */
       }
@@ -653,14 +684,18 @@ int evrTime(epicsUInt32 mpsModifier)
     }
     evr_aps[evrTimeNext3] = evr_ps;
     evr_aps[evrTimeNext3]->timeStatus = epicsTimeERROR;
-    evr_ps = evr_aps[evrTimeCurrent];
+
     /* Update the EDEF array for any initialized or active EDEF -
-       this array is used later by BSA processing */
-    if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask ||
+       this array is used later by BSA processing.
+       NOTE: Now, we are *always* looking ahead!
+       Before, we were using evrTimeCurrent, not evrTimeNext2!
+     */
+    evr_ps = evr_aps[evrTimeNext2];
+    if (evr_ps->pattern_s.edefInitMask ||
         evr_ps->pattern_s.modifier_a[MOD5_IDX] & MOD5_EDEF_MASK) {
       for (idx=0;idx<EDEF_MAX;idx++) {
         edefMask = 1 << idx;
-        if (!(evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) &&
+        if (!(evr_ps->pattern_s.edefInitMask & edefMask) &&
             !(evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask))
           continue;
         else {
@@ -668,8 +703,13 @@ int evrTime(epicsUInt32 mpsModifier)
           evrTimeEdef_ts *edef = &edef_as[idx][idx2];
           *edef = edef_as[idx][(idx2 - 1) & MAX_EDEF_TIME_MASK]; /* Init from previous! */
           /* EDEF initialized? - check the newest mask so init done ASAP */
-          if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask & edefMask) {
-            edef->timeInit = evr_aps[evrTimeNext2]->pattern_s.time;
+          if (evr_ps->pattern_s.edefInitMask & edefMask) {
+            edef->timeInit = evr_ps->pattern_s.time;
+#ifdef BSA_DEBUG
+            if (bsa_debug_mask & edefMask)
+                printf("%08x:%08x EDEF%d slot %d, initialized.\n",
+                       edef->timeInit.secPastEpoch, edef->timeInit.nsec, idx, idx2);
+#endif            
           }
           /* EDEF active? - set time and flags used by BSA processing later */
           if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
@@ -685,9 +725,15 @@ int evrTime(epicsUInt32 mpsModifier)
             else
               edef->sevr = INVALID_ALARM;
             }
+#ifdef BSA_DEBUG
+            if (bsa_debug_mask & edefMask)
+                printf("%08x:%08x EDEF%d slot %d, done=%d.\n", edef->time.secPastEpoch, edef->time.nsec, idx, idx2, edef->avgdone);
+#endif            
         }
       }
     }
+
+    evr_ps = evr_aps[evrTimeCurrent];
     pulseidNext2 = PULSEID(evr_aps[evrTimeNext2]->pattern_s.time);
     pulseidNext1 = PULSEID(evr_aps[evrTimeNext1]->pattern_s.time);
     pulseid      = PULSEID(evr_aps[evrTimeCurrent]->pattern_s.time);

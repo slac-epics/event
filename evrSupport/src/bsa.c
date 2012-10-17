@@ -74,6 +74,10 @@
 #include "evrTime.h"          /* evrTimeGetFromEdef        */
 #include "evrPattern.h"       /* EDEF_MAX                  */
 #include "bsa.h"              /* prototypes in this file   */
+#ifdef BSA_DEBUG
+#include<stdio.h>
+#include<iocsh.h>
+#endif
 
 /* BSA information for one device, one EDEF */
 typedef struct {
@@ -149,6 +153,9 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
   int             status = 0;
   epicsEnum16     edefSevr;
   bsa_ts         *bsa_ps;
+#ifdef BSA_DEBUG
+  char           *name = ((bsaDevice_ts *)dev_ps)->name;
+#endif
   
   if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps) || (!dev_ps))
     return -1;
@@ -165,6 +172,12 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
     /* Check if the EDEF has initialized and wipe out old values if it has */
     if ((edefTimeInit_s.secPastEpoch != bsa_ps->timeInit.secPastEpoch) ||
         (edefTimeInit_s.secPastEpoch != bsa_ps->timeInit.secPastEpoch)) {
+#ifdef BSA_DEBUG
+        if (bsa_debug_mask & (1 << idx))
+            printf("%08x:%08x EDEF%d %s reset, old epoch %08x:%08x\n",
+                   edefTimeInit_s.secPastEpoch, edefTimeInit_s.nsec, idx, name,
+                   bsa_ps->timeInit.secPastEpoch, bsa_ps->timeInit.nsec);
+#endif
       bsa_ps->timeInit = edefTimeInit_s;
       bsa_ps->avg    = 0.0;
       bsa_ps->var    = 0.0;
@@ -241,6 +254,11 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
         if (bsa_ps->readFlag) bsa_ps->noread++;
         else                  bsa_ps->readFlag = 1;
         scanIoRequest(bsa_ps->ioscanpvt);
+#ifdef BSA_DEBUG
+        if (bsa_debug_mask & (1 << idx))
+            printf("%08x:%08x EDEF%d %s signaled.\n",
+                   bsa_ps->time.secPastEpoch, bsa_ps->time.nsec, idx, name);
+#endif
       }
     }
   }
@@ -350,6 +368,10 @@ static long read_bsa(bsaRecord *pbsa)
   epicsEnum16 dsevr = INVALID_ALARM;  /* data severity */
 
   /* Lock and update */
+#ifdef BSA_DEBUG
+  if (bsa_debug_mask & (1 << (pbsa->edef - 1)))
+      printf("BSA%d %s res=%d, read=%d, reset=%d\n", pbsa->edef - 1, pbsa->name, pbsa->res, bsa_ps->readFlag, bsa_ps->reset);
+#endif
   if (bsa_ps && bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) {
     if (pbsa->res) {
       pbsa->res        = 0;
@@ -512,3 +534,22 @@ DSET devBsa =
 epicsExportAddress(dset,devAoBsa);
 epicsExportAddress(dset,devBsa);
 
+#ifdef BSA_DEBUG
+/* iocsh command: bsadebug */
+const iocshArg bsadebugArg0 = {"Level" , iocshArgInt};
+const iocshArg *const bsadebugArgs[1] = {&bsadebugArg0};
+const iocshFuncDef bsadebugDef = {"bsadebug", 1, bsadebugArgs};
+
+void bsadebugCall(const iocshArgBuf * args)
+{
+    printf("Changing bsa_debug_mask from 0x%05x to 0x%05x\n", bsa_debug_mask, args[0].ival);
+    bsa_debug_mask = args[0].ival;
+}
+#endif
+
+void bsaRegister() {
+#ifdef BSA_DEBUG
+    iocshRegister(&bsadebugDef  , bsadebugCall );
+#endif
+}
+epicsExportRegistrar(bsaRegister);
