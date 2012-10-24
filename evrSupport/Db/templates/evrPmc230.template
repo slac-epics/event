@@ -62,7 +62,7 @@ record(er, "$(DEV):CTRL")
 
 record(bi, "$(DEV):LINK")
 {
-  field(DESC, "$(DEV) Link State")
+  field(DESC, "$(DEV) LnkSt")
   field(DTYP, "MRF Event Receiver")
   field(INP,  "#C$(CARD) S0 @")
   field(PINI, "YES")
@@ -127,7 +127,7 @@ record(stringout, "$(DEV):FP3L")
 
 record(ai, "$(DEV):LINKERRCNT")
 {
-  field(DESC, "$(DEV) Link Errs")
+  field(DESC, "$(DEV) LnkErrs")
   field(INP, "$(DEV):CTRL.TAXI MS")
   field(SCAN, "2 second")
 }
