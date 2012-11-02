@@ -49,8 +49,12 @@
 
 #define MAX_DELTA_TIME 400000000
 
+#define DBUFF_OLDWAY
+/* #define DBUFF_NEWWAY */
+
 unsigned long evrFiducialTime = 0;
 
+#if defined(DBUFF_NEWWAY)
 typedef struct 
 {
   evrMessage_tu       message_au[2]; /* Message, double-buffered          */
@@ -83,6 +87,43 @@ typedef struct
   epicsMutexId        lock;
 
 } evrMessage_ts;
+#endif
+
+#if defined(DBUFF_OLDWAY)
+typedef struct
+{
+  evrMessage_tu       message_au[2]; /* Message, double-buffered          */
+  dbCommon           *record_ps;     /* Record that processes the message */
+  epicsTimeStamp      resetTime_s;   /* Time when counters reset          */
+  unsigned long       notRead_a[2];  /* Message not-yet read flag         */
+  long                readingIdx; /* Message currently being read, -1 = none */
+  unsigned long       newestIdx;     /* Index in double buffer of newest msg */
+  unsigned long       fiducialIdx;   /* Index at the time of the fiducial */
+  unsigned long       updateCount;
+  unsigned long       updateCountRollover;
+  unsigned long       overwriteCount;
+  unsigned long       writeErrorCount;
+  unsigned long       noDataCount;
+  unsigned long       checkSumErrorCount;
+  unsigned long       procTimeStart;
+  unsigned long       procTimeLap;
+  unsigned long       procTimeEnd;
+  unsigned long       procTimeDeltaStartMax;
+  unsigned long       procTimeDeltaStartMin;
+  unsigned long       procTimeDeltaMax;
+  unsigned long       procTimeDeltaCount;
+  unsigned long       procTimeDelayMin;
+  unsigned long       procTimeDelayMax;
+  unsigned long       procTimeDelay;
+  unsigned long       procTimeDelta_a[MODULO720_COUNT];
+  unsigned long       absoluteStartTime;
+  unsigned long       absoluteStartTimeMin;
+  unsigned long       absoluteStartTimeMax;
+
+  epicsMutexId        lock;
+
+} evrMessage_ts;
+#endif
 
 /* Maintain 4 messages - PNET, PATTERN, DATA (future), FIDUCIAL */
 static evrMessage_ts evrMessage_as[EVR_MESSAGE_MAX];
@@ -239,6 +280,11 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
   evrMessage_as[messageIdx].lock = 0;
 #endif
 
+
+#if defined(DBUFF_OLDWAY)
+  evrMessage_as[messageIdx].readingIdx = -1;
+#endif
+
   evrMessageCountReset(messageIdx);
   return messageIdx;
 }
@@ -303,6 +349,7 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
   Return: 0 = OK, -1 = Failed
 ==============================================================================*/
 
+#if defined(DBUFF_NEWWAY)
 int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
 {
   int idx;
@@ -340,6 +387,46 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
 
   return 0;
 }
+#endif
+
+#if defined(DBUFF_OLDWAY)
+int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
+{
+  int idx;
+
+  if (messageIdx >= EVR_MESSAGE_MAX) return -1;
+
+  /* Double buffer message if not PNET - first find a free message */
+  idx = 0;
+  if (evrMessage_as[messageIdx].notRead_a[idx] &&
+      (messageIdx != EVR_MESSAGE_PNET)) {
+    idx = 1;
+    if (evrMessage_as[messageIdx].notRead_a[idx]) {
+      /* No message is free.  If a message is being read, overwrite the
+         other one.  Otherwise, overwrite the message after the fiducial. */
+      if (evrMessage_as[messageIdx].readingIdx >= 0)
+        idx = evrMessage_as[messageIdx].readingIdx?0:1;
+      else
+        idx = evrMessage_as[messageIdx].fiducialIdx?0:1;
+    } /* end both messages not free */
+  }   /* end message 0 is not free  */
+
+  /* Update a message only if it's not currently being read. */
+  if (idx != evrMessage_as[messageIdx].readingIdx) {
+    /* Update message in holding array */
+    evrMessage_as[messageIdx].message_au[idx] = *message_pu;
+    evrMessage_as[messageIdx].newestIdx       = idx;
+    if (evrMessage_as[messageIdx].notRead_a[idx])
+      evrMessage_as[messageIdx].overwriteCount++;
+    else
+      evrMessage_as[messageIdx].notRead_a[idx] = 1;
+  } else {
+    evrMessage_as[messageIdx].writeErrorCount++;
+  }
+  return 0;
+}
+#endif
+
 
 /*=============================================================================
 
@@ -390,6 +477,7 @@ int evrMessageProcess(unsigned int messageIdx)
   
 ==============================================================================*/
 
+#if defined(DBUFF_NEWWAY)
 evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
                                        evrMessage_tu *message_pu)
 {
@@ -446,6 +534,46 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
 
   return status;
 }
+#endif
+
+#if defined(DBUFF_OLDWAY)
+evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
+                                       evrMessage_tu *message_pu)
+{
+  evrMessageReadStatus_te status;
+  volatile int idx;
+
+  if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
+
+  /* Read the message marked by the fiducial. */
+  idx = evrMessage_as[messageIdx].fiducialIdx;
+  if (!evrMessage_as[messageIdx].notRead_a[idx]) {
+    status = evrMessageDataNotAvail;
+    evrMessage_as[messageIdx].noDataCount++;
+  } else {
+    status = evrMessageOK;
+    evrMessage_as[messageIdx].readingIdx = idx;
+    switch (messageIdx) {
+      case EVR_MESSAGE_PNET:
+        message_pu->pnet_s    = evrMessage_as[messageIdx].message_au[idx].pnet_s;
+        break;
+      case EVR_MESSAGE_PATTERN:
+        message_pu->pattern_s = evrMessage_as[messageIdx].message_au[idx].pattern_s;
+        break;
+      case EVR_MESSAGE_FIDUCIAL:
+        break;
+      case EVR_MESSAGE_DATA:
+      default:
+        status = evrMessageInpError;
+        break;
+    }
+    evrMessage_as[messageIdx].readingIdx = -1;
+    evrMessage_as[messageIdx].notRead_a[idx] = 0;
+  }
+  return status;
+}
+#endif
+
 
 int evrMessageClockCounter(unsigned int messageIdx, epicsUInt32 evrClockCounter)
 {
