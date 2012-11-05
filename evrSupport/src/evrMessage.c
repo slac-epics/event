@@ -50,7 +50,7 @@
 #define MAX_DELTA_TIME 400000000
 
 #define DBUFF_OLDWAY
-/* #define DBUFF_NEWWAY */
+#define DBUFF_NEWWAY_
 
 unsigned long evrFiducialTime = 0;
 
@@ -635,6 +635,23 @@ int evrMessageStart(unsigned int messageIdx)
     evrMessage_as[messageIdx].updateCountRollover++;
     evrMessage_as[messageIdx].updateCount = 0;
   }
+
+
+
+
+#if defined(DBUFF_OLDWAY)
+  /* Special processing for the fiducial - set PATTERN message to read
+     and throw away any old PATTERN messages */
+  if (messageIdx == EVR_MESSAGE_FIDUCIAL) {
+    evrFiducialTime = evrMessage_as[messageIdx].procTimeStart;
+    idx = evrMessage_as[EVR_MESSAGE_PATTERN].newestIdx;
+    evrMessage_as[EVR_MESSAGE_PATTERN].fiducialIdx = idx;
+    oldidx = idx?0:1;
+    if (evrMessage_as[EVR_MESSAGE_PATTERN].readingIdx != oldidx) {
+      evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[oldidx] = 0;
+    }
+  }
+#endif
   
 
   return 0;
