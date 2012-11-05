@@ -322,6 +322,18 @@ void ErIrqHandler(int signal)
   irqCount++;
 
 
+  if(flags & EVR_IRQFLAG_EVENT) {
+   struct FIFOEvent fe;
+   for(i=0; i < EVR_FIFO_EVENT_LIMIT; i++) {
+    if(EvrGetFIFOEvent(pEr, &fe) < 0)
+     break;
+    if(pCard->DevEventFunc != NULL)
+     (*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
+   }
+  }
+
+
+
   if(flags & EVR_IRQFLAG_DATABUF) {
    int databuf_sts = EvrGetDBufStatus(pEr);
    if(databuf_sts & (1<<C_EVR_DATABUF_CHECKSUM))
@@ -334,18 +346,6 @@ void ErIrqHandler(int signal)
     EvrReceiveDBuf(pEr, 1); /* That means we only re-enable it if
           someone cares (DevDBuffFunc set) */
     (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
-   }
-  }
-
-
-
-  if(flags & EVR_IRQFLAG_EVENT) {
-   struct FIFOEvent fe;
-   for(i=0; i < EVR_FIFO_EVENT_LIMIT; i++) {
-    if(EvrGetFIFOEvent(pEr, &fe) < 0)
-     break;
-    if(pCard->DevEventFunc != NULL)
-     (*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
    }
   }
 
