@@ -3,6 +3,8 @@ Release Notes for the event package
 event-R3-2-2-br_generaltime-2-6: (KHKIM)
         * remove MUTEX in the ErGetTicsk to prevent locking 
         * change the double buffer algorithm to prevent the timeslot offset issue
+        * re-arrange the order of interrupt handling t prevent the timeslot offset issue for the linux/linuxRT
+        * code handles evr timestamp counter swapping issue
 
 event-R3-2-2-br_generaltime-2-5: (KHKIM)
         * add new diagnostic to measure the abolute time (interrupt delay)
