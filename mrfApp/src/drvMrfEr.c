@@ -146,8 +146,8 @@ typedef struct MrfErRegs
    /*---------------------
     * Timestamp registers
     */
-    epicsUInt16  EventCounterHi;        /* 00C: Timestamp Event Counter (MSW)                     */
-    epicsUInt16  EventCounterLo;        /* 00E: Timestamp Event Counter (LSW)                     */
+    epicsUInt16  EventCounterLo;        /* 00C: Timestamp Event Counter (LSW)                     */
+    epicsUInt16  EventCounterHi;        /* 00E: Timestamp Event Counter (MSW)                     */
     epicsUInt16  TimeStampLo;           /* 010: Timestamp Latch (LSW)                             */
     epicsUInt16  TimeStampHi;           /* 012: Timestamp Latch (MSW)                             */
 
@@ -1347,9 +1347,15 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     * Get the two halfs of the event counter.
     * Read the low-order word twice to check for rollover.
     */
-    LoWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
-    HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
-    LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+    if(pCard->FormFactor == VME_EVR) {
+        LoWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+    } else {
+        LoWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+        LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+    }
 
    /*---------------------
     * If we had low-order word rollover, use the second low-order read.
@@ -1358,7 +1364,11 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     */
     if (LoWord_2 < LoWord) {
         LoWord = LoWord_2;
-        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        if(pCard->FormFactor == VME_EVR) 
+            HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        else
+            HiWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+
     }/*end if there was low-order word wraparound*/
 
    /*---------------------
