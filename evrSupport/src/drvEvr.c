@@ -51,8 +51,10 @@ struct drvet drvEvr = {
 };
 epicsExportAddress(drvet, drvEvr);
 
+static epicsMessageQueueId  eventTaskQueue;
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
+static epicsEventId     evrEventTaskSem   = NULL;  /* evr Event Task semaphore */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
 static int evrInitialized = 0;          /* evrInitialize performed        */
@@ -225,6 +227,7 @@ static int evrTask()
     }
     /* Now do record processing */
     evrMessageStart(EVR_MESSAGE_PATTERN);
+    epicsEventSignal(evrEventTaskSem);
     epicsEventSignal(evrRecordEventSem);
   }
   return 0;
@@ -254,6 +257,26 @@ static int evrRecord()
   return 0;
 }
 
+
+static int evrEventTask(void)
+{
+    eventTaskQueue = epicsMessageQueueCreate(256, sizeof(IOSCANPVT));
+    IOSCANPVT ioScanPvt;
+
+    for(;;) {   /* wait signal from evrTask to proceed the events */
+      if(epicsEventWait(evrEventTaskSem)) {
+          errlogPrintf("evrEventTask: Exit due to bad status from epicsEvent\n");
+          return -1;
+      }
+      for(;;) {
+          epicsMessageQueueReceive(eventTaskQueue, &ioScanPvt, sizeof(IOSCANPVT));
+          if(!ioScanPvt) break;      /* stop processing until evrTask release permission */
+          scanIoRequest(ioScanPvt);  /* proceed the event until the queue is empty */
+      }
+    }
+
+    return 0;
+}
 /*=============================================================================
                                                          
   Name: evrInitialize
@@ -296,6 +319,13 @@ int evrInitialize()
     errlogPrintf("evrInitialize: unable to create the EVR task semaphore\n");
     return -1;
   }
+
+  evrEventTaskSem = epicsEventMustCreate(epicsEventEmpty);
+  if(!evrEventTaskSem) {
+    errlogPrintf("evrIntialize: unable to create the evr Event Task semaphore\n");
+    return -1;
+  }
+
   evrRecordEventSem = epicsEventMustCreate(epicsEventEmpty);
   if (!evrRecordEventSem) {
     errlogPrintf("evrInitialize: unable to create the EVR record task semaphore\n");
@@ -317,6 +347,14 @@ int evrInitialize()
     errlogPrintf("evrInitialize: unable to create the EVR task\n");
     return -1;
   }
+
+  if(!epicsThreadCreate("evrEventTask", epicsThreadPriorityHigh,
+                        epicsThreadGetStackSize(epicsThreadStackMedium),
+                        (EPICSTHREADFUNC)evrEventTask,0)) {
+    errlogPrintf("evrInitialize: unable to crate the evrEvent task\n");
+    return -1;
+  }
+
   if (!epicsThreadCreate("evrRecord", epicsThreadPriorityScanHigh+10,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
                          (EPICSTHREADFUNC)evrRecord, 0)) {
@@ -331,6 +369,7 @@ int evrInitialize()
     errlogPrintf("evrInitialize: cannot find an EVR module\n");
   /* Register the ISR functions in this file with the EVR */
   } else {
+    pCard->eventTaskQueue = eventTaskQueue;
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
     ErEnableDBuff            (pCard, 1);
     ErDBuffIrq               (pCard, 1);
