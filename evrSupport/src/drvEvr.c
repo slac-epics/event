@@ -267,18 +267,22 @@ static int evrEventTask(void)
 
     eventTaskQueue = epicsMessageQueueCreate(256, sizeof(eventMessage));
 
-    for(;;) {   /* wait signal from evrTask to proceed the events */
+    for(;;) {   
       for(;;) {
           epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
-          if(!eventMessage.ioscanPvt) break;      /* stop processing until evrTask release permission */
+          if(eventMessage.eventNum==EVENT_FIDUCIAL) break;
           evrTimeEventProcessing(eventMessage.eventNum);
-          scanIoRequest(eventMessage.ioscanPvt);  /* proceed the event until the queue is empty */
+          scanIoRequest(eventMessage.ioscanPvt); 
       }
 
       if(epicsEventWait(evrEventTaskSem)) {
           errlogPrintf("evrEventTask: Exit due to bad status from epicsEvent\n");
           return -1;
       }
+
+      /* Process EVENT_FIDUCIAL now */
+      evrTimeEventProcessing(eventMessage.eventNum);
+      scanIoRequest(eventMessage.ioscanPvt);
 
     }
 

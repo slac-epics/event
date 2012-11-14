@@ -1038,10 +1038,6 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     eventMessage.ioscanPvt = pCard->IoScanPvt[EventNum];
     eventMessage.eventNum  = EventNum;
     epicsMessageQueueSend(pCard->eventTaskQueue, &eventMessage, sizeof(eventMessage));
-    if(EventNum==1) {
-        eventMessage.ioscanPvt = NULL;
-        epicsMessageQueueSend(pCard->eventTaskQueue, &eventMessage, sizeof(eventMessage));
-    }
 
 }/*end ErDevEventFunc()*/
 
