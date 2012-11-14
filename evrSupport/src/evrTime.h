@@ -92,6 +92,7 @@ int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
 int evrTimeInit           (epicsInt32   firstTimeSlotIn,
                            epicsInt32   secondTimeSlotIn);
 int evrTime               (epicsUInt32  mpsModifier);
+long evrTimeEventProcessing(epicsInt16 eventNum);
 int evrTimeCount          (unsigned int eventCode);
 int evrTimePatternPutStart(evrMessagePattern_ts **pattern_pps,
                            unsigned long        **timeslot_pp,

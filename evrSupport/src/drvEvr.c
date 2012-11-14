@@ -260,19 +260,26 @@ static int evrRecord()
 
 static int evrEventTask(void)
 {
-    eventTaskQueue = epicsMessageQueueCreate(256, sizeof(IOSCANPVT));
-    IOSCANPVT ioScanPvt;
+    struct {
+        IOSCANPVT  ioscanPvt;
+        epicsInt16 eventNum;
+    } eventMessage;
+
+    eventTaskQueue = epicsMessageQueueCreate(256, sizeof(eventMessage));
 
     for(;;) {   /* wait signal from evrTask to proceed the events */
+      for(;;) {
+          epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+          if(!eventMessage.ioscanPvt) break;      /* stop processing until evrTask release permission */
+          evrTimeEventProcessing(eventMessage.eventNum);
+          scanIoRequest(eventMessage.ioscanPvt);  /* proceed the event until the queue is empty */
+      }
+
       if(epicsEventWait(evrEventTaskSem)) {
           errlogPrintf("evrEventTask: Exit due to bad status from epicsEvent\n");
           return -1;
       }
-      for(;;) {
-          epicsMessageQueueReceive(eventTaskQueue, &ioScanPvt, sizeof(IOSCANPVT));
-          if(!ioScanPvt) break;      /* stop processing until evrTask release permission */
-          scanIoRequest(ioScanPvt);  /* proceed the event until the queue is empty */
-      }
+
     }
 
     return 0;

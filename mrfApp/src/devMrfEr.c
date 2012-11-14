@@ -1020,7 +1020,10 @@ epicsStatus ErEpicsBiProcess (biRecord  *pRec)
 LOCAL_RTN
 void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
 {
-   void * pNULL = NULL;
+    struct {
+    IOSCANPVT  ioscanPvt;
+    epicsInt16 eventNum;
+    } eventMessage;
    /*---------------------
     * Invoke the user-defined event handler (if one is defined)
     */
@@ -1032,8 +1035,13 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     *
     * scanIoRequest (pCard->IoScanPvt[EventNum]);
     */
-    epicsMessageQueueSend(pCard->eventTaskQueue, &(pCard->IoScanPvt[EventNum]), sizeof(IOSCANPVT));
-    if(EventNum==1) epicsMessageQueueSend(pCard->eventTaskQueue, &pNULL, sizeof(IOSCANPVT));
+    eventMessage.ioscanPvt = pCard->IoScanPvt[EventNum];
+    eventMessage.eventNum  = EventNum;
+    epicsMessageQueueSend(pCard->eventTaskQueue, &eventMessage, sizeof(eventMessage));
+    if(EventNum==1) {
+        eventMessage.ioscanPvt = NULL;
+        epicsMessageQueueSend(pCard->eventTaskQueue, &eventMessage, sizeof(eventMessage));
+    }
 
 }/*end ErDevEventFunc()*/
 

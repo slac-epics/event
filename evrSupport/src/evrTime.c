@@ -849,6 +849,22 @@ static long evrTimeEvent(longSubRecord *psub)
   eventCodeTime_as[psub->a].status = epicsTimeERROR;
   return epicsTimeERROR;
 }
+
+long evrTimeEventProcessing(epicsInt16 eventNum)
+{
+
+  if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
+    eventCodeTime_as[eventNum].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
+    eventCodeTime_as[eventNum].status = evr_aps[evrTimeCurrent]->timeStatus;
+    epicsMutexUnlock(evrTimeRWMutex_ps);
+    return epicsTimeOK;
+  }
+  /* invalid mutex id or lock error - must set status to invalid for the caller */
+  eventCodeTime_as[eventNum].status = epicsTimeERROR;
+  return epicsTimeERROR;
+}
+
+
 
 /*=============================================================================
 
