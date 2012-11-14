@@ -48,7 +48,7 @@
 #define TOTAL_EVR_PULSES	12
 #define MAX_FP_CHANNELS         12
 #define TOTAL_FP_CHANNELS	((pLinuxErCard->ErCard.FormFactor == SLAC_EVR) ? 12 : 8)
-#define TOTAL_TB_CHANNELS	40
+#define TOTAL_TB_CHANNELS	32
 #define MAX_DG                  ((pLinuxErCard->ErCard.FormFactor == SLAC_EVR) ? EVR_NUM_DG : 4)
 
 enum outputs_mapping_id            /* See Table 1 in EVR document */
@@ -81,7 +81,12 @@ enum outputs_mapping_id            /* See Table 1 in EVR document */
 	UNUSED = 63,
 };
 
-/* This *was* a hardware definition: See EVR-TREF-005. It isn't now, so we will insert DELAYED_PULSE_[4-11] */
+/*
+ * This *was* a hardware definition: See EVR-TREF-005. It isn't now, so we will insert 
+ * DELAYED_PULSE_[4-11].
+ *
+ * (Actually, I suppose it still is, but we don't have any transition boards, so...)
+ */
 enum transition_board_channel
 {
 	DELAYED_PULSE_0 = 0,
@@ -1648,6 +1653,13 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 		for(map=0; map < 14; map++) {
 			if(RamBuf[code] & (1<<map)) {
 				enum outputs_mapping_id func;
+#if 0
+/*
+ * MCB - OK, this code is wrong.  OTL_0 is 33, but tb_channel only has TOTAL_TB_CHANNELS
+ * entries.  However, simply changing TOTAL_TB_CHANNELS to 40 causes the IOC to die with
+ * SIGIO.  Fortunately, we don't really use this, only delayed pulses, so let's just take
+ * it out!
+ */
 				func = pLinuxErCard->tb_channel[OTL_0+(map>>1)];
 				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_11)) {
 					if(map & 1)
@@ -1658,6 +1670,7 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 				func = pLinuxErCard->tb_channel[OTP_DBUS_0+map];
 				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_11))
 					ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
+#endif
 				if(map < EVR_NUM_DG) {
 					func = pLinuxErCard->tb_channel[DELAYED_PULSE_0+map];
 					if((func>=PULSE_GENERATOR_0) && (func < PULSE_GENERATOR_11))
