@@ -48,7 +48,7 @@
 #define TOTAL_EVR_PULSES	12
 #define MAX_FP_CHANNELS         12
 #define TOTAL_FP_CHANNELS	((pLinuxErCard->ErCard.FormFactor == SLAC_EVR) ? 12 : 8)
-#define TOTAL_TB_CHANNELS	32
+#define TOTAL_TB_CHANNELS	40
 #define MAX_DG                  ((pLinuxErCard->ErCard.FormFactor == SLAC_EVR) ? EVR_NUM_DG : 4)
 
 enum outputs_mapping_id            /* See Table 1 in EVR document */
