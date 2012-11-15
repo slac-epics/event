@@ -1,5 +1,11 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-7: (KHKIM) 
+        * introduce new task to process the evr events and the timestamp updating
+          this new thread will prevent some of race conditions for the multi-core platform
+        * the original code updates the timestmap via record processing, we push it down to the new event thread
+          to prevent race condition on the record processing and timestamp for the event driven record
+
 event-R3-2-2-br_generaltime-2-6: (KHKIM)
         * remove MUTEX in the ErGetTicsk to prevent locking 
         * change the double buffer algorithm to prevent the timeslot offset issue
