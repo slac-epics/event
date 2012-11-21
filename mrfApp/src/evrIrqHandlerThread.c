@@ -18,7 +18,7 @@ static int evrIrqHandlerThread(void *handler)
     return 0;
 }
 
-void EvrIrqHandlerThreadCreate(void (*handler) (int))
+void EvrIrqHandlerThreadCreate(void (**handler) (int))
 {
 
     epicsThreadMustCreate("evrIrqHandler", epicsThreadPriorityHigh+9,

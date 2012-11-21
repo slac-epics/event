@@ -444,7 +444,7 @@ static int ErConfigure (
 	struct ErCardStruct *pCard;
 	struct MrfErRegs *pEr;
     u32		FPGAVersion;
-	
+
 	epicsMutexLock(ErCardListLock);
 	/* If not already done, initialize the driver structures */
 	if (!bErCardListInitDone) {
@@ -496,6 +496,7 @@ static int ErConfigure (
 	case PMC_EVR_FIRMWARE_REV_LINUX1:
 	case PMC_EVR_FIRMWARE_REV_LINUX2:
 	case PMC_EVR_FIRMWARE_REV_LINUX3:
+	case PMC_EVR_FIRMWARE_REV_LINUX4:
 	    break;
 	case PMC_EVR_FIRMWARE_REV_VME1:
 	    fprintf ( stderr,

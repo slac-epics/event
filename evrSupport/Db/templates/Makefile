@@ -17,6 +17,7 @@ DB_INSTALLS += evrSLAC.template
 DB_INSTALLS += evrPmc230.substitutions
 DB_INSTALLS += evrPmc230.template
 DB_INSTALLS += evrPmcEvent.template
+DB_INSTALLS += evrSlaveEvent.template
 DB_INSTALLS += evrVme230.substitutions
 DB_INSTALLS += evrVme230.template
 DB_INSTALLS += evrVmeEvent.template

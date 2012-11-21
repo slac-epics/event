@@ -23,9 +23,12 @@
 
 #include "erapi.h"
 
+extern void EvrIrqHandlerThreadCreate(void (**handler) (int));
+
 /*
 #define DEBUG 1
 */
+
 #define DEBUG_PRINTF printf
 unsigned int	erapiDebug	= 1;
 
@@ -44,7 +47,7 @@ int EvrOpen(struct MrfErRegs **pEr, char *device_name)
       *pEr = (struct MrfErRegs *) mmap(0, EVR_MEM_WINDOW, PROT_READ | PROT_WRITE,
 					MAP_SHARED, fd, 0);
 #ifdef DEBUG
-  DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr,
+  DEBUG_PRINTF("EvrOpen: mmap returned %p, errno %d\n", *pEr,
 	       errno);
 #endif
       if (*pEr == MAP_FAILED)
@@ -571,7 +574,6 @@ void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs)
   for (i = 0; i < outputs; i++)
     DEBUG_PRINTF("TBOut[%d] %02x\n", i, be16_to_cpu(pEr->TBOutMap[i]));
 }
-
 
 void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 			 void (*handler)(int))
