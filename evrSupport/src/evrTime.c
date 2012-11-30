@@ -199,10 +199,10 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            evrTimeId_te     id,
                            evrModifier_ta   modifier_a, 
-                           unsigned long   *patternStatus_p,
-                           unsigned long   *edefAvgDoneMask_p,
-                           unsigned long   *edefMinorMask_p,
-                           unsigned long   *edefMajorMask_p)
+                           epicsUInt32	*	patternStatus_p,
+                           epicsUInt32	*	edefAvgDoneMask_p,
+                           epicsUInt32	*	edefMinorMask_p,
+                           epicsUInt32	*	edefMajorMask_p)
 {
   evrTimePattern_ts *evr_ps;
   int status;

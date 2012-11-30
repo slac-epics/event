@@ -180,7 +180,7 @@ long EgEnableAltRam(EgCardStruct *pParm, int Ram);
 long EgSetSingleSeqMode(EgCardStruct *pParm, int Ram);
 long EgDisableRam(EgCardStruct *pParm, int Ram);
 long EgEnableRam(EgCardStruct *pParm, int Ram);
-long EgGetMode(EgCardStruct *pParm, int ram, int *pBusy, int *pEnable);
+long EgGetMode(EgCardStruct *pParm, int ram, volatile int *pBusy, volatile int *pEnable);
 
 long EgGetEnableTrigger(EgCardStruct *pParm, unsigned int Channel);
 long EgGetBusyStatus(EgCardStruct *pParm, int Ram);
