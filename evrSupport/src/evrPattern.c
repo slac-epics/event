@@ -57,7 +57,7 @@
 #include "alarm.h"            /* INVALID_ALARM             */
 
 
-#define  MAX_PATTERN_DELTA_TIME  10 /* sec */
+#define  MAX_PATTERN_DELTA_TIME  100 /* sec */
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
@@ -162,6 +162,8 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
          if NTP is no good. */
       if (deltaTime >= evrDeltaTimeMax) {
         invalidTimeCount++;
+        if (invalidTimeCount % 10000 == 0)
+            printf("Delta Time = %ld, > %ld\n", deltaTime, evrDeltaTimeMax);
         if (ntpStatus) {
           patternErrCount = 0;
         } else {

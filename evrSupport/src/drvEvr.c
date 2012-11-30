@@ -233,6 +233,8 @@ static int evrTask()
   {
     readyForFiducial = 1;
     status = epicsEventWaitWithTimeout(evrTaskEventSem, EVR_TIMEOUT);
+
+    evrMessageLap(EVR_MESSAGE_FIDUCIAL);
     if (status == epicsEventWaitOK) {
       evrPattern(0, &mpsModifier);/* N-3           */
       evrTime(mpsModifier);       /* Move pipeline */
@@ -311,6 +313,10 @@ int evrInitialize()
     return -1;
   }
   evrInitialized = -1;
+
+#ifdef _X86_
+  Get_evrTicksPerUsec_for_X86(); 
+#endif
 
   /* Initialize BSA */
   if (bsaInit()) return -1;

@@ -158,9 +158,7 @@ mrfVme64xLib_OBJS      += $(mrfVme64x_OBJS)
 #
 LIBRARY_IOC_Linux    += drvMrf
 drvMrf_OBJS_Linux    += drvLinux
-
-# Include the mrfApi library in drvMrf
-drvMrfLib_LIBS_Linux += mrfApi
+drvMrf_OBJS_Linux    += evrIrqHandlerThread
 
 # Add drvMrf objects to all drvMrf libraries
 drvMrfLib_OBJS       += $(drvMrf_OBJS)
