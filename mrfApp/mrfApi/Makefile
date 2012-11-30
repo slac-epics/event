@@ -51,18 +51,19 @@ mmap_test_SRCS		+= mmap_test.c
 PROD_IOC_Linux		+= irqtest
 irqtest_SRCS		+= irqtest.c
 irqtest_SRCS		+= erapi.c
-irqtest_SRCS		+= egapi.c
+irqtest_LIBS		+= mrfApi
+#irqtest_SRCS		+= egapi.c
+#irqtest_SRCS_Linux  += evrIrqHandlerThread.c
 
 # IRQ monitor
 PROD_IOC_Linux		+= irq_monitor
 irq_monitor_SRCS	+= irq_monitor.c
-irq_monitor_SRCS	+= erapi.c
+irq_monitor_LIBS	+= mrfApi
 
 # Factory Test
 PROD_IOC_Linux		+= factest
 factest_SRCS		+= factest.c
-factest_SRCS		+= egapi.c
-factest_SRCS		+= erapi.c
+factest_LIBS		+= mrfApi
 
 
 #---------------------

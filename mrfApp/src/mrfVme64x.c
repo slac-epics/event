@@ -154,7 +154,7 @@ LOCAL const epicsUInt32 evr_board_ids[MRF_EVR_BIDS] = {MRF_EVR200RF_BID, MRF_EVR
 GLOBAL_RTN
 int mrfFindNextEVG (int lastSlot, epicsUInt32 *pboard_id)
 {
-    int   slot;			/* VME slot number of next Event Generator Card                   */
+    int   slot	= 0;		/* VME slot number of next Event Generator Card                   */
         
    /*---------------------
     * Make sure the input parameter is in the appropriate range
@@ -232,7 +232,7 @@ int mrfFindNextEVG (int lastSlot, epicsUInt32 *pboard_id)
 GLOBAL_RTN
 int mrfFindNextEVR (int lastSlot, epicsUInt32 *pboard_id)
 {
-    int   slot;			/* VME slot number of next Event Receiver Card                    */
+    int   slot = 0;		/* VME slot number of next Event Receiver Card                    */
 
    /*---------------------
     * Make sure the input parameter is in the appropriate range

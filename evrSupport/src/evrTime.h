@@ -103,8 +103,12 @@ typedef enum {
 } evrTimeId_te;
 #define MAX_EVR_TIME  4
 
-#define MAX_EDEF_TIME      8
-#define MAX_EDEF_TIME_MASK 7
+#define MAX_EDEF_TIME      16
+#define MAX_EDEF_TIME_MASK 15
+#undef BSA_DEBUG
+#ifdef BSA_DEBUG
+extern int bsa_debug_mask;
+#endif
 
 /* For modifier array */
 #define MAX_EVR_MODIFIER  6
@@ -131,11 +135,13 @@ int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            unsigned long   *edefAvgDoneMask_p,
                            unsigned long   *edefMinorMask_p,
                            unsigned long   *edefMajorMask_p);
+#if 0
 int evrTimeGetFromEdef    (unsigned int     edefIdx,
                            epicsTimeStamp  *edefTime_ps,
                            epicsTimeStamp  *edefTimeInit_ps,
                            int             *edefAvgDone_p,
                            epicsEnum16     *edefSevr_p);
+#endif
 int evrTimeGetFromEdefTime(unsigned int     edefIdx,
                            epicsTimeStamp  *edefTime_ps,
                            epicsTimeStamp  *edefTimeInit_ps,

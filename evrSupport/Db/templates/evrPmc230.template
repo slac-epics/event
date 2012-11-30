@@ -52,6 +52,10 @@
 # 14 = Programmable Width Pulse 3 (OTP3)
 # 63 = Disabled
 #
+# These days, all we seem to be using is the extended delay triggers though.
+# Better to disable the others, especially since this won't work well with the
+# SLAC EVR.
+#
 record(er, "$(DEV):CTRL")
 {
   field(DESC, "$(DEV) Control")
@@ -63,12 +67,12 @@ record(er, "$(DEV):CTRL")
   field(FPS1, "1")
   field(FPS2, "2")
   field(FPS3, "3")
-  field(TRG0, "Enabled")
-  field(TRG1, "Enabled")
-  field(OTP0, "Enabled")
-  field(OTP1, "Enabled")
-  field(OTP2, "Enabled")
-  field(OTP3, "Enabled")
+  field(TRG0, "Disabled")
+  field(TRG1, "Disabled")
+  field(OTP0, "Disabled")
+  field(OTP1, "Disabled")
+  field(OTP2, "Disabled")
+  field(OTP3, "Disabled")
   field(OT0D, "120" )
   field(OT1D, "120" )
   field(OT2D, "120" )
@@ -100,7 +104,7 @@ record(er, "$(DEV):CTRL")
 
 record(bi, "$(DEV):LINK")
 {
-  field(DESC, "$(DEV) Link State")
+  field(DESC, "$(DEV) LnkSt")
   field(DTYP, "MRF Event Receiver")
   field(INP,  "#C$(CARD=0) S0 @")
   field(PINI, "YES")
@@ -165,7 +169,7 @@ record(stringout, "$(DEV):FP3L")
 
 record(ai, "$(DEV):LINKERRCNT")
 {
-  field(DESC, "$(DEV) Link Errs")
+  field(DESC, "$(DEV) LnkErrs")
   field(INP, "$(DEV):CTRL.TAXI MS")
   field(SCAN, "2 second")
 }
