@@ -637,7 +637,7 @@ static int evrTriggerInit(longSubRecord *psub)
 }
 
 static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard, unsigned long last,
-                        unsigned long *gen)
+                        epicsUInt32 *gen)
 {
     int i, j = -1, result = 0;
 
@@ -664,7 +664,7 @@ static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard, unsi
             break;
         }
     }
- done:
+
     if (result != last)
         (*gen)++;
     return result;

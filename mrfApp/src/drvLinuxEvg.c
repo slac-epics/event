@@ -110,7 +110,7 @@ long EgDisableRam(EgCardStruct *pParm, int Ram)
 long EgEnableRam(EgCardStruct *pParm, int Ram)
 {	return 0;
 }
-long EgGetMode(EgCardStruct *pParm, int ram, int *pBusy, int *pEnable)
+long EgGetMode(EgCardStruct *pParm, int ram, volatile int *pBusy, volatile int *pEnable)
 {	return 0;
 }
 long EgGetEnableTrigger(EgCardStruct *pParm, unsigned int Channel)
