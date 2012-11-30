@@ -1,0 +1,2589 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 876
+y 108
+w 700
+h 900
+font "helvetica-medium-r-18.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 7
+textColor index 14
+ctlFgColor1 index 1
+ctlFgColor2 index 14
+ctlBgColor1 index 25
+ctlBgColor2 index 7
+topShadowColor index 1
+botShadowColor index 14
+title "$(EVR) Event Receiver"
+showGrid
+snapToGrid
+gridSize 8
+endScreenProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 32
+w 448
+h 40
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 80
+w 448
+h 352
+lineColor index 56
+fill
+fillColor index 56
+lineWidth 0
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 80
+w 336
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Event Receiver Module #1: $(EVR1)"
+}
+endObjectProperties
+
+# (Exit Button)
+object activeExitButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 412
+y 48
+w 48
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+label "Exit"
+font "helvetica-medium-r-12.0"
+3d
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 264
+y 288
+w 192
+h 136
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 360
+y 328
+w 80
+h 24
+controlPv "$(EVR1):CTRL.TAXI"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 12
+fill
+font "courier-medium-r-12.0"
+fontAlign "center"
+lineWidth 2
+lineAlarm
+endObjectProperties
+
+# (Choice Button)
+object activeChoiceButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 296
+w 80
+h 24
+fgColor index 25
+fgAlarm
+bgColor index 4
+selectColor index 4
+inconsistentColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR1):CTRL.ENAB"
+indicatorPv "$(EVR1):CTRL.ENAB"
+font "courier-medium-r-12.0"
+orientation "horizontal"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 296
+w 88
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "Enable"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 328
+w 88
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "Rx Error Count"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 360
+y 360
+w 80
+h 24
+controlPv "$(EVR1):LINK"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 12
+fill
+font "courier-medium-r-12.0"
+fontAlign "center"
+lineWidth 2
+lineAlarm
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 360
+w 88
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "Rx Avail"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 264
+y 280
+w 40
+h 16
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Board"
+}
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 288
+y 48
+w 48
+h 24
+fgColor index 44
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "LOC\\VisFrml=e:0,hide,show"
+pressValue "show"
+releaseValue "hide"
+onLabel "Shown"
+offLabel "Hidden"
+toggle
+3d
+font "helvetica-medium-i-10.0"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 16
+y 32
+w 88
+h 16
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Event Codes"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 136
+y 8
+w 128
+h 24
+controlPv "$(IOC):TOD"
+precision 1
+fgColor index 14
+fgAlarm
+bgColor index 12
+font "helvetica-medium-r-12.0"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 16
+y 8
+w 104
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "$(IOC)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 280
+y 392
+w 175
+h 28
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "Enable Board Then Check EVG "
+  "Settings If Not RxAvail=YES"
+}
+autoSize
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 416
+y 80
+w 32
+h 32
+lineColor index 14
+fill
+fillColor index 15
+fillAlarm
+alarmPv "$(EVR1):STATUS"
+numPoints 5
+xPoints {
+  0 432
+  1 416
+  2 432
+  3 448
+  4 432
+}
+yPoints {
+  0 80
+  1 96
+  2 112
+  3 96
+  4 80
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 20
+y 48
+w 72
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Details..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrscreens/evrTrig_twoModule"
+}
+setPosition {
+  0 "parentWindow"
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 104
+y 48
+w 80
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Diag"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrscreens/evrDiag_twoModule.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 196
+y 48
+w 80
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Ev Codes"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrscreens/lclsEventCodes.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR1)"
+}
+icon
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 16
+y 440
+w 448
+h 352
+lineColor index 56
+fill
+fillColor index 56
+lineWidth 0
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 120
+w 432
+h 152
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 72
+y 144
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR1):CTRL.DG0E"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 80
+y 128
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "State"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 72
+y 176
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR1):CTRL.DG1E"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 72
+y 208
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR1):CTRL.DG2E"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 176
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 144
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 112
+w 56
+h 16
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Triggers"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 208
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 32
+y 128
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Trigger#"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 152
+y 128
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Polarity"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 144
+y 208
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR1):CTRL.DG2P"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 144
+y 176
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR1):CTRL.DG1P"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 144
+y 144
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR1):CTRL.DG0P"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 232
+y 128
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Width"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 312
+y 128
+w 40
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Delay"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 216
+y 144
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG0W"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 216
+y 176
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG1W"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 216
+y 208
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG2W"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 296
+y 144
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG0D"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 296
+y 176
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG1D"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 296
+y 208
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG2D"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 384
+y 128
+w 48
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Pre-scale"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 376
+y 144
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG0C"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 376
+y 176
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG1C"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 376
+y 208
+w 64
+h 24
+controlPv "$(EVR1):CTRL.DG2C"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 72
+y 240
+w 61
+h 28
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "Set Trigger"
+  "Parameters"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 208
+y 240
+w 184
+h 12
+font "helvetica-medium-i-10.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "1=8.4nsec  119=1usec  119000=1msec"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 288
+w 232
+h 136
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 280
+w 80
+h 16
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "TTL Outputs"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 40
+y 320
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 40
+y 344
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 40
+y 368
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "2"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 80
+y 320
+w 32
+h 24
+controlPv "$(EVR1):CTRL.FPS0"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 80
+y 344
+w 32
+h 24
+controlPv "$(EVR1):CTRL.FPS1"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 80
+y 368
+w 32
+h 24
+controlPv "$(EVR1):CTRL.FPS2"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 304
+w 40
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Output#"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 80
+y 304
+w 40
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Trigger#"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 32
+y 392
+w 208
+h 28
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "Assign Local Triggers to Front Panel "
+  "TTL Signals"
+}
+autoSize
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 88
+y 320
+w 168
+h 24
+controlPv "$(EVR1):FP0L.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+nullColor index 18
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 88
+y 344
+w 168
+h 24
+controlPv "$(EVR1):FP1L.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+nullColor index 18
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 88
+y 368
+w 168
+h 24
+controlPv "$(EVR1):FP2L.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+nullColor index 18
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 432
+w 336
+h 40
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Event Receiver Module #2: $(EVR2)"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 264
+y 648
+w 192
+h 136
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 360
+y 688
+w 80
+h 24
+controlPv "$(EVR2):CTRL.TAXI"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 12
+fill
+font "courier-medium-r-12.0"
+fontAlign "center"
+lineWidth 2
+lineAlarm
+endObjectProperties
+
+# (Choice Button)
+object activeChoiceButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 656
+w 80
+h 24
+fgColor index 25
+fgAlarm
+bgColor index 4
+selectColor index 4
+inconsistentColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR2):CTRL.ENAB"
+indicatorPv "$(EVR2):CTRL.ENAB"
+font "courier-medium-r-12.0"
+orientation "horizontal"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 656
+w 88
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "Enable"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 688
+w 88
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "Rx Error Count"
+}
+endObjectProperties
+
+# (Text Update)
+object TextupdateClass
+beginObjectProperties
+major 10
+minor 0
+release 0
+x 360
+y 720
+w 80
+h 24
+controlPv "$(EVR2):LINK"
+precision 1
+fgColor index 16
+fgAlarm
+bgColor index 12
+fill
+font "courier-medium-r-12.0"
+fontAlign "center"
+lineWidth 2
+lineAlarm
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 720
+w 88
+h 24
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "Rx Avail"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 264
+y 640
+w 40
+h 16
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Board"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 280
+y 752
+w 175
+h 28
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "Enable Board Then Check EVG "
+  "Settings If Not RxAvail=YES"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 480
+w 432
+h 152
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 72
+y 504
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR2):CTRL.DG0E"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 80
+y 488
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "State"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 72
+y 536
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR2):CTRL.DG1E"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 72
+y 568
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR2):CTRL.DG2E"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 536
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 504
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 472
+w 56
+h 16
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Triggers"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 568
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "2"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 32
+y 488
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Trigger#"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 152
+y 488
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Polarity"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 144
+y 568
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR2):CTRL.DG2P"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 144
+y 536
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR2):CTRL.DG1P"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 144
+y 504
+w 56
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR2):CTRL.DG0P"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 232
+y 488
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Width"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 312
+y 488
+w 40
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Delay"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 216
+y 504
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG0W"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 216
+y 536
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG1W"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 216
+y 568
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG2W"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 296
+y 504
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG0D"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 296
+y 536
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG1D"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 296
+y 568
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG2D"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 384
+y 488
+w 48
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Pre-scale"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 376
+y 504
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG0C"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 376
+y 536
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG1C"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 376
+y 568
+w 64
+h 24
+controlPv "$(EVR2):CTRL.DG2C"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 72
+y 600
+w 61
+h 28
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "Set Trigger"
+  "Parameters"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 208
+y 600
+w 184
+h 12
+font "helvetica-medium-i-10.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "1=8.4nsec  119=1usec  119000=1msec"
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 648
+w 232
+h 136
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 640
+w 80
+h 16
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "TTL Outputs"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 40
+y 680
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 40
+y 704
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 40
+y 728
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "2"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 80
+y 680
+w 32
+h 24
+controlPv "$(EVR2):CTRL.FPS0"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 80
+y 704
+w 32
+h 24
+controlPv "$(EVR2):CTRL.FPS1"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 80
+y 728
+w 32
+h 24
+controlPv "$(EVR2):CTRL.FPS2"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 3
+useDisplayBg
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+fastUpdate
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 664
+w 40
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Output#"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 80
+y 664
+w 40
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Trigger#"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 32
+y 752
+w 208
+h 28
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 44
+bgColor index 4
+useDisplayBg
+visPv "LOC\\VisFrml=e:0,hide,show"
+visMin "1"
+visMax "2"
+value {
+  "Assign Local Triggers to Front Panel "
+  "TTL Signals"
+}
+autoSize
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 88
+y 680
+w 168
+h 24
+controlPv "$(EVR2):FP0L.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+nullColor index 18
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 88
+y 704
+w 168
+h 24
+controlPv "$(EVR2):FP1L.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+nullColor index 18
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 88
+y 728
+w 168
+h 24
+controlPv "$(EVR2):FP2L.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+nullColor index 18
+fastUpdate
+newPos
+objType "controls"
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 424
+y 440
+w 32
+h 32
+lineColor index 14
+fill
+fillColor index 15
+fillAlarm
+alarmPv "$(EVR1):STATUS"
+numPoints 5
+xPoints {
+  0 440
+  1 424
+  2 440
+  3 456
+  4 440
+}
+yPoints {
+  0 440
+  1 456
+  2 472
+  3 456
+  4 440
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 348
+y 48
+w 56
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 14
+font "helvetica-bold-r-12.0"
+buttonLabel "IOC"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "./iocscreens/ioc_soft.edl"
+}
+symbols {
+  0 "ioc=$(IOC)"
+}
+icon
+endObjectProperties
+
