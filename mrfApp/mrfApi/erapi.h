@@ -1,3 +1,6 @@
+#ifndef	ERAPI_H
+#define	ERAPI_H
+
 /*
   erapi.h -- Definitions for Micro-Research Event Receiver
              Application Programming Interface
@@ -324,3 +327,5 @@ int EvrSetTxDBufMode(volatile struct MrfErRegs *pEr, int enable);
 int EvrGetTxDBufStatus(volatile struct MrfErRegs *pEr);
 int EvrSendTxDBuf(volatile struct MrfErRegs *pEr, char *dbuf, int size);
 int EvrGetFormFactor(volatile struct MrfErRegs *pEr);
+
+#endif	/*	ERAPI_H	*/

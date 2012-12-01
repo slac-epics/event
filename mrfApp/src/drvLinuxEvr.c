@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <byteswap.h>
 #include "erapi.h"
+#include "evrIrqHandlerThread.h"
 
 #define DEVNODE_NAME_BASE	"/dev/er"
 #ifdef EVENT_CLOCK_SPEED
@@ -569,7 +570,7 @@ static int ErConfigure (
 	/* Set the clock divider. For now it is a fixed value */
 	EvrSetFracDiv(pEr, FR_SYNTH_WORD);
 	ErEnableIrq_nolock(pCard, EVR_IRQ_OFF);
-	EvrIrqAssignHandler(pEr, fdEvr, ErIrqHandler);
+	EvrIrqAssignEpicsHandler(pEr, fdEvr, ErIrqHandler);
 	pCard->IrqLevel = 1;	/* Tell the interrupt handler this interrupt is enabled */
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);

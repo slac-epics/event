@@ -4,19 +4,7 @@
 #include <signal.h>
 #include <epicsThread.h>
 #include "erapi.h"
-
-#if 0
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <stdio.h>
-#include <endian.h>
-#include <byteswap.h>
-#include <errno.h>
-#include <signal.h>
-#include <sys/ioctl.h>
-#include <signal.h>
-#include <string.h>
-#endif
+#include "evrIrqHandlerThread.h"
 
 static int evrIrqHandlerThread(void *handler)
 {
