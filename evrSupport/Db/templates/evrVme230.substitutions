@@ -1,9 +1,9 @@
 #
 # Basic VME EVR 230 Event Substitutions file
 # Set event specific variations here.
-# Set EVR and IOC in dbLoadRecords()
+# Set EVR in dbLoadRecords()
 # Example:
-# dbLoadRecords( "db/evrVme230.db", "IOC=AMO:R06:IOC:19,EVR=AMO:R06:EVR:19" )
+# dbLoadRecords( "db/evrVme230.db", "EVR=AMO:R06:EVR:19" )
 #
 
 # Need one instance for the card

@@ -3,7 +3,7 @@
 # abstract:
 #	This template creates records supporting the high level
 #	device control and link status of an MRF evrVme230 module.
-#	Each IOC that support an evr should instantiate one instance
+#	Each ioc that support an evr should instantiate one instance
 #	of this template.
 #
 # Required Macros:

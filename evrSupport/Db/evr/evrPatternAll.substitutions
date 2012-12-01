@@ -14,12 +14,12 @@
 #==============================================================================
 #
 
-#file evrPatternProc.db
-#{
-#	pattern
-#	{ DEV       }
-#	{ $(DEVICE) }
-#}
+file evrPatternProc.db
+{
+	pattern
+	{ DEV       }
+	{ $(DEVICE) }
+}
 
 file evrPattern.db
 {
