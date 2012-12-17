@@ -81,6 +81,8 @@ extern "C" {
 #define MAX_TS_QUEUE           512              /* # timestamps queued per event */
 #define MAX_TS_QUEUE_MASK      511
 
+#define MAX_EV_TRIGGERS        12
+
 extern int lastfid;                             /* The last known fiducial, set by interrupt handler */
 
 /*
