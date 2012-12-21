@@ -183,6 +183,7 @@ INC += drvMrfEr.h
 INC += devMrfEr.h
 
 INC += erapi.h
+INC += evrIrqHandler.h
 
 INC += debugPrint.h
 

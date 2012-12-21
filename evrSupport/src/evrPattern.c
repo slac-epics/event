@@ -327,7 +327,7 @@ static int evrPatternProcInit(longSubRecord *psub)
   Sub Inputs/ Outputs:
    Inputs:
     X - Data source (0=PNET, 1=PATTERN), used only by evrPatternProcInit.
-    Z - Time ID (see evrTimeId_e in evrTime.h, 0=Current,
+    Z - Time ID (see evrTimeId_te in evrTime.h, 0=Current,
                  1=Next1, 2=Next2, 3=Next3)
     
    Outputs:

@@ -54,6 +54,7 @@ record(seq, "$(DEV):RESETCNT") {
   field(LNK3, "$(DEV):RESETCNT.DLY1")
 }
 
+# Processed via $(DEV):PATTERND-3.FLNK
 record(mbbo, "$(DEV):PATTERNSTATE") {
   field(DESC, "Pattern Processing State")
   field(DOL, "$(DEV):PATTERNDIAG PP")
