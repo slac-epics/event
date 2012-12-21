@@ -1245,8 +1245,9 @@ static long evrTimeEvent(longSubRecord *psub)
     /*
      * Update the count and timestamp, unlock the mutex, and go home!
      */
-    psub->val = eventCodeTime_as[psub->a].count;
-    psub->time = eventCodeTime_as[psub->a].time;
+    psub->val	= eventCodeTime_as[psub->a].count;
+    psub->time	= eventCodeTime_as[psub->a].time;
+    psub->s		= eventCodeTime_as[psub->a].status;
     epicsMutexUnlock(evrTimeRWMutex_ps);
     return epicsTimeOK;
 }
