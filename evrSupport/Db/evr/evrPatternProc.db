@@ -7,7 +7,7 @@
 # evrPatternProc.db
 # This template is for pattern processing records
 # Most users should load evrPatternAll.db which
-# includes these records via evrPatterAll.substitution
+# includes these records via evrPatternAll.substitution
 # 
 
 record(longSub, "$(DEV):PATTERNN-3") {
@@ -24,6 +24,7 @@ record(longSub, "$(DEV):PATTERNN-3") {
   field(Z, "3")
 }
 
+# Processed via $(DEV):PATTERNSTATE.DOL
 record(longSub, "$(DEV):PATTERNDIAG") {
   field(DESC, "Pattern Processing State")
   field(SNAM, "evrPatternState")

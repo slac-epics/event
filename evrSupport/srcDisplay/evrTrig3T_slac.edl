@@ -5162,6 +5162,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT1RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5315,6 +5316,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT2RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5388,6 +5390,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT3RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5461,6 +5464,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT4RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5534,6 +5538,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT5RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5607,6 +5612,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT6RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5680,6 +5686,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT7RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5753,6 +5760,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT8RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5826,6 +5834,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT9RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5899,6 +5908,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT10RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -5972,6 +5982,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT11RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -6045,6 +6056,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT12RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -6118,6 +6130,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT13RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12
@@ -6191,6 +6204,7 @@ w 40
 h 24
 controlPv "$(EVR):EVENT14RATE"
 displayMode "decimal"
+precision 1
 fgColor index 16
 fgAlarm
 bgColor index 12

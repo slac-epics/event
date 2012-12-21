@@ -187,6 +187,8 @@ INC += drvMrfEg.h
 INC += drvMrfEr.h
 INC += devMrfEr.h
 
+INC += evrIrqHandler.h
+
 INC += debugPrint.h
 
 
