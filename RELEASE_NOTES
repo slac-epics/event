@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-8: (KHKIM)  Feb. 12, 2013
+        * FACET
+          make new event number 214 PMAQ (Profile Monitor DACQ)
+
 event-R3-2-2-br_generaltime-2-7: (KHKIM) 
         * introduce new task to process the evr events and the timestamp updating
           this new thread will prevent some of race conditions for the multi-core platform
