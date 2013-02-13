@@ -3,6 +3,8 @@ Release Notes for the event package
 event-R3-2-2-br_generaltime-2-8: (KHKIM)  Feb. 12, 2013
         * FACET
           make new event number 214 PMAQ (Profile Monitor DACQ)
+        * confiugre/CONFIG_SITE
+          filter-out the vxworks from the target arch. until the event module is available for the vxworks
 
 event-R3-2-2-br_generaltime-2-7: (KHKIM) 
         * introduce new task to process the evr events and the timestamp updating
