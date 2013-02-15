@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-4-BR: (KHKIM) Feb. 15, 2013
+        * Brach out from the event-R3-2-2-br_generaltime-2-4
+        * Just temporal bach version, will be removed soon
+
 event-R3-2-2-br_generaltime-2-4: (KHKIM)
         * update README file
         * fix configure/RELEASE file: EPICS_MODULES=$(MODULES_SITE_TOP)
