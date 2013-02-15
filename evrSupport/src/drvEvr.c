@@ -25,6 +25,7 @@
 =============================================================================*/
 
 #include <stdlib.h> 		/* for calloc             */
+#include <dbScan.h>             /* for post_event         */
 #include "drvSup.h" 		/* for DRVSUPFN           */
 #include "errlog.h"		/* for errlogPrintf       */
 #include "epicsExport.h" 	/* for epicsExportAddress */
@@ -272,6 +273,7 @@ static int evrEventTask(void)
           epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
           if(eventMessage.eventNum==EVENT_FIDUCIAL) break;
           evrTimeEventProcessing(eventMessage.eventNum);
+          post_event(eventMessage.eventNum);
           scanIoRequest(eventMessage.ioscanPvt); 
       }
 
@@ -282,6 +284,7 @@ static int evrEventTask(void)
 
       /* Process EVENT_FIDUCIAL now */
       evrTimeEventProcessing(eventMessage.eventNum);
+      post_event(eventMessage.eventNum);
       scanIoRequest(eventMessage.ioscanPvt);
 
     }
