@@ -83,6 +83,8 @@ typedef struct
   unsigned long       absoluteStartTime;
   unsigned long       absoluteStartTimeMin;
   unsigned long       absoluteStartTimeMax;
+  unsigned long       qPend;
+  unsigned long       qPendMax;
 
   epicsMutexId        lock;
 
@@ -119,6 +121,8 @@ typedef struct
   unsigned long       absoluteStartTime;
   unsigned long       absoluteStartTimeMin;
   unsigned long       absoluteStartTimeMax;
+  unsigned long       qPend;
+  unsigned long       qPendMax;
 
   epicsMutexId        lock;
 
@@ -680,6 +684,18 @@ int evrMessageLap(unsigned int messageIdx)
 }
 
 
+int evrMessageQ(unsigned int messageIdx, int pend)
+{
+    if(messageIdx==EVR_MESSAGE_FIDUCIAL) {
+        evrMessage_as[messageIdx].qPend = pend;
+        if(pend > evrMessage_as[messageIdx].qPendMax) 
+            evrMessage_as[messageIdx].qPendMax = pend;
+    }
+
+    return 0;
+}
+
+
 
 /*=============================================================================
 
@@ -934,6 +950,19 @@ int evrMessageCountsClockCounter(unsigned int messageIdx,
     return 0; 
 }
 
+int evrMessageCountsQ(unsigned int messageIdx,
+                      epicsUInt32 *qPend,
+                      epicsUInt32 *qPendMax)
+{
+    evrMessage_ts *em_ps = evrMessage_as + messageIdx;
+    if(messageIdx >= EVR_MESSAGE_MAX) return -1;
+
+    *qPend    = em_ps->qPend;
+    *qPendMax = em_ps->qPendMax;
+   
+    return 0;
+}
+
 
 /*=============================================================================
 
@@ -971,6 +1000,8 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].absoluteStartTime     = 0;
   evrMessage_as[messageIdx].absoluteStartTimeMax  = 0;
   evrMessage_as[messageIdx].absoluteStartTimeMin  = MAX_DELTA_TIME;
+  evrMessage_as[messageIdx].qPend                 = 0;
+  evrMessage_as[messageIdx].qPendMax              = 0;
   /* Save counter reset time for reporting purposes */
   epicsTimeGetCurrent(&evrMessage_as[messageIdx].resetTime_s);
   return 0;

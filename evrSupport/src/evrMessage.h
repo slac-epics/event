@@ -106,6 +106,7 @@ int evrMessageClockCounter(unsigned int messageIdx, epicsUInt32 evrClockCounter)
 int evrMessageStart     (unsigned int  messageIdx);
 int evrMessageLap       (unsigned int  messageIdx);
 int evrMessageEnd       (unsigned int  messageIdx);
+int evrMessageQ         (unsigned int  messageIdx, int pend);
 int evrMessageReport    (unsigned int  messageIdx, char *messageName_a,
                          int interest);
 int evrMessageCounts    (unsigned int  messageIdx,
@@ -127,6 +128,9 @@ int evrMessageCountsClockCounter(unsigned int messageIdx,
                          epicsUInt32 *absoluteStartTime_p,
                          epicsUInt32 *absoluteStartTimeMin_p,
                          epicsUInt32 *absoluteStartTimeMax_p);
+int evrMessageCountsQ(unsigned int messageIdx,
+                      epicsUInt32  *qPend_p,
+                      epicsUInt32  *qPendMax_p);
 int evrMessageCountReset   (unsigned int messageIdx);
 int evrMessageCheckSumError(unsigned int messageIdx);
 int evrMessageNoDataError  (unsigned int messageIdx);

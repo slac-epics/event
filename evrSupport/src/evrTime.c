@@ -694,8 +694,11 @@ static int evrTimeProc (longSubRecord *psub)
   G  Absolute start time for the data buffer handling (us)  
   H  Minimum of the start time for the data buffer handling (us)
   I  Maximum of the start time for the data buffer handling (us)
+  
+  J  Pended message for the evrEvent task
+  K  Maximum number of pended message for the evrEventTask
 
-  G - L Spare
+  L Spare
 
   M  fiducial counter
   N  Number of times M has rolled over
@@ -734,6 +737,8 @@ static long evrTimeDiag (longSubRecord *psub)
                                &psub->d, &psub->e, &psub->f);
   evrMessageCountsClockCounter(EVR_MESSAGE_PATTERN,
                                &psub->g, &psub->h, &psub->i);
+  evrMessageCountsQ(EVR_MESSAGE_FIDUCIAL,
+                    &psub->j, &psub->k);
 
   if (psub->r > 0) {
     psub->r           = 0;
