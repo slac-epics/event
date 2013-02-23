@@ -1,5 +1,15 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-2-9: (KHKIM)  Feb. 21, 2013
+        * fix deadlock issue
+    M RELEASE_NOTES
+    M evrSupport/Db/evr/evrEvent.db
+    M evrSupport/src/drvEvr.c
+    M evrSupport/src/evrMessage.c
+    M evrSupport/src/evrMessage.h
+    M evrSupport/src/evrTime.c
+    M mrfApp/src/devMrfEr.c
+
 event-R3-2-2-br_generaltime-2-8: (KHKIM)  Feb. 12, 2013
         * FACET
           make new event number 214 PMAQ (Profile Monitor DACQ)
