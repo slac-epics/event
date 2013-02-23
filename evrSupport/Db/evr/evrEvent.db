@@ -1,13 +1,13 @@
-record(event, "$(DEV):$(NAME)EV") {
-  field(DESC, "$(NAME) Event")
-  field(DTYP, "MRF Event Receiver")
-  field(INP, "#C0 S$(ID) @")
-  field(SCAN, "I/O Intr")
-  field(PRIO, "HIGH")
-  field(VAL, "$(ID)")
+#record(event, "$(DEV):$(NAME)EV") {
+#  field(DESC, "$(NAME) Event")
+#  field(DTYP, "MRF Event Receiver")
+#  field(INP, "#C0 S$(ID) @")
+#  field(SCAN, "I/O Intr")
+#  field(PRIO, "HIGH")
+#  field(VAL, "$(ID)")
 #  field(FLNK, "$(DEV):$(NAME)CNT")
-  field(TSE, "$(ID)")
-}
+#  field(TSE, "$(ID)")
+#}
 
 #record(longSub, "$(DEV):$(NAME)CNT") {
 #  field(DESC, "$(NAME) Event Counter")
