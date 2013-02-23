@@ -1,6 +1,6 @@
 Release Notes for the event package
 -----------------------------------
-event-R3-2-2-br_generaltime-2-9: (KHKIM)  Feb. 21, 2013
+event-R3-2-2-br_generaltime-3-0: (KHKIM)  Feb. 22, 2013
         * fix deadlock issue
     M RELEASE_NOTES
     M evrSupport/Db/evr/evrEvent.db
