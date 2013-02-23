@@ -1021,7 +1021,7 @@ LOCAL_RTN
 void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
 {
     struct {
-    IOSCANPVT  ioscanPvt;
+    IOSCANPVT  *ioscanPvt;
     epicsInt16 eventNum;
     } eventMessage;
    /*---------------------
@@ -1035,9 +1035,12 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     *
     * scanIoRequest (pCard->IoScanPvt[EventNum]);
     */
-    eventMessage.ioscanPvt = pCard->IoScanPvt[EventNum];
-    eventMessage.eventNum  = EventNum;
-    epicsMessageQueueSend(pCard->eventTaskQueue, &eventMessage, sizeof(eventMessage));
+
+    if(EventNum != 1 /* EVENT_FIDUCIAL */) {   /* send a mssage to the event thread  when the event is not the fiducial */
+        eventMessage.ioscanPvt = &(pCard->IoScanPvt[EventNum]);
+        eventMessage.eventNum  = EventNum;
+        epicsMessageQueueSend(pCard->eventTaskQueue, &eventMessage, sizeof(eventMessage));
+    }
 
 }/*end ErDevEventFunc()*/
 
