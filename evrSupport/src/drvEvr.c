@@ -55,7 +55,6 @@ epicsExportAddress(drvet, drvEvr);
 static epicsMessageQueueId  eventTaskQueue;
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
-static epicsEventId     evrEventTaskSem   = NULL;  /* evr Event Task semaphore */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
 static int evrInitialized = 0;          /* evrInitialize performed        */
@@ -186,11 +185,26 @@ static int evrTask()
 {  
   epicsEventWaitStatus status;
   epicsUInt32          mpsModifier;
+  int                  messagePending;
+
+  struct {
+    IOSCANPVT  *ioscanPvt;
+    epicsInt16 eventNum;
+  } eventMessage;
 
   if (evrTimeInit(0,0)) {
     errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
     return -1;
   }
+
+  if(!pCard) {
+    errlogPrintf("evrTask: could not find an EVR module\n");
+    return -1;
+  }
+
+  eventMessage.ioscanPvt = &(pCard->IoScanPvt[EVENT_FIDUCIAL]);
+  eventMessage.eventNum  = EVENT_FIDUCIAL;
+
   for (;;)
   {
     readyForFiducial = 1;
@@ -226,9 +240,13 @@ static int evrTask()
         return -1;
       }
     }
+
+    epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+    messagePending = epicsMessageQueuePending(eventTaskQueue);
+    evrMessageQ(EVR_MESSAGE_FIDUCIAL, messagePending);
+
     /* Now do record processing */
     evrMessageStart(EVR_MESSAGE_PATTERN);
-    epicsEventSignal(evrEventTaskSem);
     epicsEventSignal(evrRecordEventSem);
   }
   return 0;
@@ -262,31 +280,17 @@ static int evrRecord()
 static int evrEventTask(void)
 {
     struct {
-        IOSCANPVT  ioscanPvt;
+        IOSCANPVT  *ioscanPvt;
         epicsInt16 eventNum;
     } eventMessage;
 
     eventTaskQueue = epicsMessageQueueCreate(256, sizeof(eventMessage));
 
     for(;;) {   
-      for(;;) {
-          epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
-          if(eventMessage.eventNum==EVENT_FIDUCIAL) break;
-          evrTimeEventProcessing(eventMessage.eventNum);
-          post_event(eventMessage.eventNum);
-          scanIoRequest(eventMessage.ioscanPvt); 
-      }
-
-      if(epicsEventWait(evrEventTaskSem)) {
-          errlogPrintf("evrEventTask: Exit due to bad status from epicsEvent\n");
-          return -1;
-      }
-
-      /* Process EVENT_FIDUCIAL now */
+      epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
       evrTimeEventProcessing(eventMessage.eventNum);
       post_event(eventMessage.eventNum);
-      scanIoRequest(eventMessage.ioscanPvt);
-
+      scanIoRequest(*eventMessage.ioscanPvt); 
     }
 
     return 0;
@@ -334,12 +338,6 @@ int evrInitialize()
     return -1;
   }
 
-  evrEventTaskSem = epicsEventMustCreate(epicsEventEmpty);
-  if(!evrEventTaskSem) {
-    errlogPrintf("evrIntialize: unable to create the evr Event Task semaphore\n");
-    return -1;
-  }
-
   evrRecordEventSem = epicsEventMustCreate(epicsEventEmpty);
   if (!evrRecordEventSem) {
     errlogPrintf("evrInitialize: unable to create the EVR record task semaphore\n");
@@ -353,6 +351,9 @@ int evrInitialize()
     return -1;
   }
   ellInit(&evrFiducialFuncList_s);
+
+
+  pCard = ErGetCardStruct(0);
   
   /* Create the processing tasks */
   if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh+1,
