@@ -325,7 +325,7 @@ struct ErCardStruct {
     epicsUInt32     DataBuffer [EVR_MAX_BUFFER/4];   /* Buffer for data stream                    */
     char            intMsg     [EVR_INT_MSG_LEN];    /* Buffer for interrupt debug messages       */
     char            FormFactor;              /* "VME_EVR" or "PMC_EVR" */
-    epicsMessageQueueId eventTaskQueue;       /* Message Queue for the event task */
+    epicsMessageQueueId *peventTaskQueue;       /* Message Queue for the event task */
 };/*ErCardStruct*/
 
 #endif

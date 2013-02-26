@@ -1039,7 +1039,7 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     if(EventNum != 1 /* EVENT_FIDUCIAL */) {   /* send a mssage to the event thread  when the event is not the fiducial */
         eventMessage.ioscanPvt = &(pCard->IoScanPvt[EventNum]);
         eventMessage.eventNum  = EventNum;
-        epicsMessageQueueSend(pCard->eventTaskQueue, &eventMessage, sizeof(eventMessage));
+        if(pCard->peventTaskQueue) epicsMessageQueueSend(*(pCard->peventTaskQueue), &eventMessage, sizeof(eventMessage));
     }
 
 }/*end ErDevEventFunc()*/
