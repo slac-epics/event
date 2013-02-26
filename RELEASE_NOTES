@@ -10,6 +10,12 @@ event-R3-2-2-br_generaltime-3-0: (KHKIM)  Feb. 22, 2013
     M evrSupport/src/evrTime.c
     M mrfApp/src/devMrfEr.c
 
+        * bug fix on the epics event generation
+    M evrSupport/src/drvEvr.c
+    M mrfApp/src/devMrfEr.c
+    M mrfApp/src/drvMrfEr.h
+
+
 event-R3-2-2-br_generaltime-2-8: (KHKIM)  Feb. 12, 2013
         * FACET
           make new event number 214 PMAQ (Profile Monitor DACQ)
