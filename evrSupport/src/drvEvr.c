@@ -384,7 +384,7 @@ int evrInitialize()
     errlogPrintf("evrInitialize: cannot find an EVR module\n");
   /* Register the ISR functions in this file with the EVR */
   } else {
-    pCard->eventTaskQueue = eventTaskQueue;
+    pCard->peventTaskQueue = &eventTaskQueue;
     ErRegisterDevDBuffHandler(pCard, (DEV_DBUFF_FUNC)evrSend);
     ErEnableDBuff            (pCard, 1);
     ErDBuffIrq               (pCard, 1);
