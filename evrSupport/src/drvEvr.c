@@ -290,7 +290,7 @@ static int evrEventTask(void)
       epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
       evrTimeEventProcessing(eventMessage.eventNum);
       post_event(eventMessage.eventNum);
-      scanIoRequest(*eventMessage.ioscanPvt); 
+      if(eventMessage.ioscanPvt && *eventMessage.ioscanPvt) scanIoRequest(*eventMessage.ioscanPvt); 
     }
 
     return 0;
