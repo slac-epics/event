@@ -607,6 +607,50 @@ int main(int argc,char *argv[])
 }
 
 
+2) erapi chages
+MRF provides APIs for both EVR and EVG. These APIs are included in the followings files.
+    erapi.c
+    erapi.h
+
+We have put a new thread (irqHandler thread) for linux platform.
+This thread receive the SIGIO signal sychronousely from the kernel module, and does the irq handling.
+We have modfied the erapi.c for this new thread.
+
+For upgrading the APIs, Please, follow the following procedure.
+
+- copy above files into mrfApp/src directory
+- add the following line into very top in the erapi.c
+
+    void EvrIrqHandlerThreadCreate(void(*handler)(int));
+
+- make chage for the EvrIrqAssignHdler()
+
+void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
+                         void (*handler)(int))
+{
+  struct sigaction act;
+  int oflags;
+  int result;
+
+/*
+
+  act.sa_handler = handler;
+  sigemptyset(&act.sa_mask);
+  act.sa_flags = 0;
+
+  result = sigaction(SIGIO, &act, NULL);
+  printf("sigaction returned %d\n", result);
+*/
+
+  EvrIrqHandlerThreadCreate(handler);
+
+  fcntl(fd, F_SETOWN, getpid());
+  oflags = fcntl(fd, F_GETFL);
+  fcntl(fd, F_SETFL, oflags | FASYNC);
+  /* Now enable handler */
+  EvrIrqHandled(fd);
+}
+
 
 Adding Timing Display autogen to your application
 ------------------------------------------------------
