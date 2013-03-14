@@ -10,6 +10,7 @@
  */
 
 #define  EVR_DRIVER_SUPPORT_MODULE   /* Indicates we are in the driver support module environment */
+#include <signal.h>
 #include "drvMrfEr.h"
 #undef EVR_MAX_BUFFER
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
@@ -155,6 +156,22 @@ static epicsMutexId ErConfigureLock;
 /**************************************************************************************************/
 /*                              Private APIs                                                      */
 /*                                                                                                */
+static void BlockSIGIO(void)
+{
+    static int once_flag = 0;
+    sigset_t set;
+
+    if(once_flag) return;  /* if it has been done, nothing to do it again */
+
+
+    once_flag = 1;
+    /* Blocking SIGIO signal for the _MAIN_ thread */
+    sigemptyset(&set);
+    sigaddset(&set, SIGIO);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
+
+}
+
 
 char * FormFactorToString( int formFactor )
 {
@@ -422,6 +439,9 @@ static int ErConfigure (
  struct ErCardStruct *pCard;
  struct MrfErRegs *pEr;
     u32  FPGAVersion;
+
+
+  BlockSIGIO();
  
  epicsMutexLock(ErCardListLock);
  /* If not already done, initialize the driver structures */
