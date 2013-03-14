@@ -7,19 +7,37 @@
 
 */
 
+#ifdef __linux__
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/mman.h>
-#include <stdio.h>
 #include <endian.h>
 #include <byteswap.h>
 #include <errno.h>
 #include <signal.h>
 #include <sys/ioctl.h>
-#include <signal.h>
+#else /* assume VxWorks */
+#ifndef VXWORKS
+#define VXWORKS 1
+#endif
+#include <vxWorks.h>
+#include <sysLib.h>
+#include <vxLib.h>
+#include <intLib.h>
+#include <iosLib.h>
+#include <taskLib.h>
+#include <semLib.h>
+#include <memLib.h>
+#include <rebootLib.h>
+#include <lstLib.h>
+#include <vme.h>
+#include <tickLib.h>
+#include <iv.h>
+#endif
+
+#include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "erapi.h"
 
@@ -29,9 +47,10 @@ void EvrIrqHandlerThreadCreate(void(*handler)(int));
 #define DEBUG 1
 */
 #define DEBUG_PRINTF printf
-unsigned int	erapiDebug	= 0;
+unsigned int erapiDebug = 0;
 
-int EvrOpen(struct MrfErRegs **pEr, char *device_name)
+#ifdef __linux__
+int EvrOpenWindow(struct MrfErRegs **pEr, char *device_name, int mem_window)
 {
   int fd;
 
@@ -43,7 +62,7 @@ int EvrOpen(struct MrfErRegs **pEr, char *device_name)
   if (fd != -1)
     {
       /* Memory map Event Receiver registers */
-      *pEr = (struct MrfErRegs *) mmap(0, EVR_MEM_WINDOW, PROT_READ | PROT_WRITE,
+      *pEr = (struct MrfErRegs *) mmap(0, mem_window, PROT_READ | PROT_WRITE,
 					MAP_SHARED, fd, 0);
 #ifdef DEBUG
   DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr,
@@ -59,13 +78,48 @@ int EvrOpen(struct MrfErRegs **pEr, char *device_name)
   return fd;
 }
 
-int EvrClose(int fd)
+int EvrOpen(struct MrfErRegs **pEr, char *device_name)
+{
+  return EvrOpenWindow(pEr, device_name, EVR_CPCI230_MEM_WINDOW);
+}
+
+int EvrTgOpen(struct MrfErRegs **pEr, char *device_name)
+{
+  return EvrOpenWindow(pEr, device_name, EVR_CPCI300TG_MEM_WINDOW);
+}
+
+#else
+int EvrOpen(struct MrfErRegs **pEg, char *device_name)
+{
+  return 0;
+}
+#endif
+
+#ifdef __linux__
+int EvrCloseWindow(int fd, int mem_window)
 {
   int result;
 
-  result = munmap(0, EVR_MEM_WINDOW);
+  result = munmap(0, mem_window);
   return close(fd);
 }
+
+int EvrClose(int fd)
+{
+  return EvrCloseWindow(fd, EVR_CPCI230_MEM_WINDOW);
+}
+
+int EvrTgClose(int fd)
+{
+  return EvrCloseWindow(fd, EVR_CPCI300TG_MEM_WINDOW);
+}
+
+#else
+int EvrClose(int fd)
+{
+  return 0;
+}
+#endif
 
 int EvrEnable(volatile struct MrfErRegs *pEr, int state)
 {
@@ -74,6 +128,16 @@ int EvrEnable(volatile struct MrfErRegs *pEr, int state)
   else
     pEr->Control &= be32_to_cpu(~(1 << C_EVR_CTRL_MASTER_ENABLE));
   
+  return EvrGetEnable(pEr);
+}
+
+int EvrOutputEnable(volatile struct MrfErRegs *pEr, int state)
+{
+  if (state)
+    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_OUTEN);
+  else
+    pEr->Control &= be32_to_cpu(~(1 << C_EVR_CTRL_OUTEN));
+
   return EvrGetEnable(pEr);
 }
 
@@ -101,8 +165,8 @@ void EvrDumpStatus(volatile struct MrfErRegs *pEr)
   DEBUG_PRINTF("Status %08x ", result);
   if (result & (1 << C_EVR_STATUS_LEGACY_VIO))
     DEBUG_PRINTF("LEGVIO ");
-  if (result & (1 << C_EVR_STATUS_FIFO_STOPPED))
-    DEBUG_PRINTF("FIFOSTOP ");
+  if (result & (1 << C_EVR_STATUS_LOG_STOPPED))
+    DEBUG_PRINTF("LOGSTOP ");
   DEBUG_PRINTF("\n");
   result = be32_to_cpu(pEr->Control);
   DEBUG_PRINTF("Control %08x: ", result);
@@ -169,8 +233,8 @@ int EvrDumpMapRam(volatile struct MrfErRegs *pEr, int ram)
 	    DEBUG_PRINTF("LED ");
 	  if (intev & (1 << C_EVR_MAP_FORWARD_EVENT))
 	    DEBUG_PRINTF("FWD ");
-	  if (intev & (1 << C_EVR_MAP_STOP_FIFO))
-	    DEBUG_PRINTF("STOPFIFO ");
+	  if (intev & (1 << C_EVR_MAP_STOP_LOG))
+	    DEBUG_PRINTF("STOPLOG ");
 	  if (intev & (1 << C_EVR_MAP_HEARTBEAT_EVENT))
 	    DEBUG_PRINTF("HB ");
 	  if (intev & (1 << C_EVR_MAP_RESETPRESC_EVENT))
@@ -311,7 +375,7 @@ int EvrSetLatchEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enab
   return 0;
 }
 
-int EvrSetFIFOStopEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
+int EvrSetLogEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
 {
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
@@ -320,9 +384,25 @@ int EvrSetFIFOStopEvent(volatile struct MrfErRegs *pEr, int ram, int code, int e
     return -1;
 
   if (!enable)
-    pEr->MapRam[ram][code].IntEvent &= be32_to_cpu(~(1 << C_EVR_MAP_STOP_FIFO));
+    pEr->MapRam[ram][code].IntEvent &= be32_to_cpu(~(1 << C_EVR_MAP_LOG_EVENT));
   if (enable)
-    pEr->MapRam[ram][code].IntEvent |= be32_to_cpu(1 << C_EVR_MAP_STOP_FIFO);
+    pEr->MapRam[ram][code].IntEvent |= be32_to_cpu(1 << C_EVR_MAP_LOG_EVENT);
+    
+  return 0;
+}
+
+int EvrSetLogStopEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
+{
+  if (ram < 0 || ram >= EVR_MAPRAMS)
+    return -1;
+
+  if (code <= 0 || code > EVR_MAX_EVENT_CODE)
+    return -1;
+
+  if (!enable)
+    pEr->MapRam[ram][code].IntEvent &= be32_to_cpu(~(1 << C_EVR_MAP_STOP_LOG));
+  if (enable)
+    pEr->MapRam[ram][code].IntEvent |= be32_to_cpu(1 << C_EVR_MAP_STOP_LOG);
     
   return 0;
 }
@@ -354,34 +434,56 @@ int EvrGetFIFOEvent(volatile struct MrfErRegs *pEr, struct FIFOEvent *fe)
     return -1;
 }
 
-int EvrEnableFIFO(volatile struct MrfErRegs *pEr, int enable)
+int EvrEnableLog(volatile struct MrfErRegs *pEr, int enable)
 {
   if (enable)
-    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_FIFO_ENABLE);
+    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_LOG_ENABLE);
   else
-    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_FIFO_DISABLE);
+    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_LOG_DISABLE);
   
-  return EvrGetFIFOState(pEr);
+  return EvrGetLogState(pEr);
 }
 
-int EvrGetFIFOState(volatile struct MrfErRegs *pEr)
+int EvrGetLogState(volatile struct MrfErRegs *pEr)
 {
-  return be32_to_cpu(pEr->Status & be32_to_cpu(1 << C_EVR_STATUS_FIFO_STOPPED));
+  return be32_to_cpu(pEr->Status & be32_to_cpu(1 << C_EVR_STATUS_LOG_STOPPED));
 }
 
-int EvrEnableFIFOStopEvent(volatile struct MrfErRegs *pEr, int enable)
+int EvrGetLogStart(volatile struct MrfErRegs *pEr)
+{
+  int pos;
+
+  pos = be32_to_cpu(pEr->LogStatus);
+  if (pos >= 0)
+    return 0;
+  else
+    return (pos & (EVR_LOG_SIZE - 1));
+}
+
+int EvrGetLogEntries(volatile struct MrfErRegs *pEr)
+{
+  int pos;
+
+  pos = be32_to_cpu(pEr->LogStatus);
+  if (pos >= 0)
+    return pos;
+  else
+    return EVR_LOG_SIZE;
+}
+
+int EvrEnableLogStopEvent(volatile struct MrfErRegs *pEr, int enable)
 {
   if (enable)
-    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_FIFO_STOP_EV_EN);
+    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_LOG_STOP_EV_EN);
   else
-    pEr->Control &= be32_to_cpu(~(1 << C_EVR_CTRL_FIFO_STOP_EV_EN));
+    pEr->Control &= be32_to_cpu(~(1 << C_EVR_CTRL_LOG_STOP_EV_EN));
   
-  return EvrGetFIFOStopEvent(pEr);
+  return EvrGetLogStopEvent(pEr);
 }
 
-int EvrGetFIFOStopEvent(volatile struct MrfErRegs *pEr)
+int EvrGetLogStopEvent(volatile struct MrfErRegs *pEr)
 {
-  return be32_to_cpu(pEr->Control & be32_to_cpu(1 << C_EVR_CTRL_FIFO_STOP_EV_EN));
+  return be32_to_cpu(pEr->Control & be32_to_cpu(1 << C_EVR_CTRL_LOG_STOP_EV_EN));
 }
 
 int EvrDumpFIFO(volatile struct MrfErRegs *pEr)
@@ -394,11 +496,43 @@ int EvrDumpFIFO(volatile struct MrfErRegs *pEr)
       i = EvrGetFIFOEvent(pEr, &fe);
       if (!i)
 	{
-	  printf("Code %08x, %08x:%08x\n",
+	  printf("FIFO Code %08lx, %08lx:%08lx\n",
 		 fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
 	}
     }
   while (!i);
+
+  return 0;
+}
+
+int EvrClearLog(volatile struct MrfErRegs *pEr)
+{
+  int ctrl;
+
+  ctrl = be32_to_cpu(pEr->Control);
+  ctrl |= (1 << C_EVR_CTRL_LOG_RESET);
+  pEr->Control = be32_to_cpu(ctrl);
+
+  return be32_to_cpu(pEr->Control);
+}
+
+int EvrDumpLog(volatile struct MrfErRegs *pEr)
+{
+  int pos, i, j;
+
+  pos = EvrGetLogStart(pEr);
+  i = EvrGetLogEntries(pEr);
+  j = 1;
+  if (i > 512) i = 512;
+  for (; i; i--)
+    {
+      printf("%02x Log Code %08lx, %08lx:%08lx\n", j++,
+	     be32_to_cpu(pEr->Log[pos].EventCode),
+	     be32_to_cpu(pEr->Log[pos].TimestampHigh),
+	     be32_to_cpu(pEr->Log[pos].TimestampLow));
+      pos++;
+      pos &= (EVR_LOG_SIZE - 1);
+    }
 
   return 0;
 }
@@ -422,33 +556,41 @@ int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig
   return 0;
 }
 
-int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
-		      u32 delay, u32 width)
+int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
+		      int delay, int width)
 {
   if (pulse < 0 || pulse >= EVR_MAX_PULSES)
     return -1;
 
-  pEr->Pulse[pulse].Prescaler = be32_to_cpu(presc);
-  pEr->Pulse[pulse].Delay = be32_to_cpu(delay);
   pEr->Pulse[pulse].Width = be32_to_cpu(width);
-  if ( erapiDebug	>= 1 )
-  {
-	/*
-	 * Sanity check on prescaler value (due to fixed bug in generator allocation)
-	 * Prescaler value is readable on generators 0-1
-	 * A MRF firmware bug prevents reading prescaler on generators 2-3
-	 * Generators 4-9 do not support prescaling and always read back 0
-	 */
-	if ( pulse < 3 )
-	{
-	  if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
-		printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,
-				pulse, be32_to_cpu(pEr->Pulse[pulse].Prescaler), presc );
-	  else if ( presc != 0 )
-		printf( "%s Pulse %d: Success! prescaler is now %d\n", __func__, pulse, presc );
-	}
-  }
+  pEr->Pulse[pulse].Delay = be32_to_cpu(delay);
+  pEr->Pulse[pulse].Prescaler = be32_to_cpu(presc);
+
   return 0;
+}
+
+int EvrGetPulsePresc(volatile struct MrfErRegs *pEr, int pulse)
+{
+  if (pulse < 0 || pulse >= EVR_MAX_PULSES)
+    return -1;
+
+  return be32_to_cpu(pEr->Pulse[pulse].Prescaler);
+}
+
+int EvrGetPulseDelay(volatile struct MrfErRegs *pEr, int pulse)
+{
+  if (pulse < 0 || pulse >= EVR_MAX_PULSES)
+    return -1;
+
+  return be32_to_cpu(pEr->Pulse[pulse].Delay);
+}
+
+int EvrGetPulseWidth(volatile struct MrfErRegs *pEr, int pulse)
+{
+  if (pulse < 0 || pulse >= EVR_MAX_PULSES)
+    return -1;
+
+  return be32_to_cpu(pEr->Pulse[pulse].Width);
 }
 
 void EvrDumpPulses(volatile struct MrfErRegs *pEr, int pulses)
@@ -457,7 +599,7 @@ void EvrDumpPulses(volatile struct MrfErRegs *pEr, int pulses)
 
   for (i = 0; i < pulses; i++)
     {
-      DEBUG_PRINTF("Pulse %02x Presc %08x Delay %08x Width %08x", i,
+      DEBUG_PRINTF("Pulse %02x Presc %08lx Delay %08lx Width %08lx", i,
 		   be32_to_cpu(pEr->Pulse[i].Prescaler), 
 		   be32_to_cpu(pEr->Pulse[i].Delay), 
 		   be32_to_cpu(pEr->Pulse[i].Width));
@@ -523,13 +665,47 @@ int EvrSetPulseProperties(volatile struct MrfErRegs *pEr, int pulse, int polarit
   return 0;
 }
 
+int EvrSetPrescalerTrig(volatile struct MrfErRegs *pEr, int prescaler, int trigs)
+{
+  int result;
+
+  if (prescaler < 0 || prescaler >= EVR_MAX_PRESCALERS)
+    return -1;
+
+  pEr->PrescalerTrig[prescaler] = be32_to_cpu(trigs);
+  return be32_to_cpu(pEr->PrescalerTrig[prescaler]);  
+}
+
+int EvrSetDBusTrig(volatile struct MrfErRegs *pEr, int dbus, int trigs)
+{
+  int result;
+
+  if (dbus < 0 || dbus >= 8)
+    return -1;
+
+  pEr->DBusTrig[dbus] = be32_to_cpu(trigs);
+  return be32_to_cpu(pEr->DBusTrig[dbus]);  
+}
+
+
+int EvrSetPulseTrigDBus(volatile struct MrfErRegs *pEr, int pulse, int dbus);
+
 int EvrSetUnivOutMap(volatile struct MrfErRegs *pEr, int output, int map)
 {
   if (output < 0 || output >= EVR_MAX_UNIVOUT_MAP)
     return -1;
 
   pEr->UnivOutMap[output] = be16_to_cpu(map);
-  return 0;
+
+  return be16_to_cpu(pEr->UnivOutMap[output]);
+}
+
+int EvrGetUnivOutMap(volatile struct MrfErRegs *pEr, int output)
+{
+  if (output < 0 || output >= EVR_MAX_UNIVOUT_MAP)
+    return -1;
+
+  return be16_to_cpu(pEr->UnivOutMap[output]);
 }
 
 void EvrDumpUnivOutMap(volatile struct MrfErRegs *pEr, int outputs)
@@ -546,7 +722,16 @@ int EvrSetFPOutMap(volatile struct MrfErRegs *pEr, int output, int map)
     return -1;
 
   pEr->FPOutMap[output] = be16_to_cpu(map);
-  return 0;
+
+  return be16_to_cpu(pEr->FPOutMap[output]);
+}
+
+int EvrGetFPOutMap(volatile struct MrfErRegs *pEr, int output)
+{
+  if (output < 0 || output >= EVR_MAX_FPOUT_MAP)
+    return -1;
+
+  return be16_to_cpu(pEr->FPOutMap[output]);
 }
 
 void EvrDumpFPOutMap(volatile struct MrfErRegs *pEr, int outputs)
@@ -563,7 +748,16 @@ int EvrSetTBOutMap(volatile struct MrfErRegs *pEr, int output, int map)
     return -1;
 
   pEr->TBOutMap[output] = be16_to_cpu(map);
-  return 0;
+
+  return be16_to_cpu(pEr->TBOutMap[output]);
+}
+
+int EvrGetTBOutMap(volatile struct MrfErRegs *pEr, int output)
+{
+  if (output < 0 || output >= EVR_MAX_TBOUT_MAP)
+    return -1;
+
+  return be16_to_cpu(pEr->TBOutMap[output]);
 }
 
 void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs)
@@ -574,7 +768,7 @@ void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs)
     DEBUG_PRINTF("TBOut[%d] %02x\n", i, be16_to_cpu(pEr->TBOutMap[i]));
 }
 
-
+#ifdef __linux__
 void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 			 void (*handler)(int))
 {
@@ -582,39 +776,55 @@ void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
   int oflags;
   int result;
 
+/*
 
-  /*
-   * The signal handling has been removed to use synchronous method
-   * instead of the asynchornous method....
-   */
-
-  /*
   act.sa_handler = handler;
   sigemptyset(&act.sa_mask);
   act.sa_flags = 0;
 
   result = sigaction(SIGIO, &act, NULL);
   printf("sigaction returned %d\n", result);
-  */
+*/
 
-
-  /* create epics thread to handle the signal (EVR Irq) with
-   * with synchronous method.
-   */
   EvrIrqHandlerThreadCreate(handler);
 
   fcntl(fd, F_SETOWN, getpid());
   oflags = fcntl(fd, F_GETFL);
   fcntl(fd, F_SETFL, oflags | FASYNC);
   /* Now enable handler */
-
-
   EvrIrqHandled(fd);
 }
 
+void EvrIrqUnassignHandler(int vector,
+			 void (*handler)(int))
+{
+}
+#endif
+
+#ifdef VXWORKS
+void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int vector,
+			 void (*handler)(int))
+{
+  return intConnect(INUM_TO_IVEC(vector), handler, pEr);
+}
+
+void EvrIrqUnassignHandler(int vector,
+			 void (*handler)(int))
+{
+  ppcDisconnectVec(vector, handler);
+}
+#endif
+
 int EvrIrqEnable(volatile struct MrfErRegs *pEr, int mask)
 {
-  pEr->IrqEnable = be32_to_cpu(mask);
+  int control = be32_to_cpu(pEr->IrqEnable) & EVR_IRQ_PCICORE_ENABLE;
+
+  pEr->IrqEnable = be32_to_cpu(mask | control);
+  return be32_to_cpu(pEr->IrqEnable);
+}
+
+int EvrGetIrqEnable(volatile struct MrfErRegs *pEr)
+{
   return be32_to_cpu(pEr->IrqEnable);
 }
 
@@ -629,15 +839,18 @@ int EvrClearIrqFlags(volatile struct MrfErRegs *pEr, int mask)
   return be32_to_cpu(pEr->IrqFlag);
 }
 
+#ifdef __linux__
 void EvrIrqHandled(int fd)
 {
   ioctl(fd, EV_IOCIRQEN);
 }
+#endif
 
 int EvrSetPulseIrqMap(volatile struct MrfErRegs *pEr, int map)
 {
   pEr->PulseIrqMap = be32_to_cpu(map);
-  return 0;
+
+  return be32_to_cpu(pEr->PulseIrqMap);
 }
 
 void EvrClearDiagCounters(volatile struct MrfErRegs *pEr)
@@ -646,17 +859,36 @@ void EvrClearDiagCounters(volatile struct MrfErRegs *pEr)
   pEr->DiagReset = 0x0;
 }
 
-void EvrEnableDiagCounters(volatile struct MrfErRegs *pEr, int enable)
+int EvrEnableDiagCounters(volatile struct MrfErRegs *pEr, int enable)
 {
   if (enable)
     pEr->DiagCE = 0xffffffff;
   else
     pEr->DiagCE = 0;
+
+  return be32_to_cpu(pEr->DiagCE);
 }
 
 u32 EvrGetDiagCounter(volatile struct MrfErRegs *pEr, int idx)
 {
   return be32_to_cpu(pEr->DiagCounter[idx]);
+}
+
+int EvrSetGPIODir(volatile struct MrfErRegs *pEr, int dir)
+{
+  pEr->GPIODir = be32_to_cpu(dir);
+  return be32_to_cpu(pEr->GPIODir);
+}
+
+int EvrSetGPIOOut(volatile struct MrfErRegs *pEr, int dout)
+{
+  pEr->GPIOOut = be32_to_cpu(dout);
+  return be32_to_cpu(pEr->GPIOOut);
+}
+
+int EvrGetGPIOIn(volatile struct MrfErRegs *pEr)
+{
+  return be32_to_cpu(pEr->GPIOIn);
 }
 
 int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable)
@@ -671,6 +903,9 @@ int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable)
       break;
     case 1:
       sh = 4;
+      break;
+    case 2:
+      sh = 8;
       break;
     default:
       return -1;
@@ -689,7 +924,7 @@ int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable)
   return 0;
 }
 
-int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, u32 dly0, u32 dly1)
+int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, int dly0, int dly1)
 {
   u32 gpio;
   int sh = 0;
@@ -703,6 +938,9 @@ int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, u32 dly0, u32
       break;
     case 1:
       sh = 4;
+      break;
+    case 2:
+      sh = 8;
       break;
     default:
       return -1;
@@ -787,7 +1025,7 @@ void EvrDumpHex(volatile struct MrfErRegs *pEr)
     {
       printf("%08x: ", i);
       for (j = 0; j < 8; j++)
-	printf("%08x ", be32_to_cpu(*p++));
+	printf("%08lx ", be32_to_cpu(*p++));
       printf("\n");
     }
 }
@@ -814,7 +1052,9 @@ int EvrSetDBufMode(volatile struct MrfErRegs *pEr, int enable)
 
 int EvrGetDBufStatus(volatile struct MrfErRegs *pEr)
 {
-  return be32_to_cpu(pEr->DataBufControl);
+  volatile u32 *dbc = &(pEr->DataBufControl);
+  
+  return be32_to_cpu(*dbc);
 }
 
 int EvrReceiveDBuf(volatile struct MrfErRegs *pEr, int enable)
@@ -844,7 +1084,18 @@ int EvrGetDBuf(volatile struct MrfErRegs *pEr, char *dbuf, int size)
   if (size < rxsize)
     return -1;
 
+#ifdef __linux__
   memcpy((void *) dbuf, (void *) &pEr->Databuf[0], rxsize);
+#else
+  memcpy((void *) dbuf, (void *) &pEr->Databuf[0], rxsize);
+  /*  {
+    int i;
+    int *p = (int *) dbuf;
+    
+    for (i = 0; i < size/4; i++)
+      p[i] = be32_to_cpu(pEr->Databuf[i]);
+      } */
+#endif
 
   if (stat & (1 << C_EVR_DATABUF_CHECKSUM))
     return -1;
@@ -893,7 +1144,7 @@ int EvrSetTimestampDBus(volatile struct MrfErRegs *pEr, int enable)
   return be32_to_cpu(pEr->Control);  
 }
 
-int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, u32 div)
+int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, int div)
 {
   if (presc >= 0 && presc < EVR_MAX_PRESCALERS)
     {
@@ -904,7 +1155,26 @@ int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, u32 div)
   return -1;
 }
 
-int EvrSetExtEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int enable)
+int EvrGetPrescaler(volatile struct MrfErRegs *pEr, int presc)
+{
+  if (presc >= 0 && presc < EVR_MAX_PRESCALERS)
+    {
+      return be32_to_cpu(pEr->Prescaler[presc]);
+    }
+  return -1;
+}
+
+int EvrSetPrescalerPolarity(volatile struct MrfErRegs *pEr, int polarity)
+{
+  if (polarity)
+    pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_PRESC_POLARITY);
+  else
+    pEr->Control &= be32_to_cpu(~(1 << C_EVR_CTRL_PRESC_POLARITY));
+  
+  return be32_to_cpu(pEr->Control & (1 << C_EVR_CTRL_PRESC_POLARITY));
+}
+
+int EvrSetExtEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int edge_enable, int level_enable)
 {
   int fpctrl;
 
@@ -918,8 +1188,12 @@ int EvrSetExtEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int enab
       fpctrl |= code << C_EVR_FPIN_EXTEVENT_BASE;
     }
   fpctrl &= ~(1 << C_EVR_FPIN_EXT_ENABLE);
-  if (enable)
+  if (edge_enable)
     fpctrl |= (1 << C_EVR_FPIN_EXT_ENABLE);
+
+  fpctrl &= ~(1 << C_EVR_FPIN_EXTLEV_ENABLE);
+  if (level_enable)
+    fpctrl |= (1 << C_EVR_FPIN_EXTLEV_ENABLE);
 
   pEr->FPInMap[ttlin] = be32_to_cpu(fpctrl);
   if (pEr->FPInMap[ttlin] == be32_to_cpu(fpctrl))
@@ -927,7 +1201,18 @@ int EvrSetExtEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int enab
   return -1;
 }
 
-int EvrSetBackEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int enable)
+int EvrGetExtEventCode(volatile struct MrfErRegs *pEr, int ttlin)
+{
+  int fpctrl;
+
+  if (ttlin < 0 || ttlin > EVR_MAX_FPIN_MAP)
+    return -1;
+
+  fpctrl = be32_to_cpu(pEr->FPInMap[ttlin]);
+  return (fpctrl >> C_EVR_FPIN_EXTEVENT_BASE) & EVR_MAX_EVENT_CODE;
+}
+
+int EvrSetBackEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int edge_enable, int level_enable)
 {
   int fpctrl;
 
@@ -941,8 +1226,48 @@ int EvrSetBackEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int ena
       fpctrl |= code << C_EVR_FPIN_BACKEVENT_BASE;
     }
   fpctrl &= ~(1 << C_EVR_FPIN_BACKEV_ENABLE);
-  if (enable)
+  if (edge_enable)
     fpctrl |= (1 << C_EVR_FPIN_BACKEV_ENABLE);
+
+  fpctrl &= ~(1 << C_EVR_FPIN_BACKLEV_ENABLE);
+  if (level_enable)
+    fpctrl |= (1 << C_EVR_FPIN_BACKLEV_ENABLE);
+
+  pEr->FPInMap[ttlin] = be32_to_cpu(fpctrl);
+  if (pEr->FPInMap[ttlin] == be32_to_cpu(fpctrl))
+    return 0;
+  return -1;
+}
+
+int EvrSetExtEdgeSensitivity(volatile struct MrfErRegs *pEr, int ttlin, int edge)
+{
+  int fpctrl;
+
+  if (ttlin < 0 || ttlin > EVR_MAX_FPIN_MAP)
+    return -1;
+
+  fpctrl = be32_to_cpu(pEr->FPInMap[ttlin]);
+  fpctrl &= ~(1 << C_EVR_FPIN_EXT_EDGE);
+  if (edge)
+    fpctrl |= (1 << C_EVR_FPIN_EXT_EDGE);
+
+  pEr->FPInMap[ttlin] = be32_to_cpu(fpctrl);
+  if (pEr->FPInMap[ttlin] == be32_to_cpu(fpctrl))
+    return 0;
+  return -1;
+}
+
+int EvrSetExtLevelSensitivity(volatile struct MrfErRegs *pEr, int ttlin, int level)
+{
+  int fpctrl;
+
+  if (ttlin < 0 || ttlin > EVR_MAX_FPIN_MAP)
+    return -1;
+
+  fpctrl = be32_to_cpu(pEr->FPInMap[ttlin]);
+  fpctrl &= ~(1 << C_EVR_FPIN_EXTLEV_ACT);
+  if (level)
+    fpctrl |= (1 << C_EVR_FPIN_EXTLEV_ACT);
 
   pEr->FPInMap[ttlin] = be32_to_cpu(fpctrl);
   if (pEr->FPInMap[ttlin] == be32_to_cpu(fpctrl))
@@ -991,7 +1316,6 @@ int EvrSendTxDBuf(volatile struct MrfErRegs *pEr, char *dbuf, int size)
   int stat;
 
   stat = EvrGetTxDBufStatus(pEr);
-  //  printf("EvgSendDBuf: stat %08x\n", stat);
   /* Check that DBUF mode enabled */
   if (!(stat & (1 << C_EVR_TXDATABUF_MODE)))
     return -1;
@@ -1002,19 +1326,24 @@ int EvrSendTxDBuf(volatile struct MrfErRegs *pEr, char *dbuf, int size)
   if (size & 3 || size > EVR_MAX_BUFFER || size < 4)
     return -1;
 
+#ifdef __linux__
   memcpy((void *) &pEr->TxDatabuf[0], (void *) dbuf, size);
+#else
+  memcpy((void *) &pEr->TxDatabuf[0], (void *) dbuf, size);
+#endif
 
   /* Enable and set size */
   stat &= ~((EVR_MAX_BUFFER-1) | (1 << C_EVR_TXDATABUF_TRIGGER));
   stat |= (1 << C_EVR_TXDATABUF_ENA) | size;
-  //  printf("EvgSendDBuf: stat %08x\n", stat);
   pEr->TxDataBufControl = be32_to_cpu(stat);
-  //  printf("EvgSendDBuf: stat %08x\n", be32_to_cpu(pEr->DataBufControl));
-
+  /*
+  printf("TxDataBufControl %08x\n", pEr->TxDataBufControl);
+  */
   /* Trigger */
   pEr->TxDataBufControl = be32_to_cpu(stat | (1 << C_EVR_TXDATABUF_TRIGGER));
-  //  printf("EvgSendDBuf: stat %08x\n", be32_to_cpu(pEr->DataBufControl));
-
+  /*
+  printf("TxDataBufControl %08x\n", pEr->TxDataBufControl);
+  */
   return size;
 }
 
@@ -1024,4 +1353,53 @@ int EvrGetFormFactor(volatile struct MrfErRegs *pEr)
   
   stat = be32_to_cpu(pEr->FPGAVersion);
   return ((stat >> 24) & 0x0f);
+}
+
+int EvrSetFineDelay(volatile struct MrfErRegs *pEr, int channel, int delay)
+{
+  if (channel < 0 || channel >= EVR_MAX_CML_OUTPUTS)
+    return -1;
+
+  pEr->FineDelay[channel] = be32_to_cpu(delay);
+  return be32_to_cpu(pEr->FineDelay[channel]);
+}
+
+int EvrCMLEnable(volatile struct MrfErRegs *pEr, int channel, int state)
+{
+  int ctrl;
+
+  if (channel < 0 || channel >= EVR_MAX_CML_OUTPUTS)
+    return -1;
+
+  ctrl = be16_to_cpu(pEr->CML[channel].Control);
+  if (state)
+    {
+      ctrl &= ~((1 << C_EVR_CMLCTRL_RESET) | (1 << C_EVR_CMLCTRL_POWERDOWN));
+      ctrl |= (1 << C_EVR_CMLCTRL_ENABLE);
+    }
+  else
+    {
+      ctrl |= (1 << C_EVR_CMLCTRL_RESET) | (1 << C_EVR_CMLCTRL_POWERDOWN);
+      ctrl &= ~(1 << C_EVR_CMLCTRL_ENABLE);
+    }
+
+
+  pEr->CML[channel].Control = be16_to_cpu(ctrl);
+  return be16_to_cpu(pEr->CML[channel].Control);
+}
+
+int EvrSetCMLMode(volatile struct MrfErRegs *pEr, int channel, int mode)
+{
+  int ctrl;
+
+  if (channel < 0 || channel >= EVR_MAX_CML_OUTPUTS)
+    return -1;
+
+  ctrl = be16_to_cpu(pEr->CML[channel].Control);
+  ctrl &= ~(C_EVR_CMLCTRL_MODE_GUNTX200 | C_EVR_CMLCTRL_MODE_GUNTX300 |
+	    C_EVR_CMLCTRL_MODE_PATTERN);
+  ctrl |= mode;
+
+  pEr->CML[channel].Control = be16_to_cpu(ctrl);
+  return be16_to_cpu(pEr->CML[channel].Control);
 }
