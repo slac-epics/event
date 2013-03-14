@@ -18,7 +18,7 @@
 #define u16 unsigned short
 #endif
 #ifndef u32
-#define u32 unsigned long
+#define u32 unsigned int
 #endif
 
 #ifndef be16_to_cpu
