@@ -1,5 +1,10 @@
 Release Notes for the event package
 -----------------------------------
+
+event-R3-2-2-br_generaltime-3-1: (KHKIM)  Mar. 14, 2013
+        * upgrade vendor's APIs  for linux platform
+        * move signal blocking from main() to ErConfigure for linux platform
+
 event-R3-2-2-br_generaltime-3-0: (KHKIM)  Feb. 22, 2013
         * fix deadlock issue
     M RELEASE_NOTES
