@@ -153,7 +153,7 @@ static double        evrTicksPerUsec = 1;
 #define MFTB(var) (var)=Read_timer()
 #endif
 #endif
-#if defined(linux) && !defined(_X86_)
+#if defined(linux) && (!defined(_X86_) && !defined(_X86_64_))
 #define MFTB(var)  ((var)=1) /* make compiler happy */
 #endif
 
@@ -163,13 +163,24 @@ static double        evrTicksPerUsec = 1;
  *
  */
 
-#ifdef _X86_
-__inline__ static unsigned long long int rdtsc(void)
+#if defined( _X86_) || defined(_X86_64_)
+#if defined(_X86_)
+static __inline__ unsigned long long int rdtsc(void)
 {
         unsigned long long int x;
         __asm__ volatile (".byte 0x0f, 0x31": "=A" (x));
         return x;
 }
+#elif defined(_X86_64_)
+static __inline__ unsigned long long rdtsc(void)
+{
+  unsigned hi, lo;
+  __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+  return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+}
+#endif
+
+
 static double evrTicksPerUsec = 1.5E+3;  /* need to fix it to avoid hardcoding */
 #define MFTB(var)  ((var)=(unsigned long) rdtsc())
 
@@ -184,6 +195,7 @@ void  Get_evrTicksPerUsec_for_X86(void)
     } while(!(stop>start));
 
     evrTicksPerUsec = (double)(stop-start) * 1.E-6;
+    printf("CPU Clock Estimation: %lf MHz\n", evrTicksPerUsec);
 }
 #endif
 
@@ -783,7 +795,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
          evrMessage_as[messageIdx].writeErrorCount);
   printf("Number of check sum errors: %lu\n",
          evrMessage_as[messageIdx].checkSumErrorCount);
-#if defined(__PPC__) || defined(_X86_)
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
   printf("Maximum proc time delta (us) = %lf\n",
          (double)evrMessage_as[messageIdx].procTimeDeltaMax/evrTicksPerUsec);
   printf("Max/Min proc start time deltas (us) = %lf/%lf\n",
@@ -803,7 +815,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
     if (interest > 2) count = MODULO720_COUNT;
     printf("Last %d proc time deltas (us):\n", count);
     for (idx=0; idx<count; idx++) {
-#if defined(__PPC__) || defined(_X86_)
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
       printf("  %d: %lf\n", idx,
              (double)evrMessage_as[messageIdx].procTimeDelta_a[idx]/
              evrTicksPerUsec);
@@ -870,7 +882,7 @@ int evrMessageCounts    (unsigned int  messageIdx,
   *procTimeStartMax_p    = em_ps->procTimeDeltaStartMax;
   *procTimeDeltaMax_p    = em_ps->procTimeDeltaMax;
 /* Nearest microsecond for PPC */
-#if defined(__PPC__) || defined(_X86_)
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
   *procTimeStartMin_p    = (unsigned long)
     (((double)(*procTimeStartMin_p)/evrTicksPerUsec) + 0.5);
   *procTimeStartMax_p    = (unsigned long)
@@ -885,7 +897,7 @@ int evrMessageCounts    (unsigned int  messageIdx,
     for (idx = 0; idx < em_ps->procTimeDeltaCount; idx++) {
       *procTimeDeltaAvg_p += em_ps->procTimeDelta_a[idx];
     }
-#if defined(__PPC__) || defined(_X86_)
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
     *procTimeDeltaAvg_p    = (unsigned long)
       ((((double)(*procTimeDeltaAvg_p)/
          (double)em_ps->procTimeDeltaCount)/
@@ -913,7 +925,7 @@ int evrMessageCountsFiducial(unsigned int messageIdx,
     *procTimeDelayMin_p = em_ps->procTimeDelayMin;
     *procTimeDelayMax_p = em_ps->procTimeDelayMax;
 
-#if defined(__PPC__) || defined(_X86_)
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
     *procTimeDelay_p = (unsigned long) 
         (((double)(*procTimeDelay_p)/evrTicksPerUsec) + 0.5);
     *procTimeDelayMin_p = (unsigned long)

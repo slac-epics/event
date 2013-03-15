@@ -315,7 +315,7 @@ int evrInitialize()
   evrInitialized = -1;
 
 
-#ifdef _X86_
+#if defined(_X86_) || defined(_X86_64_)
   Get_evrTicksPerUsec_for_X86(); 
 #endif
 
