@@ -1,5 +1,12 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-2-2-br_generaltime-3-2: (KHKIM) Mar 15. 2013
+      Support 64 bits machine
+        * 64bits bug fix for the erapi.h
+        * 64bits bug fix for the longSubRecord
+        * 64bits bug fix for the evrMessage
+        * 64bits bug fix for the evrTime
+       
 
 event-R3-2-2-br_generaltime-3-1: (KHKIM)  Mar. 14, 2013
         * upgrade vendor's APIs  for linux platform
