@@ -5,13 +5,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/timex.h>        /* for ntp_adjtime           */
+#include "epicsTypes.h"
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "longSubRecord.h"    /* for struct longSubRecord  */
 
 typedef struct {
-    unsigned long  code;
-    unsigned long  offset; 
+    epicsUInt32  code;
+    epicsUInt32  offset; 
 } evOffset_t;
 
 
@@ -113,18 +114,18 @@ static evOffset_t evOffset[256] = {
 
 
 
-static int lsubTrigSelInit(longSubRecord *prec)
+static long lsubTrigSelInit(longSubRecord *prec)
 {
     /* printf("lsubTrigSelInit for %s\n", prec->name); */
 
     return 0;
 }
 
-static int lsubTrigSel(longSubRecord *prec)
+static long lsubTrigSel(longSubRecord *prec)
 {
-   unsigned long i   = 0;
-   unsigned long *p  = &prec->a;
-   unsigned long *pp = &prec->z;
+   epicsUInt32    i   = 0;
+   epicsUInt32    *p  = &prec->a;
+   epicsUInt32    *pp = &prec->z;
 
    /* printf("lsubTrigSel for %s\n", prec->name);  */
 
@@ -138,17 +139,17 @@ static int lsubTrigSel(longSubRecord *prec)
    return -1;
 }
 
-static int lsubEvSelInit(longSubRecord *prec)
+static long lsubEvSelInit(longSubRecord *prec)
 {
     /* printf("lsubEvSelInit for %s\n", prec->name); */
 
     return 0;
 }
 
-static int lsubEvSel(longSubRecord *prec)
+static long lsubEvSel(longSubRecord *prec)
 {
-    unsigned long i  = prec->v;
-    unsigned long *p = &prec->a;
+    epicsUInt32  i  = prec->v;
+    epicsUInt32  *p = &prec->a;
 
     /* printf("lsubEvSel for %s\n", prec->name); */
 
@@ -157,14 +158,14 @@ static int lsubEvSel(longSubRecord *prec)
     return 0;
 }
 
-static int lsubLookupOffsetInit(longSubRecord *prec)
+static long lsubLookupOffsetInit(longSubRecord *prec)
 {
     /* printf("lsubLookupOffsetInit for %s\n", prec->name); */
 
     return 0;
 }
 
-static int lsubLookupOffset(longSubRecord *prec)
+static long lsubLookupOffset(longSubRecord *prec)
 {
 
     /* printf("lsubLookupOffset for %s\n", prec->name); */
