@@ -33,7 +33,7 @@
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be32_to_cpu(x) bswap_32(x)
 #else
-#define be32_to_cpu(x) ((unsigned long)(x))
+#define be32_to_cpu(x) ((unsigned int)(x))
 #endif
 #endif
 
