@@ -883,13 +883,13 @@ int evrMessageCounts    (unsigned int  messageIdx,
   *procTimeDeltaMax_p    = em_ps->procTimeDeltaMax;
 /* Nearest microsecond for PPC */
 #if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
-  *procTimeStartMin_p    = (unsigned long)
+  *procTimeStartMin_p    = (epicsUInt32)
     (((double)(*procTimeStartMin_p)/evrTicksPerUsec) + 0.5);
-  *procTimeStartMax_p    = (unsigned long)
+  *procTimeStartMax_p    = (epicsUInt32)
     (((double)(*procTimeStartMax_p)/evrTicksPerUsec) + 0.5);
-  *procTimeDeltaMax_p    = (unsigned long)
+  *procTimeDeltaMax_p    = (epicsUInt32)
     (((double)(*procTimeDeltaMax_p)/evrTicksPerUsec) + 0.5);
-  *procTimeDeltaAvg_p    = (unsigned long)
+  *procTimeDeltaAvg_p    = (epicsUInt32)
     (((double)(*procTimeDeltaAvg_p)/evrTicksPerUsec) + 0.5);
 #endif
   *procTimeDeltaAvg_p    = 0;
@@ -898,7 +898,7 @@ int evrMessageCounts    (unsigned int  messageIdx,
       *procTimeDeltaAvg_p += em_ps->procTimeDelta_a[idx];
     }
 #if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
-    *procTimeDeltaAvg_p    = (unsigned long)
+    *procTimeDeltaAvg_p    = (epicsUInt32)
       ((((double)(*procTimeDeltaAvg_p)/
          (double)em_ps->procTimeDeltaCount)/
         evrTicksPerUsec) + 0.5);
@@ -926,11 +926,11 @@ int evrMessageCountsFiducial(unsigned int messageIdx,
     *procTimeDelayMax_p = em_ps->procTimeDelayMax;
 
 #if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
-    *procTimeDelay_p = (unsigned long) 
+    *procTimeDelay_p = (epicsUInt32) 
         (((double)(*procTimeDelay_p)/evrTicksPerUsec) + 0.5);
-    *procTimeDelayMin_p = (unsigned long)
+    *procTimeDelayMin_p = (epicsUInt32)
         (((double)(*procTimeDelayMin_p)/evrTicksPerUsec) + 0.5);
-    *procTimeDelayMax_p = (unsigned long)
+    *procTimeDelayMax_p = (epicsUInt32)
         (((double)(*procTimeDelayMax_p)/evrTicksPerUsec) + 0.5);
 #endif
 
@@ -951,7 +951,7 @@ int evrMessageCountsClockCounter(unsigned int messageIdx,
     *absoluteStartTimeMin_p = em_ps->absoluteStartTimeMin;
     *absoluteStartTimeMax_p = em_ps->absoluteStartTimeMax;
 
-    #define CALC_FUNC(A)  (*A) = (unsigned long)(((double)(*A)*(1./119.))+0.5)
+    #define CALC_FUNC(A)  (*A) = (epicsUInt32)(((double)(*A)*(1./119.))+0.5)
 
     CALC_FUNC(absoluteStartTime_p);
     CALC_FUNC(absoluteStartTimeMin_p);

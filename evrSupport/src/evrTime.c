@@ -164,10 +164,10 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
                                           1,2,3 = time associated w next pulses
                                           4 = last active pulse
         evrModifier_ta  modifier_a        Write    First 6 longwords of the pattern
-        unsigned long * patternStatus_p   Write    Pattern Status (see evrPattern.h)
-        unsigned long * edefAvgDoneMask_p Write    EDEF average-done mask
-        unsigned long * edefMinorMask_p   Write    EDEF minor severity mask
-        unsigned long * edefMajorMask_p   Write    EDEF major severity mask
+        epicsUInt32   * patternStatus_p   Write    Pattern Status (see evrPattern.h)
+        epicsUInt32   * edefAvgDoneMask_p Write    EDEF average-done mask
+        epicsUInt32   * edefMinorMask_p   Write    EDEF minor severity mask
+        epicsUInt32   * edefMajorMask_p   Write    EDEF major severity mask
 
   Rem:  Routine to get the epics timestamp and pattern from the evr timestamp
         table that is populated from incoming broadcast from EVG.
@@ -181,10 +181,10 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            evrTimeId_te     id,
                            evrModifier_ta   modifier_a, 
-                           unsigned long   *patternStatus_p,
-                           unsigned long   *edefAvgDoneMask_p,
-                           unsigned long   *edefMinorMask_p,
-                           unsigned long   *edefMajorMask_p)
+                           epicsUInt32     *patternStatus_p,
+                           epicsUInt32     *edefAvgDoneMask_p,
+                           epicsUInt32     *edefMinorMask_p,
+                           epicsUInt32     *edefMajorMask_p)
 {
   evrTimePattern_ts *evr_ps;
   int status;
