@@ -10,22 +10,23 @@
 /*
   Note: Byte ordering is big-endian.
  */
+#include <stdint.h>
 
 #define EVR_CPCI230_MEM_WINDOW      0x00008000
 #define EVR_CPCI300TG_MEM_WINDOW    0x00040000
 
 #ifndef u16
-#define u16 unsigned short
+#define u16 uint16_t
 #endif
 #ifndef u32
-#define u32 unsigned int
+#define u32 uint32_t
 #endif
 
 #ifndef be16_to_cpu
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be16_to_cpu(x) bswap_16(x)
 #else
-#define be16_to_cpu(x) ((unsigned short)(x))
+#define be16_to_cpu(x) ((u16)(x))
 #endif
 #endif
 
@@ -33,7 +34,7 @@
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be32_to_cpu(x) bswap_32(x)
 #else
-#define be32_to_cpu(x) ((unsigned int)(x))
+#define be32_to_cpu(x) ((u32)(x))
 #endif
 #endif
 

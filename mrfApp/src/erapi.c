@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <stdint.h>
 #include <endian.h>
 #include <byteswap.h>
 #include <errno.h>
