@@ -6,6 +6,7 @@ event-R3-2-2-br_generaltime-3-2: (KHKIM) Mar 15. 2013
         * 64bits bug fix for the longSubRecord
         * 64bits bug fix for the evrMessage
         * 64bits bug fix for the evrTime
+        * use <stdhint.h> for the erapi (vendor's API)
        
 
 event-R3-2-2-br_generaltime-3-1: (KHKIM)  Mar. 14, 2013
