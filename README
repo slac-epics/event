@@ -236,6 +236,8 @@ III - Adding event databases and EVR configuration to your IOC startup file:
     PMC:      ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
     Embedded: ErConfigure(<instance>,    0    ,<vector>,<level>,2)
 
+    PCI-E:    ErConfigure(<instance>,    0    ,    0   ,   0   ,4)
+
     where instance = EVR instance, starting from 0, incrementing by 1
                      for each subsequent card.  Only 1 EVR instance
 		     is allowed for Embedded EVRs.
@@ -252,6 +254,8 @@ III - Adding event databases and EVR configuration to your IOC startup file:
     and   0        = VME
        or 1        = PMC
        or 2	   = Embedded
+
+       or 4        = PCI-E
 
 (5) Add evrInitialize (after ErConfigure) if a fiducial routine will be
     registered before iocInit driver initialization:
