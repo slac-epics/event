@@ -182,6 +182,7 @@ char * FormFactorToString( int formFactor )
  case PMC_EVR: pString = "PMC_EVR"; break;
  case CPCI_EVR: pString = "cPCI_EVR"; break;
  case VME_EVR: pString = "VME_EVR"; break;
+ case PCIE_EVR: pString = "PCIE_EVR"; break;
  }
  return pString;
 }
@@ -196,6 +197,7 @@ int ErGetFormFactor( struct MrfErRegs * pEr )
  case 0x1: formFactor = PMC_EVR; break;
  case 0x0: formFactor = CPCI_EVR; break;
  case 0x2: formFactor = VME_EVR; break;
+ case 0x7: formFactor = PCIE_EVR; break;
  default: formFactor = -1;  break;
  }
  return formFactor;
@@ -485,7 +487,7 @@ static int ErConfigure (
 
  /* Check the firmware version */
  FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
- printf( "PMC EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
+ printf( "EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
  switch ( FPGAVersion )
  {
  default:
@@ -494,6 +496,7 @@ static int ErConfigure (
  case PMC_EVR_FIRMWARE_REV_LINUX1:
  case PMC_EVR_FIRMWARE_REV_LINUX2:
  case PMC_EVR_FIRMWARE_REV_LINUX3:
+ case PCIE_EVR_FIRMWARE_REV_LINUX4:
      break;
  case PMC_EVR_FIRMWARE_REV_VME1:
      fprintf ( stderr,

@@ -83,6 +83,7 @@
  #define       PMC_EVR_FIRMWARE_REV_LINUX1     0x11000002
  #define       PMC_EVR_FIRMWARE_REV_LINUX2     0x11000003
  #define       PMC_EVR_FIRMWARE_REV_LINUX3     0x11000103
+ #define       PCIE_EVR_FIRMWARE_REV_LINUX4    0x17000005
 
 
 /**************************************************************************************************/
@@ -294,6 +295,7 @@ typedef void (*DBUFF_FUNC) (void);
 #define PMC_EVR (1)
 #define EMBEDDED_EVR (2)
 #define CPCI_EVR (3)
+#define PCIE_EVR (4)
 
 /*---------------------
  * Event Receiver Card Structure
