@@ -1,12 +1,20 @@
 Release Notes for the event package
 -----------------------------------
-event-R3-2-2-br_generaltime-3-2: (KHKIM) Mar 15. 2013
+event-R3-2-2-br_generaltime-4-0: (KHKIM) 
       Support 64 bits machine
         * 64bits bug fix for the erapi.h
         * 64bits bug fix for the longSubRecord
         * 64bits bug fix for the evrMessage
         * 64bits bug fix for the evrTime
         * use <stdhint.h> for the erapi (vendor's API)
+
+      Add new platform PCI-E, Please, look at README file for the ErConfigure().
+      Note1) hardware trigger does not work for PCI-E
+             PCI-E EVR300 has new bit in control register 0x004 bit#27 OUTEN
+             it should be set for the hardware trigger, but not implemented in the code yet.
+      Note2) PMC EVR230 has additional triggers though J4 connector. (called TBOut[n]).
+             it does not work properly. I suspect the pulse generator allocation in the linux driver.
+             We need to fix it. But, Front Panel Triggers (Called FTOut[n]) works.
        
 
 event-R3-2-2-br_generaltime-3-1: (KHKIM)  Mar. 14, 2013
