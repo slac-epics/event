@@ -1065,6 +1065,17 @@ void ErRegisterDevDBuffHandler (ErCardStruct *pCard, DEV_DBUFF_FUNC DBuffFunc)
 	pCard->DevDBuffFunc = DBuffFunc;
 }
 
+int EvrSetOutMap(volatile struct MrfErRegs *pEr, int output, int map)
+{
+	switch ( ErGetFormFactor(pEr) ) {
+		default:  break;
+		case PCIE_EVR:
+			return ( output < TOTAL_UO_CHANNELS ) ? EvrSetUnivOutMap(pEr, output, map) : -1;
+
+	}
+	return EvrSetTBOutMap(pEr, output, map);
+}
+
 /**************************************************************************************************
 |* ErResetAll () -- Reset the Event Receiver Card
 |*-------------------------------------------------------------------------------------------------
@@ -1195,7 +1206,7 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 			}
 			map = pulse + PULSE_GENERATOR_0;
 			pLinuxErCard->tb_channel[DELAYED_PULSE_0 + Channel] = map;
-			EvrSetTBOutMap(pEr, DELAYED_PULSE_0 + Channel, map);
+			EvrSetOutMap(pEr, DELAYED_PULSE_0 + Channel, map);
 			/* If a front panel uses the same settings as this TB port we update */
 			update_fp_map(pLinuxErCard, DELAYED_PULSE_0 + Channel);
 		} else {
@@ -1208,7 +1219,7 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
-		EvrSetTBOutMap(pEr, DELAYED_PULSE_0 + Channel, UNUSED);
+		EvrSetOutMap(pEr, DELAYED_PULSE_0 + Channel, UNUSED);
 		pLinuxErCard->tb_channel[DELAYED_PULSE_0 + Channel] = UNUSED;
 		update_fp_map(pLinuxErCard, DELAYED_PULSE_0 + Channel);
 	}
@@ -1355,7 +1366,7 @@ void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 
 	if(Enable) {
 		epicsMutexLock(pCard->CardLock);
-		EvrSetTBOutMap(pEr, OTP_DBUS_0 + Channel, DBUS_0 + Channel);
+		EvrSetOutMap(pEr, OTP_DBUS_0 + Channel, DBUS_0 + Channel);
 		pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel] = DBUS_0 + Channel;
 		pLinuxErCard->OTP[Channel].DBusEnable = epicsTrue;
 		update_fp_map(pLinuxErCard, OTP_DBUS_0 + Channel);
@@ -1417,7 +1428,7 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		pLinuxErCard->tb_channel[OTL_0 + Channel] = map;
 		EvrSetPulseParams(pEr, pulse, 1, 0, 0);
 		EvrSetPulseProperties(pEr, pulse, 1, 1, 1, 0, 1);
-		EvrSetTBOutMap(pEr, OTL_0 + Channel, map);
+		EvrSetOutMap(pEr, OTL_0 + Channel, map);
 		/* If a front panel uses the same settings as this TB port we update */
 		update_fp_map(pLinuxErCard, OTL_0 + Channel);
 	} else {
@@ -1425,7 +1436,7 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
-		EvrSetTBOutMap(pEr, OTL_0 + Channel, UNUSED);
+		EvrSetOutMap(pEr, OTL_0 + Channel, UNUSED);
 		epicsMutexLock(pCard->CardLock);
 		pLinuxErCard->tb_channel[OTL_0 + Channel] = UNUSED;
 		epicsMutexUnlock(pCard->CardLock);
@@ -1486,7 +1497,7 @@ void ErSetOtp(
 				}
 				map = pulse + PULSE_GENERATOR_0;
 				pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel] = map;
-				EvrSetTBOutMap(pEr, OTP_DBUS_0 + Channel, map);
+				EvrSetOutMap(pEr, OTP_DBUS_0 + Channel, map);
 				/* If a front panel uses the same settings as this TB port we update */
 				update_fp_map(pLinuxErCard, OTP_DBUS_0 + Channel);
 			} else {
@@ -1499,7 +1510,7 @@ void ErSetOtp(
 				epicsMutexUnlock(pCard->CardLock);
 				return;
 			}
-			EvrSetTBOutMap(pEr, OTP_DBUS_0 + Channel, UNUSED);
+			EvrSetOutMap(pEr, OTP_DBUS_0 + Channel, UNUSED);
 			pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel] = UNUSED;
 			update_fp_map(pLinuxErCard, OTP_DBUS_0 + Channel);
 		}		
@@ -1552,7 +1563,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		map = pulse + PULSE_GENERATOR_0;
 		EvrSetPulseParams(pEr, pulse, 0, 0, 0);
 		EvrSetPulseProperties(pEr, pulse, 1, 0, 0, 1, 1);
-		EvrSetTBOutMap(pEr, TRIGGER_EVENT_0 + Channel, map);
+		EvrSetOutMap(pEr, TRIGGER_EVENT_0 + Channel, map);
 		pLinuxErCard->tb_channel[TRIGGER_EVENT_0 + Channel] = map;
 		/* If a front panel uses the same settings as this TB port we update */
 		update_fp_map(pLinuxErCard, TRIGGER_EVENT_0 + Channel);
@@ -1561,7 +1572,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
-		EvrSetTBOutMap(pEr, TRIGGER_EVENT_0 + Channel, UNUSED);
+		EvrSetOutMap(pEr, TRIGGER_EVENT_0 + Channel, UNUSED);
 		pLinuxErCard->tb_channel[TRIGGER_EVENT_0 + Channel] = UNUSED;
 		update_fp_map(pLinuxErCard, TRIGGER_EVENT_0 + Channel);
 	}		
