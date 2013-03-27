@@ -581,6 +581,7 @@ static int ErConfigure (
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);
 	ErResetAll(pCard);
+	if(FPGAVersion == PCIE_EVR_FIRMWARE_REV_LINUX4) EvrOutputEnable(pEr, 1);
 	return OK;
 }
 
