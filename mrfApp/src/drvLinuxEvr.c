@@ -188,7 +188,7 @@ char * FormFactorToString( int formFactor )
 }
 
 
-int ErGetFormFactor( struct MrfErRegs * pEr )
+int ErGetFormFactor( volatile struct MrfErRegs * pEr )
 {
  int  formFactor;
  int  id = (be32_to_cpu(pEr->FPGAVersion)>>24) & 0x0F;
