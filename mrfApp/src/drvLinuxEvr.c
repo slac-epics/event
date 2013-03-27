@@ -65,6 +65,7 @@ enum outputs_mapping_id
  PRESCALER_0 = 40,
  PRESCALER_1 = 41,
  PRESCALER_2 = 42,
+ HIZ     = 61,
  LOGIC_1 = 62,
  LOGIC_0 = 63,
  UNUSED = 63,
@@ -72,6 +73,7 @@ enum outputs_mapping_id
 
 #define TOTAL_FP_CHANNELS 8
 #define TOTAL_TB_CHANNELS 32
+#define TOTAL_UO_CHANNELS 16
 enum transition_board_channel
 {
  DELAYED_PULSE_0 = 0,
@@ -1107,6 +1109,9 @@ void ErResetAll(ErCardStruct *pCard)
 	for(i=0; i < TOTAL_TB_CHANNELS; i++) {
 		pLinuxErCard->tb_channel[i] = UNUSED;
 		EvrSetTBOutMap(pEr, i, pLinuxErCard->tb_channel[i]);
+	}
+	for(i=0; i < TOTAL_UO_CHANNELS; i++) {
+		EvrSetUnivOutMap(pEr, i, HIZ);
 	}
 	EvrSetTimestampDivider(pEr, 0);
 	for(i=0; i < TOTAL_FP_CHANNELS; i++) {
