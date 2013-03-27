@@ -1445,7 +1445,7 @@ void ErSetOtp(
 	pLinuxErCard->OTP[Channel].Width = Width;
 	pLinuxErCard->OTP[Channel].Pol = Pol;
 	
-	if(pLinuxErCard->OTP[Channel].DBusEnable == epicsTrue) {
+	if(pLinuxErCard->OTP[Channel].DBusEnable == epicsFalse) {
 		map = pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel];
 		if(Enable) {
 			/* If the channel is already using a pulse generator we keep it 
