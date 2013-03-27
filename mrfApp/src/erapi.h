@@ -408,3 +408,5 @@ int EvrGetFormFactor(volatile struct MrfErRegs *pEr);
 int EvrSetFineDelay(volatile struct MrfErRegs *pEr, int channel, int delay);
 int EvrCMLEnable(volatile struct MrfErRegs *pEr, int channel, int state);
 int EvrSetCMLMode(volatile struct MrfErRegs *pEr, int channel, int mode);
+
+int EvrOutputEnable(volatile struct MrfErRegs *pEr, int state);
