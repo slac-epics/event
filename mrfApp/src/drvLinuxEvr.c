@@ -210,14 +210,20 @@ int find_free_pulsegen(struct LinuxErCardStruct *pLinuxErCard)
  int id;
 
  for(pulse = PULSE_GENERATOR_4; pulse <= PULSE_GENERATOR_9; pulse++) {
-  if(pLinuxErCard->pulse_irq == pulse)
+  if(pLinuxErCard->pulse_irq == pulse) {
+   if (ErDebug >=1 )
+	printf("%s: pulse %i used by pulse_irq\n", __func__, pulse);
    continue;
+  }
   for(id = 0; id < TOTAL_TB_CHANNELS; id++)
    if(pLinuxErCard->tb_channel[id] == pulse)
     break;
   /* If no channel uses this pulse it is available */
-  if(id != TOTAL_TB_CHANNELS)
+  if(id != TOTAL_TB_CHANNELS) {
+   if (ErDebug >=1 )
+	printf("%s: pulse %i used by tb_channel %i\n", __func__, pulse, id);
    continue;
+  }
   if ( ErDebug >= 1 )
    printf( "%s: Pulse %d is available.\n", __func__, pulse - PULSE_GENERATOR_0 );
   return pulse-PULSE_GENERATOR_0;
@@ -246,8 +252,12 @@ int update_fp_map(struct LinuxErCardStruct *pLinuxErCard, enum transition_board_
        channel, pLinuxErCard->tb_channel[channel] );
     EvrSetFPOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
    }
-   if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR)
+   if(pLinuxErCard->ErCard.FormFactor == CPCI_EVR) {
+    if ( ErDebug >= 1 )
+     printf( "%s: Calling EvrSetUnivOutMap for ch %d to pulse %d\n", __func__,
+       channel, pLinuxErCard->tb_channel[channel] );
     EvrSetUnivOutMap(pLinuxErCard->ErCard.pEr, fp, pLinuxErCard->tb_channel[channel]);
+   }
    count++;
   }
  }
