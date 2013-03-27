@@ -74,20 +74,27 @@ enum outputs_mapping_id
 #define TOTAL_FP_CHANNELS 8
 #define TOTAL_TB_CHANNELS 32
 #define TOTAL_UO_CHANNELS 16
+
+#define NUM_TRIGGER_EVENTS 0
 enum transition_board_channel
 {
  DELAYED_PULSE_0 = 0,
+/*
  DELAYED_PULSE_1 = 1,
  DELAYED_PULSE_2 = 2,
  DELAYED_PULSE_3 = 3,
+*/
  TRIGGER_EVENT_0 = 4,
+/*
  TRIGGER_EVENT_1 = 5,
  TRIGGER_EVENT_2 = 6,
  TRIGGER_EVENT_3 = 7,
  TRIGGER_EVENT_4 = 8,
  TRIGGER_EVENT_5 = 9,
  TRIGGER_EVENT_6 = 10,
- OTP_DBUS_0 = 11,
+*/
+ OTP_DBUS_0 = TRIGGER_EVENT_0 + NUM_TRIGGER_EVENTS,
+/*
  OTP_DBUS_1 = 12,
  OTP_DBUS_2 = 13,
  OTP_DBUS_3 = 14,
@@ -101,13 +108,16 @@ enum transition_board_channel
  OTP_11 = 22,
  OTP_12 = 23,
  OTP_13 = 24,
+*/
  OTL_0 = 25,
+/*
  OTL_1 = 26,
  OTL_2 = 27,
  OTL_3 = 28,
  OTL_4 = 29,
  OTL_5 = 30,
  OTL_6 = 31,
+*/
  UNUSED_CH = 255,
 };
 
@@ -1513,6 +1523,13 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 	
 	if ( Channel < 0 || Channel >= EVR_NUM_TRG ) {
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
+		return;
+	}
+
+    if ( Channel >= NUM_TRIGGER_EVENTS ) {
+		if ( ErDebug >= 1 )
+			printf( "%s: EVR %d-%d requested channel %i >= configured trigger events (%i)\n",
+			        __func__, pCard->Cardno, pCard->Slot, Channel, NUM_TRIGGER_EVENTS );
 		return;
 	}
 
