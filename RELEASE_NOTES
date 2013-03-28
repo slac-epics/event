@@ -1,6 +1,25 @@
 Release Notes for the event package
 -----------------------------------
-event-R3-2-2-br_generaltime-4-0: (KHKIM) 
+event-R3-2-2-br_generaltime-4-0: 
+      (STRAUMAN):
+        Support for output triggers under linux now working:
+        * Added declaration of EvrOutputEnable() routine.
+        * Mods to drvLinuxEvr.c:
+          -- Bug Fix ==> ErSetOtp() must map pulsegen to TBOut if DBUS 
+             is disabled (not if it is enabled)
+          -- Added some more debugging messages (if ErDebug > 0 only)
+          -- Initialize UniversalIO channels to Hi-Z.
+          -- Added compile-time option to limit the number of trigger events 
+             and set to zero so that these never use pulse generators nor TBO pins... 
+          -- Support for PCIe-EVR-300 which has no TBOuts but uses UniversalIO.
+             ## Introduced EvrSetOutMap() which maps to UnivIO pins on 
+                the PCIe-EVR-300 and to TBOuts on other boards. 
+                This is a quick hack to make this board work. 
+                The entire driver should be re-written with better support 
+                for differences between board flavors.
+      (KHKIM):
+      Working on output triggers:
+       * Let ErConfigure() call EvrOutputEnable() for PCIE_EVR_FIRMWARE_REV_LINUX4
       Support 64 bits machine
         * 64bits bug fix for the erapi.h
         * 64bits bug fix for the longSubRecord
