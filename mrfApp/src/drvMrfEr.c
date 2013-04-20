@@ -116,6 +116,7 @@
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
 /**************************************************************************************************/
+int fiddbg = 0;
 
 #ifdef DEBUG_PRINT
 int drvMrfErFlag = DP_ERROR;            /* Interest level can be set from the command shell       */
