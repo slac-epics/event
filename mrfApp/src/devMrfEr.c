@@ -297,7 +297,7 @@ epicsStatus ErProcess (erRecord  *pRec)
     * If the card is being disabled, do it now
     * before processing any of the other record fields.
     */
-    if (!pRec->enab & ErMasterEnableGet(pCard))
+    if ( ! pRec->enab && ErMasterEnableGet(pCard) )
         ErMasterEnableSet (pCard, epicsFalse);
   
    /*---------------------
