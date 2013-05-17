@@ -1341,7 +1341,7 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     * Disable interrupts while we extract the tick counter
     */
     pEr = (MrfErRegs *)pCard->pEr;
-    /* Key = epicsInterruptLock(); */
+    Key = epicsInterruptLock();
 
    /*---------------------
     * Get the two halfs of the event counter.
@@ -1375,7 +1375,7 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     * Build the 32-bit tick count, restore interrupts, and return success
     */
     *Ticks = (HiWord << 16) | LoWord;
-    /* epicsInterruptUnlock (Key); */
+    epicsInterruptUnlock (Key);
     return OK;
 
 }/*end ErGetTicks()*/
