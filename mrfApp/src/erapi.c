@@ -18,6 +18,8 @@
 #include <errno.h>
 #include <signal.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
+#include <inttypes.h>
 #else /* assume VxWorks */
 #ifndef VXWORKS
 #define VXWORKS 1
@@ -99,9 +101,8 @@ int EvrOpen(struct MrfErRegs **pEg, char *device_name)
 #ifdef __linux__
 int EvrCloseWindow(int fd, int mem_window)
 {
-  int result;
 
-  result = munmap(0, mem_window);
+  munmap(0, mem_window);
   return close(fd);
 }
 
@@ -497,7 +498,7 @@ int EvrDumpFIFO(volatile struct MrfErRegs *pEr)
       i = EvrGetFIFOEvent(pEr, &fe);
       if (!i)
 	{
-	  printf("FIFO Code %08lx, %08lx:%08lx\n",
+	  printf("FIFO Code %08"PRIx32", %08"PRIx32":%08"PRIx32"\n",
 		 fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
 	}
     }
@@ -527,7 +528,7 @@ int EvrDumpLog(volatile struct MrfErRegs *pEr)
   if (i > 512) i = 512;
   for (; i; i--)
     {
-      printf("%02x Log Code %08lx, %08lx:%08lx\n", j++,
+      printf("%02x Log Code %08"PRIx32", %08"PRIx32":%08"PRIx32"\n", j++,
 	     be32_to_cpu(pEr->Log[pos].EventCode),
 	     be32_to_cpu(pEr->Log[pos].TimestampHigh),
 	     be32_to_cpu(pEr->Log[pos].TimestampLow));
@@ -600,7 +601,7 @@ void EvrDumpPulses(volatile struct MrfErRegs *pEr, int pulses)
 
   for (i = 0; i < pulses; i++)
     {
-      DEBUG_PRINTF("Pulse %02x Presc %08lx Delay %08lx Width %08lx", i,
+      DEBUG_PRINTF("Pulse %02x Presc %08"PRIx32" Delay %08"PRIx32" Width %08"PRIx32"", i,
 		   be32_to_cpu(pEr->Pulse[i].Prescaler), 
 		   be32_to_cpu(pEr->Pulse[i].Delay), 
 		   be32_to_cpu(pEr->Pulse[i].Width));
@@ -668,8 +669,6 @@ int EvrSetPulseProperties(volatile struct MrfErRegs *pEr, int pulse, int polarit
 
 int EvrSetPrescalerTrig(volatile struct MrfErRegs *pEr, int prescaler, int trigs)
 {
-  int result;
-
   if (prescaler < 0 || prescaler >= EVR_MAX_PRESCALERS)
     return -1;
 
@@ -679,8 +678,6 @@ int EvrSetPrescalerTrig(volatile struct MrfErRegs *pEr, int prescaler, int trigs
 
 int EvrSetDBusTrig(volatile struct MrfErRegs *pEr, int dbus, int trigs)
 {
-  int result;
-
   if (dbus < 0 || dbus >= 8)
     return -1;
 
@@ -773,11 +770,11 @@ void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs)
 void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 			 void (*handler)(int))
 {
-  struct sigaction act;
   int oflags;
-  int result;
 
 /*
+  struct sigaction act;
+  int result;
 
   act.sa_handler = handler;
   sigemptyset(&act.sa_mask);
@@ -1026,7 +1023,7 @@ void EvrDumpHex(volatile struct MrfErRegs *pEr)
     {
       printf("%08x: ", i);
       for (j = 0; j < 8; j++)
-	printf("%08lx ", be32_to_cpu(*p++));
+	printf("%08"PRIx32" ", be32_to_cpu(*p++));
       printf("\n");
     }
 }
