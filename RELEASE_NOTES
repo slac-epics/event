@@ -18,6 +18,7 @@ event-R3-2-2-br_generaltime-4-0:
                 The entire driver should be re-written with better support 
                 for differences between board flavors.
       (KHKIM):
+      Bug fix for the forward/backward propagation
       Working on output triggers:
        * Let ErConfigure() call EvrOutputEnable() for PCIE_EVR_FIRMWARE_REV_LINUX4
       Support 64 bits machine
