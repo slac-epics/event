@@ -990,10 +990,20 @@ static long evrTimeRate(subRecord *psub)
 
   if ((eventCode > 0) && (eventCode <= MRF_NUM_EVENTS)) {
     if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-      psub->val	= eventCodeTime_as[eventCode].count - psub->a;
-      psub->a	= eventCodeTime_as[eventCode].count;
+	  int	eventCodeCount = eventCodeTime_as[eventCode].count;
+	  psub->val	= 0;
+	  /* Only compute count if event code is the same as last time */
+	  if ( psub->f == psub->e )
+		psub->val	= eventCodeCount - psub->a;
+      psub->f	= psub->e;
+      psub->a	= eventCodeCount;
       epicsMutexUnlock(evrTimeRWMutex_ps);
-      if ( psub->val < 0 ) psub->val += EVR_MAX_INT;
+
+	  /* Check for integer rollover */
+      if ( psub->val < 0 )
+	  	psub->val += EVR_MAX_INT;
+
+	  /* Convert 0.5Hz count (MODULO 720 fiducials) to a rate in sec */
       psub->val /= MODULO720_SECS;
       return epicsTimeOK;
     }

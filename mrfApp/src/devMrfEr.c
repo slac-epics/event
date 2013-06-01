@@ -77,6 +77,7 @@
 
 #include <alarm.h>              /* EPICS Alarm status and severity definitions                    */
 #include <dbAccess.h>           /* EPICS Database access definitions                              */
+#include <dbEvent.h>            /* EPICS Event monitoring routines and definitions                */
 #include <dbScan.h>             /* EPICS Database scan routines and definitions                   */
 #include <devLib.h>             /* EPICS Device hardware addressing support library               */
 #include <devSup.h>             /* EPICS Device support layer structures and symbols              */
@@ -573,6 +574,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     epicsBoolean   LoadRam  = epicsFalse;       /* True if need ro re-load the Event Map RAM      */
     epicsUInt16    Mask = 0;                    /* New output mask for this event                 */
     ErCardStruct  *pCard;                       /* Pointer to Event Receiver card structure       */
+	unsigned short monitor_mask = 0;
   
    /*---------------------
     * Get the card structure.
@@ -590,8 +592,11 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     */
     DebugFlag = (pRec->tpro > 10) || (ErDebug > 10);
     if (DebugFlag)
-        printf ("ErEventProc(%s) entered.  ENAB = %s\n",
+        printf ("ErEventProcess(%s) entered.  ENAB = %s\n",
                       pRec->name, pRec->enab?"True":"False");
+    if (DebugFlag)
+		printf( "ErEventProcess(%s) entered: monitor_mask=%u, stat=%u, nsta=%u, sevr=%u, nsev=%u\n",
+				pRec->name, monitor_mask, pRec->stat, pRec->nsta, pRec->sevr, pRec->nsev );
 
    /*---------------------
     * Lock the event receiver card structure while we process this record
@@ -628,14 +633,54 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         */
         if (pRec->enm != pRec->lenm) {
             if (DebugFlag)
-                printf ("ErEventProc(%s) event number changed %d-%d\n", 
+                printf ("ErEventProcess(%s) event number changed %d-%d\n", 
                               pRec->name, pRec->lenm, pRec->enm);
+			/* Check to see if the new event number is already used */
+			if (	(pRec->enm < EVR_NUM_EVENTS) && (pRec->enm > 0)
+				&&	pCard->ErEventTab[pRec->enm] != 0 ) {
+			   /*----------------
+			    * The new event number is already being used by a different erevent record
+				* Force this record to keep it's prior event number
+				*/
+        		errlogPrintf( "ErEventProcess Error: Event %d already in use!\n", pRec->enm );
+				pRec->enm = pRec->lenm;
+				/* This call needed as recGblSetSevr() doesn't post events for pField NULL */
+				/* db_post_events( pRec, &pRec->enm, DBE_VALUE | DBE_LOG ); */
 
-           /* Clear the entry for the previous event number */ 
-            if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
-                pCard->ErEventTab[pRec->lenm] = 0;
-                LoadRam = epicsTrue;
-            }/*end if previous event number was valid*/
+			   /*----------------
+				* Clear the output mask for our old event number
+				*/
+				if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
+					pCard->ErEventTab[pRec->lenm] = 0;
+					LoadRam = epicsTrue;
+				}/*end if LENM was valid*/
+
+			   /*---------------------
+				* Disable the event and set LENM to an invalid code in order to:
+				* a) Inhibit further processing until ENAB goes back to "Enabled", and
+				* b) Force a RAM re-load when ENAB does go back to "Enabled".
+				*/
+				Mask		= 0;
+				pRec->enab	= epicsFalse;
+				pRec->lenm	= -1;
+				recGblSetSevr(	pRec, STATE_ALARM, MAJOR_ALARM	);
+			}
+			else {
+				/* Clear the entry for the previous event number */ 
+				if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
+					pCard->ErEventTab[pRec->lenm] = 0;
+					LoadRam = epicsTrue;
+				}/*end if previous event number was valid*/
+
+				if ((pRec->enm < EVR_NUM_EVENTS) && (pRec->enm > 0)) {
+					/*
+					 * Update the record desc field with the description
+					 * for this event code
+					 */
+				   strncpy( &pRec->desc[0], &pCard->EventCodeDesc[pRec->enm][0],
+				   			MAX_STRING_SIZE+1 );
+				}
+			}
 
             pRec->lenm = pRec->enm;
             LoadMask = epicsTrue;
@@ -646,7 +691,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         */
         if (Mask != pRec->lout) {
             if (DebugFlag)
-                printf ("ErEventProc(%s) New RAM mask is 0x%4.4X\n", pRec->name, Mask);
+                printf ("ErEventProcess(%s) New RAM mask is 0x%4.4X\n", pRec->name, Mask);
 
             pRec->lout = Mask;
             LoadMask = epicsTrue;
@@ -694,7 +739,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     */
     if (LoadRam) {
         if (DebugFlag)
-            printf ("ErEventProc(%s) updating Event RAM\n", pRec->name);
+            printf ("ErEventProcess(%s) updating Event RAM\n", pRec->name);
 
         if (Mask & EVR_MAP_INTERRUPT)
             ErEventIrq (pCard, epicsTrue);
@@ -707,14 +752,13 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     */
     epicsMutexUnlock (pCard->CardLock);
     if (DebugFlag)
-        printf ("ErEventProc(%s) I/O operations complete\n", pRec->name);
+        printf ("ErEventProcess(%s) I/O operations complete\n", pRec->name);
 
    /*---------------------
     * Raise the record severity to MAJOR, if the event number is not valid.
     */
     if ((pRec->enm >= EVR_NUM_EVENTS) || (pRec->enm < 0))
         recGblSetSevr (pRec, HW_LIMIT_ALARM, MAJOR_ALARM);
-
     return (0);
 
 }/*end ErEventProcess()*/
@@ -817,6 +861,12 @@ epicsStatus ErEpicsEventInitRec (eventRecord *pRec)
                           "devMrfEr::ErEpicsEventInitRec() invalid signal number in INP field");
         return(S_dev_badCard);
     }/*end if event number is invalid*/
+
+	/*
+	 * Keep a copy of the event code description for
+	 * later use when the ereventRecord handles changing event codes
+	 */
+   strncpy( &pCard->EventCodeDesc[Event][0], &pRec->desc[0], MAX_STRING_SIZE+1 );
 
    /*---------------------
     * Store the address of the IOSCANPVT structure that corresponds
