@@ -286,7 +286,7 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
 #endif
   if (messageIdx < 0) return -1;
 
-  memset(&evrMessage_as[messageIdx], sizeof(evrMessage_ts), 0);
+  memset(&evrMessage_as[messageIdx], 0, sizeof(evrMessage_ts));
 
 #if defined(linux)
   /* probably, we don't need mutex for linux. Let's try without the mutex */
