@@ -51,7 +51,7 @@ extern "C" {
 /* Defines for MODULO720 (2 second) Processing */
 #define MODULO720_COUNT 720   /* # of expected pulses for MOD720RESYNC */
 
-#ifdef _X86_
+#if defined(_X86_) || defined(_X86_64_)
 void Get_evrTicksPerUsec_for_X86(void);
 #endif
   
