@@ -141,7 +141,8 @@ static long init_record(psub,pass)
 	recGblRecordError(S_db_BadSub,(void *)psub,"recSub(init_record)");
 	return(S_db_BadSub);
     }
-    return(0);
+	/* 0 & status eliminates compiler warning about unused 'status' */
+    return(0 & status);
 }
 
 static long process(psub)
