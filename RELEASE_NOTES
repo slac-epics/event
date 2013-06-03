@@ -2,6 +2,38 @@ Release Notes for the event package
 -----------------------------------
 event-R3-2-2-br_generaltime-4-0: 
       (STRAUMAN):
+        * Fixed a number of compiler warnings
+          -- evrMessage.c: corrected order of parameters passed to memset().
+          -- evrMessage.h: added test for _X86_64_ enable intel-specific
+                           hacks on 64-bit platforms, too.
+          -- evrModifier5.c: longSubRecord fields should accessed via
+                           epicsUInt32* pointers rather than (non-portable)
+                           unsigned long *.
+          -- longSubRecord.c: added bogus use of otherwise unused variable.
+          -- bsa.c:        include "errlog.h"
+        * Moved all usage of event-related message queue out of drvMrfEr
+          and into drvEvr.c.
+          -- drvMrfEr.h:   removed peventTaskQueue field from card struct
+          -- drvMrfEr.c:   removed test for event #1 ('FIDUCIAL' in slac-speak)
+                           and posting to message queue). This can and should be
+                           done from the user-specific callback that is hooked
+                           into the driver or devsup.
+          -- drvEvr.c:     o Added typedef for 'EventMessage' instead of redeclaring
+                             at multiple places.
+                           o Compute I/O-intr scanlist from event number rather
+                             than making it part of an EventMessage.
+                           o Let evrEvent (handler) post all non-fiducial events
+                             to message queue (this was formerly done from drvMrfEr's
+                             interrupt handler).
+                           o Moved creation of message queue to initialization routine,
+                             *before* any of the asynchronous tasks/ISR which may
+                             use the queue are created/hooked.
+                           o evrTask: moved posting of FIDUCIAL event message
+                             into 'if' block which is executed only if no timeout
+                             has occurred. (Previously the task would post a
+                             FIDUCIAL message on each timeout which is incorrect).
+                             Fixed as per Stephanie Allison's email 2013/05/22.
+      (STRAUMAN):
         Support for output triggers under linux now working:
         * Added declaration of EvrOutputEnable() routine.
         * Mods to drvLinuxEvr.c:
