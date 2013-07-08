@@ -143,6 +143,7 @@ record(ao, "$(DEV):BW_DIS") {
   field(OUT, "$(DEV):BW_SW PP")
   field(DOL, "1")
   field(OMSL, "closed_loop")
+  field(SDIS, "$(DEV):FW_SW")
 }
 
 record(ao, "$(DEV):FW_DIS") {
@@ -150,6 +151,7 @@ record(ao, "$(DEV):FW_DIS") {
   field(OUT, "$(DEV):FW_SW PP")
   field(DOL, "1")
   field(OMSL, "closed_loop")
+  field(SDIS, "$(DEV):BW_SW")
 }
 
 record(seq, "$(DEV):FW_SEQ") {
@@ -179,6 +181,7 @@ record(ao, "$(DEV):BW_DIS2") {
   field(OUT, "$(DEV):BW_SW2 PP")
   field(DOL, "1")
   field(OMSL, "closed_loop")
+  field(SDIS, "$(DEV):FW_SW2")
 }
 
 record(ai, "$(DEV):FW_SW2") {
@@ -229,12 +232,13 @@ record(ao, "$(DEV):FW_DIS2") {
   field(OUT, "$(DEV):FW_SW2 PP")
   field(DOL, "1")
   field(OMSL, "closed_loop")
+  field(SDIS, "$(DEV):BW_SW2")
 }
 
 record(seq, "$(DEV):BW_SEQ2") {
   field(DLY1, "1.")
   field(DOL1, "0")
-  field(LNK1, "$(DEV):FW_SW2")
+  field(LNK1, "$(DEV):FW_SW2 PP")
 }
 
 record(fanout, "$(DEV):BW_FOUT2") {
@@ -320,7 +324,6 @@ record(longSub, "$(DEV):LSUB:LKUOFFSET") {
   field(FLNK, "$(DEV)TDES")
 }
 
-
 record(bo, "$(DEV)TPOL_ITN") {
   field(SCAN, "Passive")
   field(DTYP, "Soft Channel")
@@ -331,7 +334,6 @@ record(bo, "$(DEV)TPOL_ITN") {
   field(ONAM, "Inverted")
   field(FLNK, "$(DEV)TPOL_ITNSEQ")
 }
-
 
 record(bo, "$(DEV)TCTL_ITN") {
   field(SCAN, "Passive")
@@ -344,7 +346,6 @@ record(bo, "$(DEV)TCTL_ITN") {
   field(FLNK, "$(DEV)TCTL_ITNSEQ")
 }
 
-
 record(seq, "$(DEV)TCTL_ITNSEQ") {
   field(DLY1, "0")
   field(DOL1, "0")
@@ -353,7 +354,6 @@ record(seq, "$(DEV)TCTL_ITNSEQ") {
   field(DOL2, "1")
   field(LNK2, "$(DEV)TCTL_ITN.DISV")
 }
-
 
 record(seq, "$(DEV)TPOL_ITNSEQ") {
   field(DLY1, "0")
@@ -365,8 +365,8 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 }
 
 #! Further lines contain data used by VisualDCT
-#! View(1293,1503,1.0)
-#! Record("$(DEV)EVENTCTRL",2300,1370,0,0,"$(DEV)EVENTCTRL")
+#! View(2464,1578,1.0)
+#! Record("$(DEV)EVENTCTRL",2300,1376,0,0,"$(DEV)EVENTCTRL")
 #! Record("$(DEV)TINI",1880,1340,0,0,"$(DEV)TINI")
 #! Field("$(DEV)TINI.LNK1",16777215,1,"$(DEV)TINI.LNK1")
 #! Link("$(DEV)TINI.LNK1","$(DEV)TINI/LNK1")
@@ -390,12 +390,12 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Field("$(DEV)TWID.FLNK",16777215,1,"$(DEV)TWID.FLNK")
 #! Link("$(DEV)TWID.FLNK","$(DEV)TWID/FLNK")
 #! Field("$(DEV)TWID.VAL",16777215,1,"$(DEV)TWID.VAL")
-#! Connector("$(DEV)TWID/FLNK","$(DEV):BW_DIS2",2700,1857,16777215,"",0)
+#! Connector("$(DEV)TWID/FLNK","$(DEV):BW_DIS2",2700,1843,16777215,"",0)
 #! Record("$(DEV)TDES",2520,929,0,0,"$(DEV)TDES")
 #! Field("$(DEV)TDES.VAL",16777215,1,"$(DEV)TDES.VAL")
 #! Field("$(DEV)TDES.FLNK",16777215,1,"$(DEV)TDES.FLNK")
 #! Link("$(DEV)TDES.FLNK","$(DEV)TDES/FLNK")
-#! Connector("$(DEV)TDES/FLNK","$(DEV):BW_DIS",2760,1087,16777215,"",0)
+#! Connector("$(DEV)TDES/FLNK","$(DEV):BW_DIS",2760,1083,16777215,"",0)
 #! Record("$(DEV)TCON",1880,1112,0,0,"$(DEV)TCON")
 #! Record("$(DEV)TDLYCALC",3180,925,0,0,"$(DEV)TDLYCALC")
 #! Field("$(DEV)TDLYCALC.INPA",16777215,0,"$(DEV)TDLYCALC.INPA")
@@ -438,19 +438,24 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Field("$(DEV):BW_SW.VAL",16777215,1,"$(DEV):BW_SW.VAL")
 #! Record("$(DEV):FW_SW",2880,1223,0,1,"$(DEV):FW_SW")
 #! Field("$(DEV):FW_SW.VAL",16777215,1,"$(DEV):FW_SW.VAL")
-#! Record("$(DEV):BW_DIS",2820,908,0,0,"$(DEV):BW_DIS")
+#! Record("$(DEV):BW_DIS",2820,894,0,0,"$(DEV):BW_DIS")
 #! Field("$(DEV):BW_DIS.FLNK",16777215,1,"$(DEV):BW_DIS.FLNK")
 #! Link("$(DEV):BW_DIS.FLNK","$(DEV)TDLYCALC")
 #! Field("$(DEV):BW_DIS.DOL",16777215,1,"$(DEV):BW_DIS.DOL")
 #! Field("$(DEV):BW_DIS.OUT",16777215,1,"$(DEV):BW_DIS.OUT")
 #! Link("$(DEV):BW_DIS.OUT","$(DEV):BW_DIS/OUT")
+#! Field("$(DEV):BW_DIS.SDIS",16777215,1,"$(DEV):BW_DIS.SDIS")
+#! Link("$(DEV):BW_DIS.SDIS","$(DEV):FW_SW.VAL")
 #! Connector("$(DEV):BW_DIS/OUT","$(DEV):BW_SW.VAL",3120,1190,16777215,"",0)
-#! Record("$(DEV):FW_DIS",3480,1468,0,1,"$(DEV):FW_DIS")
+#! Record("$(DEV):FW_DIS",3520,1454,0,1,"$(DEV):FW_DIS")
 #! Field("$(DEV):FW_DIS.FLNK",16777215,1,"$(DEV):FW_DIS.FLNK")
 #! Link("$(DEV):FW_DIS.FLNK","$(DEV):BW_FOUT")
 #! Field("$(DEV):FW_DIS.DOL",16777215,1,"$(DEV):FW_DIS.DOL")
 #! Field("$(DEV):FW_DIS.OUT",16777215,0,"$(DEV):FW_DIS.OUT")
 #! Link("$(DEV):FW_DIS.OUT","$(DEV):FW_SW.VAL")
+#! Field("$(DEV):FW_DIS.SDIS",16777215,0,"$(DEV):FW_DIS.SDIS")
+#! Link("$(DEV):FW_DIS.SDIS","$(DEV):FW_DIS/SDIS")
+#! Connector("$(DEV):FW_DIS/SDIS","$(DEV):BW_SW.VAL",3400,1480,16777215,"",0)
 #! Record("$(DEV):FW_SEQ",3540,942,0,1,"$(DEV):FW_SEQ")
 #! Field("$(DEV):FW_SEQ.LNK1",16777215,0,"$(DEV):FW_SEQ.LNK1")
 #! Link("$(DEV):FW_SEQ.LNK1","$(DEV):BW_SW.VAL")
@@ -469,13 +474,16 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Link("$(DEV):BW_FOUT.FLNK","$(DEV):BW_SEQ")
 #! Field("$(DEV):BW_FOUT.LNK1",16777215,0,"$(DEV):BW_FOUT.LNK1")
 #! Link("$(DEV):BW_FOUT.LNK1","$(DEV)BW_TDES")
-#! Record("$(DEV):BW_DIS2",2740,1888,0,0,"$(DEV):BW_DIS2")
+#! Record("$(DEV):BW_DIS2",2740,1854,0,0,"$(DEV):BW_DIS2")
 #! Field("$(DEV):BW_DIS2.OUT",16777215,1,"$(DEV):BW_DIS2.OUT")
 #! Link("$(DEV):BW_DIS2.OUT","$(DEV):BW_DIS2/OUT")
 #! Field("$(DEV):BW_DIS2.FLNK",16777215,1,"$(DEV):BW_DIS2.FLNK")
 #! Link("$(DEV):BW_DIS2.FLNK","$(DEV):BW_DIS2/FLNK")
-#! Connector("$(DEV):BW_DIS2/FLNK","$(DEV):FW_FOUT2",3420,1940,16777215,"",0)
-#! Connector("$(DEV):BW_DIS2/OUT","$(DEV):BW_SW2.VAL",3480,2150,16777215,"",0)
+#! Field("$(DEV):BW_DIS2.SDIS",16777215,0,"$(DEV):BW_DIS2.SDIS")
+#! Link("$(DEV):BW_DIS2.SDIS","$(DEV):BW_DIS2/SDIS")
+#! Connector("$(DEV):BW_DIS2/SDIS","$(DEV):FW_SW2.VAL",2620,2080,16777215,"",0)
+#! Connector("$(DEV):BW_DIS2/FLNK","$(DEV):FW_FOUT2",3420,1930,16777215,"",0)
+#! Connector("$(DEV):BW_DIS2/OUT","$(DEV):BW_SW2.VAL",3480,2140,16777215,"",0)
 #! Record("$(DEV):FW_SW2",2740,2063,0,1,"$(DEV):FW_SW2")
 #! Field("$(DEV):FW_SW2.VAL",16777215,1,"$(DEV):FW_SW2.VAL")
 #! Record("$(DEV):BW_SW2",3600,2223,0,1,"$(DEV):BW_SW2")
@@ -511,12 +519,15 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Link("$(DEV):BW_CALCTWID.FLNK","$(DEV):BW_CALCTWID/FLNK")
 #! Field("$(DEV):BW_CALCTWID.VAL",16777215,0,"$(DEV):BW_CALCTWID.VAL")
 #! Connector("$(DEV):BW_CALCTWID/SDIS","$(DEV):BW_SW2.VAL",3820,2360,16777215,"",0)
-#! Connector("$(DEV):BW_CALCTWID/FLNK","$(DEV):FW_DIS2",3800,2417,16777215,"",0)
-#! Record("$(DEV):FW_DIS2",3600,2328,0,1,"$(DEV):FW_DIS2")
+#! Connector("$(DEV):BW_CALCTWID/FLNK","$(DEV):FW_DIS2",3800,2413,16777215,"",0)
+#! Record("$(DEV):FW_DIS2",3600,2314,0,1,"$(DEV):FW_DIS2")
 #! Field("$(DEV):FW_DIS2.OUT",16777215,0,"$(DEV):FW_DIS2.OUT")
 #! Link("$(DEV):FW_DIS2.OUT","$(DEV):FW_DIS2/OUT")
 #! Field("$(DEV):FW_DIS2.FLNK",16777215,0,"$(DEV):FW_DIS2.FLNK")
 #! Link("$(DEV):FW_DIS2.FLNK","$(DEV):FW_DIS2/FLNK")
+#! Field("$(DEV):FW_DIS2.SDIS",16777215,0,"$(DEV):FW_DIS2.SDIS")
+#! Link("$(DEV):FW_DIS2.SDIS","$(DEV):FW_DIS2/SDIS")
+#! Connector("$(DEV):FW_DIS2/SDIS","$(DEV):BW_SW2.VAL",3540,2390,16777215,"",0)
 #! Connector("$(DEV):FW_DIS2/OUT","$(DEV):FW_SW2.VAL",2960,2290,16777215,"",0)
 #! Connector("$(DEV):FW_DIS2/FLNK","$(DEV):BW_FOUT2",3520,2404,16777215,"",0)
 #! Record("$(DEV):BW_SEQ2",2740,2222,0,1,"$(DEV):BW_SEQ2")
@@ -613,8 +624,6 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Field("$(DEV)TCTL_ITN.FLNK",16777215,0,"$(DEV)TCTL_ITN.FLNK")
 #! Link("$(DEV)TCTL_ITN.FLNK","$(DEV)TCTL_ITNSEQ")
 #! Field("$(DEV)TCTL_ITN.DISV",16777215,0,"$(DEV)TCTL_ITN.DISV")
-#! TextBox(TB0,2161,2479,2455,2572,0,"Dialog",12,1,16777215,"Create a device-centric event code for those devices that have dedicated event codes. This can be written to from HLA's and is an input to the EVR EventCtrl .ENM record.",null)
-#! TextBox(TB1,2062,2277,2481,2384,0,"Dialog",12,1,16777215,"Delay (in clock ticks)=\n(<device>:TDES<beamcode> + <group>:TREF<beamcode>) *\n(EVG:<loca>:EV01:CTRL.R1SP/1E9nsec/sec)",null)
 #! Record("$(DEV)TCTL_ITNSEQ",1620,2080,0,1,"$(DEV)TCTL_ITNSEQ")
 #! Field("$(DEV)TCTL_ITNSEQ.LNK1",16777215,1,"$(DEV)TCTL_ITNSEQ.LNK1")
 #! Link("$(DEV)TCTL_ITNSEQ.LNK1","$(DEV)TCTL_ITN.DISV")
@@ -625,3 +634,5 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Link("$(DEV)TPOL_ITNSEQ.LNK1","$(DEV)TPOL_ITN.DISV")
 #! Field("$(DEV)TPOL_ITNSEQ.LNK2",16777215,1,"$(DEV)TPOL_ITNSEQ.LNK2")
 #! Link("$(DEV)TPOL_ITNSEQ.LNK2","$(DEV)TPOL_ITN.DISV")
+#! TextBox(TB0,2161,2479,2455,2572,0,"Dialog",12,1,16777215,"Create a device-centric event code for those devices that have dedicated event codes. This can be written to from HLA's and is an input to the EVR EventCtrl .ENM record.",null)
+#! TextBox(TB1,2062,2277,2481,2384,0,"Dialog",12,1,16777215,"Delay (in clock ticks)=\n(<device>:TDES<beamcode> + <group>:TREF<beamcode>) *\n(EVG:<loca>:EV01:CTRL.R1SP/1E9nsec/sec)",null)
