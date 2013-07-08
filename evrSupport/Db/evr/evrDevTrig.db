@@ -238,7 +238,7 @@ record(ao, "$(DEV):FW_DIS2") {
 record(seq, "$(DEV):BW_SEQ2") {
   field(DLY1, "1.")
   field(DOL1, "0")
-  field(LNK1, "$(DEV):FW_SW2")
+  field(LNK1, "$(DEV):FW_SW2 PP")
 }
 
 record(fanout, "$(DEV):BW_FOUT2") {
@@ -365,7 +365,7 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 }
 
 #! Further lines contain data used by VisualDCT
-#! View(2541,1669,1.0)
+#! View(2464,1578,1.0)
 #! Record("$(DEV)EVENTCTRL",2300,1376,0,0,"$(DEV)EVENTCTRL")
 #! Record("$(DEV)TINI",1880,1340,0,0,"$(DEV)TINI")
 #! Field("$(DEV)TINI.LNK1",16777215,1,"$(DEV)TINI.LNK1")
@@ -444,9 +444,9 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Field("$(DEV):BW_DIS.DOL",16777215,1,"$(DEV):BW_DIS.DOL")
 #! Field("$(DEV):BW_DIS.OUT",16777215,1,"$(DEV):BW_DIS.OUT")
 #! Link("$(DEV):BW_DIS.OUT","$(DEV):BW_DIS/OUT")
-#! Connector("$(DEV):BW_DIS/OUT","$(DEV):BW_SW.VAL",3120,1190,16777215,"",0)
 #! Field("$(DEV):BW_DIS.SDIS",16777215,1,"$(DEV):BW_DIS.SDIS")
 #! Link("$(DEV):BW_DIS.SDIS","$(DEV):FW_SW.VAL")
+#! Connector("$(DEV):BW_DIS/OUT","$(DEV):BW_SW.VAL",3120,1190,16777215,"",0)
 #! Record("$(DEV):FW_DIS",3520,1454,0,1,"$(DEV):FW_DIS")
 #! Field("$(DEV):FW_DIS.FLNK",16777215,1,"$(DEV):FW_DIS.FLNK")
 #! Link("$(DEV):FW_DIS.FLNK","$(DEV):BW_FOUT")
@@ -479,11 +479,11 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Link("$(DEV):BW_DIS2.OUT","$(DEV):BW_DIS2/OUT")
 #! Field("$(DEV):BW_DIS2.FLNK",16777215,1,"$(DEV):BW_DIS2.FLNK")
 #! Link("$(DEV):BW_DIS2.FLNK","$(DEV):BW_DIS2/FLNK")
-#! Connector("$(DEV):BW_DIS2/FLNK","$(DEV):FW_FOUT2",3420,1930,16777215,"",0)
-#! Connector("$(DEV):BW_DIS2/OUT","$(DEV):BW_SW2.VAL",3480,2140,16777215,"",0)
 #! Field("$(DEV):BW_DIS2.SDIS",16777215,0,"$(DEV):BW_DIS2.SDIS")
 #! Link("$(DEV):BW_DIS2.SDIS","$(DEV):BW_DIS2/SDIS")
 #! Connector("$(DEV):BW_DIS2/SDIS","$(DEV):FW_SW2.VAL",2620,2080,16777215,"",0)
+#! Connector("$(DEV):BW_DIS2/FLNK","$(DEV):FW_FOUT2",3420,1930,16777215,"",0)
+#! Connector("$(DEV):BW_DIS2/OUT","$(DEV):BW_SW2.VAL",3480,2140,16777215,"",0)
 #! Record("$(DEV):FW_SW2",2740,2063,0,1,"$(DEV):FW_SW2")
 #! Field("$(DEV):FW_SW2.VAL",16777215,1,"$(DEV):FW_SW2.VAL")
 #! Record("$(DEV):BW_SW2",3600,2223,0,1,"$(DEV):BW_SW2")
@@ -525,11 +525,11 @@ record(seq, "$(DEV)TPOL_ITNSEQ") {
 #! Link("$(DEV):FW_DIS2.OUT","$(DEV):FW_DIS2/OUT")
 #! Field("$(DEV):FW_DIS2.FLNK",16777215,0,"$(DEV):FW_DIS2.FLNK")
 #! Link("$(DEV):FW_DIS2.FLNK","$(DEV):FW_DIS2/FLNK")
-#! Connector("$(DEV):FW_DIS2/OUT","$(DEV):FW_SW2.VAL",2960,2290,16777215,"",0)
-#! Connector("$(DEV):FW_DIS2/FLNK","$(DEV):BW_FOUT2",3520,2404,16777215,"",0)
 #! Field("$(DEV):FW_DIS2.SDIS",16777215,0,"$(DEV):FW_DIS2.SDIS")
 #! Link("$(DEV):FW_DIS2.SDIS","$(DEV):FW_DIS2/SDIS")
 #! Connector("$(DEV):FW_DIS2/SDIS","$(DEV):BW_SW2.VAL",3540,2390,16777215,"",0)
+#! Connector("$(DEV):FW_DIS2/OUT","$(DEV):FW_SW2.VAL",2960,2290,16777215,"",0)
+#! Connector("$(DEV):FW_DIS2/FLNK","$(DEV):BW_FOUT2",3520,2404,16777215,"",0)
 #! Record("$(DEV):BW_SEQ2",2740,2222,0,1,"$(DEV):BW_SEQ2")
 #! Field("$(DEV):BW_SEQ2.LNK1",16777215,0,"$(DEV):BW_SEQ2.LNK1")
 #! Link("$(DEV):BW_SEQ2.LNK1","$(DEV):BW_SEQ2/LNK1")
