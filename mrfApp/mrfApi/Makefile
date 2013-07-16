@@ -25,11 +25,11 @@ USR_CFLAGS += -std=gnu99
 #---------------------
 # Build the MRF APplication Interface library
 #
-LIBRARY_IOC_Linux	+= mrfApi
+#LIBRARY_IOC_Linux	+= mrfApi
 
 # API lib source
-mrfApi_SRCS			+=	egapi.c
-mrfApi_SRCS			+=	erapi.c
+#mrfApi_SRCS			+=	egapi.c
+#mrfApi_SRCS			+=	erapi.c
 
 #---------------------
 # Build the MRF Diagnostic tools
