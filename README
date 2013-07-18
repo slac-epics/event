@@ -701,3 +701,29 @@ Adding Timing Display autogen to your application
 
  For any other errors, please consult with Murali or Debbie
  -------------------------------------------------------------
+
+
+General BSA template
+--------------------
+
+Exising BSA templates are depended on a specific system. 
+There is demand to get a new BSA template which is not depend on a specific system,
+is also have more flexibility to adjust PV fields.
+So, we made a new general BSA template which named "bsaGENEdef.db."
+IOC engineer has to set the following macros on his/her subsitutuion file to use the
+new template.
+
+	$(DEVICE)	device information, prefix of PV name
+			ex) TCAV:LI28:800
+	$(ATRB)		attibute name for the BSA PV
+	$(IN)		PV name for the data source
+	$(EGU)		Engineering Unit
+	$(HOPR)		High operation range
+	$(LOPR)		Low operation range
+	$(PREC)		Precision
+	$(ADEL)		Archive Deadband
+	$(FLNK)		forward link to hook a processing chain after the BSA processing
+			if you don't want to use it, Please, put double quote into subsitution file
+			to make an empty allocation for the forward link.
+
+
