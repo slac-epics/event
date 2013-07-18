@@ -1,5 +1,20 @@
 Release Notes for the event package
 -----------------------------------
+
+evemt-R3-2-2-br_generaltime-4-1: July 18 ,2013
+      (KHKIM):
+      Add dynamic update event code description: the new PVs shows the description of event code and it will be updated
+                                                 when the event code is changed
+      Fix colon (:) issues in the event template - evrDevTrig.db
+      - Please, look at README file for the details.
+
+      Provide a general BSA template to give maximum flexibility, but ioc engineer has to care additional macros
+      - Please, look at README file for the details.
+
+      clean up linux library to eliminate mrfApi.
+      - Please, read README file to get more detail information
+
+
 event-R3-2-2-br_generaltime-4-0: 
       (STRAUMAN):
         * Fixed a number of compiler warnings
@@ -68,16 +83,6 @@ event-R3-2-2-br_generaltime-4-0:
              it does not work properly. I suspect the pulse generator allocation in the linux driver.
              We need to fix it. But, Front Panel Triggers (Called FTOut[n]) works.
 
-      Add dynamic update event code description: the new PVs shows the description of event code and it will be updated
-                                                 when the event code is changed
-      Fix colon (:) issues in the event template - evrDevTrig.db
-      - Please, look at README file for the details.
-
-      Provide a general BSA template to give maximum flexibility, but ioc engineer has to care additional macros
-      - Please, look at README file for the details.
-    
-      clean up linux library to eliminate mrfApi.
-       
 
 event-R3-2-2-br_generaltime-3-1: (KHKIM)  Mar. 14, 2013
         * upgrade vendor's APIs  for linux platform
