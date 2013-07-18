@@ -727,3 +727,29 @@ new template.
 			to make an empty allocation for the forward link.
 
 
+Colon issues for the <ioc_name>trig.substitutions file
+------------------------------------------------------
+
+The evrDevTrig.db template had a missing colon.
+Thus, your <ioc_name>trig.substitutions provided addtional colon for the DEV macro
+as the followings.
+
+
+	file evrDevTrig.db
+	{
+	#           Device         , Description    , 
+	#                                             
+	  pattern { DEV            ,  DESC          ,
+	#EVR EVR:IN20:BP02
+	#FILE evnt_in20_bp02
+	         { BPMS:IN20:525:  ,  "BPM9"        ,
+                                ^
+                                |
+	Addtional colon --------+
+
+The new template fix this problem. 
+Plase do not put additional colon.
+And, Please remove the additional colon in your exisiting substitution file !!!!
+
+
+
