@@ -752,4 +752,28 @@ Plase do not put additional colon.
 And, Please remove the additional colon in your exisiting substitution file !!!!
 
 
+Library and DBD files for EVG applicaton
+----------------------------------------
+
+RTEMS/VME
+	Library		DBD
+ 	evrSupport
+ 	devMrfEg	devMrfEg.dbd
+	devMrfEr
+	mrfVme64x
+
+Library and DBD files for EVR application
+-----------------------------------------
+
+RTEMS/VME&PMC 
+	Library		DBD
+	evrSupport	evrSupport.dbd
+	devMrfEr	devMrfEr.dbd
+	mrfVme64x
+
+LINUX/PMC&PCI
+	Library		DBD
+	evrSupport	evrSupport.dbd
+	devMrfEr	devMrfEr.dbd
+	drvMrf
 
