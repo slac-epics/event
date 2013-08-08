@@ -25,3 +25,18 @@ record(erevent, "$(DEV):$(NAME)CTRL") {
   field(DISS, "INVALID")
   info(autosaveFields, "ENM OUT0 OUT1 OUT2 OUT3 OUT4 OUT5 OUT6 OUT7 OUT8 OUT9 OUTA OUTB OUTC OUTD VME ENAB")
 }
+
+record(longSub, "$(DEV):$(NAME)LSUBEVDESC") {
+  field(DESC, "$(NAME) EV Desc")
+  field(PINI, "YES")
+  field(SCAN, "Passive")
+  field(INAM, "lsubEvDescInit")
+  field(SNAM, "lsubEvDesc")
+  field(INPA, "$(DEV):$(NAME)CTRL.ENM CPP NMS")
+  field(INPB, "$(DEV):$(NAME)DESC.PROC PP NMS")
+  field(FLNK, "$(DEV):$(NAME)DESC PP NMS")
+}
+
+record(stringin, "$(DEV):$(NAME)DESC") {
+  field(SCAN, "Passive")
+}

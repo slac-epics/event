@@ -70,6 +70,7 @@
 
 #include <epicsStdlib.h>        /* EPICS Standard C library support routines                      */
 #include <epicsStdio.h>         /* EPICS Standard C I/O support routines                          */
+#include <epicsStdioRedirect.h>
 #include <epicsTypes.h>         /* EPICS Architecture-independent type definitions                */
 #include <epicsInterrupt.h>     /* EPICS Interrupt context support routines                       */
 #include <epicsMutex.h>         /* EPICS Mutex support library                                    */
@@ -296,7 +297,7 @@ epicsStatus ErProcess (erRecord  *pRec)
     * If the card is being disabled, do it now
     * before processing any of the other record fields.
     */
-    if (!pRec->enab & ErMasterEnableGet(pCard))
+    if ( ! pRec->enab && ErMasterEnableGet(pCard) )
         ErMasterEnableSet (pCard, epicsFalse);
   
    /*---------------------
@@ -1024,11 +1025,6 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     */
     if (pCard->EventFunc != NULL)
         (*(USER_EVENT_FUNC)pCard->EventFunc)(pCard->Cardno, EventNum, Time);
-
-   /*---------------------
-    * Schedule processing for any event-driven records
-    */
-    scanIoRequest (pCard->IoScanPvt[EventNum]);
 
 }/*end ErDevEventFunc()*/
 

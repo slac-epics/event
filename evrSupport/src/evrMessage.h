@@ -22,6 +22,7 @@
 #include    <stddef.h>             /* size_t                 */
 #include    "dbCommon.h"           /* dbCommon               */
 #include    "epicsTime.h"          /* epicsTimeStamp         */
+#include    "epicsTypes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,6 +50,10 @@ extern "C" {
 
 /* Defines for MODULO720 (2 second) Processing */
 #define MODULO720_COUNT 720   /* # of expected pulses for MOD720RESYNC */
+
+#if defined(_X86_) || defined(_X86_64_)
+void Get_evrTicksPerUsec_for_X86(void);
+#endif
   
 /* Waveform header in waveform sent by the EVG and received by the EVR */
 typedef struct {
@@ -97,21 +102,35 @@ evrMessageReadStatus_te
     evrMessageRead      (unsigned int  messageIdx, evrMessage_tu *message_pu);
 int evrMessageWrite     (unsigned int  messageIdx, evrMessage_tu *message_pu);
 int evrMessageProcess   (unsigned int  messageIdx);
+int evrMessageClockCounter(unsigned int messageIdx, epicsUInt32 evrClockCounter);
 int evrMessageStart     (unsigned int  messageIdx);
+int evrMessageLap       (unsigned int  messageIdx);
 int evrMessageEnd       (unsigned int  messageIdx);
+int evrMessageQ         (unsigned int  messageIdx, int pend);
 int evrMessageReport    (unsigned int  messageIdx, char *messageName_a,
                          int interest);
 int evrMessageCounts    (unsigned int  messageIdx,
-                         unsigned long *updateCount_p,
-                         unsigned long *updateCountRollover_p,
-                         unsigned long *overwriteCount_p,
-                         unsigned long *noDataCount_p,
-                         unsigned long *writeErrorCount_p,
-                         unsigned long *checkSumErrorCount_p,
-                         unsigned long *procTimeStartMin_p,
-                         unsigned long *procTimeStartMax_p,
-                         unsigned long *procTimeDeltaAvg_p,
-                         unsigned long *procTimeDeltaMax_p);
+                         epicsUInt32 *updateCount_p,
+                         epicsUInt32 *updateCountRollover_p,
+                         epicsUInt32 *overwriteCount_p,
+                         epicsUInt32 *noDataCount_p,
+                         epicsUInt32 *writeErrorCount_p,
+                         epicsUInt32 *checkSumErrorCount_p,
+                         epicsUInt32 *procTimeStartMin_p,
+                         epicsUInt32 *procTimeStartMax_p,
+                         epicsUInt32 *procTimeDeltaAvg_p,
+                         epicsUInt32 *procTimeDeltaMax_p);
+int evrMessageCountsFiducial(unsigned int messageIdx,
+                         epicsUInt32 *procTimeDelay_p,
+                         epicsUInt32 *procTimeDelayMin_p,
+                         epicsUInt32 *procTimeDelayMax_p);
+int evrMessageCountsClockCounter(unsigned int messageIdx,
+                         epicsUInt32 *absoluteStartTime_p,
+                         epicsUInt32 *absoluteStartTimeMin_p,
+                         epicsUInt32 *absoluteStartTimeMax_p);
+int evrMessageCountsQ(unsigned int messageIdx,
+                      epicsUInt32  *qPend_p,
+                      epicsUInt32  *qPendMax_p);
 int evrMessageCountReset   (unsigned int messageIdx);
 int evrMessageCheckSumError(unsigned int messageIdx);
 int evrMessageNoDataError  (unsigned int messageIdx);

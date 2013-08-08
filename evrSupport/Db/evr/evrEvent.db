@@ -1,19 +1,20 @@
-record(event, "$(DEV):$(NAME)EV") {
-  field(DESC, "$(NAME) Event")
-  field(DTYP, "MRF Event Receiver")
-  field(INP, "#C0 S$(ID) @")
-  field(SCAN, "I/O Intr")
-  field(PRIO, "HIGH")
-  field(VAL, "$(ID)")
-  field(FLNK, "$(DEV):$(NAME)CNT")
-}
+#record(event, "$(DEV):$(NAME)EV") {
+#  field(DESC, "$(NAME) Event")
+#  field(DTYP, "MRF Event Receiver")
+#  field(INP, "#C0 S$(ID) @")
+#  field(SCAN, "I/O Intr")
+#  field(PRIO, "HIGH")
+#  field(VAL, "$(ID)")
+#  field(FLNK, "$(DEV):$(NAME)CNT")
+#  field(TSE, "$(ID)")
+#}
 
-record(longSub, "$(DEV):$(NAME)CNT") {
-  field(DESC, "$(NAME) Event Counter")
-  field(SNAM, "evrTimeEvent")
-  field(BRSV, "INVALID")
-  field(INPA, "$(ID)")
-}
+#record(longSub, "$(DEV):$(NAME)CNT") {
+#  field(DESC, "$(NAME) Event Counter")
+#  field(SNAM, "evrTimeEvent")
+#  field(BRSV, "INVALID")
+#  field(INPA, "$(ID)")
+#}
 
 record(sub, "$(DEV):$(NAME)RATE") {
   field(DESC, "$(NAME) Event Rate")
@@ -35,6 +36,7 @@ record(sub, "$(DEV):$(NAME)RATE") {
   field(LOW,  "$(LOW)")
   field(LSV,  "MINOR")
   field(HOPR, "$(HIHI)")
+  field(TSE, "-1")
 }
 
 record (stringout, "$(DEV):$(NAME)NAME") {

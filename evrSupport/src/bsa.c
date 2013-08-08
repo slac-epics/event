@@ -64,6 +64,7 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsTime.h"        /* epicsTimeStamp */
 #include "epicsMutex.h"       /* epicsMutexId   */
+#include "errlog.h"
 #include "dbAccess.h"         /* dbGetTimeStamp */
 #include "devSup.h"           /* for dset and DEVSUPFUN    */
 #include "devLib.h"           /* for S_dev_noMemory        */

@@ -19,6 +19,10 @@
  *      Date:            08-20-08
  *      S.A.Allison - Renamed to longSubRecord.c, added
  *                    fields M to Z, and changed double to unsigned long.
+ *
+ *      Date:            03-14-13
+ *      K. Kim      - change unsinged long (for the record filed related variales) to epicsUInt32
+ *                    to avoid the 64 bit problem
  */
 
 
@@ -28,6 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "epicsTypes.h"
 #include "dbDefs.h"
 #include "epicsPrint.h"
 #include "registryFunction.h"
@@ -103,7 +108,7 @@ static long init_record(psub,pass)
     long	status = 0;
     struct link *plink;
     int i;
-    unsigned long  *pvalue;
+    epicsUInt32  *pvalue;
 
     if (pass==0) return(0);
 
@@ -136,7 +141,8 @@ static long init_record(psub,pass)
 	recGblRecordError(S_db_BadSub,(void *)psub,"recSub(init_record)");
 	return(S_db_BadSub);
     }
-    return(0);
+	/* 0 & status eliminates compiler warning about unused 'status' */
+    return(0 & status);
 }
 
 static long process(psub)
@@ -268,9 +274,9 @@ static long get_alarm_double(paddr,pad)
 static void checkAlarms(psub)
     struct longSubRecord	*psub;
 {
-	unsigned long	val;
-	unsigned long	lalm, hihi, high, low, lolo;
-        unsigned long   hyst;
+	epicsUInt32	val;
+	epicsUInt32	lalm, hihi, high, low, lolo;
+        epicsUInt32   hyst;
 	unsigned short	hhsv, llsv, hsv, lsv;
 
 	if(psub->udf == TRUE ){
@@ -314,9 +320,9 @@ static void monitor(psub)
     struct longSubRecord	*psub;
 {
 	unsigned short	monitor_mask;
-	unsigned long   delta;
-	unsigned long   *pnew;
-	unsigned long   *pprev;
+	epicsUInt32   delta;
+	epicsUInt32   *pnew;
+	epicsUInt32   *pprev;
 	int             i;
 
         /* get previous stat and sevr  and new stat and sevr*/
@@ -326,7 +332,7 @@ static void monitor(psub)
           delta = psub->mlst - psub->val;
         else
           delta = psub->val - psub->mlst;
-        if ((psub->mdel < 0) || (delta > (unsigned long)psub->mdel)) {
+        if ((psub->mdel < 0) || (delta > (epicsUInt32)psub->mdel)) {
                 /* post events for value change */
                 monitor_mask |= DBE_VALUE;
                 /* update last value monitored */
@@ -337,7 +343,7 @@ static void monitor(psub)
           delta = psub->alst - psub->val;
         else
           delta = psub->val - psub->alst;
-        if ((psub->adel < 0) || (delta > (unsigned long)psub->adel)) {
+        if ((psub->adel < 0) || (delta > (epicsUInt32)psub->adel)) {
                 /* post events on value field for archive change */
                 monitor_mask |= DBE_LOG;
                 /* update last archive value monitored */
@@ -361,7 +367,7 @@ static long fetch_values(psub)
 struct longSubRecord *psub;
 {
         struct link     *plink; /* structure of the link field  */
-        unsigned long   *pvalue;
+        epicsUInt32   *pvalue;
         int             i;
 	long		status;
 

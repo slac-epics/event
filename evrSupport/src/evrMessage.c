@@ -41,23 +41,28 @@
 #endif
 
 #include "dbAccess.h"           /* dbProcess,dbScan* protos    */
+#include "epicsMutex.h"
+#include "epicsThread.h"        /* epicsThreadSleep()          */
 #include "epicsTime.h"          /* epicsTimeStamp              */
 #include "errlog.h"             /* errlogPrintf                */
 #include "evrMessage.h"         /* prototypes in this file     */
 
-#define MAX_DELTA_TIME 1000000
+#define MAX_DELTA_TIME 400000000
+
+#define DBUFF_OLDWAY
+#define DBUFF_NEWWAY_
 
 unsigned long evrFiducialTime = 0;
 
+#if defined(DBUFF_NEWWAY)
 typedef struct 
 {
   evrMessage_tu       message_au[2]; /* Message, double-buffered          */
   dbCommon           *record_ps;     /* Record that processes the message */
   epicsTimeStamp      resetTime_s;   /* Time when counters reset          */
   unsigned long       notRead_a[2];  /* Message not-yet read flag         */
-  long                readingIdx; /* Message currently being read, -1 = none */ 
-  unsigned long       newestIdx;     /* Index in double buffer of newest msg */
-  unsigned long       fiducialIdx;   /* Index at the time of the fiducial */
+  unsigned long       newData_a[2];  /* New data flag */
+  unsigned long       flgRead_a[2];
   unsigned long       updateCount;   
   unsigned long       updateCountRollover;
   unsigned long       overwriteCount;
@@ -65,14 +70,64 @@ typedef struct
   unsigned long       noDataCount;
   unsigned long       checkSumErrorCount;
   unsigned long       procTimeStart;
+  unsigned long       procTimeLap;
   unsigned long       procTimeEnd;
   unsigned long       procTimeDeltaStartMax;
   unsigned long       procTimeDeltaStartMin;
   unsigned long       procTimeDeltaMax;
   unsigned long       procTimeDeltaCount;
+  unsigned long       procTimeDelayMin;
+  unsigned long       procTimeDelayMax;
+  unsigned long       procTimeDelay;
   unsigned long       procTimeDelta_a[MODULO720_COUNT];
-  
+  unsigned long       absoluteStartTime;
+  unsigned long       absoluteStartTimeMin;
+  unsigned long       absoluteStartTimeMax;
+  unsigned long       qPend;
+  unsigned long       qPendMax;
+
+  epicsMutexId        lock;
+
 } evrMessage_ts;
+#endif
+
+#if defined(DBUFF_OLDWAY)
+typedef struct
+{
+  evrMessage_tu       message_au[2]; /* Message, double-buffered          */
+  dbCommon           *record_ps;     /* Record that processes the message */
+  epicsTimeStamp      resetTime_s;   /* Time when counters reset          */
+  unsigned long       notRead_a[2];  /* Message not-yet read flag         */
+  long                readingIdx; /* Message currently being read, -1 = none */
+  unsigned long       newestIdx;     /* Index in double buffer of newest msg */
+  unsigned long       fiducialIdx;   /* Index at the time of the fiducial */
+  unsigned long       updateCount;
+  unsigned long       updateCountRollover;
+  unsigned long       overwriteCount;
+  unsigned long       writeErrorCount;
+  unsigned long       noDataCount;
+  unsigned long       checkSumErrorCount;
+  unsigned long       procTimeStart;
+  unsigned long       procTimeLap;
+  unsigned long       procTimeEnd;
+  unsigned long       procTimeDeltaStartMax;
+  unsigned long       procTimeDeltaStartMin;
+  unsigned long       procTimeDeltaMax;
+  unsigned long       procTimeDeltaCount;
+  unsigned long       procTimeDelayMin;
+  unsigned long       procTimeDelayMax;
+  unsigned long       procTimeDelay;
+  unsigned long       procTimeDelta_a[MODULO720_COUNT];
+  unsigned long       absoluteStartTime;
+  unsigned long       absoluteStartTimeMin;
+  unsigned long       absoluteStartTimeMax;
+  unsigned long       qPend;
+  unsigned long       qPendMax;
+
+  epicsMutexId        lock;
+
+} evrMessage_ts;
+#endif
 
 /* Maintain 4 messages - PNET, PATTERN, DATA (future), FIDUCIAL */
 static evrMessage_ts evrMessage_as[EVR_MESSAGE_MAX];
@@ -98,9 +153,54 @@ static double        evrTicksPerUsec = 1;
 #define MFTB(var) (var)=Read_timer()
 #endif
 #endif
-#ifdef linux
+#if defined(linux) && (!defined(_X86_) && !defined(_X86_64_))
 #define MFTB(var)  ((var)=1) /* make compiler happy */
 #endif
+
+/*
+ *
+ * from Kukhee Kim: 
+ *
+ */
+
+#if defined( _X86_) || defined(_X86_64_)
+#if defined(_X86_)
+static __inline__ unsigned long long int rdtsc(void)
+{
+        unsigned long long int x;
+        __asm__ volatile (".byte 0x0f, 0x31": "=A" (x));
+        return x;
+}
+#elif defined(_X86_64_)
+static __inline__ unsigned long long rdtsc(void)
+{
+  unsigned hi, lo;
+  __asm__ __volatile__ ("rdtsc" : "=a"(lo), "=d"(hi));
+  return ( (unsigned long long)lo)|( ((unsigned long long)hi)<<32 );
+}
+#endif
+
+
+static double evrTicksPerUsec = 1.5E+3;  /* need to fix it to avoid hardcoding */
+#define MFTB(var)  ((var)=(unsigned long) rdtsc())
+
+void  Get_evrTicksPerUsec_for_X86(void)
+{
+    unsigned long start, stop;
+
+    do {
+      MFTB(start);
+      epicsThreadSleep(1.);
+      MFTB(stop);
+    } while(!(stop>start));
+
+    evrTicksPerUsec = (double)(stop-start) * 1.E-6;
+    printf("CPU Clock Estimation: %lf MHz\n", evrTicksPerUsec);
+}
+#endif
+
+
+
 
 /*=============================================================================
 
@@ -186,14 +286,21 @@ int evrMessageCreate(char *messageName_a, size_t messageSize)
 #endif
   if (messageIdx < 0) return -1;
 
-  memset(&evrMessage_as[messageIdx], sizeof(evrMessage_ts), 0);
-  evrMessage_as[messageIdx].record_ps          = 0;
-  evrMessage_as[messageIdx].notRead_a[0]       = 0;
-  evrMessage_as[messageIdx].notRead_a[1]       = 0;
-  evrMessage_as[messageIdx].readingIdx         = -1;
-  evrMessage_as[messageIdx].newestIdx          = 0;
-  evrMessage_as[messageIdx].fiducialIdx        = 0;
-  evrMessage_as[messageIdx].procTimeDeltaCount = 0;
+  memset(&evrMessage_as[messageIdx], 0, sizeof(evrMessage_ts));
+
+#if defined(linux)
+  /* probably, we don't need mutex for linux. Let's try without the mutex */
+  /*  evrMessage_as[messageIdx].lock = epicsMutexMustCreate();  */
+  evrMessage_as[messageIdx].lock = 0;
+#else 
+  evrMessage_as[messageIdx].lock = 0;
+#endif
+
+
+#if defined(DBUFF_OLDWAY)
+  evrMessage_as[messageIdx].readingIdx = -1;
+#endif
+
   evrMessageCountReset(messageIdx);
   return messageIdx;
 }
@@ -258,6 +365,47 @@ int evrMessageRegister(char *messageName_a, size_t messageSize,
   Return: 0 = OK, -1 = Failed
 ==============================================================================*/
 
+#if defined(DBUFF_NEWWAY)
+int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
+{
+  int idx;
+
+  if (messageIdx >= EVR_MESSAGE_MAX) return -1;
+
+  if(evrMessage_as[messageIdx].lock) epicsMutexLock(evrMessage_as[messageIdx].lock);
+
+
+  /* Double buffer message if not PNET - first find a free message */
+  idx = 0;  /* Let's start from buffer0 */
+  
+  if(messageIdx != EVR_MESSAGE_PNET) {
+    if(evrMessage_as[messageIdx].newData_a[0]) idx = 1; /* if it used up the buffer0, then switch to buffer 1 */
+  }
+
+  /* if this buffer is being read out by the evrMessageRead, then we got trouble */
+  if(evrMessage_as[messageIdx].flgRead_a[idx]) {
+      evrMessage_as[messageIdx].writeErrorCount++;
+      goto bail;
+  }
+ 
+  /* everthing looks good, let's update the buffer */ 
+  evrMessage_as[messageIdx].message_au[idx] = *message_pu;
+  evrMessage_as[messageIdx].newData_a[idx] = 1;      /* now, this buffer has new data */
+  evrMessage_as[messageIdx].newData_a[idx?0:1] = 0;  /* the previous one is old now */
+
+  if (evrMessage_as[messageIdx].notRead_a[idx])      /* Oh! I update, before read out, It is overwitten */
+     evrMessage_as[messageIdx].overwriteCount++;
+  else
+     evrMessage_as[messageIdx].notRead_a[idx] = 1;   /* This buffer is not read out yet */
+
+  bail:
+  if(evrMessage_as[messageIdx].lock) epicsMutexUnlock(evrMessage_as[messageIdx].lock);
+
+  return 0;
+}
+#endif
+
+#if defined(DBUFF_OLDWAY)
 int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
 {
   int idx;
@@ -278,7 +426,7 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
         idx = evrMessage_as[messageIdx].fiducialIdx?0:1;
     } /* end both messages not free */
   }   /* end message 0 is not free  */
-  
+
   /* Update a message only if it's not currently being read. */
   if (idx != evrMessage_as[messageIdx].readingIdx) {
     /* Update message in holding array */
@@ -293,6 +441,8 @@ int evrMessageWrite(unsigned int messageIdx, evrMessage_tu * message_pu)
   }
   return 0;
 }
+#endif
+
 
 /*=============================================================================
 
@@ -343,12 +493,72 @@ int evrMessageProcess(unsigned int messageIdx)
   
 ==============================================================================*/
 
+#if defined(DBUFF_NEWWAY)
+evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
+                                       evrMessage_tu *message_pu)
+{
+  evrMessageReadStatus_te status;
+  int idx;
+  
+  if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
+  
+ 
+  if(evrMessage_as[messageIdx].lock) epicsMutexLock(evrMessage_as[messageIdx].lock);
+  
+  /* check up if there is no data available */
+  if (!evrMessage_as[messageIdx].notRead_a[0] && 
+      !evrMessage_as[messageIdx].notRead_a[1]) {
+    status = evrMessageDataNotAvail;
+    evrMessage_as[messageIdx].noDataCount++;
+  } else {
+    /* yes! we have new data */
+    status = evrMessageOK;
+
+    if(evrMessage_as[messageIdx].newData_a[0]) idx =0; /* new data is at buffer0 */
+    else                                       idx =1; /* new data is at buffer1 */
+
+    /* check up if fiducial is delayed. If both buffer have not been read, then we can assume
+       the delayed fiducial */
+    if(evrMessage_as[messageIdx].notRead_a[0] && evrMessage_as[messageIdx].notRead_a[1]) {
+        idx = idx?0:1;  /* for the delayed fiducial, we need to read the old data instead of new one */
+    }
+
+    if(messageIdx == EVR_MESSAGE_PNET) idx = 0; /* for the PNET, we only use buffer0 */
+
+    evrMessage_as[messageIdx].flgRead_a[idx] = 1; /* I am reading now, don't change anything on my buffer */
+
+    switch (messageIdx) {
+      case EVR_MESSAGE_PNET:
+        message_pu->pnet_s    = evrMessage_as[messageIdx].message_au[idx].pnet_s;
+        break;
+      case EVR_MESSAGE_PATTERN:
+        message_pu->pattern_s = evrMessage_as[messageIdx].message_au[idx].pattern_s;
+        break;
+      case EVR_MESSAGE_FIDUCIAL:
+        break;
+      case EVR_MESSAGE_DATA:
+      default:
+        status = evrMessageInpError;
+        break;
+    }
+
+    evrMessage_as[messageIdx].flgRead_a[idx] = 0; /* done to read */
+    evrMessage_as[messageIdx].notRead_a[idx] = 0; /* I have read out this buffer */
+  }
+
+  if(evrMessage_as[messageIdx].lock) epicsMutexUnlock(evrMessage_as[messageIdx].lock);
+
+  return status;
+}
+#endif
+
+#if defined(DBUFF_OLDWAY)
 evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
                                        evrMessage_tu *message_pu)
 {
   evrMessageReadStatus_te status;
   volatile int idx;
-  
+
   if (messageIdx >= EVR_MESSAGE_MAX) return evrMessageInpError;
 
   /* Read the message marked by the fiducial. */
@@ -377,6 +587,23 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
     evrMessage_as[messageIdx].notRead_a[idx] = 0;
   }
   return status;
+}
+#endif
+
+
+int evrMessageClockCounter(unsigned int messageIdx, epicsUInt32 evrClockCounter)
+{
+    if(messageIdx >= EVR_MESSAGE_MAX) return -1;
+
+    evrClockCounter += 33; 
+
+    evrMessage_as[messageIdx].absoluteStartTime = evrClockCounter;
+    if(evrMessage_as[messageIdx].absoluteStartTimeMin > evrClockCounter)
+        evrMessage_as[messageIdx].absoluteStartTimeMin = evrClockCounter;
+    if(evrMessage_as[messageIdx].absoluteStartTimeMax < evrClockCounter) 
+        evrMessage_as[messageIdx].absoluteStartTimeMax = evrClockCounter;
+
+    return 0;
 }
 
 /*=============================================================================
@@ -424,7 +651,11 @@ int evrMessageStart(unsigned int messageIdx)
     evrMessage_as[messageIdx].updateCountRollover++;
     evrMessage_as[messageIdx].updateCount = 0;
   }
-  
+
+
+
+
+#if defined(DBUFF_OLDWAY)
   /* Special processing for the fiducial - set PATTERN message to read
      and throw away any old PATTERN messages */
   if (messageIdx == EVR_MESSAGE_FIDUCIAL) {
@@ -436,8 +667,47 @@ int evrMessageStart(unsigned int messageIdx)
       evrMessage_as[EVR_MESSAGE_PATTERN].notRead_a[oldidx] = 0;
     }
   }
+#endif
+  
+
   return 0;
 }
+
+int evrMessageLap(unsigned int messageIdx)
+{
+    unsigned long delayTime;
+
+    if(messageIdx == EVR_MESSAGE_FIDUCIAL) {
+        MFTB(evrMessage_as[messageIdx].procTimeLap);
+        delayTime = evrMessage_as[messageIdx].procTimeLap - evrMessage_as[messageIdx].procTimeStart;
+        evrMessage_as[messageIdx].procTimeDelay = delayTime;
+        
+        if(delayTime < MAX_DELTA_TIME) {
+            if(evrMessage_as[messageIdx].procTimeDelayMax < delayTime) 
+                evrMessage_as[messageIdx].procTimeDelayMax = delayTime;
+            if(evrMessage_as[messageIdx].procTimeDelayMin > delayTime)
+                evrMessage_as[messageIdx].procTimeDelayMin = delayTime;
+        }
+    }
+
+    
+
+    return 0;   
+}
+
+
+int evrMessageQ(unsigned int messageIdx, int pend)
+{
+    if(messageIdx==EVR_MESSAGE_FIDUCIAL) {
+        evrMessage_as[messageIdx].qPend = pend;
+        if(pend > evrMessage_as[messageIdx].qPendMax) 
+            evrMessage_as[messageIdx].qPendMax = pend;
+    }
+
+    return 0;
+}
+
+
 
 /*=============================================================================
 
@@ -474,6 +744,7 @@ int evrMessageEnd(unsigned int messageIdx)
     em_ps->procTimeDeltaMax =
       em_ps->procTimeDelta_a[em_ps->procTimeDeltaCount];
   }
+
   em_ps->procTimeDeltaCount++;
   if (em_ps->procTimeDeltaCount >= MODULO720_COUNT) {
     em_ps->procTimeDeltaCount = MODULO720_COUNT-1;
@@ -524,7 +795,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
          evrMessage_as[messageIdx].writeErrorCount);
   printf("Number of check sum errors: %lu\n",
          evrMessage_as[messageIdx].checkSumErrorCount);
-#ifdef __PPC__
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
   printf("Maximum proc time delta (us) = %lf\n",
          (double)evrMessage_as[messageIdx].procTimeDeltaMax/evrTicksPerUsec);
   printf("Max/Min proc start time deltas (us) = %lf/%lf\n",
@@ -544,7 +815,7 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
     if (interest > 2) count = MODULO720_COUNT;
     printf("Last %d proc time deltas (us):\n", count);
     for (idx=0; idx<count; idx++) {
-#ifdef __PPC__
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
       printf("  %d: %lf\n", idx,
              (double)evrMessage_as[messageIdx].procTimeDelta_a[idx]/
              evrTicksPerUsec);
@@ -567,16 +838,16 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
   Args: Type     Name           Access     Description
         -------  -------        ---------- ----------------------------
   unsigned int   messageIdx            Read    Message Index
-  unsigned long * updateCount_p        Write   # times ISR wrote a message
-  unsigned long * updateCountRollover_p  Write # times above rolled over
-  unsigned long * overwriteCount_p     Write   # times ISR overwrote a message
-  unsigned long * noDataCount_p        Write   # times no data was available for a read
-  unsigned long * writeErrorCount_p    Write   # times data not written during read
-  unsigned long * checkSumErrorCount_p Write   # times message check sum error
-  unsigned long * procTimeStartMin_p   Write   Min start time delta (us)
-  unsigned long * procTimeStartMax_p   Write   Max start time delta (us)
-  unsigned long * procTimeDeltaAvg_p   Write   Avg time for message processing (us)
-  unsigned long * procTimeDeltaMax_p   Write   Max time for message processing (us)
+  epicsUInt32   * updateCount_p        Write   # times ISR wrote a message
+  epicsUInt32   * updateCountRollover_p  Write # times above rolled over
+  epicsUInt32   * overwriteCount_p     Write   # times ISR overwrote a message
+  epicsUInt32   * noDataCount_p        Write   # times no data was available for a read
+  epicsUInt32   * writeErrorCount_p    Write   # times data not written during read
+  epicsUInt32   * checkSumErrorCount_p Write   # times message check sum error
+  epicsUInt32   * procTimeStartMin_p   Write   Min start time delta (us)
+  epicsUInt32   * procTimeStartMax_p   Write   Max start time delta (us)
+  epicsUInt32   * procTimeDeltaAvg_p   Write   Avg time for message processing (us)
+  epicsUInt32   * procTimeDeltaMax_p   Write   Max time for message processing (us)
 
   Rem:  The diagnostics count values are filled in if the message index is valid.
   
@@ -586,16 +857,16 @@ int evrMessageReport(unsigned int  messageIdx, char *messageName_a,
 ==============================================================================*/
 
 int evrMessageCounts    (unsigned int  messageIdx,
-                         unsigned long *updateCount_p,
-                         unsigned long *updateCountRollover_p,
-                         unsigned long *overwriteCount_p,
-                         unsigned long *noDataCount_p,
-                         unsigned long *writeErrorCount_p,
-                         unsigned long *checkSumErrorCount_p,
-                         unsigned long *procTimeStartMin_p,
-                         unsigned long *procTimeStartMax_p,
-                         unsigned long *procTimeDeltaAvg_p,
-                         unsigned long *procTimeDeltaMax_p)
+                         epicsUInt32 *updateCount_p,
+                         epicsUInt32 *updateCountRollover_p,
+                         epicsUInt32 *overwriteCount_p,
+                         epicsUInt32 *noDataCount_p,
+                         epicsUInt32 *writeErrorCount_p,
+                         epicsUInt32 *checkSumErrorCount_p,
+                         epicsUInt32 *procTimeStartMin_p,
+                         epicsUInt32 *procTimeStartMax_p,
+                         epicsUInt32 *procTimeDeltaAvg_p,
+                         epicsUInt32 *procTimeDeltaMax_p)
 {  
   evrMessage_ts *em_ps = evrMessage_as + messageIdx;
   int    idx;
@@ -611,14 +882,14 @@ int evrMessageCounts    (unsigned int  messageIdx,
   *procTimeStartMax_p    = em_ps->procTimeDeltaStartMax;
   *procTimeDeltaMax_p    = em_ps->procTimeDeltaMax;
 /* Nearest microsecond for PPC */
-#ifdef __PPC__
-  *procTimeStartMin_p    = (unsigned long)
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
+  *procTimeStartMin_p    = (epicsUInt32)
     (((double)(*procTimeStartMin_p)/evrTicksPerUsec) + 0.5);
-  *procTimeStartMax_p    = (unsigned long)
+  *procTimeStartMax_p    = (epicsUInt32)
     (((double)(*procTimeStartMax_p)/evrTicksPerUsec) + 0.5);
-  *procTimeDeltaMax_p    = (unsigned long)
+  *procTimeDeltaMax_p    = (epicsUInt32)
     (((double)(*procTimeDeltaMax_p)/evrTicksPerUsec) + 0.5);
-  *procTimeDeltaAvg_p    = (unsigned long)
+  *procTimeDeltaAvg_p    = (epicsUInt32)
     (((double)(*procTimeDeltaAvg_p)/evrTicksPerUsec) + 0.5);
 #endif
   *procTimeDeltaAvg_p    = 0;
@@ -626,8 +897,8 @@ int evrMessageCounts    (unsigned int  messageIdx,
     for (idx = 0; idx < em_ps->procTimeDeltaCount; idx++) {
       *procTimeDeltaAvg_p += em_ps->procTimeDelta_a[idx];
     }
-#ifdef __PPC__
-    *procTimeDeltaAvg_p    = (unsigned long)
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
+    *procTimeDeltaAvg_p    = (epicsUInt32)
       ((((double)(*procTimeDeltaAvg_p)/
          (double)em_ps->procTimeDeltaCount)/
         evrTicksPerUsec) + 0.5);
@@ -638,6 +909,73 @@ int evrMessageCounts    (unsigned int  messageIdx,
   }
   return 0;
 }
+
+
+int evrMessageCountsFiducial(unsigned int messageIdx,
+                             epicsUInt32 *procTimeDelay_p,
+                             epicsUInt32 *procTimeDelayMin_p,
+                             epicsUInt32 *procTimeDelayMax_p)
+
+{
+   evrMessage_ts *em_ps = evrMessage_as + messageIdx;
+
+   if(messageIdx != EVR_MESSAGE_FIDUCIAL) return -1;
+
+    *procTimeDelay_p    = em_ps->procTimeDelay;
+    *procTimeDelayMin_p = em_ps->procTimeDelayMin;
+    *procTimeDelayMax_p = em_ps->procTimeDelayMax;
+
+#if defined(__PPC__) || defined(_X86_) || defined(_X86_64_)
+    *procTimeDelay_p = (epicsUInt32) 
+        (((double)(*procTimeDelay_p)/evrTicksPerUsec) + 0.5);
+    *procTimeDelayMin_p = (epicsUInt32)
+        (((double)(*procTimeDelayMin_p)/evrTicksPerUsec) + 0.5);
+    *procTimeDelayMax_p = (epicsUInt32)
+        (((double)(*procTimeDelayMax_p)/evrTicksPerUsec) + 0.5);
+#endif
+
+    return 0;
+}
+
+
+int evrMessageCountsClockCounter(unsigned int messageIdx,
+                                 epicsUInt32 *absoluteStartTime_p,
+                                 epicsUInt32 *absoluteStartTimeMin_p,
+                                 epicsUInt32 *absoluteStartTimeMax_p)
+{
+
+    evrMessage_ts *em_ps = evrMessage_as + messageIdx;
+    if(messageIdx >= EVR_MESSAGE_MAX) return -1;
+
+    *absoluteStartTime_p    = em_ps->absoluteStartTime;
+    *absoluteStartTimeMin_p = em_ps->absoluteStartTimeMin;
+    *absoluteStartTimeMax_p = em_ps->absoluteStartTimeMax;
+
+    #define CALC_FUNC(A)  (*A) = (epicsUInt32)(((double)(*A)*(1./119.))+0.5)
+
+    CALC_FUNC(absoluteStartTime_p);
+    CALC_FUNC(absoluteStartTimeMin_p);
+    CALC_FUNC(absoluteStartTimeMax_p);
+
+    #undef CALC_FUNC
+
+    return 0; 
+}
+
+int evrMessageCountsQ(unsigned int messageIdx,
+                      epicsUInt32 *qPend,
+                      epicsUInt32 *qPendMax)
+{
+    evrMessage_ts *em_ps = evrMessage_as + messageIdx;
+    if(messageIdx >= EVR_MESSAGE_MAX) return -1;
+
+    *qPend    = em_ps->qPend;
+    *qPendMax = em_ps->qPendMax;
+   
+    return 0;
+}
+
+
 /*=============================================================================
 
   Name: evrMessageCountReset
@@ -669,6 +1007,13 @@ int evrMessageCountReset (unsigned int messageIdx)
   evrMessage_as[messageIdx].procTimeDeltaStartMax = 0;
   evrMessage_as[messageIdx].procTimeDeltaStartMin = MAX_DELTA_TIME;
   evrMessage_as[messageIdx].procTimeDeltaCount    = 0;
+  evrMessage_as[messageIdx].procTimeDelayMax      = 0;
+  evrMessage_as[messageIdx].procTimeDelayMin      = MAX_DELTA_TIME;
+  evrMessage_as[messageIdx].absoluteStartTime     = 0;
+  evrMessage_as[messageIdx].absoluteStartTimeMax  = 0;
+  evrMessage_as[messageIdx].absoluteStartTimeMin  = MAX_DELTA_TIME;
+  evrMessage_as[messageIdx].qPend                 = 0;
+  evrMessage_as[messageIdx].qPendMax              = 0;
   /* Save counter reset time for reporting purposes */
   epicsTimeGetCurrent(&evrMessage_as[messageIdx].resetTime_s);
   return 0;

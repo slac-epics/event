@@ -87,6 +87,7 @@
 
 #include <epicsStdlib.h>        /* EPICS Standard C library support routines                      */
 #include <epicsStdio.h>         /* EPICS Standard C I/O support routines                          */
+#include <epicsStdioRedirect.h>
 #include <epicsTypes.h>         /* EPICS Architecture-independent type definitions                */
 #include <epicsInterrupt.h>     /* EPICS Interrupt context support routines                       */
 #include <epicsMutex.h>         /* EPICS Mutex support library                                    */
@@ -1346,9 +1347,15 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     * Get the two halfs of the event counter.
     * Read the low-order word twice to check for rollover.
     */
-    LoWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
-    HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
-    LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+    if(pCard->FormFactor == VME_EVR) {
+        LoWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+    } else {
+        LoWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+        LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+    }
 
    /*---------------------
     * If we had low-order word rollover, use the second low-order read.
@@ -1357,7 +1364,11 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     */
     if (LoWord_2 < LoWord) {
         LoWord = LoWord_2;
-        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        if(pCard->FormFactor == VME_EVR) 
+            HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        else
+            HiWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+
     }/*end if there was low-order word wraparound*/
 
    /*---------------------
@@ -3883,7 +3894,7 @@ void DiagDumpDataBuffer (ErCardStruct *pCard)
 	*/
 	for (index=0, address=0;   index < numWords;   index+=8, address+=32) {
 	    printf ("%3.3X:", address);
-	    lastIndex = min(index+8, numWords);
+            lastIndex = ((index+8)< numWords)? (index+8):numWords;
 
 	   /*---------------------
 	    * Inner loop displays individual longwords

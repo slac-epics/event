@@ -16,7 +16,6 @@ ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 USR_CFLAGS_Linux += -DEVR_DRIVER_SUPPORT
 endif
 
-
 ifeq ($(SITE_FACILITY), LCLS)
 USR_CFLAGS += -DLCLS
 endif
@@ -28,7 +27,6 @@ endif
 ifeq ($(SITE_FACILITY), XTA)
 USR_CFLAGS += -DXTA
 endif
-
 
 
 SRC_DIRS += $(TOP)/mrfApp/src
@@ -43,6 +41,7 @@ DBDINC += bsaRecord
 
 DBD += evrSupport.dbd
 DBD += evrEvInvariantDelay.dbd
+DBD += evrEvDesc.dbd
 DBD += evrPattern.dbd
 DBD += evrModifier5.dbd
 DBD += evrTime.dbd
@@ -52,6 +51,7 @@ DBD += drvEvr.dbd
 LIBRARY_IOC = evrSupport
 
 evrSupport_SRCS += evrEvInvariantDelay.c
+evrSupport_SRCS += evrEvDesc.c
 evrSupport_SRCS += evrPattern.c
 evrSupport_SRCS += evrModifier5.c
 evrSupport_SRCS += evrTime.c
@@ -60,7 +60,7 @@ evrSupport_SRCS += bsa.c
 evrSupport_SRCS += longSubRecord.c
 evrSupport_SRCS += bsaRecord.c
 evrSupport_SRCS += drvEvr.c
-evrSupport_LIBS += generalTime
+#evrSupport_LIBS += generalTime
 evrSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #===========================

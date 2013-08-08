@@ -57,8 +57,8 @@ DBD += devMrfEg.dbd
 DBD += devMrfEgEvent.dbd
 DBD += drvMrfEr.dbd
 DBD += devMrfEr.dbd
-DBD += devMrfEgLib.dbd
-DBD += devMrfErLib.dbd
+#DBD += devMrfEgLib.dbd
+#DBD += devMrfErLib.dbd
 devMrfEgLib_DBD += devMrfEg.dbd
 devMrfEgLib_DBD += devMrfEgEvent.dbd
 devMrfErLib_DBD += base.dbd
@@ -125,7 +125,8 @@ LIBRARY_IOC_vxWorks += mrfVme64x
 ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 LIBRARY_IOC_Linux += drvMrf
 drvMrf_OBJS_Linux += drvLinux
-drvMrf_OBJS_Linux += $(MRFAPI_DIR)/erapi.o
+drvMrf_OBJS_Linux += evrIrqHandlerThread
+drvMrf_OBJS_Linux += erapi.o
 endif
 
 mrfVme64x_OBJS_RTEMS += mrfVme64x
@@ -161,7 +162,10 @@ INC += drvMrfEg.h
 INC += drvMrfEr.h
 INC += devMrfEr.h
 
+INC += erapi.h
+
 INC += debugPrint.h
+
 
 #=======================================================================#
 #                               RULES                                   #

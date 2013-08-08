@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: plx9080_eeprom.c,v 1.2.6.1 2013/05/17 17:21:07 strauman Exp $ */
 
 /* PLX9080 serial EEPROM access (93CS46 device) */
 #include <stdio.h>
@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 #include <rtems.h>
 #include <bsp/pci.h>
@@ -133,7 +134,7 @@ int	plx9080_ee_type               = -1;
 static inline int
 wb(int bit, volatile unsigned *rp)
 {
-unsigned long v;
+unsigned v;
 	/* apply bit */
 	v=in_le32(rp);
 	if (bit)
@@ -159,7 +160,7 @@ unsigned long v;
 static inline void
 cs(int on, volatile unsigned *rp)
 {
-unsigned long v;
+unsigned v;
 	/* apply bit */
 	v=in_le32(rp);
 	if (on)
@@ -173,7 +174,7 @@ unsigned long v;
 
 /* write a word */
 static void
-ww(unsigned long w, unsigned len, volatile unsigned *rp)
+ww(unsigned w, unsigned len, volatile unsigned *rp)
 {
 	/* length to mask */
 	len = (1<<(len-1));
@@ -183,7 +184,7 @@ ww(unsigned long w, unsigned len, volatile unsigned *rp)
 	} while (len);
 }
 
-static long do_write(int address, int *pval, int n)
+static long do_write(int address, unsigned *pval, int n)
 {
 volatile unsigned	*rp = plx9080_ee_reg;
 
@@ -240,6 +241,8 @@ volatile unsigned	*rp = plx9080_ee_reg;
 
 long plx9080_ee_write(int address, int value)
 {
+unsigned v = (unsigned) value;
+
 	if ( plx9080_ee_type < 0 ) {
 		fprintf(stderr,"plx9080_ee_init() not executed\n");
 		return -1;
@@ -255,7 +258,7 @@ long plx9080_ee_write(int address, int value)
 		return -1;
 	}
 
-	do_write(address, &value, 1);
+	do_write(address, &v, 1);
 
 	return plx9080_ee_read(address, 0);
 }
@@ -264,7 +267,7 @@ long plx9080_ee_write_from_file(char *name)
 {
 FILE *fp   = 0;
 int	 rval  = -1;
-int  *vals = 0;
+unsigned *vals = 0;
 int  i,ch;
 
 	if ( plx9080_ee_type < 0 ) {
@@ -378,10 +381,10 @@ static void usage()
 long plx9080_ee_init(int instance, int plxType, int eeType)
 {
 int b,d,f,hasee;
-unsigned base;
+uint32_t base;
 unsigned devid;
-unsigned off;
-unsigned tmp;
+uint32_t off;
+uint32_t tmp;
 
 	switch( plxType ) {
 		default:
@@ -407,7 +410,7 @@ unsigned tmp;
 							 instance,
 							 &b,&d,&f)) {
 		pci_read_config_dword(b,d,f,PCI_BASE_ADDRESS_0,&base);
-		printf("PLX %u found at 0x%08x", plxType, base);
+		printf("PLX %u found at 0x%08"PRIx32, plxType, base);
 		pci_read_config_dword(b,d,f,PCI_SUBSYSTEM_VENDOR_ID,&tmp);
 		plx9080_ee_reg = (volatile unsigned *)(base + off);
 	} else {
@@ -416,7 +419,7 @@ unsigned tmp;
 	}
 	hasee = (in_le32(plx9080_ee_reg) & EE_PRES);
 	printf(", %sEEPROM present\n", hasee ? "" : "NO ");
-	printf("Subsytem vendor ID 0x%04x, device ID 0x%04x\n",
+	printf("Subsytem vendor ID 0x%04"PRIx32", device ID 0x%04"PRIx32"\n",
 		tmp & 0xffff, (tmp>>16)&0xffff);				
 	return hasee ? 0 : -1;
 }

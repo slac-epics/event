@@ -57,6 +57,7 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsTime.h"        /* epicsTimeStamp and protos */
 #include "epicsGeneralTime.h" /* generalTimeTpRegister     */
+#include "generalTimeSup.h"
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
@@ -163,10 +164,10 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
                                           1,2,3 = time associated w next pulses
                                           4 = last active pulse
         evrModifier_ta  modifier_a        Write    First 6 longwords of the pattern
-        unsigned long * patternStatus_p   Write    Pattern Status (see evrPattern.h)
-        unsigned long * edefAvgDoneMask_p Write    EDEF average-done mask
-        unsigned long * edefMinorMask_p   Write    EDEF minor severity mask
-        unsigned long * edefMajorMask_p   Write    EDEF major severity mask
+        epicsUInt32   * patternStatus_p   Write    Pattern Status (see evrPattern.h)
+        epicsUInt32   * edefAvgDoneMask_p Write    EDEF average-done mask
+        epicsUInt32   * edefMinorMask_p   Write    EDEF minor severity mask
+        epicsUInt32   * edefMajorMask_p   Write    EDEF major severity mask
 
   Rem:  Routine to get the epics timestamp and pattern from the evr timestamp
         table that is populated from incoming broadcast from EVG.
@@ -180,10 +181,10 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            evrTimeId_te     id,
                            evrModifier_ta   modifier_a, 
-                           unsigned long   *patternStatus_p,
-                           unsigned long   *edefAvgDoneMask_p,
-                           unsigned long   *edefMinorMask_p,
-                           unsigned long   *edefMajorMask_p)
+                           epicsUInt32     *patternStatus_p,
+                           epicsUInt32     *edefAvgDoneMask_p,
+                           epicsUInt32     *edefMinorMask_p,
+                           epicsUInt32     *edefMajorMask_p)
 {
   evrTimePattern_ts *evr_ps;
   int status;
@@ -294,6 +295,10 @@ int evrTimeGetFromEdef    (unsigned int     edefIdx,
 int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 {
   int status;
+
+  /* Hack event code to get pre-bundled general-time behavior */
+  if ( (unsigned int)epicsTimeEventBestTime == eventCode )
+	eventCode = 0;
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
@@ -329,6 +334,22 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   }
   return epicsTimeOK;
 }
+
+/*===============================================
+  Wrapper function for generalTime: Temporal
+=================================================*/
+static int evrTimeGet_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGet(epicsTime_ps, (unsigned int)eventCode);
+}
+
+static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGetSystem(epicsTime_ps, 0);
+}
+
+
+
 
 /*=============================================================================
 
@@ -404,11 +425,10 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
   /* For IOCs that support iocClock (RTEMS and vxWorks), register
      evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
 #ifdef EVR_DRIVER_SUPPORT
-        if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
-                                  (pepicsTimeGetEvent)evrTimeGet))
+        if(generalTimeRegisterEventProvider("evrTimeGet", 1000, (TIMEEVENTFUN) evrTimeGet_gtWrapper))
           return epicsTimeERROR;
-        if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
-                                  (pepicsTimeGetEvent)evrTimeGetSystem))
+
+        if(generalTimeRegisterEventProvider("evrTimeGetSystem", 2000, (TIMEEVENTFUN) evrTimeGetSystem_gtWrapper))
           return epicsTimeERROR;
 #endif
         evrTimeRWMutex_ps = epicsMutexCreate();
@@ -419,8 +439,8 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
 /* For IOCs that don't support iocClock (linux), supply a dummy
    iocClockRegister to keep the linker happy. */
 #ifndef EVR_DRIVER_SUPPORT
-void iocClockRegister(pepicsTimeGetCurrent getCurrent,
-                      pepicsTimeGetEvent   getEvent) 
+void iocClockRegister(TIMECURRENTFUN getCurrent,
+                      TIMEEVENTFUN   getEvent) 
 {
 }
 #endif
@@ -663,7 +683,23 @@ static int evrTimeProc (longSubRecord *psub)
   R - Counter Reset Flag
 
   Outputs:
-  A - L Spare
+  A  Fiducial Delay Time (us) - due to the epicsEventSignal
+  B  Minimum of Fiducial Delay Time (us)
+  C  Maximum of Fiducial Delay Time (us)
+
+  D  Absolute Fiducial Delay (us) - based on the evr clock outer
+  E  Minimum of Absolute Fiducial Delay (us)
+  F  Maximum of Absolute Fiducial Delay (us) 
+
+  G  Absolute start time for the data buffer handling (us)  
+  H  Minimum of the start time for the data buffer handling (us)
+  I  Maximum of the start time for the data buffer handling (us)
+  
+  J  Pended message for the evrEvent task
+  K  Maximum number of pended message for the evrEventTask
+
+  L Spare
+
   M  fiducial counter
   N  Number of times M has rolled over
   O  Number of same pulses
@@ -684,7 +720,7 @@ static int evrTimeProc (longSubRecord *psub)
 
 static long evrTimeDiag (longSubRecord *psub)
 {
-  unsigned long  dummy;
+  epicsUInt32  dummy;
   
   psub->val = fiducialStatus;
   psub->m = msgCount;          /* # fiducials processed since boot/reset */
@@ -695,6 +731,15 @@ static long evrTimeDiag (longSubRecord *psub)
   evrMessageCounts(EVR_MESSAGE_FIDUCIAL,
                    &psub->t,&psub->u,&dummy  ,&psub->y,&dummy,
                    &dummy,  &psub->v,&psub->w,&psub->x,&psub->z);
+  evrMessageCountsFiducial(EVR_MESSAGE_FIDUCIAL,
+                           &psub->a, &psub->b, &psub->c);
+  evrMessageCountsClockCounter(EVR_MESSAGE_FIDUCIAL,
+                               &psub->d, &psub->e, &psub->f);
+  evrMessageCountsClockCounter(EVR_MESSAGE_PATTERN,
+                               &psub->g, &psub->h, &psub->i);
+  evrMessageCountsQ(EVR_MESSAGE_FIDUCIAL,
+                    &psub->j, &psub->k);
+
   if (psub->r > 0) {
     psub->r           = 0;
     msgCount          = 0;
@@ -809,6 +854,22 @@ static long evrTimeEvent(longSubRecord *psub)
   eventCodeTime_as[psub->a].status = epicsTimeERROR;
   return epicsTimeERROR;
 }
+
+long evrTimeEventProcessing(epicsInt16 eventNum)
+{
+
+  if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
+    eventCodeTime_as[eventNum].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
+    eventCodeTime_as[eventNum].status = evr_aps[evrTimeCurrent]->timeStatus;
+    epicsMutexUnlock(evrTimeRWMutex_ps);
+    return epicsTimeOK;
+  }
+  /* invalid mutex id or lock error - must set status to invalid for the caller */
+  eventCodeTime_as[eventNum].status = epicsTimeERROR;
+  return epicsTimeERROR;
+}
+
+
 
 /*=============================================================================
 
