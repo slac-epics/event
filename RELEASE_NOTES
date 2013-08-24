@@ -1,5 +1,17 @@
 Release Notes for the event package
 -----------------------------------
+event-R3-5-0:
+      * Removing Beam Program Dependency from Event Module
+        - do not require SITE_FACILITY information in the RELEASE_SITE file
+        - readout the list of event name and EVG delay (intrinsic delay) 
+          from waveform PVs in the PNET soft IOC
+      * Remove event name from PV (no more TEC macro in the trig.substitution file)
+        - Please, read README file for more detailed information
+      * Remove ACTV macro for the trig.subsitution file
+        - the forward/backward propagation & event invariant delay (fixed delay) are default one
+        - Please, read README file for more detailed information
+
+
 event-R3-4-0:
       * Sync with event-R3-2-2-br_generaltime-2-4
 

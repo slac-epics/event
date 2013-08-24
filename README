@@ -752,3 +752,27 @@ LINUX/PMC&PCI
 	devMrfEr	devMrfEr.dbd
 	drvMrf
 
+
+----------------------------------------------------
+How to use event-R3-5-0 and later, for IOC Engineers
+----------------------------------------------------
+
+Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Event Code Invariant Delay)
+from your trig.substitution file. (there is no more trigger event code name. 
+The forward/backward propagation and event code invariant delay is a default mode)
+
+Just incase, ioc engineer need to put new macro SYS to describe the beam program in the trig.substitution file
+Please, follow the following rule. LCLS does not require the SYS macro due to it's a default.
+
+For the FACET and NLCTA, Please add SYS macro to describe beam program.
+SYS=SYS0: LCLS (default, if you did not put SYS macro, it will assign SYS0 automatically)
+SYS=SYS1: FACET
+SYS=SYS6: NLCTA
+
+Note) 
+If you really want to disable the event code invariant delay,
+you can put ACTV macro and set it to ZERO.
+Then the feature will be disabled. The intrinsic delay (EVG delay)
+will be set to 13004 as a default.
+If you want to change the default value, you can use TEC macro.
+Please, put your default instrinsic delay value for the TEC macro.
