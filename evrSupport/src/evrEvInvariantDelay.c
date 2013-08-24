@@ -5,35 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/timex.h>        /* for ntp_adjtime           */
+#include "dbAccess.h"
 #include "epicsTypes.h"
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
-#include "longSubRecord.h"    /* for struct longSubRecord  */
-
-typedef struct {
-    epicsUInt32  code;
-    epicsUInt32  offset; 
-} evOffset_t;
-
-
-/* for LCLS */
-#if     defined(LCLS)
-#include "evrEvInvDelayLCLS.h"
-
-/* for FACET */
-#elif defined(FACET)
-#include "evrEvInvDelayFACET.h"
-
-
-/* for XTA */
-#elif defined(XTA)
-#include "evrEvInvDelayXTA.h"
-
-
-#else
-#error "Please, defind your facility in the RELEASE_SITE file. ex) SITE_FACILITY = LCLS | FACET | XTA
-#endif
-
+#include "longSubRecord.h"    /* for struct longSubRecord */
+#include "aSubRecord.h"       /* for struct aSubRecord  */
+#include "alarm.h"           
 
 static long lsubTrigSelInit(longSubRecord *prec)
 {
@@ -79,28 +57,48 @@ static long lsubEvSel(longSubRecord *prec)
     return 0;
 }
 
-static long lsubLookupOffsetInit(longSubRecord *prec)
+static long aSubEvOffsetInit(aSubRecord *prec)
 {
-    /* printf("lsubLookupOffsetInit for %s\n", prec->name); */
 
     return 0;
 }
 
-static long lsubLookupOffset(longSubRecord *prec)
+/*
+ *   -----------------
+ *   Input/Output list 
+ *   -----------------
+ *
+ * INPA: Input for event number: event number selector (long type)
+ * INPB: Activate/Deactivate event invariant delay (long type)
+ * INPC: Input for EVG delay - lookup PV (long type waveform)
+ * INPD: Input for previous delay (just in case, if EVNT:SYSx:1:DELAY array is not available, invalid severity)
+
+ * OUTA: Output for delay
+ *
+ */
+static long aSubEvOffset(aSubRecord *prec)
 {
+    long eventNumber   = *(long*)(prec->a);
+    long activeFlag    = *(long*)(prec->b);
+    long *pdelayArray  =  (long*)(prec->c);
+    long defaultDelay  = *(long*)(prec->d);
+    long *poutputDelay =  (long*)(prec->vala);
+    epicsEnum16 sevr;
 
-    /* printf("lsubLookupOffset for %s\n", prec->name); */
-
-   if(prec->a>255) {         /* exception on event code */
-       prec->val = prec->c;  /* just give default value */
-       return 0;
-   }
-
-    if(prec->b) {    /* when activate the event code invariant delay */
-        prec->val = evOffset[prec->a].offset;
-        if(!prec->val) prec->val = prec->c;  /* if, offset is 0, then use default */
+    if(dbGetSevr(&prec->inpc, &sevr)) {
+        printf("%s: CA connection serverity check error\n", prec->name);
+        return 0;
     }
-    else  prec->val = prec->c; /* when deactivate, use default offset */
+
+
+    if(sevr                          ||     /* record is not initialized */
+       !activeFlag                   ||     /* deactivate */
+       !pdelayArray                  ||     /* no lookup table */
+       (eventNumber<0 || eventNumber>255)   /* out of range for event number */) {
+        *poutputDelay = defaultDelay;                   /* if something is wrong, just use default delay */
+    }
+    else *poutputDelay = *(pdelayArray + eventNumber);  /* Everything is OK, let's use look up table */
+
 
     return 0;
 }
@@ -111,5 +109,5 @@ epicsRegisterFunction(lsubTrigSelInit);
 epicsRegisterFunction(lsubTrigSel);
 epicsRegisterFunction(lsubEvSelInit);
 epicsRegisterFunction(lsubEvSel);
-epicsRegisterFunction(lsubLookupOffsetInit);
-epicsRegisterFunction(lsubLookupOffset);
+epicsRegisterFunction(aSubEvOffsetInit);
+epicsRegisterFunction(aSubEvOffset);
