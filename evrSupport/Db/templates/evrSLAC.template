@@ -94,7 +94,7 @@ record(er, "$(DEV):CTRL")
   field(DGBP, "$(DGBP)")
 
   field(PRES, "1")
-  field(FLNK, "$(EVRFLNK)")
+  field(FLNK, "$(EVRFLNK=$(EVR):Triggers)")
 }
 
 record(bi, "$(DEV):LINK")

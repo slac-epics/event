@@ -106,5 +106,5 @@ record(er, "$(DEV):CTRL")
   field(DG1D, "$(DELAY)")
   field(DG2D, "$(DELAY)")
   field(DG3D, "$(DELAY)")
-  field(FLNK, "$(EVRFLNK)")
+  field(FLNK, "$(EVRFLNK=$(EVR):Triggers)")
 }

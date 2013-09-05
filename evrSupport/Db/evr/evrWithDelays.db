@@ -51,7 +51,7 @@ record(er, "$(DEV):CTRL") {
   field(DG1D, "$(DELAY1)")
   field(DG2D, "$(DELAY2)")
   field(DG3D, "$(DELAY3)")
-  field(FLNK, "$(EVRFLNK)")
+  field(FLNK, "$(EVRFLNK=$(EVR):Triggers)")
 }
 record(bi, "$(DEV):LINK") {
   field(DESC, "$(DEV) Link Status")
