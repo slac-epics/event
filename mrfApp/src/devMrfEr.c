@@ -644,8 +644,6 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
 				*/
         		errlogPrintf( "ErEventProcess Error: Event %d already in use!\n", pRec->enm );
 				pRec->enm = pRec->lenm;
-				/* This call needed as recGblSetSevr() doesn't post events for pField NULL */
-				/* db_post_events( pRec, &pRec->enm, DBE_VALUE | DBE_LOG ); */
 
 			   /*----------------
 				* Clear the output mask for our old event number
