@@ -3838,7 +3838,7 @@ setPosition {
   0 "parentWindow"
 }
 symbols {
-  0 "ioc=$(IOC)"
+  0 "IOC=$(IOC)"
 }
 icon
 endObjectProperties
