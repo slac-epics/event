@@ -1736,7 +1736,7 @@ buttonLabel "Details..."
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrscreens/evrTrig3T"
+  0 "evrScreens/evrTrig3T.edl"
 }
 setPosition {
   0 "parentWindow"
@@ -1763,7 +1763,7 @@ buttonLabel "Diag"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrscreens/evrDiag.edl"
+  0 "evrScreens/evrDiag.edl"
 }
 setPosition {
   0 "parentWindow"
@@ -1790,7 +1790,7 @@ buttonLabel "Ev Codes"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrscreens/lclsEventCodes.edl"
+  0 "evrScreens/lclsEventCodes.edl"
 }
 setPosition {
   0 "parentWindow"

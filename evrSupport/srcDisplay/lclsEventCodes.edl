@@ -960,7 +960,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-7-ec.edl"
+  0 "evrScreens/emb-7-ec.edl"
 }
 symbols {
   0 "DEC=1"
@@ -986,7 +986,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-7-ec.edl"
+  0 "evrScreens/emb-7-ec.edl"
 }
 symbols {
   0 "DEC=2"
@@ -1012,7 +1012,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-7-ec.edl"
+  0 "evrScreens/emb-7-ec.edl"
 }
 symbols {
   0 "DEC=3"
@@ -1038,7 +1038,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-7-ec.edl"
+  0 "evrScreens/emb-7-ec.edl"
 }
 symbols {
   0 "DEC=4"
@@ -1064,7 +1064,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-7-ec.edl"
+  0 "evrScreens/emb-7-ec.edl"
 }
 symbols {
   0 "DEC=5"
@@ -1090,7 +1090,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-7-ec.edl"
+  0 "evrScreens/emb-7-ec.edl"
 }
 symbols {
   0 "DEC=6"
@@ -1156,7 +1156,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-10-ec.edl"
+  0 "evrScreens/emb-10-ec.edl"
 }
 symbols {
   0 "DEC=14"
@@ -1182,7 +1182,7 @@ displaySource "menu"
 filePv "LOC\\\\emb-ec=i,0"
 numDsps 1
 displayFileName {
-  0 "evrscreens/emb-10-ec.edl"
+  0 "evrScreens/emb-10-ec.edl"
 }
 symbols {
   0 "DEC=15"
