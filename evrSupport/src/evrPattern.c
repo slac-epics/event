@@ -670,6 +670,15 @@ static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard, unsi
     return result;
 }
 
+
+/*
+ * Input:
+ *     X - Card number
+ * Output:
+ *     A-L - Event number causing this output to trigger, 0 = no trigger,
+ *           512 = multiple triggers, 1024 = misconfigure (no IRQ).
+ *     M-X - Change counters for A-L, respectively.
+ */
 static int evrTriggerProc(longSubRecord *psub)
 {
     ErCardStruct  *pCard = ErGetCardStruct(psub->z);
