@@ -43,8 +43,6 @@ pattern { DEV,  ID,  DELY, HIHI,  HIGH,  LOW, LOLO, DESC     }
 	{ $(DEV),  161, 11921, 120.5, 120.5,  -1,   -1,  "LI25 Kicker (BXKIK)" }
 	{ $(DEV),  162, 11922, 120.5, 120.5,  -1,   -1,  "LTU  Kicker (BYKIK)" }
 # Beam-Independent Time Slot Triggers
-#   Fiducial (360Hz)
-	{ $(DEV),    1,     0, 360.5, 360.5, 359.5, 359.5, "Fiducial"    }
 #   360Hz
 	{ $(DEV),    9, 12950, 360.5, 360.5, 359.5, 359.5, "360Hz"       }
 #   Modulo36 base event code
@@ -99,7 +97,7 @@ pattern { DEV,  ID,  DELY, HIHI,  HIGH,  LOW, LOLO, DESC     }
 	{ $(DEV),  56, 13065,  1.0,  1.0,  0.0,  0.0, "TS5 0.5Hz"    }
 	{ $(DEV),  66, 13066,  1.0,  1.0,  0.0,  0.0, "TS6 0.5Hz"    }
 
-# Event Sequence 1 Codes
+# Event Sequence Codes, Block 1
 	{ $(DEV),  67, 13067,  1.0,  1.0,  0.0,  0.0, "AMO Shut Open"    }
 	{ $(DEV),  68, 13068,  1.0,  1.0,  0.0,  0.0, "AMO Shut Close"    }
 	{ $(DEV),  69, 13069,  1.0,  1.0,  0.0,  0.0, "AMO Laser"    }
@@ -116,8 +114,6 @@ pattern { DEV,  ID,  DELY, HIHI,  HIGH,  LOW, LOLO, DESC     }
 	{ $(DEV),  80, 13080,  1.0,  1.0,  0.0,  0.0, "SXR Final State"    }
 	{ $(DEV),  81, 13081,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV),  82, 13082,  1.0,  1.0,  0.0,  0.0, "Available"    }
-
-# Event Sequence 2 Codes
 	{ $(DEV),  83, 13083,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV),  84, 13084,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV),  85, 13085,  1.0,  1.0,  0.0,  0.0, "XPP Laser"    }
@@ -135,7 +131,7 @@ pattern { DEV,  ID,  DELY, HIHI,  HIGH,  LOW, LOLO, DESC     }
 	{ $(DEV),  97, 13097,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV),  98, 13098,  1.0,  1.0,  0.0,  0.0, "Available"    }
 
-# Event Sequence 3 Codes
+# Event Sequence Codes, Block 2
 	{ $(DEV), 167, 13167,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 168, 13168,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 169, 13169,  1.0,  1.0,  0.0,  0.0, "Available"    }
@@ -152,8 +148,6 @@ pattern { DEV,  ID,  DELY, HIHI,  HIGH,  LOW, LOLO, DESC     }
 	{ $(DEV), 180, 13180,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 181, 13181,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 182, 13182,  1.0,  1.0,  0.0,  0.0, "Available"    }
-
-# Event Sequence 4 Codes
 	{ $(DEV), 183, 13183,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 184, 13184,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 185, 13185,  1.0,  1.0,  0.0,  0.0, "Available"    }
@@ -170,4 +164,22 @@ pattern { DEV,  ID,  DELY, HIHI,  HIGH,  LOW, LOLO, DESC     }
 	{ $(DEV), 196, 13196,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 197, 13197,  1.0,  1.0,  0.0,  0.0, "Available"    }
 	{ $(DEV), 198, 13198,  1.0,  1.0,  0.0,  0.0, "Available"    }
+
+# Event Sequence Codes, Block 3
+	{ $(DEV), 201, 13201,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 202, 13202,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 203, 13203,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 204, 13204,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 205, 13205,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 206, 13220,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 207, 13207,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 208, 13208,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 209, 13209,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 210, 13210,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 211, 13211,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 212, 13212,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 213, 13213,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 214, 13214,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 215, 13215,  1.0,  1.0,  0.0,  0.0, "Available"    }
+	{ $(DEV), 216, 13216,  1.0,  1.0,  0.0,  0.0, "Available"    }
 }
