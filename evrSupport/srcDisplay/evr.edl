@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1925
-y 2304
+x 62
+y 122
 w 475
 h 528
 font "helvetica-medium-r-18.0"
@@ -22,7 +22,7 @@ botShadowColor index 14
 title "$(EVR) Event Receiver"
 showGrid
 snapToGrid
-gridSize 8
+gridSize 4
 endScreenProperties
 
 # (Rectangle)
@@ -465,7 +465,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 104
 y 328
@@ -485,13 +485,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 104
 y 352
@@ -511,13 +512,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 104
 y 376
@@ -537,6 +539,7 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -840,7 +843,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 136
@@ -860,13 +863,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 168
@@ -886,13 +890,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 200
@@ -912,13 +917,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 232
@@ -938,13 +944,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 136
@@ -964,13 +971,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 168
@@ -990,13 +998,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 200
@@ -1016,13 +1025,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 232
@@ -1042,6 +1052,7 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -1068,7 +1079,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 136
@@ -1088,13 +1099,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 168
@@ -1114,13 +1126,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 200
@@ -1140,13 +1153,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 232
@@ -1166,6 +1180,7 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -1197,11 +1212,11 @@ endObjectProperties
 object activeMessageButtonClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
-x 416
+x 412
 y 424
-w 48
+w 56
 h 24
 fgColor index 44
 onColor index 4
@@ -1255,7 +1270,7 @@ release 0
 x 12
 y 49
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1308,7 +1323,7 @@ release 0
 x 12
 y 105
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1361,7 +1376,7 @@ release 0
 x 12
 y 297
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1572,7 +1587,7 @@ release 0
 x 12
 y 412
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1652,7 +1667,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 160
 y 328
@@ -1669,13 +1684,14 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 160
 y 352
@@ -1692,13 +1708,14 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 160
 y 376
@@ -1715,13 +1732,14 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Related Display)
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
 x 40
 y 64
@@ -1748,11 +1766,11 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
-x 312
-y 424
-w 80
+x 412
+y 456
+w 56
 h 24
 fgColor index 14
 bgColor index 4
@@ -1775,18 +1793,51 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
-x 312
+x 308
 y 456
-w 80
+w 100
 h 24
 fgColor index 14
 bgColor index 4
 topShadowColor index 1
 botShadowColor index 11
 font "helvetica-medium-r-12.0"
-buttonLabel "Ev Codes"
+buttonLabel "Seq Events"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/pcdsEventCodes.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "ECS=ECS:SYS0,EVG=EVNT:SYS0"
+}
+replaceSymbols {
+  0 1
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 308
+y 424
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "LCLS Events"
 numPvs 4
 numDsps 1
 displayFileName {
@@ -1794,6 +1845,9 @@ displayFileName {
 }
 setPosition {
   0 "parentWindow"
+}
+symbols {
+  0 "EVG=EVNT:SYS0"
 }
 icon
 endObjectProperties
