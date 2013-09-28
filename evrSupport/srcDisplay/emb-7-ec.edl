@@ -7,9 +7,9 @@ x 437
 y 74
 w 245
 h 349
-font "helvetica-bold-r-12.0"
-ctlFont "helvetica-bold-r-12.0"
-btnFont "helvetica-bold-r-14.0"
+font "helvetica-medium-r-12.0"
+ctlFont "helvetica-medium-r-12.0"
+btnFont "helvetica-medium-r-14.0"
 btnFontAlign "center"
 fgColor index 14
 bgColor index 3
@@ -36,8 +36,8 @@ x 180
 y 156
 w 44
 h 20
-controlPv "$(EVR):EventCode:$(DEC)6:Rate.D"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)6:Rate.D"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -59,8 +59,8 @@ x 140
 y 156
 w 36
 h 20
-controlPv "$(EVR):EventCode:$(DEC)6:Rate"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)6:Rate"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -82,7 +82,7 @@ x 108
 y 156
 w 28
 h 20
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -101,9 +101,9 @@ x 4
 y 156
 w 96
 h 20
-controlPv "$(EVR):EventCode:$(DEC)6.DESC"
+controlPv "$(EVG):EventCode:$(DEC)6.DESC"
 format "string"
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 5
 editable
@@ -126,8 +126,8 @@ x 180
 y 132
 w 44
 h 20
-controlPv "$(EVR):EventCode:$(DEC)5:Rate.D"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)5:Rate.D"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -149,8 +149,8 @@ x 140
 y 132
 w 36
 h 20
-controlPv "$(EVR):EventCode:$(DEC)5:Rate"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)5:Rate"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -172,7 +172,7 @@ x 108
 y 132
 w 28
 h 20
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -191,9 +191,9 @@ x 4
 y 132
 w 96
 h 20
-controlPv "$(EVR):EventCode:$(DEC)5.DESC"
+controlPv "$(EVG):EventCode:$(DEC)5.DESC"
 format "string"
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 5
 editable
@@ -216,8 +216,8 @@ x 180
 y 108
 w 44
 h 20
-controlPv "$(EVR):EventCode:$(DEC)4:Rate.D"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)4:Rate.D"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -239,8 +239,8 @@ x 140
 y 108
 w 36
 h 20
-controlPv "$(EVR):EventCode:$(DEC)4:Rate"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)4:Rate"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -262,7 +262,7 @@ x 108
 y 108
 w 28
 h 20
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -281,9 +281,9 @@ x 4
 y 108
 w 96
 h 20
-controlPv "$(EVR):EventCode:$(DEC)4.DESC"
+controlPv "$(EVG):EventCode:$(DEC)4.DESC"
 format "string"
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 5
 editable
@@ -306,8 +306,8 @@ x 180
 y 84
 w 44
 h 20
-controlPv "$(EVR):EventCode:$(DEC)3:Rate.D"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)3:Rate.D"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -329,8 +329,8 @@ x 140
 y 84
 w 36
 h 20
-controlPv "$(EVR):EventCode:$(DEC)3:Rate"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)3:Rate"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -352,7 +352,7 @@ x 108
 y 84
 w 28
 h 20
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -371,9 +371,9 @@ x 4
 y 84
 w 96
 h 20
-controlPv "$(EVR):EventCode:$(DEC)3.DESC"
+controlPv "$(EVG):EventCode:$(DEC)3.DESC"
 format "string"
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 5
 editable
@@ -396,8 +396,8 @@ x 180
 y 60
 w 44
 h 20
-controlPv "$(EVR):EventCode:$(DEC)2:Rate.D"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)2:Rate.D"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -419,8 +419,8 @@ x 140
 y 60
 w 36
 h 20
-controlPv "$(EVR):EventCode:$(DEC)2:Rate"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)2:Rate"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -442,7 +442,7 @@ x 108
 y 60
 w 28
 h 20
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -461,9 +461,9 @@ x 4
 y 60
 w 96
 h 20
-controlPv "$(EVR):EventCode:$(DEC)2.DESC"
+controlPv "$(EVG):EventCode:$(DEC)2.DESC"
 format "string"
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 5
 editable
@@ -486,8 +486,8 @@ x 180
 y 36
 w 44
 h 20
-controlPv "$(EVR):EventCode:$(DEC)1:Rate.D"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)1:Rate.D"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -509,8 +509,8 @@ x 140
 y 36
 w 36
 h 20
-controlPv "$(EVR):EventCode:$(DEC)1:Rate"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)1:Rate"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -532,7 +532,7 @@ x 108
 y 36
 w 28
 h 20
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -551,9 +551,9 @@ x 4
 y 36
 w 96
 h 20
-controlPv "$(EVR):EventCode:$(DEC)1.DESC"
+controlPv "$(EVG):EventCode:$(DEC)1.DESC"
 format "string"
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 5
 editable
@@ -576,8 +576,8 @@ x 180
 y 12
 w 44
 h 20
-controlPv "$(EVR):EventCode:$(DEC)0:Rate.D"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)0:Rate.D"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -599,8 +599,8 @@ x 140
 y 12
 w 36
 h 20
-controlPv "$(EVR):EventCode:$(DEC)0:Rate"
-font "helvetica-bold-r-12.0"
+controlPv "$(EVG):EventCode:$(DEC)0:Rate"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -622,7 +622,7 @@ x 108
 y 12
 w 28
 h 20
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
@@ -641,9 +641,9 @@ x 4
 y 12
 w 96
 h 20
-controlPv "$(EVR):EventCode:$(DEC)0.DESC"
+controlPv "$(EVG):EventCode:$(DEC)0.DESC"
 format "string"
-font "helvetica-bold-r-12.0"
+font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 5
 editable
