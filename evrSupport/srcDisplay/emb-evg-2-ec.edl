@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 654
-y 495
+x 996
+y 483
 w 280
 h 72
 font "helvetica-bold-r-12.0"
@@ -33,10 +33,10 @@ major 4
 minor 5
 release 0
 x 0
-y 0
+y 28
 w 112
 h 24
-controlPv "$(EVG):1:$(NAME1)CTRL.DESC"
+controlPv "$(EVR):EventCode:$(ID2).DESC"
 font "helvetica-bold-r-10.0"
 fgColor index 14
 bgColor index 10
@@ -46,6 +46,7 @@ nullColor index 1
 smartRefresh
 newPos
 objType "monitors"
+id "x"
 noExecuteClipMask
 endObjectProperties
 
@@ -56,10 +57,10 @@ major 4
 minor 5
 release 0
 x 0
-y 28
+y 0
 w 112
 h 24
-controlPv "$(EVG):1:$(NAME2)CTRL.DESC"
+controlPv "$(EVR):EventCode:$(ID1).DESC"
 font "helvetica-bold-r-10.0"
 fgColor index 14
 bgColor index 10

@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1322
-y 717
+x 833
+y 746
 w 400
 h 100
 font "helvetica-bold-r-12.0"
@@ -26,47 +26,78 @@ snapToGrid
 gridSize 4
 endScreenProperties
 
-# (Static Text)
-object activeXTextClass
+# (Rectangle)
+object activeRectangleClass
 beginObjectProperties
 major 4
-minor 1
-release 0
-x 0
-y 4
-w 32
-h 20
-font "helvetica-bold-r-14.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-value {
-  "$(N1)"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
+minor 0
 release 0
 x 36
 y 4
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(N1)_OWNER_NAME"
+lineColor index 14
+fill
+fillColor index 89
+lineWidth 0
+alarmPv "$(ECS):0:EC_$(N1)_OWNER_ID"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 36
+y 28
+w 44
+h 20
+lineColor index 14
+fill
+fillColor index 89
+lineWidth 0
+alarmPv "$(ECS):0:EC_$(N2)_OWNER_ID"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 36
+y 52
+w 44
+h 20
+lineColor index 14
+fill
+fillColor index 89
+lineWidth 0
+alarmPv "$(ECS):0:EC_$(N3)_OWNER_ID"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 136
+y 52
+w 168
+h 20
+controlPv "$(EVG):1:NAME$(N3)"
 font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
+fgColor index 25
+bgColor index 4
+editable
+motifWidget
 limitsFromDb
 nullColor index 0
-smartRefresh
 useHexPrefix
 newPos
-objType "monitors"
+objType "controls"
 noExecuteClipMask
 endObjectProperties
 
@@ -76,11 +107,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 84
-y 4
-w 48
+x 136
+y 28
+w 168
 h 20
-controlPv "$(ECS):0:EC_$(N1)_OWNER_ID"
+controlPv "$(EVG):1:NAME$(N2)"
 font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 4
@@ -104,7 +135,7 @@ x 136
 y 4
 w 168
 h 20
-controlPv "$(ECS):0:EC_$(N1)_OWNER_ID.DESC"
+controlPv "$(EVG):1:NAME$(N1)"
 font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 4
@@ -115,30 +146,6 @@ nullColor index 0
 useHexPrefix
 newPos
 objType "controls"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 308
-y 4
-w 48
-h 20
-controlPv "$(EVG):1:ECS_$(N1)DLY"
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 1
-smartRefresh
-newPos
-objType "monitors"
 noExecuteClipMask
 endObjectProperties
 
@@ -171,12 +178,13 @@ x 36
 y 28
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(N2)_OWNER_NAME"
+controlPv "$(ECS):0:EC_$(N2)_OWNER_ID"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
-fgColor index 15
+fgColor index 14
 fgAlarm
 bgColor index 12
+useDisplayBg
 limitsFromDb
 nullColor index 0
 smartRefresh
@@ -197,30 +205,6 @@ y 28
 w 48
 h 20
 controlPv "$(ECS):0:EC_$(N2)_OWNER_ID"
-font "helvetica-medium-r-12.0"
-fgColor index 25
-bgColor index 4
-editable
-motifWidget
-limitsFromDb
-nullColor index 0
-useHexPrefix
-newPos
-objType "controls"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 136
-y 28
-w 168
-h 20
-controlPv "$(ECS):0:EC_$(N2)_OWNER_ID.DESC"
 font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 4
@@ -287,12 +271,13 @@ x 36
 y 52
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(N3)_OWNER_NAME"
+controlPv "$(ECS):0:EC_$(N3)_OWNER_ID"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
-fgColor index 15
+fgColor index 14
 fgAlarm
 bgColor index 12
+useDisplayBg
 limitsFromDb
 nullColor index 0
 smartRefresh
@@ -313,30 +298,6 @@ y 52
 w 48
 h 20
 controlPv "$(ECS):0:EC_$(N3)_OWNER_ID"
-font "helvetica-medium-r-12.0"
-fgColor index 25
-bgColor index 4
-editable
-motifWidget
-limitsFromDb
-nullColor index 0
-useHexPrefix
-newPos
-objType "controls"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 136
-y 52
-w 168
-h 20
-controlPv "$(ECS):0:EC_$(N3)_OWNER_ID.DESC"
 font "helvetica-medium-r-12.0"
 fgColor index 25
 bgColor index 4
@@ -372,5 +333,98 @@ smartRefresh
 newPos
 objType "monitors"
 noExecuteClipMask
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 308
+y 4
+w 48
+h 20
+controlPv "$(EVG):1:ECS_$(N1)DLY"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 84
+y 4
+w 48
+h 20
+controlPv "$(ECS):0:EC_$(N1)_OWNER_ID"
+font "helvetica-medium-r-12.0"
+fgColor index 25
+bgColor index 4
+editable
+motifWidget
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 36
+y 4
+w 44
+h 20
+controlPv "$(ECS):0:EC_$(N1)_OWNER_ID"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+fgAlarm
+bgColor index 12
+useDisplayBg
+limitsFromDb
+nullColor index 0
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 0
+y 4
+w 32
+h 20
+font "helvetica-bold-r-14.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "$(N1)"
+}
 endObjectProperties
 

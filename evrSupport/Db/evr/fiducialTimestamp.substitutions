@@ -4,22 +4,14 @@
 # 	IOC=Name of the IOC
 #	CARD= EVR card #
 
-# Note: Feb 13, 2012
-# evrPatternAll is needed
-# currently coming from the evr
-# substitution file supplied by the template.
-# Not sure if that's the best, as it exposes the
-# TREF, TS1ST, and TS2ND macros at the IOC level.
-# Would prefer to expand them here in the module for
-# normal use.
 # 
 file evrPatternAll.db 
 {
 #	    Device        ,  SLC Pattern, EVR/Trigger     
 #	                                    Links       
   pattern
-  { DEVICE        ,  LNK4      , LNK5, TREF    , TS1ST, TS2ND }
-  { $(DEV)        ,   ""       ,  "",  1.03E06 ,   1  ,   4   }
+  { DEVICE,  LINK4,			LINK5,			TREF   , TS1ST, TS2ND }
+  { $(DEV),  "\$(LINK4=)",	"\$(LINK5=)",  1.03E06 ,   1  ,   4   }
 }
 
 file evrTrigger.db
