@@ -1,17 +1,11 @@
-#
-# Each EVR will need one instance of this template for
-# each event code it will support.
-# The event record should be I/O Intr so it runs only
-# when there's an interrupt for that event code.
-# The longSub Count record is passive, being processed
-# only when the event record sees an interrupt.
 record( event, "$(DEV):EventCode:$(ID)" )
 {
   field( DESC,  "$(DESC)" )
   field( DTYP,  "MRF Event Receiver" )
   field( INP,   "#C0 S$(ID) @" )
+#  field( SCAN,  "I/O Intr" )
   field( PRIO,  "HIGH" )
-  field( SCAN,  "I/O Intr" )
+#  field( VAL,   "$(ID)" )
   field( FLNK,  "$(DEV):EventCode:$(ID):Count" )
 }
 
@@ -21,6 +15,7 @@ record( longSub, "$(DEV):EventCode:$(ID):Count" )
   field( SNAM, "evrTimeEvent" )
   field( BRSV, "INVALID" )
   field( INPA, "$(ID)" )
+  field( SCAN,  ".1 second" )
 }
 
 record( sub, "$(DEV):EventCode:$(ID):Rate" )

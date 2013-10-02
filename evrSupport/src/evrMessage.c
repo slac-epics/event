@@ -466,6 +466,7 @@ evrMessageReadStatus_te evrMessageRead(unsigned int  messageIdx,
 int evrMessageStart(unsigned int messageIdx)
 {
   unsigned long prevTimeStart, deltaTimeStart;
+  int idx, oldidx;  
 
   if (messageIdx >= EVR_MESSAGE_MAX) return -1;
 

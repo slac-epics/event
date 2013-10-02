@@ -44,11 +44,11 @@ int EvrOpen(struct MrfErRegs **pEr, char *device_name)
       *pEr = (struct MrfErRegs *) mmap(0, EVR_MEM_WINDOW, PROT_READ | PROT_WRITE,
 					MAP_SHARED, fd, 0);
 #ifdef DEBUG
-  DEBUG_PRINTF("EvrOpen: mmap returned %p, errno %d\n", *pEr, errno);
+      DEBUG_PRINTF("EvrOpen: mmap returned %08x, errno %d\n", (int) *pEr, errno);
 #endif
       if (*pEr == MAP_FAILED)
 	{
-	  DEBUG_PRINTF( "mmap failed!  A firmware update may be needed!\n" );
+      DEBUG_PRINTF( "mmap failed!  A firmware update may be needed!\n" );
 	  close(fd);
 	  return -1;
 	}
@@ -577,6 +577,7 @@ void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs)
     DEBUG_PRINTF("TBOut[%d] %02x\n", i, be16_to_cpu(pEr->TBOutMap[i]));
 }
 
+
 void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 			 void (*handler)(int))
 {
@@ -590,11 +591,9 @@ void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 
   result = sigaction(SIGIO, &act, NULL);
   printf("sigaction returned %d\n", result);
-
   fcntl(fd, F_SETOWN, getpid());
   oflags = fcntl(fd, F_GETFL);
   fcntl(fd, F_SETFL, oflags | FASYNC);
-
   /* Now enable handler */
   EvrIrqHandled(fd);
 }

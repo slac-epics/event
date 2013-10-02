@@ -1,17 +1,21 @@
 #! /bin/bash
 
 # Setup edm environment
-source /reg/g/pcds/setup/epicsenv-3.14.12.sh
+export EPICS_SITE_TOP=/reg/g/pcds/package/epics/3.14
+export EPICS_HOST_ARCH=$($EPICS_SITE_TOP/base/current/startup/EpicsHostArch.pl)
 
-edm -x -eolc	\
--m "IOC=LAS:R52:IOC:30"	\
--m "EVR=LAS:R52:EVR:30"	\
--m "DEC=9"	\
--m "N1=87,N2=171,N3=201"	\
--m "EVG=EVNT:SYS0"	\
--m "ECS=ECS:SYS0"	\
-evrScreens/evr.edl	\
-evrScreens/emb-evg-*-ec.edl	\
-evrScreens/emb-ecs-*-ec.edl	\
-&
+export EDMFILES=$EPICS_SITE_TOP/extensions/current/templates/edm
+export EDMFILTERS=$EPICS_SITE_TOP/extensions/current/templates/edm
+export EDMHELPFILES=$EPICS_SITE_TOP/extensions/current/src/edm/helpFiles
+export EDMLIBS=$EPICS_SITE_TOP/extensions/current/lib/$EPICS_HOST_ARCH
+export EDMOBJECTS=$EPICS_SITE_TOP/extensions/current/templates/edm
+export EDMPVOBJECTS=$EPICS_SITE_TOP/extensions/current/templates/edm
+export EDMUSERLIB=$EPICS_SITE_TOP/extensions/current/lib/$EPICS_HOST_ARCH
+export EDMACTIONS=/reg/g/pcds/package/tools/edm/config
+export EDMWEBBROWSER=mozilla
+export PATH=$PATH:$EPICS_SITE_TOP/extensions/current/bin/$EPICS_HOST_ARCH
+export EDMDATAFILES=".:.."
+
+edm -x -eolc -m "IOC=LAS:R52:IOC:30,EVR=LAS:R52:EVR:30,DEC=14" evrscreens/evr.edl evrscreens/lclsEventCodes.edl evrscreens/emb-event-code.edl evrscreens/emb-10-ec.edl &
+#edm -x -eolc -m "IOC=UND:R02:IOC:16,EVR=UND:R02:EVR:16" evrscreens/evr.edl evrscreens/lclsEventCodes.edl evrscreens/emb-event-code.edl &
 

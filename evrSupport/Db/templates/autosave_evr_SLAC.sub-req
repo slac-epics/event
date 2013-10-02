@@ -3,7 +3,7 @@
 #
 file autosave_evr_SLAC.tpl-req
 {
-	{	EVR	= $(EVR)	}
+	{	IOC	= $(IOC),	EVR	= $(EVR)	}
 }
 
 

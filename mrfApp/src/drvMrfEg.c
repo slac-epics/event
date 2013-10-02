@@ -1573,7 +1573,7 @@ long EgGetAltStatus(EgCardStruct *pParm, int Ram)
  * Also return the busy and enable status of the RAM.
  *
  **/
-long EgGetMode(EgCardStruct *pParm, int Ram, volatile int *pBusy, volatile int *pEnable)
+long EgGetMode(EgCardStruct *pParm, int Ram, int *pBusy, int *pEnable)
 {
   volatile MrfEVGRegs  *pEg = pParm->pEg;
   unsigned short        Mask;

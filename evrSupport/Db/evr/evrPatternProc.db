@@ -55,7 +55,7 @@ record(erevent, "$(DEV):FIDUCIALCTRL") {
   field(ENAB, "Enabled")
   field(ENM, "1")
   field(VME,  "1")
-  field(FLNK, "$(EVRFLNK=$(EVR):Triggers)")
+  field(FLNK, "$(EVRFLNK)")
 }
 
 #! Further lines contain data used by VisualDCT

@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 		  ts = ((long long) evan.TimestampHigh << 32) +
 			(long long) evan.TimestampLow;
 		  sec = ts / (EVG_RF_FREQ/EVG_RF_DIVIDER);
-		  printf("Timestamp %08x%08x, %16.9Lf, event %02x, dbus %02x\n",
+		  printf("Timestamp %08lx%08lx, %16.9Lf, event %02lx, dbus %02lx\n",
 				 evan.TimestampHigh, evan.TimestampLow, sec, 
 				 evan.EventCode & 0x00ff, evan.EventCode >> 8);
 		}

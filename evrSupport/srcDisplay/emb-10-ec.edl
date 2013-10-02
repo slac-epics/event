@@ -1,0 +1,1068 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 2884
+y 2858
+w 245
+h 349
+font "helvetica-bold-r-12.0"
+ctlFont "helvetica-bold-r-12.0"
+btnFont "helvetica-bold-r-14.0"
+btnFontAlign "center"
+fgColor index 14
+bgColor index 3
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 1
+ctlBgColor1 index 3
+ctlBgColor2 index 49
+topShadowColor index 1
+botShadowColor index 14
+title "Emb Event Code Info"
+showGrid
+snapToGrid
+gridSize 4
+endScreenProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 0
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 0
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)0:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 0
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)0:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 0
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)0"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 0
+y 0
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)0.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 24
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 24
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)1:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 24
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)1:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 24
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)1"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 0
+y 24
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)1.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 48
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 48
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)2:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 48
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)2:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 48
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)2"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 0
+y 48
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)2.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 72
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 72
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)3:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 72
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)3:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 72
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)3"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 0
+y 72
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)3.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 96
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 96
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)4:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 96
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)4:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 96
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)4"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 0
+y 96
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)4.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 120
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 120
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)5:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 120
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)5:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 120
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)5"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x -4
+y 120
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)5.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 144
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 144
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)6:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 144
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)6:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 144
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)6"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x -4
+y 144
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)6.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 168
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 168
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)7:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 168
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)7:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 168
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)7"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x -4
+y 168
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)7.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 192
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 192
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)8:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 192
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)8:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 192
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)8"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x -4
+y 192
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)8.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 216
+w 224
+h 20
+
+beginGroup
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 188
+y 216
+w 48
+h 20
+controlPv "$(EVR):EventCode:$(DEC)9:Rate.D"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+precision 0
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 144
+y 216
+w 36
+h 20
+controlPv "$(EVR):EventCode:$(DEC)9:Rate"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+limitsFromDb
+nullColor index 1
+smartRefresh
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 104
+y 216
+w 35
+h 20
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 10
+value {
+  "$(DEC)9"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x -4
+y 216
+w 96
+h 20
+controlPv "$(EVR):EventCode:$(DEC)9.DESC"
+format "string"
+font "helvetica-bold-r-12.0"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 1
+smartRefresh
+autoSelect
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+

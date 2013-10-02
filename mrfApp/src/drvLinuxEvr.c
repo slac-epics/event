@@ -32,14 +32,13 @@
 #include <unistd.h>
 #include <byteswap.h>
 #include "erapi.h"
-#include "evrIrqHandlerThread.h"
 
 #define DEVNODE_NAME_BASE	"/dev/er"
 #ifdef EVENT_CLOCK_SPEED
     #define FR_SYNTH_WORD   EVENT_CLOCK_SPEED
 #else
-	#warning EVENT_CLOCK_SPEED not defined default to 119MHz
-	#define FR_SYNTH_WORD   CLOCK_119000_MHZ
+    #warning EVENT_CLOCK_SPEED not defined default to 124.950 MHz
+    #define FR_SYNTH_WORD   CLOCK_124950_MHZ
 #endif
 
 /**************************************************************************************************/
@@ -160,7 +159,7 @@ struct LinuxErCardStruct
 #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
 #endif
 #define ercard_to_linuxercard(pCard) \
-    ((struct LinuxErCardStruct *)(((char *)pCard) - offsetof(struct LinuxErCardStruct, ErCard)))
+				((struct LinuxErCardStruct *)(((char *)pCard) - offsetof(struct LinuxErCardStruct, ErCard)))
 
 #define EVR_IRQ_OFF      0x0000         /* Turn off All Interrupts                                */
 #define EVR_IRQ_ALL      0x001f         /* Enable All Interrupts                                  */
@@ -327,13 +326,12 @@ epicsUInt16 ErEnableIrq_nolock (ErCardStruct *pCard, epicsUInt16 Mask)
 |*   it has to figure out why and who generated an interrupt
 |*
 \**************************************************************************************************/
-int		irqCount = 0;
+int irqCount = 0;
 void ErIrqHandler(int signal)
 {
 	struct ErCardStruct *pCard;
 	struct MrfErRegs *pEr;
 	int flags, i;
-
 	epicsMutexLock(ErCardListLock);
 	for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
 		pCard != NULL;
@@ -345,15 +343,15 @@ void ErIrqHandler(int signal)
 		}
 		pEr = pCard->pEr;
 		flags = EvrGetIrqFlags(pEr);
-		/*
-		 * Acknowledge immediately!
-		 */
-		if(flags & ~EVR_IRQFLAG_FIFOFULL)
-			EvrClearIrqFlags(pEr, (flags & ~EVR_IRQFLAG_FIFOFULL));
+                /*
+                 * Acknowledge immediately!
+                 */
+                if(flags & ~EVR_IRQFLAG_FIFOFULL)
+                    EvrClearIrqFlags(pEr, (flags & ~EVR_IRQFLAG_FIFOFULL)); 
 
-		irqCount++;
+                irqCount++;
 
-		/* This should always be here 2ms before the fiducial event */
+                /* This should always be here 2ms before the fiducial event */
 		if(flags & EVR_IRQFLAG_DATABUF) {
 			int databuf_sts = EvrGetDBufStatus(pEr);
 			if(databuf_sts & (1<<C_EVR_DATABUF_CHECKSUM))
@@ -407,7 +405,7 @@ void ErIrqHandler(int signal)
 	epicsMutexUnlock(ErCardListLock);
 	return;
 }
- 
+	
 
 /**************************************************************************************************
 |* ErConfigure () -- Event Receiver Card Configuration Routine
@@ -460,7 +458,7 @@ static int ErConfigure (
 		errlogPrintf("%s: driver does not support %d cards (max is %d).\n", __func__, Card, EVR_MAX_CARDS);
 		return ERROR;
 	}
-
+	
 	epicsMutexLock(ErConfigureLock);
 	for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
 		pCard != NULL;
@@ -479,14 +477,12 @@ static int ErConfigure (
 		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
-
 	fdEvr = EvrOpen(&pEr, strDevice);
 	if (fdEvr < 0) {
 		errlogPrintf("%s@%d(EvrOpen) Error: %s opening %s\n", __func__, __LINE__, strerror(errno), strDevice );
 		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
 	}
-	printf("EvrOpen, device = %s\n", strDevice);
 
 	/* Check the firmware version */
 	FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
@@ -570,7 +566,7 @@ static int ErConfigure (
 	/* Set the clock divider. For now it is a fixed value */
 	EvrSetFracDiv(pEr, FR_SYNTH_WORD);
 	ErEnableIrq_nolock(pCard, EVR_IRQ_OFF);
-	EvrIrqAssignEpicsHandler(pEr, fdEvr, ErIrqHandler);
+	EvrIrqAssignHandler(pEr, fdEvr, ErIrqHandler);
 	pCard->IrqLevel = 1;	/* Tell the interrupt handler this interrupt is enabled */
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);

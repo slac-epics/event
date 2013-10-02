@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 52
-y 49
-w 831
-h 936
+x 1925
+y 2304
+w 790
+h 758
 font "helvetica-bold-r-12.0"
 ctlFont "helvetica-bold-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -22,37 +22,8 @@ topShadowColor index 1
 botShadowColor index 14
 title "LCLS Event Codes"
 showGrid
-snapToGrid
 gridSize 4
 endScreenProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 540
-y 40
-w 264
-h 716
-lineColor index 14
-fillColor index 14
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 272
-y 40
-w 264
-h 716
-lineColor index 14
-fillColor index 14
-endObjectProperties
 
 # (Exit Button)
 object activeExitButtonClass
@@ -61,7 +32,7 @@ major 4
 minor 1
 release 0
 x 708
-y 12
+y 18
 w 50
 h 20
 fgColor index 1
@@ -80,9 +51,9 @@ major 4
 minor 0
 release 0
 x 0
-y 40
-w 784
-h 4
+y 49
+w 764
+h 2
 lineColor index 14
 fillColor index 14
 endObjectProperties
@@ -93,8 +64,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 120
-y 48
+x 100
+y 55
 w 39
 h 32
 font "helvetica-bold-r-14.0"
@@ -105,6 +76,7 @@ value {
   "Event"
   "Code"
 }
+autoSize
 endObjectProperties
 
 # (Static Text)
@@ -113,8 +85,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 16
-y 64
+x 15
+y 70
 w 39
 h 16
 font "helvetica-bold-r-14.0"
@@ -133,17 +105,18 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 12
-y 84
-w 76
-h 20
-font "helvetica-bold-r-12.0"
+x 5
+y 90
+w 55
+h 16
+font "helvetica-bold-r-14.0"
 fgColor index 14
 bgColor index 5
 useDisplayBg
 value {
   "Fiducial"
 }
+autoSize
 endObjectProperties
 
 # (Static Text)
@@ -152,8 +125,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 4
-y 4
+x 5
+y 0
 w 249
 h 27
 font "helvetica-bold-r-24.0"
@@ -166,23 +139,27 @@ value {
 autoSize
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
+# (Text Control)
+object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 1
+minor 2
 release 0
-x 12
-y 112
-w 76
-h 20
+x 100
+y 110
+w 40
+h 14
+controlPv "$(IOC):TSX_360_RATE.E"
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
-bgColor index 12
-useDisplayBg
-value {
-  "360Hz"
-}
+bgColor index 6
+autoHeight
+precision 0
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
 endObjectProperties
 
 # (Static Text)
@@ -191,8 +168,28 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 12
-y 140
+x 5
+y 105
+w 40
+h 16
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "360Hz"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 11
+y 131
 w 142
 h 16
 font "helvetica-bold-r-14.0"
@@ -211,9 +208,9 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 164
-y 48
-w 36
+x 150
+y 55
+w 32
 h 32
 font "helvetica-bold-r-14.0"
 fgColor index 14
@@ -221,33 +218,56 @@ bgColor index 5
 useDisplayBg
 value {
   "Rate"
-  "(Hz)"
+  "(Hz)*"
 }
+autoSize
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 5
+minor 2
 release 0
-x 164
-y 84
-w 36
-h 24
-controlPv "$(EVG):1:FIDUCIALRATE"
+x 145
+y 110
+w 40
+h 14
+controlPv "$(IOC):TSX_360_RATE"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
+fgColor index 14
+bgColor index 6
+autoHeight
 limitsFromDb
 nullColor index 14
-smartRefresh
 useHexPrefix
 newPos
 objType "controls"
-noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 145
+y 90
+w 40
+h 14
+controlPv "$(IOC):FIDUCIALRATE"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+fgAlarm
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
 endObjectProperties
 
 # (Static Text)
@@ -256,10 +276,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 284
-y 84
+x 295
+y 90
 w 76
-h 20
+h 16
 font "helvetica-bold-r-14.0"
 fgColor index 14
 bgColor index 5
@@ -267,144 +287,6 @@ useDisplayBg
 value {
   "Time Slot 1"
 }
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 388
-y 48
-w 39
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Event"
-  "Code"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 436
-y 48
-w 36
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Rate"
-  "(Hz)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 660
-y 48
-w 39
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Event"
-  "Code"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 708
-y 48
-w 36
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Rate"
-  "(Hz)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 204
-y 84
-w 48
-h 24
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-value {
-  "0"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 204
-y 48
-w 48
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Delay"
-  "(ticks)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 288
-y 60
-w 39
-h 16
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Name"
-}
 autoSize
 endObjectProperties
 
@@ -414,604 +296,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 476
-y 48
-w 48
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Delay"
-  "(ticks)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 748
-y 48
-w 48
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Delay"
-  "(ticks)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 124
-y 84
-w 36
-h 24
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-value {
-  "1"
-}
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 276
-y 760
-w 528
-h 1
-lineColor index 14
-fillColor index 14
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 60
-w 39
-h 16
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Name"
-}
-autoSize
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 160
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLSBEAM,NAME2=LCLS_60_,ID1=140,ID2=141,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 216
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLS_30_,NAME2=LCLS_10_,ID1=142,ID2=143,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 272
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLS_5_,NAME2=LCLS_1_,ID1=144,ID2=145,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 328
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLSHALF,NAME2=LCLS_N-1,ID1=146,ID2=147,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 384
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLS_N-2,NAME2=LCLSTCAV,ID1=148,ID2=149,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 440
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLSBURS,NAME2=LCLS_ACC,ID1=150,ID2=151,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 496
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLSSTBY,NAME2=LCRFONLY,ID1=152,ID2=153,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 552
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCACC_10,NAME2=STRAIGHT,ID1=154,ID2=155,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 608
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLSTCV3,NAME2=LCNOTCV3,ID1=156,ID2=157,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 664
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCLSPOCK,NAME2=LCLSPROF,ID1=158,ID2=159,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 204
-y 112
-w 48
-h 24
-controlPv "$(EVG):1:TSX_360_DLY"
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 1
-smartRefresh
-newPos
-objType "monitors"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 164
-y 112
-w 36
-h 24
-controlPv "$(EVG):1:TSX_360_RATE"
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-limitsFromDb
-nullColor index 1
-smartRefresh
-newPos
-objType "monitors"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 124
-y 112
-w 36
-h 24
-controlPv "$(EVG):1:TSX_360_CTRL.A"
-font "helvetica-bold-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 1
-smartRefresh
-newPos
-objType "monitors"
-noExecuteClipMask
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 720
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCTCV3PM,NAME2=LCBXKIK,ID1=160,ID2=161,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 776
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=LCBYKIK,NAME2=LCALKIK,ID1=161,ID2=162,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 0
-y 832
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TESTBURS,NAME2=LCLSTBD,ID1=164,ID2=165,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 104
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS1_120_,NAME2=TS1_60_,ID1=10,ID2=11,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 160
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS1_30_,NAME2=TS1_10_,ID1=12,ID2=13,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 216
-w 244
-h 80
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-3-ec.edl"
-}
-symbols {
-  0 "NAME1=TS1_5_,NAME2=TS1_1_,NAME3=TS1_HALF,ID1=14,ID2=15,ID3=16,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 284
-y 308
+x 295
+y 250
 w 76
 h 16
 font "helvetica-bold-r-14.0"
@@ -1024,95 +310,14 @@ value {
 autoSize
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 328
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS2_120_,NAME2=TS2_60_,ID1=20,ID2=21,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 384
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS2_30_,NAME2=TS2_10_,ID1=22,ID2=23,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 440
-w 244
-h 80
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-3-ec.edl"
-}
-symbols {
-  0 "NAME1=TS2_5_,NAME2=TS2_1_,NAME3=TS2_HALF,ID1=24,ID2=25,ID3=26,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 0
-x 284
-y 532
+x 295
+y 410
 w 76
 h 16
 font "helvetica-bold-r-14.0"
@@ -1125,196 +330,14 @@ value {
 autoSize
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 552
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS3_120_,NAME2=TS3_60_,ID1=30,ID2=31,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 608
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS3_30_,NAME2=TS3_10_,ID1=22,ID2=33,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 276
-y 664
-w 244
-h 80
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-3-ec.edl"
-}
-symbols {
-  0 "NAME1=TS3_5_,NAME2=TS3_1_,NAME3=TS3_HALF,ID1=34,ID2=35,ID3=36,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 0
-x 552
-y 84
-w 76
-h 16
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Time Slot 4"
-}
-autoSize
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 104
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS4_120_,NAME2=TS4_60_,ID1=40,ID2=41,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 160
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS4_30_,NAME2=TS4_10_,ID1=42,ID2=43,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 216
-w 244
-h 80
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-3-ec.edl"
-}
-symbols {
-  0 "NAME1=TS4_5_,NAME2=TS4_1_,NAME3=TS4_HALF,ID1=44,ID2=45,ID3=46,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 308
+x 528
+y 248
 w 76
 h 16
 font "helvetica-bold-r-14.0"
@@ -1327,95 +350,14 @@ value {
 autoSize
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 328
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS5_120_,NAME2=TS5_60_,ID1=50,ID2=51,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 384
-w 244
-h 52
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
-}
-symbols {
-  0 "NAME1=TS5_30_,NAME2=TS5_10_,ID1=52,ID2=53,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
-# (Embedded Window)
-object activePipClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 552
-y 440
-w 244
-h 80
-fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-3-ec.edl"
-}
-symbols {
-  0 "NAME1=TS5_5_,NAME2=TS5_1_,NAME3=TS5_HALF,ID1=54,ID2=55,ID3=56,EVG=$(EVG)"
-}
-noScroll
-endObjectProperties
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 0
-x 552
-y 532
+x 528
+y 408
 w 76
 h 16
 font "helvetica-bold-r-14.0"
@@ -1428,85 +370,88 @@ value {
 autoSize
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 0
-x 552
-y 552
-w 244
-h 52
+x 347
+y 57
+w 39
+h 32
+font "helvetica-bold-r-14.0"
 fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
+bgColor index 5
+useDisplayBg
+value {
+  "Event"
+  "Code"
 }
-symbols {
-  0 "NAME1=TS6_120_,NAME2=TS6_60_,ID1=60,ID2=61,EVG=$(EVG)"
-}
-noScroll
+autoSize
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 0
-x 552
-y 608
-w 244
-h 52
+x 397
+y 57
+w 32
+h 32
+font "helvetica-bold-r-14.0"
 fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-2-ec.edl"
+bgColor index 5
+useDisplayBg
+value {
+  "Rate"
+  "(Hz)*"
 }
-symbols {
-  0 "NAME1=TS6_30_,NAME2=TS6_10_,ID1=62,ID2=63,EVG=$(EVG)"
-}
-noScroll
+autoSize
 endObjectProperties
 
-# (Embedded Window)
-object activePipClass
+# (Static Text)
+object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
 release 0
-x 552
-y 664
-w 244
-h 80
+x 635
+y 58
+w 39
+h 32
+font "helvetica-bold-r-14.0"
 fgColor index 14
-bgColor index 0
-topShadowColor index 1
-botShadowColor index 14
-displaySource "menu"
-filePv "LOC\\\\emb-ec=i,0"
-setSize
-numDsps 1
-displayFileName {
-  0 "evrScreens/emb-evg-3-ec.edl"
+bgColor index 5
+useDisplayBg
+value {
+  "Event"
+  "Code"
 }
-symbols {
-  0 "NAME1=TS6_5_,NAME2=TS6_1_,NAME3=TS6_HALF,ID1=64,ID2=65,ID3=66,EVG=$(EVG)"
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 685
+y 58
+w 32
+h 32
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Rate"
+  "(Hz)*"
 }
-noScroll
+autoSize
 endObjectProperties
 
 # (Rectangle)
@@ -1515,10 +460,10 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 272
-y 304
-w 528
-h 1
+x 237
+y 77
+w 0
+h 600
 lineColor index 14
 fillColor index 14
 endObjectProperties
@@ -1529,11 +474,706 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 272
-y 528
-w 528
+x 506
+y 51
+w 0
+h 520
+lineColor index 14
+fillColor index 14
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 190
+y 110
+w 45
+h 14
+controlPv "EVNT:SYS0:1:TSX_360_DLY"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 190
+y 90
+w 45
+h 15
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 190
+y 55
+w 43
+h 32
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Delay"
+  "(ticks)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 250
+y 70
+w 39
+h 16
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Name"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 437
+y 57
+w 43
+h 32
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Delay"
+  "(ticks)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 725
+y 58
+w 43
+h 32
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Delay"
+  "(ticks)"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 90
+w 40
+h 15
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+value {
+  "1"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 255
+y 590
+w 310
+h 48
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "* Rate updated only when IRQ is enabled for "
+  "the event code (on the \"Triggers\" display"
+  "for the first EVR on the IOC)."
+}
+autoSize
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 250
+y 575
+w 525
 h 1
 lineColor index 14
 fillColor index 14
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 8
+y 674
+w 70
+h 14
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "TCAV3 OTR"
+}
+autoSize
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 103
+y 674
+w 40
+h 14
+controlPv "$(IOC):LCTCV3PMRATE.E"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+precision 0
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 148
+y 674
+w 40
+h 14
+controlPv "$(IOC):LCTCV3PMRATE"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 193
+y 675
+w 45
+h 14
+controlPv "EVNT:SYS0:1:LCTCV3PMDLY"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 8
+y 694
+w 39
+h 14
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "BXKIK"
+}
+autoSize
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 103
+y 694
+w 40
+h 14
+controlPv "$(IOC):LCBXKIKRATE.E"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+precision 0
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 148
+y 694
+w 40
+h 14
+controlPv "$(IOC):LCBXKIKRATE"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 193
+y 695
+w 45
+h 14
+controlPv "EVNT:SYS0:1:LCBXKIKDLY"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 8
+y 714
+w 39
+h 14
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "BYKIK"
+}
+autoSize
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 103
+y 714
+w 40
+h 14
+controlPv "$(IOC):LCBYKIKRATE.E"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+precision 0
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 148
+y 714
+w 40
+h 14
+controlPv "$(IOC):LCBYKIKRATE"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 2
+release 0
+x 193
+y 715
+w 45
+h 14
+controlPv "EVNT:SYS0:1:LCBYKIKDLY"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 6
+autoHeight
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 246
+y 105
+w 238
+h 141
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-7-ec.edl"
+}
+symbols {
+  0 "DEC=1"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 246
+y 266
+w 238
+h 141
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-7-ec.edl"
+}
+symbols {
+  0 "DEC=2"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 247
+y 426
+w 238
+h 141
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-7-ec.edl"
+}
+symbols {
+  0 "DEC=3"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 527
+y 105
+w 238
+h 141
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-7-ec.edl"
+}
+symbols {
+  0 "DEC=4"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 527
+y 265
+w 238
+h 141
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-7-ec.edl"
+}
+symbols {
+  0 "DEC=5"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 527
+y 426
+w 238
+h 141
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-7-ec.edl"
+}
+symbols {
+  0 "DEC=6"
+}
+noScroll
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 530
+y 86
+w 76
+h 16
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Time Slot 4"
+}
+autoSize
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 531
+y 65
+w 39
+h 16
+font "helvetica-bold-r-14.0"
+fgColor index 14
+bgColor index 5
+useDisplayBg
+value {
+  "Name"
+}
+autoSize
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 1
+y 148
+w 238
+h 251
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-10-ec.edl"
+}
+symbols {
+  0 "DEC=14"
+}
+noScroll
+endObjectProperties
+
+# (Embedded Window)
+object activePipClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 0
+y 401
+w 238
+h 251
+fgColor index 14
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 14
+displaySource "menu"
+filePv "LOC\\\\emb-ec=i,0"
+numDsps 1
+displayFileName {
+  0 "evrscreens/emb-10-ec.edl"
+}
+symbols {
+  0 "DEC=15"
+}
+noScroll
 endObjectProperties
 

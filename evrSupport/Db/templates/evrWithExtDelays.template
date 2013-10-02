@@ -79,7 +79,7 @@ record(er, "$(DEV):CTRL")
   field(DG1P, "$(DG1P)")
   field(DG2P, "$(DG2P)")
   field(DG3P, "Normal")
-  field(FLNK, "$(EVRFLNK=$(EVR):Triggers)")
+  field(FLNK, "$(EVRFLNK)")
 }
 
 record(bi, "$(DEV):LINK")

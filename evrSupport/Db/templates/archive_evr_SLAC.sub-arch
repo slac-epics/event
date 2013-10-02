@@ -3,6 +3,6 @@
 #
 file archive_evr_SLAC.tpl-arch
 {
-	{	EVR	= $(EVR)	}
+	{	IOC	= $(IOC),	EVR	= $(EVR)	}
 }
 

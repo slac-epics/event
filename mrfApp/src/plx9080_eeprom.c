@@ -380,10 +380,10 @@ static void usage()
 long plx9080_ee_init(int instance, int plxType, int eeType)
 {
 int b,d,f,hasee;
-uint32_t base;
+unsigned base;
 unsigned devid;
 unsigned off;
-uint32_t tmp;
+unsigned tmp;
 
 	switch( plxType ) {
 		default:
@@ -409,7 +409,7 @@ uint32_t tmp;
 							 instance,
 							 &b,&d,&f)) {
 		pci_read_config_dword(b,d,f,PCI_BASE_ADDRESS_0,&base);
-		printf("PLX %u found at 0x%08lx", plxType, base);
+		printf("PLX %u found at 0x%08x", plxType, base);
 		pci_read_config_dword(b,d,f,PCI_SUBSYSTEM_VENDOR_ID,&tmp);
 		plx9080_ee_reg = (volatile unsigned *)(base + off);
 	} else {
@@ -418,7 +418,7 @@ uint32_t tmp;
 	}
 	hasee = (in_le32(plx9080_ee_reg) & EE_PRES);
 	printf(", %sEEPROM present\n", hasee ? "" : "NO ");
-	printf("Subsytem vendor ID 0x%04lx, device ID 0x%04lx\n",
+	printf("Subsytem vendor ID 0x%04x, device ID 0x%04x\n",
 		tmp & 0xffff, (tmp>>16)&0xffff);				
 	return hasee ? 0 : -1;
 }
