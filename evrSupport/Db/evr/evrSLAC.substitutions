@@ -1,0 +1,68 @@
+#
+# Basic SLAC EVR Substitutions file
+# Set event specific variations here.
+#
+# This file also gets processed via msi to produce
+# $(EVENT)/db/evrSLAC.db
+# You can load that file directly from st.cmd if all
+# you need is a generic card 0 SLAC EVR instance.
+#
+# Example:
+# dbLoadRecords( "db/evrSLAC.db", "EVR=AMO:R06:EVR:19,CARD=0" )
+#
+# If you need to customize the initial starting database,
+# or create a non-std EVR database, this basic substitutions
+# file can be used as a starting point.  Add macro values for
+# any macros in the template files where you want something
+# other than the default.
+
+# Need one instance of evrSLAC for the card
+file evrSLAC.template
+{
+	{	DEV = "$(EVR)"	}
+}
+
+
+#
+# Create 14 event controls
+#
+#   DEV     Name of EVR
+#   NAME    EVENT1 to EVENT14 - instantiate all 14 records even if you only use a few events.
+#   ID  	Event code number.
+file evrPmcEvent.template
+{
+#     Device    <------Event ------------------>       
+    pattern
+    { DEV,      NAME,    ID,  LNAME             }
+    { $(EVR),   EVENT1, 140,  "Beam Full"       }
+    { $(EVR),   EVENT2, 141,  "Beam & 60Hz"     }
+    { $(EVR),   EVENT3, 142,  "Beam & 30Hz"     }
+    { $(EVR),   EVENT4, 143,  "Beam & 10Hz"     }
+    { $(EVR),   EVENT5, 144,  "Beam & 5Hz"      }
+    { $(EVR),   EVENT6, 145,  "Beam & 1Hz"      }
+    { $(EVR),   EVENT7, 146,  "Beam & 0.5Hz"    }
+    { $(EVR),   EVENT8,  40,  "120Hz"           }
+    { $(EVR),   EVENT9,  41,  "60Hz"            }
+    { $(EVR),   EVENT10, 42,  "30Hz"            }
+    { $(EVR),   EVENT11, 43,  "10Hz"            }
+    { $(EVR),   EVENT12, 44,  "5Hz"             }
+    { $(EVR),   EVENT13, 45,  "1Hz"             }
+    { $(EVR),   EVENT14, 46,  "0.5Hz"           }
+}
+
+# Need one instance of fiducialTimestamp.db for
+# pattern processing and fiduicial ID timestamping
+file fiducialTimestamp.db
+{
+    { DEV=$(EVR) }
+}
+
+#
+# Creates records to support the event sequencer
+# event codes for the LCLS accelerator and PCDS experiments
+file pcdsEventCodes.db
+{
+   { DEV="$(EVR)", EVG="EVNT:SYS0" }
+}
+
+

@@ -172,7 +172,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -495,7 +495,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -656,7 +656,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -817,7 +817,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -978,7 +978,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1139,7 +1139,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1386,7 +1386,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1547,7 +1547,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1622,7 +1622,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1783,7 +1783,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1944,7 +1944,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -2105,7 +2105,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -2266,7 +2266,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -2427,7 +2427,7 @@ font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
-bgColor index 6
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -3733,7 +3733,7 @@ x 8
 y 88
 w 104
 h 24
-controlPv "$(EVR):EVENT1CTRL.DESC"
+controlPv "$(EVR):EVENT1_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3880,7 +3880,7 @@ x 8
 y 120
 w 104
 h 24
-controlPv "$(EVR):EVENT2CTRL.DESC"
+controlPv "$(EVR):EVENT2_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3901,7 +3901,7 @@ x 8
 y 152
 w 104
 h 24
-controlPv "$(EVR):EVENT3CTRL.DESC"
+controlPv "$(EVR):EVENT3_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3922,7 +3922,7 @@ x 8
 y 184
 w 104
 h 24
-controlPv "$(EVR):EVENT4CTRL.DESC"
+controlPv "$(EVR):EVENT4_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3943,7 +3943,7 @@ x 8
 y 216
 w 104
 h 24
-controlPv "$(EVR):EVENT5CTRL.DESC"
+controlPv "$(EVR):EVENT5_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3964,7 +3964,7 @@ x 8
 y 248
 w 104
 h 24
-controlPv "$(EVR):EVENT6CTRL.DESC"
+controlPv "$(EVR):EVENT6_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3985,7 +3985,7 @@ x 8
 y 280
 w 104
 h 24
-controlPv "$(EVR):EVENT7CTRL.DESC"
+controlPv "$(EVR):EVENT7_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -4006,7 +4006,7 @@ x 8
 y 312
 w 104
 h 24
-controlPv "$(EVR):EVENT8CTRL.DESC"
+controlPv "$(EVR):EVENT8_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -4027,7 +4027,7 @@ x 8
 y 344
 w 104
 h 24
-controlPv "$(EVR):EVENT9CTRL.DESC"
+controlPv "$(EVR):EVENT9_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -4048,7 +4048,7 @@ x 8
 y 376
 w 104
 h 24
-controlPv "$(EVR):EVENT10CTRL.DESC"
+controlPv "$(EVR):EVENT10_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -4069,7 +4069,7 @@ x 8
 y 408
 w 104
 h 24
-controlPv "$(EVR):EVENT11CTRL.DESC"
+controlPv "$(EVR):EVENT11_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -4090,7 +4090,7 @@ x 8
 y 440
 w 104
 h 24
-controlPv "$(EVR):EVENT12CTRL.DESC"
+controlPv "$(EVR):EVENT12_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -4111,7 +4111,7 @@ x 8
 y 472
 w 104
 h 24
-controlPv "$(EVR):EVENT13CTRL.DESC"
+controlPv "$(EVR):EVENT13_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -4132,7 +4132,7 @@ x 8
 y 504
 w 104
 h 24
-controlPv "$(EVR):EVENT14CTRL.DESC"
+controlPv "$(EVR):EVENT14_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15

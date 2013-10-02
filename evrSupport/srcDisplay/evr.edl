@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 62
-y 122
+x 90
+y 57
 w 475
 h 528
 font "helvetica-medium-r-18.0"
@@ -475,8 +475,7 @@ controlPv "$(EVR):CTRL.FPS0"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -502,8 +501,7 @@ controlPv "$(EVR):CTRL.FPS1"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -529,8 +527,7 @@ controlPv "$(EVR):CTRL.FPS2"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -853,8 +850,7 @@ controlPv "$(EVR):CTRL.DG0W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -880,8 +876,7 @@ controlPv "$(EVR):CTRL.DG1W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -907,8 +902,7 @@ controlPv "$(EVR):CTRL.DG2W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -934,8 +928,7 @@ controlPv "$(EVR):CTRL.DG3W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -961,8 +954,7 @@ controlPv "$(EVR):CTRL.DG0D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -988,8 +980,7 @@ controlPv "$(EVR):CTRL.DG1D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1015,8 +1006,7 @@ controlPv "$(EVR):CTRL.DG2D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1042,8 +1032,7 @@ controlPv "$(EVR):CTRL.DG3D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1089,8 +1078,7 @@ controlPv "$(EVR):CTRL.DG0C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1116,8 +1104,7 @@ controlPv "$(EVR):CTRL.DG1C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1143,8 +1130,7 @@ controlPv "$(EVR):CTRL.DG2C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1170,8 +1156,7 @@ controlPv "$(EVR):CTRL.DG3C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1677,10 +1662,12 @@ controlPv "$(EVR):FP0L.DESC"
 format "string"
 font "courier-bold-r-12.0"
 fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
 nullColor index 18
+smartRefresh
 fastUpdate
 newPos
 objType "controls"
@@ -1701,10 +1688,12 @@ controlPv "$(EVR):FP1L.DESC"
 format "string"
 font "courier-bold-r-12.0"
 fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
 nullColor index 18
+smartRefresh
 fastUpdate
 newPos
 objType "controls"
@@ -1725,10 +1714,12 @@ controlPv "$(EVR):FP2L.DESC"
 format "string"
 font "courier-bold-r-12.0"
 fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
 nullColor index 18
+smartRefresh
 fastUpdate
 newPos
 objType "controls"
@@ -1804,11 +1795,11 @@ bgColor index 4
 topShadowColor index 1
 botShadowColor index 11
 font "helvetica-medium-r-12.0"
-buttonLabel "Seq Events"
+buttonLabel "Seq Codes"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrScreens/pcdsEventCodes.edl"
+  0 "evrScreens/seqEventCodes.edl"
 }
 setPosition {
   0 "parentWindow"
@@ -1837,7 +1828,7 @@ bgColor index 4
 topShadowColor index 1
 botShadowColor index 11
 font "helvetica-medium-r-12.0"
-buttonLabel "LCLS Events"
+buttonLabel "LCLS Codes"
 numPvs 4
 numDsps 1
 displayFileName {
