@@ -1,22 +1,24 @@
 #==============================================================================
 #
-# Abs:  EVR Event Records
+# Abs:  LCLS EVR Event Records
+#
+# Original LCLS Accelerator group list of event codes
+# with original naming
+#
+# For PCDS, please use pcdsEventCodes.substitutions
+# which adds support for photon group event codes
+# and unifies the naming.
 #
 # Name: evrEventAll.substitutions
 #
 #==============================================================================
 #
-file evrPatternProc.db {
-pattern { DEV       }
-	{ $(DEVICE) }
-}
 
 file evrEvent.db
 {
 #                            Event  Delay in
 #	 Location            Code   Clock Ticks Priority   Alarm Limits        Long Name
 pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , LNAME          }
-	{$(DEVICE) , LCBYKIK , 162,11890      , LOW  ,120.5,120.5,  -1 ,  -1 , "LTU  Kicker (BYKIK)"}
 	{$(DEVICE) , LCLSBEAM, 140,11900      , LOW  ,120.5,120.5,  -1 ,  -1 , "Full Rate"    }
 	{$(DEVICE) , LCLS_60_, 141,11901      , LOW  , 60.5, 60.5,  -1 ,  -1 , "Beam & 60Hz"  }
 	{$(DEVICE) , LCLS_30_, 142,11902      , LOW  , 30.5, 30.5,  -1 ,  -1 , "Beam & 30Hz"  }
@@ -39,7 +41,11 @@ pattern { DEV      , NAME    , ID , DELY      , PRIO ,HIHI ,HIGH ,LOLO ,LOW  , L
 	{$(DEVICE) , LCLSPOCK, 158,11918      , LOW  ,120.5,120.5,  -1 , 0.5 , "Pockels Cell" }
 	{$(DEVICE) , LCLSPROF, 159,11919      , LOW  , 10.5, 10.5,  -1 ,  -1 , "Profile Monitors"   }
 	{$(DEVICE) , LCTCV3PM, 160,11920      , LOW  , 10.5, 10.5,  -1 ,  -1 , "TCAV3 OTR"    }
-	{$(DEVICE) , LCBXKIK , 161,11921      , LOW  ,120.5,120.5,  -1 ,  -1 , "LI25 Kicker (BXKIK)"}
+	{$(DEVICE) , LCBXKIK , 161,11921      , LOW  ,120.5,120.5,  -1 ,  -1 , "LI25 Kicker (BXKIK)" }
+	{$(DEVICE) , LCBYKIK , 162,11890      , LOW  ,120.5,120.5,  -1 ,  -1 , "LTU  Kicker (BYKIK)" }
+	{$(DEVICE) , LCALKIK , 163,11922      , LOW  ,120.5,120.5,  -1 ,  -1 , "A-line Kicker" }
+	{$(DEVICE) , TESTBURS, 164,11923      , LOW  ,120.5,120.5,  -1 ,  -1 , "Test Burst" }
+	{$(DEVICE) , LCLSTBD , 165,11924      , LOW  ,120.5,120.5,  -1 ,  -1 , "Spare" }
 # Beam-Independent Time Slot Triggers
 #   360Hz
 	{$(DEVICE) , TSX_360_ , 9 ,12950      , LOW  ,360.5,360.5,359.5,359.5, "360Hz"        }

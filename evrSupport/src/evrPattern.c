@@ -163,7 +163,7 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
       if (deltaTime >= evrDeltaTimeMax) {
         invalidTimeCount++;
         if (invalidTimeCount % 10000 == 0)
-            printf("Delta Time = %d, > %d\n", deltaTime, evrDeltaTimeMax);
+            printf("Delta Time = %ld, > %ld\n", deltaTime, evrDeltaTimeMax);
         if (ntpStatus) {
           patternErrCount = 0;
         } else {
@@ -637,7 +637,7 @@ static int evrTriggerInit(longSubRecord *psub)
 }
 
 static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard, unsigned long last,
-                        unsigned long *gen)
+                        epicsUInt32 *gen)
 {
     int i, j = -1, result = 0;
 
@@ -664,11 +664,21 @@ static int find_trigger(epicsEnum16 enable, int mask, ErCardStruct  *pCard, unsi
             break;
         }
     }
+
     if (result != last)
         (*gen)++;
     return result;
 }
 
+
+/*
+ * Input:
+ *     X - Card number
+ * Output:
+ *     A-L - Event number causing this output to trigger, 0 = no trigger,
+ *           512 = multiple triggers, 1024 = misconfigure (no IRQ).
+ *     M-X - Change counters for A-L, respectively.
+ */
 static int evrTriggerProc(longSubRecord *psub)
 {
     ErCardStruct  *pCard = ErGetCardStruct(psub->z);

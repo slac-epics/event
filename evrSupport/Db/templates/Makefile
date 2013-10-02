@@ -10,16 +10,15 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------------------
 # Create and install (or just install)
 # databases, templates, substitutions like this
-#
+
 # XTOD templates
 DB_INSTALLS += basic-evr.substitutions
-DB_INSTALLS += evrSLAC.template
-DB_INSTALLS += evrPmc230.substitutions
 DB_INSTALLS += evrPmc230.template
-DB_INSTALLS += evrPmcEvent.template
-DB_INSTALLS += evrSlaveEvent.template
-DB_INSTALLS += evrVme230.substitutions
 DB_INSTALLS += evrVme230.template
+DB_INSTALLS += evrSLAC.template
+DB_INSTALLS += evrPmcEvent.template
+# evrSlaveEvent.template should not be needed. - bhill
+# DB_INSTALLS += evrSlaveEvent.template
 DB_INSTALLS += evrVmeEvent.template
 DB_INSTALLS += evrEventCtrl.template
 DB_INSTALLS += evrEventRate.template
@@ -52,7 +51,11 @@ ARCHIVE += archive_vme_evr.tpl-arch
 # REQ += <file>.substitutions
 # REQ += <file>.template
 #
+REQ += autosave_evr.req
+REQ += autosave_evr.sub-req
 REQ += autosave_evr.tpl-req
+REQ += autosave_evr_SLAC.req
+REQ += autosave_evr_SLAC.sub-req
 REQ += autosave_evr_SLAC.tpl-req
 REQ += autosave_pmc_evr.tpl-req
 REQ += autosave_vme_evr.tpl-req

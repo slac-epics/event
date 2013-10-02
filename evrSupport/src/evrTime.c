@@ -53,12 +53,14 @@
 /* c includes */
 
 #include <string.h>           /* for memset                */
+#include <sys/time.h>
 #include "subRecord.h"        /* for struct subRecord      */
 #include "longSubRecord.h"    /* for struct longSubRecord  */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsTime.h"        /* epicsTimeStamp and protos */
 #include "epicsGeneralTime.h" /* generalTimeTpRegister     */
+#include "generalTimeSup.h"
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
@@ -70,7 +72,6 @@
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
 #include "evrPattern.h"        
-#include <sys/time.h>
 #include <time.h>
 
 #define  EVR_TIME_OK 0
@@ -198,10 +199,10 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
 int evrTimeGetFromPipeline(epicsTimeStamp  *epicsTime_ps,
                            evrTimeId_te     id,
                            evrModifier_ta   modifier_a, 
-                           unsigned long   *patternStatus_p,
-                           unsigned long   *edefAvgDoneMask_p,
-                           unsigned long   *edefMinorMask_p,
-                           unsigned long   *edefMajorMask_p)
+                           epicsUInt32	*	patternStatus_p,
+                           epicsUInt32	*	edefAvgDoneMask_p,
+                           epicsUInt32	*	edefMinorMask_p,
+                           epicsUInt32	*	edefMajorMask_p)
 {
   evrTimePattern_ts *evr_ps;
   int status;
@@ -414,6 +415,14 @@ int evrTimeGetFromEdefTime(unsigned int     edefIdx,
 int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 {
   int status;
+
+  /* Hack event code to get pre-bundled general-time behavior */
+  if ( (unsigned int)epicsTimeEventBestTime == eventCode )
+	eventCode = 0;
+  
+  /* Hack event code to get pre-bundled general-time behavior */
+  if ( (unsigned int)epicsTimeEventBestTime == eventCode )
+	eventCode = 0;
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
@@ -528,6 +537,22 @@ int evrTimePutPulseID (epicsTimeStamp  *epicsTime_ps, unsigned int pulseID)
   return epicsTimeOK;
 }
 
+/*===============================================
+  Wrapper function for generalTime: Temporal
+=================================================*/
+static int evrTimeGet_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGet(epicsTime_ps, (unsigned int)eventCode);
+}
+
+static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
+{
+    return evrTimeGetSystem(epicsTime_ps, 0);
+}
+
+
+
+
 /*=============================================================================
 
   Name: evrTimeInit
@@ -609,14 +634,17 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].fidR    = -1;
           eventCodeTime_as[idx].fidW    = 0;
         }
-        if (generalTimeTpRegister("evrTimeGet", 1000, 0, 0, 1,
-                                  (pepicsTimeGetEvent)evrTimeGet))
+
+		/* For IOCs that support iocClock (RTEMS and vxWorks), register
+		   evrTimeGet with generalTime so it is used by epicsTimeGetEvent */
+        if(generalTimeRegisterEventProvider("evrTimeGet", 1000, (TIMEEVENTFUN) evrTimeGet_gtWrapper))
           return epicsTimeERROR;
-        if (generalTimeTpRegister("evrTimeGetSystem", 2000, 0, 0, 2,
-                                  (pepicsTimeGetEvent)evrTimeGetSystem))
+
+        if(generalTimeRegisterEventProvider("evrTimeGetSystem", 2000, (TIMEEVENTFUN) evrTimeGetSystem_gtWrapper))
           return epicsTimeERROR;
         evrTimeRWMutex_ps = epicsMutexCreate();
-        if (!evrTimeRWMutex_ps) return epicsTimeERROR;
+        if (!evrTimeRWMutex_ps)
+			return epicsTimeERROR;
   }
   return epicsTimeOK;
 }
@@ -962,10 +990,20 @@ static long evrTimeRate(subRecord *psub)
 
   if ((eventCode > 0) && (eventCode <= MRF_NUM_EVENTS)) {
     if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
-      psub->val	= eventCodeTime_as[eventCode].count - psub->a;
-      psub->a	= eventCodeTime_as[eventCode].count;
+	  int	eventCodeCount = eventCodeTime_as[eventCode].count;
+	  psub->val	= 0;
+	  /* Only compute count if event code is the same as last time */
+	  if ( psub->f == psub->e )
+		psub->val	= eventCodeCount - psub->a;
+      psub->f	= psub->e;
+      psub->a	= eventCodeCount;
       epicsMutexUnlock(evrTimeRWMutex_ps);
-      if ( psub->val < 0 ) psub->val += EVR_MAX_INT;
+
+	  /* Check for integer rollover */
+      if ( psub->val < 0 )
+	  	psub->val += EVR_MAX_INT;
+
+	  /* Convert 0.5Hz count (MODULO 720 fiducials) to a rate in sec */
       psub->val /= MODULO720_SECS;
       return epicsTimeOK;
     }
@@ -995,9 +1033,9 @@ int evrTimeCount(unsigned int eventCode, unsigned int fiducial)
     evrTime_ts	*	pevrTime = &eventCodeTime_as[eventCode];
     /* Rollover if value gets too big */
     if (pevrTime->count < EVR_MAX_INT)
-      pevrTime->count++;
+	pevrTime->count++;
     else
-      pevrTime->count = 1;
+        pevrTime->count = 1;
     pevrTime->fidq[pevrTime->fidW] = fiducial;
     if (++pevrTime->fidW == MAX_TS_QUEUE)
         pevrTime->fidW = 0;
@@ -1035,18 +1073,32 @@ static long evrTimeEvent(longSubRecord *psub)
      * If it's a bad event or we can't lock the time mutex, just
      * fake the count and go home!
      */
+	/*
+	 * I disabled fake count for two reasons
+	 *	1. psub-val gets overridden by the event
+	 *		code count for normal operation.
+	 *	2. If there is a problem in evrTimeInit(),
+	 *		this routine returns an error code,
+	 *		but these few lines could make you
+	 *		think the EVR was still working.
+	 *	bhill - 2/15/12
+	 */
     if ((psub->a <= 0) || (psub->a > MRF_NUM_EVENTS)) {
+#if 0
         if (psub->val < EVR_MAX_INT)
             psub->val++;
         else
             psub->val = 1;
+#endif
         return epicsTimeERROR;
     }
     if (!evrTimeRWMutex_ps || epicsMutexLock(evrTimeRWMutex_ps)) {
+#if 0
         if (psub->val < EVR_MAX_INT)
             psub->val++;
         else
             psub->val = 1;
+#endif
         eventCodeTime_as[psub->a].status = epicsTimeERROR;
         return epicsTimeERROR;
     }
@@ -1216,12 +1268,12 @@ static long evrTimeEvent(longSubRecord *psub)
 
   Abs:  Lock Mutex and Return pointer to newest pattern
 
-  Args: Type                Name              Access     Description
-        ------------------- -----------       ---------- ----------------------------
-        evrMessagePattern_ts ** pattern_pps   Write  Pointer to pattern
-	unsigned long **     timeslot_pp      Write  Pointer to timeslot
-	unsigned long **     patternStatus_pp Write  Pointer to status
-	epicsTimeStamp *     mod720time_pps   Write  Pointer to mod720 timestamp
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        evrMessagePattern_ts ** pattern_pps Write  Pointer to pattern
+        unsigned long **        timeslot_pp Write  Pointer to timeslot
+        unsigned long **     patternStatus_pp Write  Pointer to status
+        epicsTimeStamp *     mod720time_pps Write  Pointer to mod720 timestamp
 
 	Rem:  The caller MUST call evrTimePatternPutEnd after the pattern is filled in.
 

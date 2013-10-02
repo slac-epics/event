@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1925
-y 2304
+x 90
+y 57
 w 475
 h 528
 font "helvetica-medium-r-18.0"
@@ -22,7 +22,7 @@ botShadowColor index 14
 title "$(EVR) Event Receiver"
 showGrid
 snapToGrid
-gridSize 8
+gridSize 4
 endScreenProperties
 
 # (Rectangle)
@@ -465,7 +465,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 104
 y 328
@@ -475,8 +475,7 @@ controlPv "$(EVR):CTRL.FPS0"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -485,13 +484,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 104
 y 352
@@ -501,8 +501,7 @@ controlPv "$(EVR):CTRL.FPS1"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -511,13 +510,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 104
 y 376
@@ -527,8 +527,7 @@ controlPv "$(EVR):CTRL.FPS2"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -537,6 +536,7 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -840,7 +840,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 136
@@ -850,8 +850,7 @@ controlPv "$(EVR):CTRL.DG0W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -860,13 +859,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 168
@@ -876,8 +876,7 @@ controlPv "$(EVR):CTRL.DG1W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -886,13 +885,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 200
@@ -902,8 +902,7 @@ controlPv "$(EVR):CTRL.DG2W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -912,13 +911,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 224
 y 232
@@ -928,8 +928,7 @@ controlPv "$(EVR):CTRL.DG3W"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -938,13 +937,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 136
@@ -954,8 +954,7 @@ controlPv "$(EVR):CTRL.DG0D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -964,13 +963,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 168
@@ -980,8 +980,7 @@ controlPv "$(EVR):CTRL.DG1D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -990,13 +989,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 200
@@ -1006,8 +1006,7 @@ controlPv "$(EVR):CTRL.DG2D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1016,13 +1015,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 312
 y 232
@@ -1032,8 +1032,7 @@ controlPv "$(EVR):CTRL.DG3D"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1042,6 +1041,7 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -1068,7 +1068,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 136
@@ -1078,8 +1078,7 @@ controlPv "$(EVR):CTRL.DG0C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1088,13 +1087,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 168
@@ -1104,8 +1104,7 @@ controlPv "$(EVR):CTRL.DG1C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1114,13 +1113,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 200
@@ -1130,8 +1130,7 @@ controlPv "$(EVR):CTRL.DG2C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1140,13 +1139,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 232
@@ -1156,8 +1156,7 @@ controlPv "$(EVR):CTRL.DG3C"
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
-bgColor index 3
-useDisplayBg
+bgColor index 5
 editable
 motifWidget
 limitsFromDb
@@ -1166,6 +1165,7 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -1197,11 +1197,11 @@ endObjectProperties
 object activeMessageButtonClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
-x 416
+x 412
 y 424
-w 48
+w 56
 h 24
 fgColor index 44
 onColor index 4
@@ -1255,7 +1255,7 @@ release 0
 x 12
 y 49
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1308,7 +1308,7 @@ release 0
 x 12
 y 105
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1361,7 +1361,7 @@ release 0
 x 12
 y 297
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1572,7 +1572,7 @@ release 0
 x 12
 y 412
 w 7
-h 11
+h 13
 font "courier-bold-r-12.0"
 fontAlign "center"
 fgColor index 0
@@ -1652,7 +1652,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 160
 y 328
@@ -1662,20 +1662,23 @@ controlPv "$(EVR):FP0L.DESC"
 format "string"
 font "courier-bold-r-12.0"
 fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
 nullColor index 18
+smartRefresh
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 160
 y 352
@@ -1685,20 +1688,23 @@ controlPv "$(EVR):FP1L.DESC"
 format "string"
 font "courier-bold-r-12.0"
 fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
 nullColor index 18
+smartRefresh
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 160
 y 376
@@ -1708,20 +1714,23 @@ controlPv "$(EVR):FP2L.DESC"
 format "string"
 font "courier-bold-r-12.0"
 fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
 nullColor index 18
+smartRefresh
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Related Display)
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
 x 40
 y 64
@@ -1736,7 +1745,7 @@ buttonLabel "Details..."
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrscreens/evrTrig3T"
+  0 "evrScreens/evrTrig3T.edl"
 }
 setPosition {
   0 "parentWindow"
@@ -1748,11 +1757,11 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
-x 312
-y 424
-w 80
+x 412
+y 456
+w 56
 h 24
 fgColor index 14
 bgColor index 4
@@ -1763,7 +1772,7 @@ buttonLabel "Diag"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrscreens/evrDiag.edl"
+  0 "evrScreens/evrDiag.edl"
 }
 setPosition {
   0 "parentWindow"
@@ -1775,25 +1784,61 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
-x 312
+x 308
 y 456
-w 80
+w 100
 h 24
 fgColor index 14
 bgColor index 4
 topShadowColor index 1
 botShadowColor index 11
 font "helvetica-medium-r-12.0"
-buttonLabel "Ev Codes"
+buttonLabel "Seq Codes"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrscreens/lclsEventCodes.edl"
+  0 "evrScreens/seqEventCodes.edl"
 }
 setPosition {
   0 "parentWindow"
+}
+symbols {
+  0 "ECS=ECS:SYS0,EVG=EVNT:SYS0"
+}
+replaceSymbols {
+  0 1
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 308
+y 424
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "LCLS Codes"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/lclsEventCodes.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVG=EVNT:SYS0"
 }
 icon
 endObjectProperties

@@ -116,6 +116,7 @@
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
 /**************************************************************************************************/
+int fiddbg = 0;
 
 #ifdef DEBUG_PRINT
 int drvMrfErFlag = DP_ERROR;            /* Interest level can be set from the command shell       */
@@ -1105,12 +1106,12 @@ int ErConfigure (
 					continue;
 
 			    /* Found PMC EVR! */
-				printf( "ErConfigure: Found PMC EVR with subsystem vendor ID 0x%04X and device ID 0x%04X.\n",
+				printf( "ErConfigure: Found PMC EVR with subsystem vendor ID 0x%04lX and device ID 0x%04lX.\n",
 						(subId & 0xFFFF ), (subId >> 16) );
 			    break;
 			}
 			else {
-				printf( "ErConfigure: PLX9030 found but subsystem vendor ID 0x%04X and device ID 0x%04X is not an EVR.\n",
+				printf( "ErConfigure: PLX9030 found but subsystem vendor ID 0x%04lX and device ID 0x%04lX is not an EVR.\n",
 						(subId & 0xFFFF ), (subId >> 16) );
 			}
 		  } while ( 1 );

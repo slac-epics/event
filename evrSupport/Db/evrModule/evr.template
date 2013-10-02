@@ -79,7 +79,6 @@ record(er, "$(EVR):CTRL") {
   field(DG1P, "$(DGP1)")
   field(DG2P, "$(DGP2)")
   field(DG3P, "Normal")
-  field(FLNK, "$(EVRFLNK)")
 }
 record(bi, "$(EVR):LINK") {
   field(DESC, "$(EVR) Link Status")

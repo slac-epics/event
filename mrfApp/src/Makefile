@@ -66,23 +66,26 @@ devMrfErLib_DBD += base.dbd
 devMrfErLib_DBD += devMrfEr.dbd
 
 #---------------------
-# Build the Event Generator Library
+# Build the Event Generator Libraries
 #
-PROD_IOC_vxWorks	+= devMrfEgLib
-LIBRARY_IOC_RTEMS	+= devMrfEg
-LIBRARY_IOC_vxWorks	+= devMrfEg
-ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
-LIBRARY_IOC_Linux	+= devMrfEg
-endif
+PROD_IOC_vxWorks    += devMrfEgLib
+LIBRARY_IOC_vxWorks += devMrfEg
+LIBRARY_IOC_RTEMS   += devMrfEg
+LIBRARY_IOC_Linux   += devMrfEg
 
-# Source objects for Event Generator Library
-devMrfEg_OBJS			+= egRecord
-devMrfEg_OBJS			+= egeventRecord
-devMrfEg_OBJS_RTEMS		+= drvMrfEg
-devMrfEg_OBJS_vxWorks	+= drvMrfEg
-ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
-devMrfEg_OBJS_Linux		+= drvLinuxEvg
-endif
+# Source code common to all platforms
+devMrfEg_OBJS += devMrfEg
+devMrfEg_OBJS += egRecord
+devMrfEg_OBJS += egeventRecord
+
+# RTEMS source
+devMrfEg_OBJS_RTEMS += drvMrfEg
+
+# VxWorks source
+devMrfEg_OBJS_vxWorks += drvMrfEg
+
+# Linux source
+devMrfEg_OBJS_Linux += drvLinuxEvg
 
 
 devMrfEgLib_OBJS += $(devMrfEg_OBJS)
@@ -96,21 +99,20 @@ OBJS_IOC_vxWorks += $(devMrfEg_OBJS)
 PROD_IOC_vxWorks    += devMrfErLib
 LIBRARY_IOC_RTEMS   += devMrfEr
 LIBRARY_IOC_vxWorks += devMrfEr
-ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 LIBRARY_IOC_Linux   += devMrfEr
-endif
 
 # Source objects for Event Receiver Library
 devMrfEr_OBJS       += devMrfEr
 devMrfEr_OBJS       += erRecord
 devMrfEr_OBJS       += ereventRecord
 
+
 # RTEMS source
-devMrfEr_OBJS_RTEMS += drvMrfEr
+devMrfEr_OBJS_RTEMS   += drvMrfEr
 ifeq ($(BSP_SUPPORTS_PCI), YES)
-devMrfEr_OBJS_RTEMS += devLibPMC
-devMrfEr_OBJS_RTEMS += plx9080_eeprom.c
-devMrfEr_OBJS_RTEMS += evrEEPROMFixup
+devMrfEr_OBJS_RTEMS   += devLibPMC
+devMrfEr_OBJS_RTEMS   += plx9080_eeprom.c
+devMrfEr_OBJS_RTEMS   += evrEEPROMFixup
 endif
 
 # VxWorks source
@@ -132,31 +134,34 @@ devMrfErLib_SRCS += devMrfErLib_registerRecordDeviceDriver.cpp
 OBJS_IOC_vxWorks += $(devMrfEr_OBJS)
 
 #---------------------
-# Build the Library for the MRF driver level access
+# Build the vxWorks Library for Accessing VME-64X CR/CSR space
 #
-PROD_IOC_vxWorks	+= drvMrfLib
-LIBRARY_IOC_RTEMS  	+= drvMrf
-LIBRARY_IOC_vxWorks	+= drvMrf
-ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
-LIBRARY_IOC_Linux	+= drvMrf
-endif
+PROD_IOC_vxWorks       += mrfVme64xLib
+LIBRARY_IOC_vxWorks    += mrfVme64x
+mrfVme64x_OBJS_vxWorks += mrfVme64x
+mrfVme64x_OBJS_vxWorks += $(CRCSR_PROBE_NAME)
+OBJS_IOC_vxWorks       += $(drvMrf_OBJS)
 
-# Source objects for MRF driver Library
-drvMrf_OBJS_RTEMS	+= mrfVme64x
-drvMrf_OBJS_RTEMS	+= $(CRCSR_PROBE_NAME)
-drvMrf_OBJS_vxWorks += mrfVme64x
-drvMrf_OBJS_vxWorks += $(CRCSR_PROBE_NAME)
-ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
-drvMrf_OBJS_Linux	+= drvLinux
-drvMrf_OBJS_Linux += evrIrqHandlerThread
-drvMrf_OBJS_Linux += erapi.o
-drvMrfLib_LIBS_Linux+= mrfApi
-endif
+#---------------------
+# Build the RTEMS Library for Accessing VME-64X CR/CSR space
+#
+LIBRARY_IOC_RTEMS      += mrfVme64x
+mrfVme64x_OBJS_RTEMS   += mrfVme64x
+mrfVme64x_OBJS_RTEMS   += $(CRCSR_PROBE_NAME)
 
-drvMrfLib_OBJS		+= $(drvMrf_OBJS)
+# Add mrfVme64x objects to all mrfVme64x libraries
+mrfVme64xLib_OBJS      += $(mrfVme64x_OBJS)
 
-OBJS_IOC_vxWorks 	+= $(drvMrf_OBJS)
 
+#---------------------
+# Build the drvMrf library for the linux driver
+#
+LIBRARY_IOC_Linux    += drvMrf
+drvMrf_OBJS_Linux    += drvLinux
+drvMrf_OBJS_Linux    += evrIrqHandlerThread
+
+# Add drvMrf objects to all drvMrf libraries
+drvMrfLib_OBJS       += $(drvMrf_OBJS)
 
 #---------------------
 # Testing
@@ -182,10 +187,10 @@ INC += drvMrfEg.h
 INC += drvMrfEr.h
 INC += devMrfEr.h
 
-INC += erapi.h
 INC += evrIrqHandler.h
 
 INC += debugPrint.h
+
 
 #=======================================================================#
 #                               RULES                                   #
