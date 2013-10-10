@@ -136,7 +136,7 @@ x 36
 y 4
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(N1)_OWNER_ID"
+controlPv "$(ECS):0:EC_$(N1)_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -229,7 +229,7 @@ x 36
 y 28
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(N2)_OWNER_ID"
+controlPv "$(ECS):0:EC_$(N2)_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14

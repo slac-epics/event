@@ -644,7 +644,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
 			    * The new event number is already being used by a different erevent record
 				* Force this record to keep it's prior event number
 				*/
-        		errlogPrintf( "ErEventProcess Error: Event %d already in use!\n", pRec->enm );
+        		errlogPrintf( "ErEventProcess Error: Event Code %d already in use!\n", pRec->enm );
 				pRec->enm = pRec->lenm;
 
 			   /*----------------
