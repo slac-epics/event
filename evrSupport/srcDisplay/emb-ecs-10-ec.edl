@@ -278,7 +278,7 @@ x 36
 y 4
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)0_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)0_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -394,7 +394,7 @@ x 36
 y 28
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)1_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)1_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -511,7 +511,7 @@ x 36
 y 52
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)2_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)2_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -628,7 +628,7 @@ x 36
 y 76
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)3_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)3_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -745,7 +745,7 @@ x 36
 y 100
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)4_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)4_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -862,7 +862,7 @@ x 36
 y 124
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)5_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)5_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -979,7 +979,7 @@ x 36
 y 148
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)6_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)6_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -1096,7 +1096,7 @@ x 36
 y 172
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)7_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)7_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -1213,7 +1213,7 @@ x 36
 y 196
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)8_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)8_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
@@ -1330,7 +1330,7 @@ x 36
 y 220
 w 44
 h 20
-controlPv "$(ECS):0:EC_$(DEC)9_OWNER_ID"
+controlPv "$(ECS):0:EC_$(DEC)9_OWNER_NAME"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
