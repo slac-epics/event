@@ -56,7 +56,7 @@ record( stringin, "$(DEV):$(NAME)_NAME" )
   field( DESC,  "Get event code name" )
   field( VAL,  "$(LNAME)" )
   field( DTYP,  "MRF Event Receiver" )
-  field( INP,   "#C0 S$(ID) @" )
+  field( INP,   "#C$(CARD) S$(ID) @" )
   field( EVNT,  "$(ID)" )
 }
 
