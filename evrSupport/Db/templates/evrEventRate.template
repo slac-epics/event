@@ -1,10 +1,10 @@
 record(event, "$(DEV):$(NAME)") {
   field(DESC, "$(NAME) Event")
   field(DTYP, "MRF Event Receiver")
-  field(INP, "#C0 S$(ID) @")
+  field(INP,  "#C$(CARD) S$(ID) @")
   field(SCAN, "I/O Intr")
   field(PRIO, "HIGH")
-  field(VAL, "$(ID)")
+  field(VAL,  "$(ID)")
   field(FLNK, "$(DEV):$(NAME)CNT")
 }
 
