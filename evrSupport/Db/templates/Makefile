@@ -17,8 +17,7 @@ DB_INSTALLS += evrPmc230.template
 DB_INSTALLS += evrVme230.template
 DB_INSTALLS += evrSLAC.template
 DB_INSTALLS += evrPmcEvent.template
-# evrSlaveEvent.template should not be needed. - bhill
-# DB_INSTALLS += evrSlaveEvent.template
+DB_INSTALLS += evrSlaveEvent.template
 DB_INSTALLS += evrVmeEvent.template
 DB_INSTALLS += evrEventCtrl.template
 DB_INSTALLS += evrEventRate.template
