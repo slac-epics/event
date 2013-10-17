@@ -4,11 +4,31 @@
 
 # Capture frequent changes to these
 $(EVR):LINK    1  monitor
+$(EVR):CTRL.ENAB 1	monitor 
+$(EVR):CTRL.FPS0 1	monitor 
+$(EVR):CTRL.FPS1 1	monitor 
+$(EVR):CTRL.FPS2 1	monitor 
+$(EVR):CTRL.TAXI 1	monitor 
 
 # Capture these once/sec
-$(EVR):FIDUCIALCTRL 1 
-$(EVR):FIDUCIALDIAG 1 
-$(EVR):CTRL 1
+$(EVR):FIDUCIALCTRL.VAL 1 
+# field M is fiducial count, no need to archive
+# $(EVR):FIDUCIALDIAG.M	1
+$(EVR):FIDUCIALDIAG.N	1
+$(EVR):FIDUCIALDIAG.O	1
+$(EVR):FIDUCIALDIAG.P	1
+$(EVR):FIDUCIALDIAG.R	1
+$(EVR):FIDUCIALDIAG.S	1
+# field T is fiducial interrupt count, no need to archive
+# $(EVR):FIDUCIALDIAG.T	1
+$(EVR):FIDUCIALDIAG.U	1
+$(EVR):FIDUCIALDIAG.V	1
+$(EVR):FIDUCIALDIAG.VAL	1
+$(EVR):FIDUCIALDIAG.W	1
+$(EVR):FIDUCIALDIAG.X	1
+$(EVR):FIDUCIALDIAG.Y	1
+$(EVR):FIDUCIALDIAG.Z	1
+$(EVR):CTRL.VAL 1
 $(EVR):EVENT1 1
 $(EVR):EVENT10 1
 $(EVR):EVENT10CTRL 1
@@ -88,11 +108,6 @@ $(EVR):EVENT13RATE 10
 $(EVR):EVENT14RATE 10
 
 # Don't exect these to change much.  Just monitor
-$(EVR):CTRL.ENAB 30	monitor 
-$(EVR):CTRL.FPS0 30	monitor 
-$(EVR):CTRL.FPS1 30	monitor 
-$(EVR):CTRL.FPS2 30	monitor 
-$(EVR):CTRL.TAXI 30	monitor 
 $(EVR):EVENT10NAME 30	monitor
 $(EVR):EVENT11NAME 30	monitor
 $(EVR):EVENT12NAME 30	monitor
