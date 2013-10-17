@@ -1,3 +1,11 @@
+# Event modules archive template
+# Format:
+# <PVNAME> <PERIOD> [ monitor ]
+
+# Capture frequent changes to these
+$(EVR):LINK      1  monitor
+$(EVR):STATUS    1  monitor
+
 $(EVR):FIDUCIALCTRL.VAL 1 
 # field M is fiducial count, no need to archive
 # $(EVR):FIDUCIALDIAG.M	1
