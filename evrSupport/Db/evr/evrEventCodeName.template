@@ -10,7 +10,7 @@ record( event, "$(DEV):EventCode:$(ID)" )
 {
   field( DESC,  "$(DESC)" )
   field( DTYP,  "MRF Event Receiver" )
-  field( INP,   "#C0 S$(ID) @" )
+  field( INP,   "#C$(CARD) S$(ID) @" )
   field( PRIO,  "HIGH" )
   field( SCAN,  "I/O Intr" )
   field( FLNK,  "$(DEV):EventCode:$(ID):Count" )
@@ -27,7 +27,7 @@ record( stringout, "$(DEV):EventCode:$(ID):Name" )
   field( OMSL,  "closed_loop" )
   field( DOL,   "$(EVG):1:NAME$(ID) CP NMS" )
   field( DTYP,  "MRF Event Receiver" )
-  field( OUT,   "#C0 S$(ID) @" )
+  field( OUT,   "#C$(CARD) S$(ID) @" )
   field( EVNT,  "$(ID)" )
 }
 
