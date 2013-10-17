@@ -3,7 +3,8 @@
 # <PVNAME> <PERIOD> [ monitor ]
 
 # Capture frequent changes to these
-$(EVR):LINK    1  monitor
+$(EVR):LINK      1  monitor
+$(EVR):STATUS    1  monitor
 $(EVR):CTRL.ENAB 1	monitor 
 $(EVR):CTRL.FPS0 1	monitor 
 $(EVR):CTRL.FPS1 1	monitor 
