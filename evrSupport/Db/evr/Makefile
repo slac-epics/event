@@ -38,6 +38,9 @@ DB += lclsEventCodes.substitutions
 # Event Code Sequences
 DB += eventCodeSequenceAll.db
 
+DB += evrDevInfo.db
+REQ += autosave_evrDevInfo.tpl-req
+
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
