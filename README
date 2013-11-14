@@ -730,11 +730,10 @@ Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Even
 from your trig.substitution file. (there is no more trigger event code name. 
 The forward/backward propagation and event code invariant delay is a default mode)
 
-Just incase, ioc engineer need to put new macro SYS to describe the beam program in the trig.substitution file
-Please, follow the following rule. LCLS does not require the SYS macro due to it's a default.
+IOC engineer need to put new macro SYS to describe the beam program in the trig.substitution file
+Please, follow the following rule.
 
-For the FACET and NLCTA, Please add SYS macro to describe beam program.
-SYS=SYS0: LCLS (default, if you did not put SYS macro, it will assign SYS0 automatically)
+SYS=SYS0: LCLS 
 SYS=SYS1: FACET
 SYS=SYS6: NLCTA
 
