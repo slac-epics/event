@@ -490,30 +490,6 @@ Same considerations are required for the XTA. The XTA own event codes are the fo
 RF full rate - 201, Beam full rate -202, Beam rate limited - 203 (**)
 You may want to use event number 6x for the XTA due to the beam runs on timeslot 6.
 
-(Remark **) If you want to see the entire event list for the each beam program,
-            Please, look at the following subsitutitions file in this module.
-	
-		LCLS	evrEventAll.substitutions
-		FACET	evrEventFACET.substitutions
-		XTA	evrEventXTA.substitutions
-
-
-
-The event module itself need to know, what is the beam program for it.
-So, we have added new variable in the RELEASE_SITE file as the followings.
-When build/re-build the event module, we need to describe the beam program 
-with the new variable.
-
-For LCLS,
-SITE_FACILITY=LCLS
-
-For FACET,
-SITE_FACILITY=FACET
-
-For XTA
-SITE_FACILITY=XTA
-
-
 
 Consideration to use the event invariant delay
 ---------------------------------------------------
@@ -526,13 +502,6 @@ The TOUT macro provides mapping between the output channel and the event invaria
 We can use OUT0, OUT1, ..., OUTA, OUTB, OUTC to describe the output channel.
 Actually, front panel trigger outputs share the events with the real panel triggers.
 So, you can use, OUT0, OUT1, OUT2 for the front panel.
-
-The ACTV macro enables/disables the event code invariant delay.
-If you don't like to use this new feature, you can put 0, other then, you can put 1.
-
-
-Please, make sure your TEC macros which should be defined in your evrEvent*.db template
-
 
 
 Consideration for Autosave
@@ -761,11 +730,10 @@ Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Even
 from your trig.substitution file. (there is no more trigger event code name. 
 The forward/backward propagation and event code invariant delay is a default mode)
 
-Just incase, ioc engineer need to put new macro SYS to describe the beam program in the trig.substitution file
-Please, follow the following rule. LCLS does not require the SYS macro due to it's a default.
+IOC engineer need to put new macro SYS to describe the beam program in the trig.substitution file
+Please, follow the following rule.
 
-For the FACET and NLCTA, Please add SYS macro to describe beam program.
-SYS=SYS0: LCLS (default, if you did not put SYS macro, it will assign SYS0 automatically)
+SYS=SYS0: LCLS 
 SYS=SYS1: FACET
 SYS=SYS6: NLCTA
 
