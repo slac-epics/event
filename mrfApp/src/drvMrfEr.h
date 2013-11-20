@@ -82,7 +82,8 @@
  #define       PMC_EVR_FIRMWARE_REV_LINUX1     0x11000002
  #define       PMC_EVR_FIRMWARE_REV_LINUX2     0x11000003
  #define       PMC_EVR_FIRMWARE_REV_LINUX3     0x11000103
- #define       PCIE_EVR_FIRMWARE_REV_LINUX4    0x17000005
+ #define       PMC_EVR_FIRMWARE_REV_LINUX4     0x11000007
+ #define       PCIE_EVR_FIRMWARE_REV_LINUX1    0x17000005
 
 
 /**************************************************************************************************/

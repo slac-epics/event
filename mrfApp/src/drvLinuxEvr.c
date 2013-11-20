@@ -518,7 +518,8 @@ static int ErConfigure (
  case PMC_EVR_FIRMWARE_REV_LINUX1:
  case PMC_EVR_FIRMWARE_REV_LINUX2:
  case PMC_EVR_FIRMWARE_REV_LINUX3:
- case PCIE_EVR_FIRMWARE_REV_LINUX4:
+ case PMC_EVR_FIRMWARE_REV_LINUX4:
+ case PCIE_EVR_FIRMWARE_REV_LINUX1:
      break;
  case PMC_EVR_FIRMWARE_REV_VME1:
      fprintf ( stderr,
@@ -593,7 +594,7 @@ static int ErConfigure (
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);
 	ErResetAll(pCard);
-	if(FPGAVersion == PCIE_EVR_FIRMWARE_REV_LINUX4) EvrOutputEnable(pEr, 1);
+	if(FPGAVersion == PCIE_EVR_FIRMWARE_REV_LINUX1) EvrOutputEnable(pEr, 1);
 	return OK;
 }
 
