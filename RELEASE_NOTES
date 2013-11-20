@@ -1,5 +1,7 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-0-1:
+      * Add new firmware version 0x11000007 into compatible list for the PMC
 event-R4-0-0:
       * remove tag event-R3-5-0 and force tag it to event-R4-0-0
 
