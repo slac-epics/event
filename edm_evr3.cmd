@@ -17,7 +17,6 @@ edm -x -eolc			\
 -m "NAME3=TS4_120_"		\
 -m "ID3=40"				\
 evrScreens/evr.edl		\
-evrScreens/emb-evg-*-ec.edl	\
-evrScreens/emb-ecs-*-ec.edl	\
+evrScreens/emb-ecs-2-ec.edl	\
 &
 
