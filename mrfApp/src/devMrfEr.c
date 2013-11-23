@@ -1202,9 +1202,11 @@ epicsStatus ErEpicsStringoutWrite (stringoutRecord  *pRec)
     * Make sure the event number is in the correct range
     */
     if ((Event <= 0) || (Event > EVR_NUM_EVENTS)) {
-        recGblRecordError(S_dev_badCard, (void *)pRec, 
-                          "devMrfEr::ErEpicsEventInitRec() invalid signal number in INP field");
-        return(S_dev_badCard);
+		/* User has entered an invalid event number
+		 * for this record.  Possibly a duplicate, in
+		 * which case the field is set to -1.
+		 * We don't set pact here as the user can fix this. */
+        return(-1);
     }/*end if event number is invalid*/
 
     /*---------------------
@@ -1364,9 +1366,11 @@ epicsStatus ErEpicsStringinRead (stringinRecord  *pRec)
     * Make sure the event number is in the correct range
     */
     if ((Event <= 0) || (Event > EVR_NUM_EVENTS)) {
-        recGblRecordError(S_dev_badCard, (void *)pRec, 
-                          "devMrfEr::ErEpicsEventInitRec() invalid signal number in INP field");
-        return(S_dev_badCard);
+		/* User has entered an invalid event number
+		 * for this record.  Possibly a duplicate, in
+		 * which case the field is set to -1.
+		 * We don't set pact here as the user can fix this. */
+        return(-1);
     }/*end if event number is invalid*/
 
     /*---------------------
