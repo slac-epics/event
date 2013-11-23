@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 876
-y 181
+x 846
+y 99
 w 400
 h 360
 font "helvetica-medium-r-12.0"
@@ -204,15 +204,16 @@ minor 5
 release 0
 x 308
 y 4
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)0DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -320,15 +321,16 @@ minor 5
 release 0
 x 308
 y 28
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)1DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -437,15 +439,16 @@ minor 5
 release 0
 x 308
 y 52
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)2DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -554,15 +557,16 @@ minor 5
 release 0
 x 308
 y 76
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)3DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -671,15 +675,16 @@ minor 5
 release 0
 x 308
 y 100
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)4DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -788,15 +793,16 @@ minor 5
 release 0
 x 308
 y 124
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)5DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -905,15 +911,16 @@ minor 5
 release 0
 x 308
 y 148
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)6DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -1022,15 +1029,16 @@ minor 5
 release 0
 x 308
 y 172
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)7DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -1139,15 +1147,16 @@ minor 5
 release 0
 x 308
 y 196
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)8DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -1256,15 +1265,16 @@ minor 5
 release 0
 x 308
 y 220
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(DEC)9DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos

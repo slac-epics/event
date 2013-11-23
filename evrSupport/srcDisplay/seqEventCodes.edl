@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1303
-y 72
+x 30
+y 95
 w 1246
 h 898
 font "helvetica-medium-r-12.0"
@@ -573,7 +573,7 @@ minor 1
 release 0
 x 332
 y 60
-w 44
+w 64
 h 20
 font "helvetica-medium-r-12.0"
 fontAlign "center"
@@ -581,27 +581,7 @@ fgColor index 14
 bgColor index 0
 useDisplayBg
 value {
-  "Delay"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 744
-y 60
-w 44
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 0
-useDisplayBg
-value {
-  "Delay"
+  "Delay (ns)"
 }
 endObjectProperties
 
@@ -671,26 +651,6 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 1164
-y 60
-w 44
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 0
-useDisplayBg
-value {
-  "Delay"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
 x 980
 y 60
 w 180
@@ -742,6 +702,46 @@ bgColor index 0
 useDisplayBg
 value {
   "Code"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 748
+y 60
+w 64
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Delay (ns)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 1164
+y 60
+w 64
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Delay (ns)"
 }
 endObjectProperties
 
