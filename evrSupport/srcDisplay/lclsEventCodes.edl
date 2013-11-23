@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 52
-y 49
+x 1486
+y 24
 w 831
 h 936
 font "helvetica-bold-r-12.0"
@@ -32,9 +32,9 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 540
+x 544
 y 40
-w 264
+w 272
 h 716
 lineColor index 14
 fillColor index 14
@@ -48,7 +48,7 @@ minor 0
 release 0
 x 272
 y 40
-w 264
+w 268
 h 716
 lineColor index 14
 fillColor index 14
@@ -81,7 +81,7 @@ minor 0
 release 0
 x 0
 y 40
-w 784
+w 816
 h 4
 lineColor index 14
 fillColor index 14
@@ -357,14 +357,14 @@ minor 1
 release 0
 x 204
 y 84
-w 48
+w 60
 h 24
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 bgColor index 12
 value {
-  "0"
+  "0.0"
 }
 endObjectProperties
 
@@ -384,7 +384,7 @@ bgColor index 5
 useDisplayBg
 value {
   "Delay"
-  "(ticks)"
+  "(ns)"
 }
 endObjectProperties
 
@@ -424,7 +424,7 @@ bgColor index 5
 useDisplayBg
 value {
   "Delay"
-  "(ticks)"
+  "(ns)"
 }
 endObjectProperties
 
@@ -444,7 +444,7 @@ bgColor index 5
 useDisplayBg
 value {
   "Delay"
-  "(ticks)"
+  "(ns)"
 }
 endObjectProperties
 
@@ -473,9 +473,9 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 276
+x 272
 y 760
-w 528
+w 544
 h 1
 lineColor index 14
 fillColor index 14
@@ -509,7 +509,7 @@ minor 1
 release 0
 x 0
 y 160
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -536,7 +536,7 @@ minor 1
 release 0
 x 0
 y 216
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -563,7 +563,7 @@ minor 1
 release 0
 x 0
 y 272
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -590,7 +590,7 @@ minor 1
 release 0
 x 0
 y 328
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -617,7 +617,7 @@ minor 1
 release 0
 x 0
 y 384
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -644,7 +644,7 @@ minor 1
 release 0
 x 0
 y 440
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -671,7 +671,7 @@ minor 1
 release 0
 x 0
 y 496
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -698,7 +698,7 @@ minor 1
 release 0
 x 0
 y 552
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -725,7 +725,7 @@ minor 1
 release 0
 x 0
 y 608
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -752,7 +752,7 @@ minor 1
 release 0
 x 0
 y 664
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -779,15 +779,16 @@ minor 5
 release 0
 x 204
 y 112
-w 48
+w 60
 h 24
 controlPv "$(EVG):1:TSX_360_DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -850,7 +851,7 @@ minor 1
 release 0
 x 0
 y 720
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -877,7 +878,7 @@ minor 1
 release 0
 x 0
 y 776
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -891,7 +892,7 @@ displayFileName {
   0 "evrScreens/emb-evg-2-ec.edl"
 }
 symbols {
-  0 "NAME1=LCBYKIK,NAME2=LCALKIK,ID1=161,ID2=162,EVG=$(EVG)"
+  0 "NAME1=LCBYKIK,NAME2=LCALKIK,ID1=162,ID2=163,EVG=$(EVG)"
 }
 noScroll
 endObjectProperties
@@ -904,7 +905,7 @@ minor 1
 release 0
 x 0
 y 832
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -931,7 +932,7 @@ minor 1
 release 0
 x 276
 y 104
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -958,7 +959,7 @@ minor 1
 release 0
 x 276
 y 160
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -985,7 +986,7 @@ minor 1
 release 0
 x 276
 y 216
-w 244
+w 256
 h 80
 fgColor index 14
 bgColor index 0
@@ -1032,7 +1033,7 @@ minor 1
 release 0
 x 276
 y 328
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1059,7 +1060,7 @@ minor 1
 release 0
 x 276
 y 384
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1086,7 +1087,7 @@ minor 1
 release 0
 x 276
 y 440
-w 244
+w 256
 h 80
 fgColor index 14
 bgColor index 0
@@ -1133,7 +1134,7 @@ minor 1
 release 0
 x 276
 y 552
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1160,7 +1161,7 @@ minor 1
 release 0
 x 276
 y 608
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1187,7 +1188,7 @@ minor 1
 release 0
 x 276
 y 664
-w 244
+w 256
 h 80
 fgColor index 14
 bgColor index 0
@@ -1234,7 +1235,7 @@ minor 1
 release 0
 x 552
 y 104
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1261,7 +1262,7 @@ minor 1
 release 0
 x 552
 y 160
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1288,7 +1289,7 @@ minor 1
 release 0
 x 552
 y 216
-w 244
+w 256
 h 80
 fgColor index 14
 bgColor index 0
@@ -1335,7 +1336,7 @@ minor 1
 release 0
 x 552
 y 328
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1362,7 +1363,7 @@ minor 1
 release 0
 x 552
 y 384
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1389,7 +1390,7 @@ minor 1
 release 0
 x 552
 y 440
-w 244
+w 256
 h 80
 fgColor index 14
 bgColor index 0
@@ -1436,7 +1437,7 @@ minor 1
 release 0
 x 552
 y 552
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1463,7 +1464,7 @@ minor 1
 release 0
 x 552
 y 608
-w 244
+w 256
 h 52
 fgColor index 14
 bgColor index 0
@@ -1490,7 +1491,7 @@ minor 1
 release 0
 x 552
 y 664
-w 244
+w 256
 h 80
 fgColor index 14
 bgColor index 0
@@ -1517,7 +1518,7 @@ minor 0
 release 0
 x 272
 y 304
-w 528
+w 544
 h 1
 lineColor index 14
 fillColor index 14
@@ -1531,7 +1532,7 @@ minor 0
 release 0
 x 272
 y 528
-w 528
+w 544
 h 1
 lineColor index 14
 fillColor index 14

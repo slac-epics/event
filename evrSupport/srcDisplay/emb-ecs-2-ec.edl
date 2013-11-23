@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 835
-y 643
+x 617
+y 395
 w 400
 h 72
 font "helvetica-bold-r-12.0"
@@ -184,15 +184,16 @@ minor 5
 release 0
 x 308
 y 4
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(N1)DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
@@ -277,15 +278,16 @@ minor 5
 release 0
 x 308
 y 28
-w 48
+w 60
 h 20
 controlPv "$(EVG):1:ECS_$(N2)DLY"
+format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
 bgColor index 12
-limitsFromDb
+precision 1
 nullColor index 1
 smartRefresh
 newPos
