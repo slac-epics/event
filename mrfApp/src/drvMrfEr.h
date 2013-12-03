@@ -65,33 +65,9 @@
 
 #include <mrfCommon.h>          /* MRF Event system constants and definitions                     */
 
-/*
- *  Firmware revisions
- */
-
- /*
-  * This firmware revision has been verified to use the VME compatible
-  * register map and work with drvMrfEr.c
-  */
- #define       PMC_EVR_FIRMWARE_REV_VME1       0xF305
-
- /*
-  * These firmware revisions are known to use the modular memory map
-  * and are intended for use on linux based systems with drvLinuxEvr.c
-  */
- #define       PMC_EVR_FIRMWARE_REV_LINUX1     0x11000002
- #define       PMC_EVR_FIRMWARE_REV_LINUX2     0x11000003
- #define       PMC_EVR_FIRMWARE_REV_LINUX3     0x11000103
-
-
 /**************************************************************************************************/
-/*  Configuration Constants                                                                       */
+/*  Firmware revisions                                                                            */
 /**************************************************************************************************/
-
-
-/*
- *  Firmware revisions
- */
 
 /*
  * This firmware revision has been verified to use the VME compatible
@@ -106,9 +82,10 @@
 #define	PMC_EVR_FIRMWARE_REV_LINUX1	0x11000002
 #define	PMC_EVR_FIRMWARE_REV_LINUX2	0x11000003
 #define	PMC_EVR_FIRMWARE_REV_LINUX3	0x11000103
-#define PMC_EVR_FIRMWARE_REV_LINUX4     0x10000003
+#define PMC_EVR_FIRMWARE_REV_LINUX4	0x10000003
+#define	PMC_EVR_FIRMWARE_REV_LINUX5	0x11000303
 
-#define PMC_EVR_FIRMWARE_REV_SLAC1      0x1F000000
+#define PMC_EVR_FIRMWARE_REV_SLAC1	0x1F000000
 
 /**************************************************************************************************/
 /*  Configuration Constants                                                                       */
@@ -145,6 +122,8 @@
 /*  Event Receiver Hardware Limits                                                                */
 /**************************************************************************************************/
 
+/* Should this depend on the EVR model?				*/
+/* i.e. EVR_NUM_DG_EVR230	4, EVR_NUM_DG_SLAC	12	*/
 #define EVR_NUM_DG      12      /* Number of Programmable Delay (DG) channels                     */
 #define EVR_NUM_TRG      7      /* Number of Trigger Event (TRG) channels                         */
 #define EVR_NUM_OTL      7      /* Number of Level Output (OTL) channels                          */

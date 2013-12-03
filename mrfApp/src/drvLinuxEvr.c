@@ -501,6 +501,7 @@ static int ErConfigure (
 	case PMC_EVR_FIRMWARE_REV_LINUX2:
 	case PMC_EVR_FIRMWARE_REV_LINUX3:
 	case PMC_EVR_FIRMWARE_REV_LINUX4:
+	case PMC_EVR_FIRMWARE_REV_LINUX5:
 	    break;
 	case PMC_EVR_FIRMWARE_REV_VME1:
 	    fprintf ( stderr,
@@ -1752,6 +1753,9 @@ epicsStatus ErDrvReport (int level)
 		EvrDumpStatus( pEr );
 		EvrDumpPulses(		pEr, 10 );
                 switch(ErGetFormFactor(pEr)) {
+                case PMC_EVR:
+		    /* ? */
+		    break;
                 case VME_EVR:
                     EvrDumpFPOutMap(	pEr, 8 );
                     EvrDumpUnivOutMap(	pEr, 4 );
