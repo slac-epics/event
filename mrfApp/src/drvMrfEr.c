@@ -1244,6 +1244,8 @@ int ErConfigure (
 	case (PMC_EVR_FIRMWARE_REV_LINUX1 & 0xFFFF):	/* VME Firmware field is only 16 bits */
 	case (PMC_EVR_FIRMWARE_REV_LINUX2 & 0xFFFF):	/* VME Firmware field is only 16 bits */
 	case (PMC_EVR_FIRMWARE_REV_LINUX3 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (PMC_EVR_FIRMWARE_REV_LINUX4 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (PMC_EVR_FIRMWARE_REV_LINUX5 & 0xFFFF):	/* VME Firmware field is only 16 bits */
 	    fprintf ( stderr,
 	       "\nErConfigure ERROR: This PMC EVR has firmware for a linux\n"
 	       "based system and cannot be used under RTEMS!\n" );
