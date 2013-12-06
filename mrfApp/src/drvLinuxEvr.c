@@ -594,6 +594,11 @@ static int ErConfigure (
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);
 	ErResetAll(pCard);
+
+	/* Backwards compatibility: old firmware had optical signal always
+	 * looped back to the TX so we enable that here...
+	 */
+	pEr->Control |= be32_to_cpu( (1<<C_EVR_CTRL_RXLOOPBACK) );
 	if(FPGAVersion == PCIE_EVR_FIRMWARE_REV_LINUX1) EvrOutputEnable(pEr, 1);
 	return OK;
 }
