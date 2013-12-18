@@ -21,6 +21,7 @@ DB_INSTALLS += evrSlaveEvent.template
 DB_INSTALLS += evrVmeEvent.template
 DB_INSTALLS += evrEventCtrl.template
 DB_INSTALLS += evrEventRate.template
+DB_INSTALLS += evrFiducial.template
 DB_INSTALLS += evrLabel.template
 DB_INSTALLS += evrLabels.template
 DB_INSTALLS += evrTaxi.template
