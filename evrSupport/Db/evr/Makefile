@@ -27,6 +27,7 @@ DB += evrTrigger.db
 DB += evrPattern.db
 DB += evrPatternProc.db
 DB += evrEventAll.db
+DB += evrEventFACET.db
 DB += evrPatternAll.db
 DB += evrMod36.db
 # fiducialTimestamp timestamp support (includes patterns)
