@@ -19,6 +19,12 @@ Branch name: event-R3-2-2-br_generaltime
         * Branch out from event-R3-2-2
         * to support new epics base R3-14-12 and bundled general time
 
+event-R3-3-0:
+       * Merge from event-R3-2-1-br_backprop branch to the MAIN_TRUNK
+         to take the following functionalities
+         - backward propagation between low level and high level dealy
+         - event code invariant delay
+
 event-R3-2-2:
 	* Modify RELEASE_SITE to use base-R3-14-8-2-lcls6_p1
 	  Modify configure/RELEASE to use
@@ -28,6 +34,27 @@ event-R3-2-2:
 	    Comment out TSE field (previously set to -2) to fix 
             timestamp bug. Merging this change onto main trunk; 
             was previously only on event-R3-2-1-lcls3 branch
+
+event-R3-2-1-br_backprop-2-1
+        * rebuild with
+          base-R3-14-8-2-lcls6_p1
+          miscUtils-R2-2-1
+          generalTime-R2-2-1
+
+event-R3-2-1-br_backprop-2-0
+        * Implement event code invariant trigger delay
+        * reflect the extended event code sequence for the photon group
+
+event-R3-2-1-br_backprop-1-1
+        * Implement backward propagation for the pulse width
+          (In the last release, we implemented it for delay only, and missed the pulse width)
+
+event-R3-2-1-br_backprop-1-0
+        * Implement backward propagation between high level PVs and low level Pvs 
+          in the EVR
+
+event-R3-2-1-br_backprop
+        * branch out from the event-R3-2-1
 
 event-R3-2-1:
 	* Made event code 162's delay < event code 140
