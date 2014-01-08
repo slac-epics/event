@@ -18,6 +18,18 @@
                RF -> EVG RF
 
   PMC-EVR-230: EVG UNIV2 -> EVR EXT.IN
+
+  PCIe:        PCIe-EVG
+               IFB-300 with all TTL outputs
+	       PCIe-EVR
+	       IFB-300 with TTL input in slot 0/1
+	       PMC-EVR
+	       Fibers: PCIe-EVG TX -> PCIe-EVR RX
+	               PCIe-EVR TX -> PMC-EVR RX
+               LEMOs:  EVG-IFB 2 -> EVR-IFB 0
+                       EVG-IFB 3 -> EVR-IFB 1
+	       EVG seqrams not working
+
 */
 
 #include <errno.h>
@@ -28,9 +40,41 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-#include "egcpci.h"
+#include <byteswap.h>
 #include "egapi.h"
 #include "erapi.h"
+#include <string.h>
+
+/*
+#define USE_EXT_RF 1
+*/
+
+#define EVR_IRQ_TESTS 1
+/*
+#define FRAC_DIV_WORD 0x02E3C2ED
+#define FRAC_DIV_WORD 0x0C9282A6
+*/
+#define FRAC_DIV_WORD_49_98 0x025B43AD /* 49.98 MHz */
+#define FRAC_DIV_WORD_62_454 0x0C9282A6 /* 62.454 MHz */
+#define FRAC_DIV_WORD_68_454 0x02E3C2ED /* 68.454 MHz */
+#define FRAC_DIV_WORD_71 0x018742AD /* 71.4 MHz */
+#define FRAC_DIV_WORD_81 0x0082822d /* 81 MHz */
+#define FRAC_DIV_WORD_100 0x008201AD /* 100 MHz */
+#define FRAC_DIV_WORD_106_25 0x049E81AD /* 106.25 MHz */
+#define FRAC_DIV_WORD_114_24 0x072F01AD /* 114.24 MHz */
+#define FRAC_DIV_WORD_119 0x018741AD /* 119 MHz */
+#define FRAC_DIV_WORD_123_757 0x0916416D /* 123.757 MHz */
+#define FRAC_DIV_WORD_124_909 0x0C928166 /* 124.909 MHz */
+#define FRAC_DIV_WORD_124_95 0x00FE816D /* 124.95 MHz */
+#define FRAC_DIV_WORD_125 0x00DE816D /* 125 MHz */
+#define FRAC_DIV_WORD_126_24 0x019E816D /* 126.24 MHz */
+#define FRAC_DIV_WORD_136 0x008B016D /* 136 MHz */
+
+int frac_div_word = 0x0C928166;
+
+/*
+#define FRAC_DIV_WORD 0x00DE816D
+*/
 
 int err_gen;
 int err_vio;
@@ -43,6 +87,7 @@ int err_seq;
 int err_dbuf;
 int err_irq;
 int err_fifo;
+int err_log;
 int err_extev;
 int err_bev;
 int err_bdbus;
@@ -62,11 +107,40 @@ void clear_errors()
   err_dbuf = 0;
   err_irq = 0;
   err_fifo = 0;
+  err_log = 0;
   err_extev = 0;
   err_bev = 0;
   err_bdbus = 0;
   err_bdbuf = 0;
   err_fwd = 0;
+}
+
+void wait()
+{
+  printf("Press .\n");
+  while (getchar() != '.');
+}
+
+void dump_mem(void *addr, int size)
+{
+  unsigned long *p = (unsigned long *) addr;
+  int j,i;
+  
+  for (j = 0; j < size; j += 0x10)
+    {
+      printf("%02x:", (int) p+j);
+      for (i = 0; i < 4; i++)
+	printf(" %08x", be32_to_cpu(p[(j/4)+i]));
+      printf("\n");
+    }  
+}
+
+void check_vio(struct MrfErRegs *pEr)
+{
+  if (EvrGetViolation(pEr, 1))
+    {
+      printf("*** Violation\n");
+    }
 }
 
 void dump_errors()
@@ -82,6 +156,7 @@ void dump_errors()
   printf("Databuf errors   %d\n", err_dbuf);
   printf("IRQ errors       %d\n", err_irq);
   printf("FIFO errors      %d\n", err_fifo);
+  printf("Log errors       %d\n", err_log);
   printf("Ext. errors      %d\n", err_extev);
   printf("B. event errors  %d\n", err_bev);
   printf("B. DBUS errors   %d\n", err_bdbus);
@@ -105,6 +180,7 @@ int              fdIrqEr;
 void evr_irq_handler(int param)
 {
   int flags, i;
+  struct FIFOEvent fe;
 
   flags = EvrGetIrqFlags(pIrqEr);
 
@@ -112,6 +188,8 @@ void evr_irq_handler(int param)
   time_t t;
   t = time(NULL);
   printf("IRQ %08x %s", flags, asctime(localtime(&t)));
+
+  printf("IRQ count: ");
   */
 
   for (i = 0; i < C_EVR_NUM_IRQ; i++)
@@ -119,9 +197,30 @@ void evr_irq_handler(int param)
       if (flags & (1 << i))
 	{
 	  evr_irq_cnt[i]++;
-	  EvrClearIrqFlags(pIrqEr, (1 << i));
+	  switch(i)
+	    {
+	    case C_EVR_IRQFLAG_EVENT:
+	      EvrGetFIFOEvent(pIrqEr, &fe);
+	      break;
+	    case C_EVR_IRQFLAG_PULSE:
+	      /* If we get a pulse IRQ we need to disable the irq so that
+		 we so not get interrupted again when re-enabling interrupts. */
+	      EvrIrqEnable(pIrqEr, EvrGetIrqEnable(pIrqEr) & ~(1 << C_EVR_IRQFLAG_PULSE));
+	      break;
+	    case C_EVR_IRQFLAG_DATABUF:
+	      EvrReceiveDBuf(pIrqEr, 1);
+	      break;
+	    default:
+	      EvrClearIrqFlags(pIrqEr, (1 << i));
+	    }
+	  /*
+	  printf("#%d: %d, ", i, evr_irq_cnt[i]);
+	  */
 	}
     }
+  /*
+  printf("\n");
+  */
   EvrIrqHandled(fdIrqEr);
 }
 
@@ -130,6 +229,8 @@ void evr_irq_handler(int param)
 int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBEr)
 {
   int i, j, k, ff;
+  int univouts = 10;
+  int tbouts = 0;
 
   EvrEnable(pEr, 1);
   if (!EvrGetEnable(pEr))
@@ -161,15 +262,28 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
     case 0: printf("Testing cPCI-EVR-230\n");
       break;
     case 1: printf("Testing PMC-EVR-230\n");
+      univouts = 0;
+      tbouts = 10;
       break;
+    case 4: printf("Testing cPCI-EVR-300\n");
+      univouts = 14;
+      break;
+    case 6: printf("Testing PXIe-EVR-300\n");
+      univouts = 4;
+      tbouts = 8;
+      break;
+    case 7: printf("Testing PCIe-EVR-300\n");
+      univouts = 16;
+      break;
+    default: printf("Unknown form factor %x\n", ff);
     }
 
   EvgSetDBusMap(pEg, 0, 0);
 
-  /* Set event clock to 499.654/4 MHz */
-  EvgSetFracDiv(pEg, 0x0C928166);
-  EvrSetFracDiv(pEr, 0x0C928166);
-  EvrSetFracDiv(pBEr, 0x0C928166);
+  EvgSetFracDiv(pEg, frac_div_word);
+  EvrSetFracDiv(pEr, frac_div_word);
+  EvrSetFracDiv(pBEr, frac_div_word);
+
   /* Set event clock to 499.654/8 MHz */
   /*
   EvgSetFracDiv(pEg, 0x0C9282A6);
@@ -177,7 +291,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
   EvrSetFracDiv(pBEr, 0x0C9282A6);
   */
 
-  sleep(1);
+  sleep(6);
 
   /* Clear violation flag */
   EvrGetViolation(pEr, 1);
@@ -199,28 +313,44 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
   /* Setup EVR map RAM */
 
-  for (i = 1; i < 11; i++)
+  for (i = 1; i < univouts + tbouts + 1; i++)
     {
       EvrSetLedEvent(pEr, 0, i, 1);
       EvrSetPulseMap(pEr, 0, i, i-1, -1, -1);
       EvrSetPulseParams(pEr, i-1, 1, 0, 100);
       EvrSetPulseProperties(pEr, i-1, 0, 0, 0, 1, 1);
-      EvrSetUnivOutMap(pEr, i-1, i-1);
-      EvrSetTBOutMap(pEr, i-1, i-1);
+    }
+  for (i = 0; i < univouts; i++)
+    {
+      if (ff != 7 || i > 1)
+	EvrSetUnivOutMap(pEr, i, i);
+      else
+	EvrSetUnivOutMap(pEr, i, C_EVR_SIGNAL_MAP_Z);
+    }
+  for (i = 0; i < tbouts; i++)
+    {
+      if (ff == 6)
+	EvrSetTBOutMap(pEr, i, i+univouts);
+      else
+	EvrSetTBOutMap(pEr, i, i);
     }
 
   EvrMapRamEnable(pEr, 0, 1);
   EvrUnivDlyEnable(pEr, 0, 1);
   EvrUnivDlyEnable(pEr, 1, 1);
+  EvrUnivDlyEnable(pEr, 2, 1);
   EvrUnivDlySetDelay(pEr, 0, 0, 0);
   EvrUnivDlySetDelay(pEr, 1, 0, 0);
+
+  EvrOutputEnable(pEr, 1);
+
   /*
-  EvrDumpPulses(pEr, 10);
+  EvrDumpPulses(pEr, 16);
   EvrDumpMapRam(pEr, 0);
-  EvrDumpUnivOutMap(pEr, 10);
+  EvrDumpUnivOutMap(pEr, 16);
   */
 
-  for (i = 1; i < 11; i++)
+  for (i = 1; i < (univouts + tbouts) + 1; i++)
     {
       EvrSetLedEvent(pBEr, 0, i, 1);
       EvrSetPulseMap(pBEr, 0, i, i-1, -1, -1);
@@ -233,61 +363,75 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
   EvrMapRamEnable(pBEr, 0, 1);
   EvrUnivDlyEnable(pBEr, 0, 1);
   EvrUnivDlyEnable(pBEr, 1, 1);
+  EvrUnivDlyEnable(pBEr, 2, 1);
   EvrUnivDlySetDelay(pBEr, 0, 0, 0);
   EvrUnivDlySetDelay(pBEr, 1, 0, 0);
-  /*  EvrDumpTBOutMap(pBEr, 10); */
+  /*
+  EvrDumpTBOutMap(pBEr, 10);
+  */
 
   /*
    * Test SW event -> EVR UNIVOUT
    */
+  {
 
-  printf("Test SW event -> EVR UNIVOUT\n");
+    printf("Test SW event -> EVR UNIVOUT\n");
 
-  EvgSWEventEnable(pEg, 1);
-  if (!EvgGetSWEventEnable(pEg))
-    {
-      printf(ERROR_TEXT "Could not enable EVG SWEvent!\n");      
-      err_gen++;
-    }
+    EvgSWEventEnable(pEg, 1);
+    if (!EvgGetSWEventEnable(pEg))
+      {
+	printf(ERROR_TEXT "Could not enable EVG SWEvent!\n");      
+	err_gen++;
+      }
 
-  for (i = 1; i < 11; i++)
-    {
-      EvrClearDiagCounters(pEr);
-      EvrEnableDiagCounters(pEr, 1);
+    i = 1;
+    if (ff == 7)
+      i = 3;
+
+    for (; i < (univouts + tbouts) + 1; i++)
+      {
+	EvrClearDiagCounters(pEr);
+	EvrEnableDiagCounters(pEr, 1);
 
 #define PULSES 10000
 
-      for (j = 0; j < PULSES; j++)
-	EvgSendSWEvent(pEg, i);
+	usleep(1000);
 
-      usleep(1000);
+	for (j = 0; j < PULSES; j++)
+	  EvgSendSWEvent(pEg, i);
 
-      for (j = 1; j < 11; j++)
-	{
-	  if (j != i)
-	    {
-	      if (EvrGetDiagCounter(pEr, j-1))
-		{
-		  printf(ERROR_TEXT "1 Spurious pulses on UNIVOUT%d: %d, i = %d, j = %d\n", j-1,
-			 EvrGetDiagCounter(pEr, j-1), i, j);
-		  err_pulse++;
-		}
-	    }
-	  else if (EvrGetDiagCounter(pEr, j-1) != PULSES)
-	    {
-	      printf(ERROR_TEXT "1 Wrong number of pulses on UNIVOUT%d: %d (%d), i = %d, j = %d\n",
-		     j-1, EvrGetDiagCounter(pEr, j-1), PULSES, i, j);
-	      err_pulse++;
-	    }
-	}
-    }
+	usleep(10000);
+	
+	for (j = 1; j < (univouts + tbouts) + 1; j++)
+	  {
+	    /*
+	    printf("Diag counter #%d %d pulses\n", j-1,  EvrGetDiagCounter(pEr, j-1));
+	    */
+	    if (j != i)
+	      {
+		if (EvrGetDiagCounter(pEr, j-1))
+		  {
+		    printf(ERROR_TEXT "1 Spurious pulses on UNIVOUT%d: %d, i = %d, j = %d\n", j-1,
+			   EvrGetDiagCounter(pEr, j-1), i, j);
+		    err_pulse++;
+		  }
+	      }
+	    else if (EvrGetDiagCounter(pEr, j-1) != PULSES)
+	      {
+		printf(ERROR_TEXT "1 Wrong number of pulses on UNIVOUT%d: %d (%d), i = %d, j = %d\n",
+		       j-1, EvrGetDiagCounter(pEr, j-1), PULSES, i, j);
+		err_pulse++;
+	      }
+	  }
+      }
 
-  EvgSWEventEnable(pEg, 0);
-  if (EvgGetSWEventEnable(pEg))
-    {
-      printf(ERROR_TEXT "Could not disable EVG SWEvent!\n");      
-      err_gen++;
-    }
+    EvgSWEventEnable(pEg, 0);
+    if (EvgGetSWEventEnable(pEg))
+      {
+	printf(ERROR_TEXT "Could not disable EVG SWEvent!\n");      
+	err_gen++;
+      }
+  }
 
   /*
    * Event Analyzer test
@@ -379,43 +523,89 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
     EvrClearDiagCounters(pEr);
     EvrEnableDiagCounters(pEr, 1);
 
-    for (i = 1; i <= 8; i++)
+    if (ff == 7)
       {
-	/* Map MXC0 to TRIG0, etc. */
-	EvgSetMxcTrigMap(pEg, i-1, i-1);
-	EvgSetTriggerEvent(pEg, i-1, i, 1);
-	EvgSetMXCPrescaler(pEg, i-1, 64 << i);
-      }
 
-    /*    
-    EvgMXCDump(pEg);
-    */
-
-    usleep(1000);
-    
-    EvrEnableDiagCounters(pEr, 0);
-    
-    for (i = 0; i < 8; i++)
-      {
-	cnt[i] = EvrGetDiagCounter(pEr, i);
-	/*
-	printf("MXC%d: %d pulses\n", i, cnt[i]);
-	*/
-	if (i > 0)
+	for (i = 1; i <= 8; i++)
 	  {
-	    if (cnt[i] < (cnt[i-1] >> 1) - (cnt[i-1] >> 4) || cnt[i] > (cnt[i-1] >> 1) + (cnt[i-1] >> 4))
+	    /* Map MXC0 to TRIG8, etc. */
+	    EvgSetMxcTrigMap(pEg, i-1, i+7);
+	    EvgSetTriggerEvent(pEg, i+7, i, 1);
+	    EvgSetMXCPrescaler(pEg, i-1, 64 << i);
+	  }
+	
+	/*    
+	      EvgMXCDump(pEg);
+	*/
+	
+	usleep(4000);
+	
+	EvrEnableDiagCounters(pEr, 0);
+	
+	for (i = 0; i < 8; i++)
+	  {
+	    cnt[i] = EvrGetDiagCounter(pEr, i+8);
+	    /*
+	      printf("MXC%d: %d pulses\n", i, cnt[i]);
+	    */
+	    if (i > 0)
 	      {
-		printf(ERROR_TEXT "MXC%d: %d pulses, MXC%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
-		err_mxc++;
+		if (cnt[i] < (cnt[i-1] >> 1) - (cnt[i-1] >> 4) || cnt[i] > (cnt[i-1] >> 1) + (cnt[i-1] >> 4))
+		  {
+		    printf(ERROR_TEXT "MXC%d: %d pulses, MXC%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
+		    err_mxc++;
+		  }
 	      }
 	  }
+	
+	for (i = 1; i <= 8; i++)
+	  {
+	    /* Unmap, reset prescalers */
+	    EvgSetMxcTrigMap(pEg, i-1, -1);
+	    EvgSetMXCPrescaler(pEg, i-1, 0);
+	  }
       }
-
-    for (i = 1; i <= 8; i++)
+    else
       {
-	/* Unmap, reset prescalers */
-	EvgSetMxcTrigMap(pEg, i-1, -1);
-	EvgSetMXCPrescaler(pEg, i-1, 0);
+
+	for (i = 1; i <= 8; i++)
+	  {
+	    /* Map MXC0 to TRIG0, etc. */
+	    EvgSetMxcTrigMap(pEg, i-1, i-1);
+	    EvgSetTriggerEvent(pEg, i-1, i, 1);
+	    EvgSetMXCPrescaler(pEg, i-1, 64 << i);
+	  }
+	
+	/*    
+	      EvgMXCDump(pEg);
+	*/
+	
+	usleep(4000);
+	
+	EvrEnableDiagCounters(pEr, 0);
+	
+	for (i = 0; i < 8; i++)
+	  {
+	    cnt[i] = EvrGetDiagCounter(pEr, i);
+
+	      printf("MXC%d: %d pulses\n", i, cnt[i]);
+
+	    if (i > 0)
+	      {
+		if (cnt[i] < (cnt[i-1] >> 1) - (cnt[i-1] >> 4) || cnt[i] > (cnt[i-1] >> 1) + (cnt[i-1] >> 4))
+		  {
+		    printf(ERROR_TEXT "MXC%d: %d pulses, MXC%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
+		    err_mxc++;
+		  }
+	      }
+	  }
+	
+	for (i = 1; i <= 8; i++)
+	  {
+	    /* Unmap, reset prescalers */
+	    EvgSetMxcTrigMap(pEg, i-1, -1);
+	    EvgSetMXCPrescaler(pEg, i-1, 0);
+	  }
       }
   }
 
@@ -438,11 +628,23 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	/* Map MXC0 to DBUS0, etc. */
 	EvgSetDBusMap(pEg, i-1, C_EVG_DBUS_SEL_MXC);
 	EvgSetMXCPrescaler(pEg, i-1, 16 << i);
-	EvrSetUnivOutMap(pEr, i-1, i-1+C_EVR_SIGNAL_MAP_DBUS);
-	EvrSetTBOutMap(pEr, i-1, i-1+C_EVR_SIGNAL_MAP_DBUS);
+	switch (ff)
+	  {
+	  case 6:
+	    EvrSetTBOutMap(pEr, i-1, i-1+C_EVR_SIGNAL_MAP_DBUS);
+	    break;
+	  case 7:
+	    EvrSetUnivOutMap(pEr, i+7, i-1+C_EVR_SIGNAL_MAP_DBUS);
+	    break;
+	  default:
+	    EvrSetUnivOutMap(pEr, i-1, i-1+C_EVR_SIGNAL_MAP_DBUS);
+	    EvrSetTBOutMap(pEr, i-1, i-1+C_EVR_SIGNAL_MAP_DBUS);
+	    break;
+	  }
       }
     
     EvgSyncMxc(pEg);
+    sleep(1);
     
     EvrClearDiagCounters(pEr);
     EvrEnableDiagCounters(pEr, 1);
@@ -453,9 +655,15 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
     
     for (i = 0; i < 8; i++)
       {
-	cnt[i] = EvrGetDiagCounter(pEr, i);
+	if (ff == 6)
+	  cnt[i] = EvrGetDiagCounter(pEr, i+4);
+	else if (ff == 7)
+	  cnt[i] = EvrGetDiagCounter(pEr, i+8);
+	else
+	  cnt[i] = EvrGetDiagCounter(pEr, i);
 	if (i > 0)
 	  {
+	    printf("MXC/DBUS%d: %d pulses, MXC%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
 	    if (cnt[i] < (cnt[i-1] >> 1) - (cnt[i-1] >> 4) || cnt[i] > (cnt[i-1] >> 1) + (cnt[i-1] >> 4))
 	      {
 		printf(ERROR_TEXT "MXC/DBUS%d: %d pulses, MXC%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
@@ -464,41 +672,49 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	  }
       }
 
-    for (i = 1; i <= 8; i++)
+    if (ff != 7)
       {
-	EvgSetDBusMap(pEg, i-1, C_EVG_DBUS_SEL_EXT);
-	EvgSetUnivinMap(pEg, i-1, -1, i-1);
-      }
-
-    EvrClearDiagCounters(pEr);
-    EvrEnableDiagCounters(pEr, 1);
-
-    /* Generate pulses */
-    for (i = 1; i <= 8; i++)
-      for (j = 0; j < (1024 >> i); j++)
-	{
-	  EvgSetUnivOutMap(pEg, i-1, 0);
-	  EvgSetUnivOutMap(pEg, i-1, (1 << EVG_SIGNAL_MAP_BITS) - 2);
-	  EvgSetUnivOutMap(pEg, i-1, 0);
-	}
-
-    usleep(1000);
-    
-    EvrEnableDiagCounters(pEr, 0);
-    
-    for (i = 0; i < 8; i++)
-      {
-	cnt[i] = EvrGetDiagCounter(pEr, i);
-	if (i > 0)
+	for (i = 1; i <= 8; i++)
 	  {
-	    if (cnt[i] != cnt[i-1] >> 1)
+	    EvgSetDBusMap(pEg, i-1, C_EVG_DBUS_SEL_EXT);
+	    EvgSetUnivinMap(pEg, i-1, -1, i-1, 0, 0);
+	  }
+	
+	EvrClearDiagCounters(pEr);
+	EvrEnableDiagCounters(pEr, 1);
+	
+	/* Generate pulses */
+	for (i = 1; i <= 8; i++)
+	  for (j = 0; j < (1024 >> i); j++)
+	    {
+	      EvgSetUnivOutMap(pEg, i-1, 0);
+	      EvgSetUnivOutMap(pEg, i-1, (1 << EVG_SIGNAL_MAP_BITS) - 2);
+	      EvgSetUnivOutMap(pEg, i-1, 0);
+	    }
+	
+	usleep(1000);
+	
+	EvrEnableDiagCounters(pEr, 0);
+	
+	for (i = 0; i < 8; i++)
+	  {
+	    if (ff == 6)
+	      cnt[i] = EvrGetDiagCounter(pEr, i+4);
+	    else if (ff == 7)
+	      cnt[i] = EvrGetDiagCounter(pEr, i+8);
+	    else
+	      cnt[i] = EvrGetDiagCounter(pEr, i);
+	    if (i > 0)
 	      {
-		printf(ERROR_TEXT "DBUS%d: %d pulses, DBUS%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
-		err_dbus++;
+		printf("DBUS%d: %d pulses, DBUS%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
+		if (cnt[i] != cnt[i-1] >> 1)
+		  {
+		    printf(ERROR_TEXT "DBUS%d: %d pulses, DBUS%d: %d pulses\n", i-1, cnt[i-1], i, cnt[i]);
+		    err_dbus++;
+		  }
 	      }
 	  }
       }
-
 
     for (i = 1; i <= 8; i++)
       {
@@ -506,9 +722,16 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	EvgSetDBusMap(pEg, i-1, 0);
 	EvgSetMXCPrescaler(pEg, i-1, 0);
 	/* Restore EVR UnivOut mapping */
-	EvrSetUnivOutMap(pEr, i-1, i-1);
-	EvrSetTBOutMap(pEr, i-1, i-1);
-	EvgSetUnivinMap(pEg, i-1, -1, -1);
+	if (ff == 7)
+	  EvrSetUnivOutMap(pEr, i+7, i-1);
+	else
+	  if (ff != 6 || i < 5)
+	    EvrSetUnivOutMap(pEr, i-1, i-1);
+	if (ff == 6)
+	  EvrSetTBOutMap(pEr, i-1, i-1+univouts);
+	else
+	  EvrSetTBOutMap(pEr, i-1, i-1);
+	EvgSetUnivinMap(pEg, i-1, -1, -1, 0, 0);
       }
   }
 
@@ -525,6 +748,11 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
     EvgSetMXCPrescaler(pEg, 3, 499.654E6/4/50);
     EvgSyncMxc(pEg);
     EvgSetUnivOutMap(pEg, 0, C_SIGNAL_MAP_PRESC+3);
+    /*
+    EvgMXCDump(pEg);
+    EvgACDump(pEg);
+    EvgUnivOutDump(pEg);
+    */
 
     /* Setup AC input for 10 Hz */
     EvgSetACInput(pEg, 0, 0, 5, 0);
@@ -543,7 +771,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	printf(ERROR_TEXT "AC input 50 Hz, div/5, count %d\n", cnt);
 	err_acin++;
       }
-    
+
     /* Restore registers */
     EvgSetTriggerEvent(pEg, 3, 4, 0);
     EvgSetACMap(pEg, -1);
@@ -559,7 +787,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 #ifdef USE_EXT_RF
   printf("Changing to external /4 reference.\n");
   EvgSetRFInput(pEg, 1, C_EVG_RFDIV_4);
-  usleep(10000);
+  sleep(2);
   /* Clear violation flag */
   EvrGetViolation(pEr, 1);
   EvrGetViolation(pBEr, 1);
@@ -597,6 +825,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	EvgSetSeqRamEvent(pEg, ram, 5, 33, 6);
 	EvgSetSeqRamEvent(pEg, ram, 6, 34, 7);
 	EvgSetSeqRamEvent(pEg, ram, 7, 40, 0x7f);
+	EvgSetSeqRamEvent(pEg, ram, 8, 41, 9);
 	/*
 	EvgSeqRamStatus(pEg, ram);
 	EvgSeqRamDump(pEg, ram);
@@ -605,7 +834,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
 	sleep(1);
 
-	EvgSeqRamControl(pEg, ram, 1, 0, 0, 0, 0);
+	EvgSeqRamControl(pEg, ram, 1, 0, 0, 1, 0);
 
 	for (i = 0; i < 7; i++)
 	  {
@@ -615,6 +844,10 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 		printf(ERROR_TEXT "SEQ%d OUT%d %d cycles out of 10\n", ram, i, cnt[i]);
 		err_seq++;
 	      }
+	    /*
+	    else
+		printf("SEQ%d OUT%d %d cycles out of 10\n", ram, i, cnt[i]);
+	    */
 	  }
       }
 
@@ -627,6 +860,11 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
    */
   
   printf("Data transfer tests\n");
+
+  /*
+  printf("Press space to continue.\n");
+  while(getchar() != ' ');
+  */
 
   {
     int buf1[EVG_MAX_BUFFER/4], buf2[EVG_MAX_BUFFER/4];
@@ -701,7 +939,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
   for (i = 1; i <= 8; i++)
     {
-      EvgSetUnivinMap(pEg, i-1, i-1, -1);
+      EvgSetUnivinMap(pEg, i-1, i-1, -1, 0, 0);
       EvgSetTriggerEvent(pEg, i-1, i, 1);
     }
 
@@ -728,19 +966,23 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
       for (j = 1; j <= 8; j++)
 	{
+	  int dc = EvrGetDiagCounter(pEr, j-1);
+	  if (ff == 7)
+	    dc = EvrGetDiagCounter(pEr, j+7);
+
 	  if (j != i)
 	    {
-	      if (EvrGetDiagCounter(pEr, j-1))
+	      if (dc)
 		{
 		  printf(ERROR_TEXT "2 Spurious pulses on UNIVOUT%d: %d\n", j-1,
-			 EvrGetDiagCounter(pEr, j-1));
+			 dc);
 		  err_pulse++;
 		}
 	    }
-	  else if (EvrGetDiagCounter(pEr, j-1) != PULSES)
+	  else if (dc != PULSES)
 	    {
 	      printf(ERROR_TEXT "2 Wrong number of pulses on UNIVOUT%d: %d (%d)\n",
-		     j-1, EvrGetDiagCounter(pEr, j-1), PULSES);
+		     j-1, dc, PULSES);
 	      err_pulse++;
 	    }
 	}
@@ -748,21 +990,25 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
   for (i = 1; i <= 8; i++)
     {
-      EvgSetUnivinMap(pEg, i-1, -1, -1);
+      EvgSetUnivinMap(pEg, i-1, -1, -1, 0, 0);
       EvgSetTriggerEvent(pEg, i-1, i, 0);
     }
 
   /*
    * Irq tests
    */
-
+#ifdef EVR_IRQ_TESTS
   printf("EVR Irq tests\n");
   {
+    /*
+    dump_mem(pEr, 0x80);
+    */
+
     evr_clr_irq();
     EvrClearIrqFlags(pEr, -1);
 
     EvrIrqEnable(pEr, EVR_IRQ_MASTER_ENABLE | EVR_IRQFLAG_VIOLATION);
-    
+ 
     /* Generate violation by reloading fractional synth */
     EvrSetFracDiv(pEr, i = EvrGetFracDiv(pEr));
 
@@ -782,7 +1028,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
     /* We have to disable IRQs to be able to sleep for a while and wait link is up */
     EvrIrqEnable(pEr, 0);
 
-    sleep(1);
+    sleep(6);
     
     EvrClearIrqFlags(pEr, -1);
 
@@ -800,12 +1046,17 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
     EvrIrqEnable(pEr, EVR_IRQ_MASTER_ENABLE | EVR_IRQFLAG_FIFOFULL);
     EvrSetFIFOEvent(pEr, 0, 1, 1);
     EvgSWEventEnable(pEg, 1);
-    for (j = 0; j < 511; j++)
-      EvgSendSWEvent(pEg, 1);
+    if (ff == 6)
+      for (j = 0; j < 1025; j++)
+	EvgSendSWEvent(pEg, 1);
+    else
+      for (j = 0; j < 512; j++)
+	EvgSendSWEvent(pEg, 1);
     EvgSWEventEnable(pEg, 0);
     EvrSetFIFOEvent(pEr, 0, 1, 0);
 
     usleep(100);
+
     if (!evr_irq_cnt[C_EVR_IRQFLAG_FIFOFULL])
       {
 	printf(ERROR_TEXT "FIFO full IRQ failed %d/1\n", evr_irq_cnt[C_EVR_IRQFLAG_FIFOFULL]);
@@ -828,7 +1079,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	printf(ERROR_TEXT "Received heartbeat interrupt %d/0!\n", evr_irq_cnt[C_EVR_IRQFLAG_HEARTBEAT]);
 	err_irq++;
       }
-    sleep(2);
+    sleep(4);
     if (!evr_irq_cnt[C_EVR_IRQFLAG_HEARTBEAT])
       {
 	printf(ERROR_TEXT "Heartbeat interrupt failed %d/1!\n", evr_irq_cnt[C_EVR_IRQFLAG_HEARTBEAT]);
@@ -854,21 +1105,34 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
       }
     EvrClearFIFO(pEr);
 
+    printf("Pulse Irq test\n");
+
     evr_clr_irq();
     EvrClearIrqFlags(pEr, -1);
     EvrIrqEnable(pEr, EVR_IRQ_MASTER_ENABLE | EVR_IRQFLAG_PULSE);
-    
+
+    printf("Generate Pulse\n");
+
+    /*
+    wait();
+    */
+
     EvrSetPulseIrqMap(pEr, C_EVR_SIGNAL_MAP_LOW);
     EvrSetPulseIrqMap(pEr, C_EVR_SIGNAL_MAP_HIGH);
     EvrSetPulseIrqMap(pEr, C_EVR_SIGNAL_MAP_LOW);
 
+    printf("Pulse Generated\n");
+
     usleep(100);
+
 
     if (evr_irq_cnt[C_EVR_IRQFLAG_PULSE] != 1)
       {
 	printf(ERROR_TEXT "Pulse IRQ failed %d/1\n", evr_irq_cnt[C_EVR_IRQFLAG_PULSE]);
 	err_irq++;
       }
+
+    printf("Databuf Irq test\n");
 
     evr_clr_irq();
     EvrSetDBufMode(pEr, 1);
@@ -890,6 +1154,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
     EvrClearIrqFlags(pEr, -1);
     EvrIrqEnable(pEr, 0);
   }
+#endif
 
   /*
    * Event FIFO test
@@ -1089,52 +1354,140 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	err_fifo++;
       }
 
-    
-    if (!EvrEnableFIFOStopEvent(pEr, 1))
+    for (i = 0; i < 256; i++)
       {
-	printf(ERROR_TEXT "Could not enable FIFO stop event.\n");
-	err_fifo++;
+	EvrSetFIFOEvent(pEr, 0, i, 0);
+	EvrSetLatchEvent(pEr, 0, i, 0);
+      }
+
+    EvgSWEventEnable(pEg, 0);
+  }
+
+  /*
+   * Event Log test
+   */
+
+  printf("Event Log test\n");
+
+  
+
+  {
+    EvrClearLog(pEr);
+    EvgSWEventEnable(pEg, 1);
+    EvrEnableLog(pEr, 1);
+    if (EvrGetLogState(pEr))
+      {
+	printf(ERROR_TEXT "Could not enable Event Log.\n");
+	err_log++;
+      }
+
+    if ((i = EvrGetLogStart(pEr)) != 0)
+      {
+	printf(ERROR_TEXT "Log not reset. Position 0x%04x\n", i);
+	err_log++;
+      }
+
+    if ((i = EvrGetLogEntries(pEr)) != 0)
+      {
+	printf(ERROR_TEXT "Log not reset. Number of entries 0x%04x\n", i);
+	err_log++;
+      }
+
+    for (i = 0; i < 0x40; i++)
+      {
+	EvrSetLogEvent(pEr, 0, i + 1, 1);
+	EvgSendSWEvent(pEg, i + 1);
+      }
+
+    usleep(100);
+
+    if ((j = EvrGetLogStart(pEr)) != 0)
+      {
+	printf(ERROR_TEXT "Log start moved. Position 0x%04x\n", j);
+	err_log++;
+      }
+
+    if ((j = EvrGetLogEntries(pEr)) != i)
+      {
+	printf(ERROR_TEXT "Number of entries 0x%04x != 0x%04x\n", j, i);
+	err_log++;
+      }
+
+    /*
+    EvrDumpLog(pEr);
+    */
+
+    for (i = 0; i < 0x200; i++)
+      {
+	EvrSetLogEvent(pEr, 0, (i & 0x3f) + 1, 1);
+	EvgSendSWEvent(pEg, (i & 0x3f) + 1);
+      }
+    usleep(100);
+
+    if ((j = EvrGetLogStart(pEr)) != 0x40)
+      {
+	printf(ERROR_TEXT "Log start not updated. Position 0x%04x\n", j);
+	err_log++;
+      }
+
+    if ((j = EvrGetLogEntries(pEr)) != 0x200)
+      {
+	printf(ERROR_TEXT "Number of entries 0x%04x != 0x04x\n", j, i);
+	err_log++;
+      }
+    
+    /*
+    EvrDumpLog(pEr);
+    */
+
+    EvrClearLog(pEr);
+
+    if (!EvrEnableLogStopEvent(pEr, 1))
+      {
+	printf(ERROR_TEXT "Could not enable Log stop event.\n");
+	err_log++;
       }
 
     for (i = 0x70; i < 0x7f; i++)
       {
-	EvrSetFIFOEvent(pEr, 0, i, 1);
+	EvrSetLogEvent(pEr, 0, i, 1);
 	EvgSendSWEvent(pEg, i);
       }
+    usleep(100);
 
-    if (!EvrGetFIFOState(pEr))
+    if (!EvrGetLogState(pEr))
       {
-	printf(ERROR_TEXT "Event FIFO not stopped.\n");
-	err_fifo++;
+	printf(ERROR_TEXT "Event Log not stopped.\n");
+	err_log++;
       }
 
-    EvrDumpFIFO(pEr);
+    EvrDumpLog(pEr);
 
-    EvrEnableFIFO(pEr, 1);
-    if (EvrGetFIFOState(pEr))
+    EvrEnableLog(pEr, 1);
+    if (EvrGetLogState(pEr))
       {
-	printf(ERROR_TEXT "Event FIFO not enabled.\n");
-	err_fifo++;
+	printf(ERROR_TEXT "Event Log not enabled.\n");
+	err_log++;
       }
 
-    EvrEnableFIFO(pEr, 0);
-    if (!EvrGetFIFOState(pEr))
+    EvrEnableLog(pEr, 0);
+    if (!EvrGetLogState(pEr))
       {
-	printf(ERROR_TEXT "Event FIFO not stopped.\n");
-	err_fifo++;
+	printf(ERROR_TEXT "Event Log not stopped.\n");
+	err_log++;
       }
 
-    if (EvrEnableFIFOStopEvent(pEr, 0))
+    if (EvrEnableLogStopEvent(pEr, 0))
       {
-	printf(ERROR_TEXT "Could not disable FIFO stop event.\n");
-	err_fifo++;
+	printf(ERROR_TEXT "Could not disable Log stop event.\n");
+	err_log++;
       }
 
-    EvrEnableFIFO(pEr, 1);
-    if (EvrGetFIFOState(pEr))
+    EvrEnableLog(pEr, 1);
+    if (EvrGetLogState(pEr))
       {
-	printf(ERROR_TEXT "Event FIFO not enabled.\n");
-	err_fifo++;
+	printf(ERROR_TEXT "Event Log not enabled.\n");
+	err_log++;
       }
 
     for (i = 0; i < 256; i++)
@@ -1158,43 +1511,173 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
   printf("EVR external event test.\n");
 
+  
+
   {
+    EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
+    EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
+    usleep(1000);
     EvrClearDiagCounters(pEr);
     EvrEnableDiagCounters(pEr, 1);
-    EvrSetExtEvent(pEr, 0, 1, 1);
-    EvrSetExtEvent(pEr, 1, 2, 1);
+    EvrSetExtEvent(pEr, 0, 3, 1, 0);
+    EvrSetExtEvent(pEr, 1, 4, 1, 0);
+    EvrSetExtEdgeSensitivity(pEr, 0, 0);
+    EvrSetExtEdgeSensitivity(pEr, 1, 0);
+    EvrSetExtLevelSensitivity(pEr, 0, 0);
+    EvrSetExtLevelSensitivity(pEr, 1, 0);
+    
     for (i = 0; i < 8; i++)
       {
 	EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
 	EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_HIGH);
+	usleep(10);
 	EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
 	usleep(10);
 	EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
 	EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_HIGH);
+	usleep(10);
 	EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
 	usleep(10);
 	EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
 	EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_HIGH);
+	usleep(10);
 	EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
 	usleep(10);
       }
-    if ((i = EvrGetDiagCounter(pEr, 0)) != 16)
+    if ((i = EvrGetDiagCounter(pEr, 2)) != 16)
       {
 	printf(ERROR_TEXT "Wrong number of ext0 events %d/16\n", i);
 	err_extev++;
       }
 
-    if (ff == 0)
+    if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
       {
-	if ((i = EvrGetDiagCounter(pEr, 1)) != 8)
+	if ((i = EvrGetDiagCounter(pEr, 3)) != 8)
 	  {
 	    printf(ERROR_TEXT "Wrong number of ext1 events %d/8\n", i);
 	    err_extev++;
 	  }
       }
+
+    /*    
+      Testing rising edge
+    */
     
-    EvrSetExtEvent(pEr, 0, 0, 0);
-    EvrSetExtEvent(pEr, 1, 0, 0);
+
+    EvrSetExtEdgeSensitivity(pEr, 0, 0);
+    EvrSetExtEdgeSensitivity(pEr, 1, 0);
+    EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
+    EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
+    usleep(100);
+    EvrClearDiagCounters(pEr);
+    EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_HIGH);
+    EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_HIGH);
+    usleep(100);
+    if ((i = EvrGetDiagCounter(pEr, 2)) != 1)
+      {
+	printf(ERROR_TEXT "Rising edge test failed for IN0\n");
+	err_extev++;
+      }
+    if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+      if ((i = EvrGetDiagCounter(pEr, 3)) != 1)
+	{
+	  printf(ERROR_TEXT "Rising edge test failed for IN1\n");
+	  err_extev++;
+	}
+    /*
+      Testing falling edge
+    */
+    EvrSetExtEdgeSensitivity(pEr, 0, 1);
+    EvrSetExtEdgeSensitivity(pEr, 1, 1);
+    EvrClearDiagCounters(pEr);
+    EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
+    EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
+    usleep(100);
+    if ((i = EvrGetDiagCounter(pEr, 2)) != 1)
+      {
+	printf(ERROR_TEXT "Falling edge test failed for IN0\n");
+	err_extev++;
+      }
+    
+    if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+      if ((i = EvrGetDiagCounter(pEr, 3)) != 1)
+	{
+	  printf(ERROR_TEXT "Falling edge test failed for IN1\n");
+	  err_extev++;
+	}
+    /*
+      Testing high level
+    */
+    EvrClearDiagCounters(pEr);
+    EvrSetExtEvent(pEr, 0, 3, 0, 1);
+    EvrSetExtEvent(pEr, 1, 4, 0, 1);
+    EvrSetExtLevelSensitivity(pEr, 0, 0);
+    EvrSetExtLevelSensitivity(pEr, 1, 0);
+    usleep(100);
+    if ((i = EvrGetDiagCounter(pEr, 2)))
+      {
+	printf(ERROR_TEXT "High sens. on IN0 produced %d events when input low\n", i);
+	err_extev++;
+      }
+    if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+      if ((i = EvrGetDiagCounter(pEr, 3)))
+	{
+	  printf(ERROR_TEXT "High sens. on IN1 produced %d events when input low\n", i);
+	  err_extev++;
+	}
+    EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_HIGH);
+    EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_HIGH);
+    usleep(100);
+    if (!(i = EvrGetDiagCounter(pEr, 2)))
+      {
+	printf(ERROR_TEXT "High level on IN0 did not produce events\n");
+	err_extev++;
+      }
+
+    if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+      if (!(i = EvrGetDiagCounter(pEr, 3)))
+	{
+	  printf(ERROR_TEXT "High level on IN1 did not produce events\n");
+	  err_extev++;
+	}
+
+    /*
+      Testing low level
+    */
+    EvrSetExtLevelSensitivity(pEr, 0, 1);
+    EvrSetExtLevelSensitivity(pEr, 1, 1);
+    usleep(100);
+    EvrClearDiagCounters(pEr);
+    usleep(100);
+    if ((i = EvrGetDiagCounter(pEr, 2)))
+      {
+	printf(ERROR_TEXT "Low sens. on IN0 produced %d events when input high\n", i);
+	err_extev++;
+      }
+    if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+      if ((i = EvrGetDiagCounter(pEr, 3)))
+	{
+	  printf(ERROR_TEXT "Low sens. on IN1 produced %d events when input high\n", i);
+	  err_extev++;
+	}
+
+    EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
+    EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
+    usleep(100);
+    if (!(i = EvrGetDiagCounter(pEr, 2)))
+      {
+	printf(ERROR_TEXT "Low level on IN0 did not produce events\n");
+	err_extev++;
+      }
+    if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+      if (!(i = EvrGetDiagCounter(pEr, 3)))
+	{
+	  printf(ERROR_TEXT "Low level on IN1 did not produce events\n");
+	  err_extev++;
+	}
+
+    EvrSetExtEvent(pEr, 0, 0, 0, 0);
+    EvrSetExtEvent(pEr, 1, 0, 0, 0);
   }
 
   /*
@@ -1203,12 +1686,22 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 
   printf("Backward event test.\n");
 
+  
+
+  /*
+  printf("Press space to continue.\n");
+  while(getchar() != ' ');
+  */
+
+#undef PULSES
+#define PULSES 10000
+
   for (i = 0; i < 2; i++)
     {
       EvrClearDiagCounters(pBEr);
       EvrEnableDiagCounters(pBEr, 1);
 
-      EvrSetBackEvent(pEr, i, i+1, 1);
+      EvrSetBackEvent(pEr, i, i+1, 1, 0);
 
       for (j = 0; j < PULSES; j++)
 	{
@@ -1220,6 +1713,8 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	  EvgSetUnivOutMap(pEg, i+2, 0);
 	  EvgSetUnivOutMap(pEg, i+2, 0);
 	}
+
+      check_vio(pBEr);
 
       /* Only one input on PMC-EVR-230 */
       k = 2;
@@ -1245,15 +1740,149 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	    }
 	}
 
-      EvrSetBackEvent(pEr, i, i+1, 0);
+      EvrSetBackEvent(pEr, i, i+1, 0, 0);
     }
+
+  EvrSetBackEvent(pEr, 0, 1, 1, 0);
+  EvrSetBackEvent(pEr, 1, 2, 1, 0);
+
+  /*
+    Testing rising edge
+  */
+  EvrSetExtEdgeSensitivity(pEr, 0, 0);
+  EvrSetExtEdgeSensitivity(pEr, 1, 0);
+  EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
+  EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
+  usleep(100);
+  EvrClearDiagCounters(pBEr);
+  EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_HIGH);
+  EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_HIGH);
+  usleep(100);
+  if (ff != 6)
+    if ((i = EvrGetDiagCounter(pBEr, 0)) != 1)
+      {
+	printf(ERROR_TEXT "Rising edge test failed for IN0\n");
+	err_bev++;
+      }
+  if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+    if ((i = EvrGetDiagCounter(pBEr, 1)) != 1)
+      {
+	printf(ERROR_TEXT "Rising edge test failed for IN1\n");
+	err_bev++;
+      }
+  /*
+    Testing falling edge
+  */
+  EvrSetExtEdgeSensitivity(pEr, 0, 1);
+  EvrSetExtEdgeSensitivity(pEr, 1, 1);
+  EvrClearDiagCounters(pBEr);
+  EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
+  EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
+  usleep(100);
+  if (ff != 6)
+    if ((i = EvrGetDiagCounter(pBEr, 0)) != 1)
+      {
+	printf(ERROR_TEXT "Falling edge test failed for IN0\n");
+	err_bev++;
+      }
+  if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+    if ((i = EvrGetDiagCounter(pBEr, 1)) != 1)
+      {
+	printf(ERROR_TEXT "Falling edge test failed for IN1\n");
+	err_bev++;
+      }
+  /*
+    Testing high level
+  */
+  EvrSetBackEvent(pEr, 0, 1, 0, 1);
+  EvrSetBackEvent(pEr, 1, 2, 0, 1);
+  EvrSetExtLevelSensitivity(pEr, 0, 0);
+  EvrSetExtLevelSensitivity(pEr, 1, 0);
+  usleep(100);
+  EvrClearDiagCounters(pBEr);
+  usleep(100);
+  if (ff != 6)
+    if ((i = EvrGetDiagCounter(pBEr, 0)))
+      {
+	printf(ERROR_TEXT "High sens. on IN0 produced %d events when input low\n", i);
+	err_bev++;
+      }
+  if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+    if ((i = EvrGetDiagCounter(pBEr, 1)))
+      {
+	printf(ERROR_TEXT "High sens. on IN1 produced %d events when input low\n", i);
+	err_bev++;
+      }
+  EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_HIGH);
+  EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_HIGH);
+  usleep(100);
+  if (ff != 6)
+    if (!(i = EvrGetDiagCounter(pBEr, 0)))
+      {
+	printf(ERROR_TEXT "High level on IN0 did not produce events\n");
+	err_bev++;
+      }
+  if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+    if (!(i = EvrGetDiagCounter(pBEr, 1)))
+      {
+	printf(ERROR_TEXT "High level on IN1 did not produce events\n");
+	err_bev++;
+      }
+  /*
+    Testing low level
+  */
+  EvrSetExtLevelSensitivity(pEr, 0, 1);
+  EvrSetExtLevelSensitivity(pEr, 1, 1);
+  usleep(100);
+  EvrClearDiagCounters(pBEr);
+  usleep(100);
+  if (ff != 6)
+    if ((i = EvrGetDiagCounter(pBEr, 0)))
+      {
+	printf(ERROR_TEXT "Low sens. on IN0 produced %d events when input low\n", i);
+	err_bev++;
+      }
+  if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+    if ((i = EvrGetDiagCounter(pBEr, 1)))
+      {
+	printf(ERROR_TEXT "High sens. on IN1 produced %d events when input low\n", i);
+	err_bev++;
+      }
+  EvgSetUnivOutMap(pEg, 2, C_SIGNAL_MAP_LOW);
+  EvgSetUnivOutMap(pEg, 3, C_SIGNAL_MAP_LOW);
+  usleep(100);
+  if (ff != 6)
+    if (!(i = EvrGetDiagCounter(pBEr, 0)))
+      {
+	printf(ERROR_TEXT "Low level on IN0 did not produce events\n");
+	err_bev++;
+      }
+  if (ff == 0 || ff == 4 || ff == 6 || ff == 7)
+    if (!(i = EvrGetDiagCounter(pBEr, 1)))
+      {
+	printf(ERROR_TEXT "Low level on IN1 did not produce events\n");
+	err_bev++;
+      }
+
+  EvrSetBackEvent(pEr, 0, 0, 0, 0);
+  EvrSetBackEvent(pEr, 1, 0, 0, 0);
 
   /*
    * Backward DBUS test
    */
 
   printf("Backward DBUS test\n");
+
   
+
+  /* Use data buffer mode!!! */
+
+  if (!(EvrSetDBufMode(pBEr, 1) & (1 << C_EVR_DATABUF_MODE)))
+    {
+      printf(ERROR_TEXT "Could not enable BEVR databuffer mode!\n");
+      err_gen++;
+    }
+
   for (i = 0; i < 8; i++)
     {
       EvrSetUnivOutMap(pBEr, i, i+C_EVR_SIGNAL_MAP_DBUS);
@@ -1283,6 +1912,8 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	  EvgSetUnivOutMap(pEg, i+2, 0);
 	}
 
+      check_vio(pBEr);
+
       for (j = 0; j < 2; j++)
 	{
 	  if (j != i)
@@ -1311,6 +1942,14 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
       EvrSetTBOutMap(pBEr, i, i);
     }
 
+  /* Disable data buffer mode!!! */
+
+  if ((EvrSetDBufMode(pBEr, 0) & (1 << C_EVR_DATABUF_MODE)))
+    {
+      printf(ERROR_TEXT "Could not disable BEVR databuffer mode!\n");
+      err_gen++;
+    }
+
   /*
    * Backward data transfer test
    */
@@ -1320,6 +1959,8 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
   {
     int buf1[EVG_MAX_BUFFER/4], buf2[EVG_MAX_BUFFER/4];
     int size;
+
+    check_vio(pBEr);
 
     /*
     printf("buf1 %08x, buf2 %08x\n", (int) buf1, (int) buf2);
@@ -1335,23 +1976,28 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	err_gen++;
       }
 
-    for (i = 4; i < EVR_MAX_BUFFER; i += 4)
+    for (i = 4; i < 2048; i += 4) /* EVR_MAX_BUFFER; i += 4) */
       {
 	for (size = 0; size < i/4; size++)
 	  buf1[size] = rand() + (rand() << 15) + (rand() << 30);
- 
+
 	EvrReceiveDBuf(pBEr, 1);
+
+	usleep(1000);
+
 	if (EvrSendTxDBuf(pEr, (char *) buf1, i) < 0)
 	  {
 	    printf(ERROR_TEXT "Error sending out data buffer %x.\n", EvrGetTxDBufStatus(pEr));
 	    err_bdbuf++;
 	  }
+	memcpy((void *) buf2, (void *) &pEr->TxDatabuf[0], i); 
 	usleep(100);
 	if (!(EvrGetTxDBufStatus(pEr) & (1 << C_EVR_TXDATABUF_COMPLETE)))
 	  {
 	    printf(ERROR_TEXT "Data buffer transmit not complete.\n");
 	    err_bdbuf++;
 	  }
+
 	size = EvrGetDBuf(pBEr, (char *) buf2, EVG_MAX_BUFFER) & (EVG_MAX_BUFFER-1);
 	if (size != i)
 	  {
@@ -1365,7 +2011,7 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
 	      err_bdbuf++;
 	      for (size = 0; size < i/4; size++)
 		if (buf1[size] != buf2[size])
-		printf("TX %08x, %08x, RX %08x, %08x\n", buf1[size], pEr->Databuf[size], buf2[size], pBEr->Databuf[size]);
+		printf("TX %08x, %08x, RX %08x, %08x\n", buf1[size], pEr->TxDatabuf[size], buf2[size], pBEr->Databuf[size]);
 	      //		printf("TX %08x, RX %08x\n", pEr->Databuf[size], pBEr->Databuf[size]);
 	    }
       }
@@ -1382,92 +2028,109 @@ int testloop(struct MrfEgRegs *pEg, struct MrfErRegs *pEr, struct MrfErRegs *pBE
       }
   }
 
+  check_vio(pBEr);
+
   /*
    * Event forwarding test
    */
 
-  printf("Event forwarding test\n");
-
-  EvrClearFIFO(pEr);
-  EvrClearFIFO(pBEr);
-  EvrSetTimestampDivider(pBEr, 1);
-
-  for (i = 1; i < 10; i++)
-    {
-      if (i < 5)
-	EvrSetForwardEvent(pEr, 0, i, 1);
-      EvrSetFIFOEvent(pEr, 0, i, 1);
-      EvrSetFIFOEvent(pBEr, 0, i, 1);
-    }
-  EvrSetForwardEvent(pEr, 0, 1, 1);
-
-  EvgSWEventEnable(pEg, 1);
-
-  EvrClearDiagCounters(pBEr);
-  EvrEnableDiagCounters(pBEr, 1);
-
-  EvgSendSWEvent(pEg, 1);
-  
-  usleep(1000);
-
-  if ( (i = EvrGetDiagCounter(pBEr, 1)) != 0 )
-    {
-      printf(ERROR_TEXT "Spurios events %d (fowarding disabled)\n", i);
-      err_fwd++;
-    }
-  
-  EvrEnableEventForwarding(pEr, 1);
-
-  /*
-  EvrDumpStatus(pEr);
-  EvrDumpMapRam(pEr, 0);
-  */
-
-  EvrClearDiagCounters(pBEr);
-  EvrEnableDiagCounters(pBEr, 1);
-
-  /* Write some RAM events */
-  EvgSetSeqRamEvent(pEg, 0, 0, 10, 9);
-  EvgSetSeqRamEvent(pEg, 0, 1, 11, 1);
-  EvgSetSeqRamEvent(pEg, 0, 2, 12, 2);
-  EvgSetSeqRamEvent(pEg, 0, 3, 13, 3);
-  EvgSetSeqRamEvent(pEg, 0, 4, 14, 4);
-  EvgSetSeqRamEvent(pEg, 0, 5, 15, 5);
-  EvgSetSeqRamEvent(pEg, 0, 6, 16, 6);
-  EvgSetSeqRamEvent(pEg, 0, 7, 17, 7);
-  EvgSetSeqRamEvent(pEg, 0, 8, 18, 8);
-  EvgSetSeqRamEvent(pEg, 0, 9, 19, 2);
-  EvgSetSeqRamEvent(pEg, 0,10, 20, 1);
-  EvgSetSeqRamEvent(pEg, 0,11, 21, 4);
-  EvgSetSeqRamEvent(pEg, 0,12, 22, 3);
-  EvgSetSeqRamEvent(pEg, 0,13, 40, 0x7f);
-
-  EvgSeqRamControl(pEg, 0, 1, 0, 0, 0, C_EVG_SEQTRIG_SWTRIGGER0);
-  EvgSeqRamSWTrig(pEg, 0);
-
-  sleep(1);
-
   {
-    struct FIFOEvent fe;
-    int eventseq[9] = {1, 2, 3, 4, 2, 1, 4, 3, -1};
+    int ram = 1;
+
+    printf("Event forwarding test\n");
+
+    /*
+    wait();
+    */
+
+    EvrClearFIFO(pEr);
+    EvrClearFIFO(pBEr);
+    EvrSetTimestampDivider(pBEr, 1);
     
-    for (i = 0; eventseq[i] > 0; i++)
+    for (i = 1; i < 10; i++)
       {
-	if (EvrGetFIFOEvent(pBEr, &fe))
-	  {
-	    printf(ERROR_TEXT "Too few events.\n");
-	    err_fwd++;
-	    break;
-	  }
-	if (fe.EventCode != eventseq[i])
-	  {
-	    printf(ERROR_TEXT "Received wrong event %02x (%02x)\n",
-		   fe.EventCode, eventseq[i]);
-	    err_fwd++;
-	  }
-	printf("Forwarded event Code %08x, %08x:%08x\n",
-	       fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
+	if (i < 5)
+	  EvrSetForwardEvent(pEr, 0, i, 1);
+	EvrSetFIFOEvent(pEr, 0, i, 1);
+	EvrSetFIFOEvent(pBEr, 0, i, 1);
       }
+    EvrSetForwardEvent(pEr, 0, 1, 1);
+    
+    EvgSWEventEnable(pEg, 1);
+    
+    EvrClearDiagCounters(pBEr);
+    EvrEnableDiagCounters(pBEr, 1);
+    
+    EvgSendSWEvent(pEg, 1);
+    
+    usleep(1000);
+    
+    if (i = EvrGetDiagCounter(pBEr, 1))
+      {
+	printf(ERROR_TEXT "Spurios events %d (fowarding disabled)\n", i);
+	err_fwd++;
+      }
+    
+    EvrEnableEventForwarding(pEr, 1);
+    
+    /*
+      EvrDumpStatus(pEr);
+      EvrDumpMapRam(pEr, 0);
+    */
+    
+    EvrClearDiagCounters(pBEr);
+    EvrEnableDiagCounters(pBEr, 1);
+    
+    /* Write some RAM events */
+    EvgSetSeqRamEvent(pEg, ram, 0, 10, 9);
+    EvgSetSeqRamEvent(pEg, ram, 1, 11, 1);
+    EvgSetSeqRamEvent(pEg, ram, 2, 12, 2);
+    EvgSetSeqRamEvent(pEg, ram, 3, 13, 3);
+    EvgSetSeqRamEvent(pEg, ram, 4, 14, 4);
+    EvgSetSeqRamEvent(pEg, ram, 5, 15, 5);
+    EvgSetSeqRamEvent(pEg, ram, 6, 16, 6);
+    EvgSetSeqRamEvent(pEg, ram, 7, 17, 7);
+    EvgSetSeqRamEvent(pEg, ram, 8, 18, 8);
+    EvgSetSeqRamEvent(pEg, ram, 9, 19, 2);
+    EvgSetSeqRamEvent(pEg, ram,10, 20, 1);
+    EvgSetSeqRamEvent(pEg, ram,11, 21, 4);
+    EvgSetSeqRamEvent(pEg, ram,12, 22, 3);
+    EvgSetSeqRamEvent(pEg, ram,13, 40, 0x7f);
+    
+    EvgSeqRamControl(pEg, ram, 1, 0, 0, 0, C_EVG_SEQTRIG_SWTRIGGER0);
+    EvgSeqRamSWTrig(pEg, 0);
+    
+    sleep(1);
+
+    EvgSeqRamControl(pEg, ram, 1, 0, 0, 1, 0);
+
+    {
+      struct FIFOEvent fe;
+      int eventseq[9] = {1, 2, 3, 4, 2, 1, 4, 3, -1};
+      
+      /*
+      printf("Press . to continue.\n");
+      while (getchar() != '.');
+      */
+
+      for (i = 0; eventseq[i] > 0; i++)
+	{
+	  if (EvrGetFIFOEvent(pBEr, &fe))
+	    {
+	      printf(ERROR_TEXT "Too few events.\n");
+	      err_fwd++;
+	      break;
+	    }
+	  if (fe.EventCode != eventseq[i])
+	    {
+	      printf(ERROR_TEXT "Received wrong event %02x (%02x)\n",
+		     fe.EventCode, eventseq[i]);
+	      err_fwd++;
+	    }
+	  printf("Forwarded event Code %08x, %08x:%08x\n",
+		 fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
+	}
+    }
   }
 
   /*
@@ -1541,34 +2204,60 @@ int dlytest(struct MrfEgRegs *pEg, struct MrfErRegs *pEr)
   EvgSetUnivOutMap(pEg, 1, 32);
   EvgSetUnivOutMap(pEg, 2, 32);
   EvgSetUnivOutMap(pEg, 3, 32);
+  EvrSetUnivOutMap(pEr, 6, 32);
+  EvrSetUnivOutMap(pEr, 7, 32);
+  EvrSetUnivOutMap(pEr, 8, 32);
+  EvrSetUnivOutMap(pEr, 9, 32);
+  EvrSetUnivOutMap(pEr, 10, 32);
+  EvrSetUnivOutMap(pEr, 11, 32);
   EvgSetMXCPrescaler(pEg, 0, 448/4); /* Storage Ring */
   EvgSyncMxc(pEg);
   EvgSetDBusMap(pEg, 0, C_EVG_DBUS_SEL_MXC);
 
   /*  EvrSetUnivOutMap(pEr, 0, C_EVR_SIGNAL_MAP_DBUS); */
 
+  printf("0\n");
   for (i = 0; i < 1024; i++)
     {
-      EvrUnivDlySetDelay(pEr, 0, i, 1023-i);
-      EvrUnivDlySetDelay(pEr, 1, 1023-i, 1023-i);
-      usleep(1000);
-    }
-   for (i = 0; i < 1024; i++)
-    {
-      EvrUnivDlySetDelay(pEr, 0, 1023-i, i);
-      EvrUnivDlySetDelay(pEr, 1, 1023-i, 1023-i);
+      EvrUnivDlySetDelay(pEr, 0, i, 0);
       usleep(1000);
     }
   for (i = 0; i < 1024; i++)
     {
-      EvrUnivDlySetDelay(pEr, 0, 1023-i, 1023-i);
-      EvrUnivDlySetDelay(pEr, 1, i, 1023-i);
+      EvrUnivDlySetDelay(pEr, 0, 1023-i, 0);
       usleep(1000);
     }
-   for (i = 0; i < 1024; i++)
+  printf("1\n");
+  for (i = 0; i < 1024; i++)
     {
-      EvrUnivDlySetDelay(pEr, 0, 1023-i, 1023-i);
-      EvrUnivDlySetDelay(pEr, 1, 1023-i, i);
+      EvrUnivDlySetDelay(pEr, 0, 0, i);
+      usleep(1000);
+    }
+  for (i = 0; i < 1024; i++)
+    {
+      EvrUnivDlySetDelay(pEr, 0, 0, 1023-i);
+      usleep(1000);
+    }
+  printf("2\n");
+  for (i = 0; i < 1024; i++)
+    {
+      EvrUnivDlySetDelay(pEr, 1, i, 0);
+      usleep(1000);
+    }
+  for (i = 0; i < 1024; i++)
+    {
+      EvrUnivDlySetDelay(pEr, 1, 1023-i, 0);
+      usleep(1000);
+    }
+  printf("3\n");
+  for (i = 0; i < 1024; i++)
+    {
+      EvrUnivDlySetDelay(pEr, 1, 0, i);
+      usleep(1000);
+    }
+  for (i = 0; i < 1024; i++)
+    {
+      EvrUnivDlySetDelay(pEr, 1, 0, 1023-i);
       usleep(1000);
     }
 
@@ -1670,6 +2359,7 @@ int main(int argc, char *argv[])
 
   pIrqEr = pEr;
   fdIrqEr = fdEr;
+  EvrIrqEnable(pIrqEr, 0);
   EvrIrqAssignHandler(pIrqEr, fdIrqEr, &evr_irq_handler);
 
   do
@@ -1679,7 +2369,9 @@ int main(int argc, char *argv[])
       printf("2. run 10 testloops\n");
       printf("3. run dlytest for UNIV-LVPECL-DLY modules\n");
       printf("4. toggle PMC-EVR-230 front panel outputs\n");
-      printf("5. exit\n");
+      printf("5. UNIV output prescaler test\n");
+      printf("6. PCIe UNIV led test\n");
+      printf("7. exit\n");
 
       do {
 	i = getchar();
@@ -1688,6 +2380,40 @@ int main(int argc, char *argv[])
 
       switch(i)
 	{
+	case 'a':
+	  clear_errors();
+	  frac_div_word = FRAC_DIV_WORD_49_98;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_62_454;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_68_454;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_71;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_81;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_100;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_106_25;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_114_24;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_119;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_123_757;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_124_909;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_124_95;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_125;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_126_24;
+	  testloop(pEg, pEr, pBEr);
+	  frac_div_word = FRAC_DIV_WORD_136;
+	  testloop(pEg, pEr, pBEr);
+	  dump_errors();
+	  break;
 	case '1':
 	  clear_errors();
 	  testloop(pEg, pEr, pBEr);
@@ -1696,8 +2422,11 @@ int main(int argc, char *argv[])
 	case '2':
 	  clear_errors();
 	  for (j = 0; j < 10; j++)
-	    testloop(pEg, pEr, pBEr);
-	  dump_errors();
+	    {
+	      testloop(pEg, pEr, pBEr);
+	      printf("Loop %d\n", j);
+	      dump_errors();
+	    }
 	  break;
 	case '3':
 	  dlytest(pEg, pEr);
@@ -1705,9 +2434,71 @@ int main(int argc, char *argv[])
 	case '4':
 	  toggle_fp(pEr);
 	  break;
+	case '5':
+	  {
+	    int i, j;
+
+	    EvgSetFracDiv(pEg, frac_div_word);
+	    EvgEnable(pEg, 1);
+	    EvgSetMXCPrescaler(pEg, 1, 125000000);
+	    EvgSetTriggerEvent(pEg, 1, 0x02, 1);
+	    EvgSetMxcTrigMap(pEg, 1, 1);
+
+	    EvrEnable(pEr, 1);
+	    EvrOutputEnable(pEr, 1);
+	    EvrSetPrescaler(pEr, 0, 10);
+	    EvrSetPrescaler(pEr, 1, 10000);
+	    EvrSetPrescaler(pEr, 2, 10000000);
+	    printf("Setting presc 0: evclk / 10\n");
+	    printf("Setting presc 1: evclk / 10000\n");
+	    printf("Setting presc 2: evclk / 10000000\n");
+	    printf("Select presc to output: ");
+	    do {
+	      j = getchar();
+	    }
+	    while (j < '0' || j > '3');
+	    EvrGetViolation(pEr, 1);
+	    for (i = 4; i < 20; i++)
+	      EvrSetUnivOutMap(pEr, i, C_EVR_SIGNAL_MAP_PRESC + j - '0');
+	    break;
+	  }
+	case '6':
+	  {
+	    int i, j;
+
+	    EvgSetFracDiv(pEg, frac_div_word);
+	    EvgEnable(pEg, 1);
+	    EvgSetMXCPrescaler(pEg, 1, 125000000);
+	    EvgSetTriggerEvent(pEg, 1, 0x02, 1);
+	    EvgSetMxcTrigMap(pEg, 1, 1);
+
+	    EvrEnable(pEr, 1);
+	    EvrOutputEnable(pEr, 1);
+	    EvrSetPrescaler(pEr, 0, 12500000);
+	    EvrSetPrescaler(pEr, 1, 25000000);
+	    EvrSetPrescaler(pEr, 2, 50000000);
+	    EvrSetPrescaler(pEr, 3, 100000000);
+	    EvrGetViolation(pEr, 1);
+	    for (i = 0; i < 16; i++)
+	      EvrSetUnivOutMap(pEr, i, C_EVR_SIGNAL_MAP_PRESC + (i % 4));
+	    break;
+	  }
+	case 'h':
+	  {
+	    int i;
+	    volatile u32 *IrqFlag = &pEr->IrqFlag;
+
+	    for (i = 0; i < 10; i++)
+	      {
+		*IrqFlag = 0xff000000;
+		while (!(*IrqFlag & 0x04000000));
+		printf("HB\n");
+	      }
+	  }
+	  break;
 	}
     }
-  while(i != '5');
+  while(i != '7');
 
 #if 0
   EvrSetPulseParams(pEr, 0, 1, 0, 10000000);

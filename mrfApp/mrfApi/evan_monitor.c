@@ -14,7 +14,7 @@
 #include "egapi.h"
 
 #define EVG_RF_FREQ 499.654E6L
-#define EVG_RF_DIVIDER 8.0L
+#define EVG_RF_DIVIDER 4.0L
 
 int main(int argc, char *argv[])
 {

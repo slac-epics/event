@@ -20,12 +20,20 @@
 #define u32 unsigned int
 #endif
 
+#ifndef be16_to_cpu
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be16_to_cpu(x) bswap_16(x)
+#else
+#define be16_to_cpu(x) ((unsigned short)(x))
+#endif
+#endif
+
+#ifndef be32_to_cpu
+#if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be32_to_cpu(x) bswap_32(x)
 #else
-#define be16_to_cpu(x) ((u16)(x))
-#define be32_to_cpu(x) ((u32)(x))
+#define be32_to_cpu(x) ((unsigned long)(x))
+#endif
 #endif
 
 #define EVG_MAX_FPOUT_MAP   32
@@ -44,6 +52,10 @@
 #define C_EVG_SEQRAM_MAX_TRIG_BITS 5
 #define EVG_DBUS_BITS       8
 #define EVG_SIGNAL_MAP_BITS 6
+
+#ifndef EVG_SEQRAMS
+#define EVG_SEQRAMS 2
+#endif
 
 struct SeqRamItemStruct {
   u32  Timestamp;
@@ -72,9 +84,12 @@ struct MrfEgRegs {
   u32  Resv0x001C;                          /* 001C: Reserved */
   u32  DataBufControl;                      /* 0020: Data Buffer Control */
   u32  DBusMap;                             /* 0024: Distributed Bus Mapping */
-  u32  Resv0x0028;                          /* 0028: Reserved */
+  u32  DBusEvent;                           /* 0028: Distributed Bus Event Enable */
   u32  FPGAVersion;                         /* 002C: FPGA version */
-  u32  Resv0x0030[(0x04C-0x030)/4];         /* 0030-004B: Reserved */
+  u32  Resv0x0030;                          /* 0030: Reserved */
+  u32  TimestampCtrl;                       /* 0034: Reserved */
+  u32  TimestampValue;                      /* 0038: Reserved */
+  u32  Resv0x003C[(0x04C-0x03C)/4];         /* 003C-004B: Reserved */
   u32  UsecDiv;                             /* 004C: round(Event clock/1 MHz) */
   u32  ClockControl;                        /* 0050: Clock Control */
   u32  Resv0x0054[(0x060-0x054)/4];         /* 0054-005F: Reserved */
@@ -117,13 +132,20 @@ struct MrfEgRegs {
 /* -- Control Register bit mappings */
 #define C_EVG_CTRL_MASTER_ENABLE    31
 #define C_EVG_CTRL_RX_DISABLE       30
+#define C_EVG_CTRL_RX_PWRDOWN       29
 #define C_EVG_CTRL_MXC_RESET        24
 #define C_EVG_CTRL_SEQRAM_ALT       16
 /* -- Interrupt Flag/Enable Register bit mappings */
 #define C_EVG_IRQ_MASTER_ENABLE  31
+#define C_EVG_IRQ_PCICORE_ENABLE 30
+#define C_EVG_NUM_IRQ            16
+#define C_EVG_IRQFLAG_SEQSTOP    12
+#define C_EVG_IRQFLAG_SEQSTART   8
+#define C_EVG_IRQFLAG_EXTERNAL   6
 #define C_EVG_IRQFLAG_DATABUF    5
 #define C_EVG_IRQFLAG_RXFIFOFULL 1
 #define C_EVG_IRQFLAG_VIOLATION  0
+#define EVG_IRQ_PCICORE_ENABLE    (1 << C_EVG_IRQ_PCICORE_ENABLE)
 /* -- SW Event Register bit mappings */
 #define C_EVG_SWEVENT_PENDING    9
 #define C_EVG_SWEVENT_ENABLE     8
@@ -146,6 +168,9 @@ struct MrfEgRegs {
 #define C_EVG_DATABUF_MODE       16
 #define C_EVG_DATABUF_SIZEHIGH   11
 #define C_EVG_DATABUF_SIZELOW    2
+/* -- Timestamp Generator Control Register bit mappings */
+#define C_EVG_TSCTRL_LOAD        1
+#define C_EVG_TSCTRL_ENABLE      0
 /* -- Clock Control Register bit mapppings */
 #define C_EVG_CLKCTRL_EXTRF        24
 #define C_EVG_CLKCTRL_DIV_HIGH     21
@@ -220,7 +245,9 @@ struct MrfEgRegs {
 #define C_EVG_EVENTTRIG_CODE_LOW   0
 /* -- Input mapping bits */
 #define C_EVG_INMAP_TRIG_BASE      0
+#define C_EVG_INMAP_SEQTRIG_BASE   8
 #define C_EVG_INMAP_DBUS_BASE      16
+#define C_EVG_INMAP_IRQ            24
 /* -- Multiplexed Counter Mapping Bits */
 #define C_EVG_MXC_READ             31
 #define C_EVG_MXCMAP_TRIG_BASE     0
@@ -256,27 +283,67 @@ int EvgEvanGetEnable(volatile struct MrfEgRegs *pEg);
 void EvgEvanReset(volatile struct MrfEgRegs *pEg);
 void EvgEvanResetCount(volatile struct MrfEgRegs *pEg);
 int EvgEvanGetEvent(volatile struct MrfEgRegs *pEg, struct EvanStruct *evan);
+void EvgEvanDump(volatile struct MrfEgRegs *pEg);
 int EvgSetMXCPrescaler(volatile struct MrfEgRegs *pEg, int mxc, unsigned int presc);
+unsigned int EvgGetMXCPrescaler(volatile struct MrfEgRegs *pEg, int mxc);
 int EvgSetMxcTrigMap(volatile struct MrfEgRegs *pEg, int mxc, int map);
 void EvgSyncMxc(volatile struct MrfEgRegs *pEg);
 void EvgMXCDump(volatile struct MrfEgRegs *pEg);
 int EvgSetDBusMap(volatile struct MrfEgRegs *pEg, int dbus, int map);
 void EvgDBusDump(volatile struct MrfEgRegs *pEg);
+int EvgSetDBusEvent(volatile struct MrfEgRegs *pEg, int enable);
+int EvgGetDBusEvent(volatile struct MrfEgRegs *pEg);
 int EvgSetACInput(volatile struct MrfEgRegs *pEg, int bypass, int sync, int div, int delay);
 int EvgSetACMap(volatile struct MrfEgRegs *pEg, int map);
 void EvgACDump(volatile struct MrfEgRegs *pEg);
 int EvgSetRFInput(volatile struct MrfEgRegs *pEg, int useRF, int div);
 int EvgSetFracDiv(volatile struct MrfEgRegs *pEg, int fracdiv);
 int EvgSetSeqRamEvent(volatile struct MrfEgRegs *pEg, int ram, int pos, unsigned int timestamp, int code);
+unsigned int EvgGetSeqRamTimestamp(volatile struct MrfEgRegs *pEg, int ram, int pos);
+int EvgGetSeqRamEvent(volatile struct MrfEgRegs *pEg, int ram, int pos);
 void EvgSeqRamDump(volatile struct MrfEgRegs *pEg, int ram);
 int EvgSeqRamControl(volatile struct MrfEgRegs *pEg, int ram, int enable, int single, int recycle, int reset, int trigsel);
 int EvgSeqRamSWTrig(volatile struct MrfEgRegs *pEg, int trig);
 void EvgSeqRamStatus(volatile struct MrfEgRegs *pEg, int ram);
-int EvgSetUnivinMap(volatile struct MrfEgRegs *pEg, int univ, int trig, int dbus);
+int EvgSetUnivinMap(volatile struct MrfEgRegs *pEg, int univ, int trig, int dbus, int irq, int seqtrig);
+int EvgGetUnivinMapTrigger(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetUnivinMapDBus(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetUnivinMapIrq(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetUnivinMapSeqtrig(volatile struct MrfEgRegs *pEg, int univ);
 void EvgUnivinDump(volatile struct MrfEgRegs *pEg);
+int EvgSetFPinMap(volatile struct MrfEgRegs *pEg, int univ, int trig, int dbus, int irq, int seqtrig);
+int EvgGetFPinMapTrigger(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetFPinMapDBus(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetFPinMapIrq(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetFPinMapSeqtrig(volatile struct MrfEgRegs *pEg, int univ);
+void EvgFPinDump(volatile struct MrfEgRegs *pEg);
+int EvgSetTBinMap(volatile struct MrfEgRegs *pEg, int univ, int trig, int dbus, int irq, int seqtrig);
+int EvgGetTBinMapTrigger(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetTBinMapDBus(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetTBinMapIrq(volatile struct MrfEgRegs *pEg, int univ);
+int EvgGetTBinMapSeqtrig(volatile struct MrfEgRegs *pEg, int univ);
+void EvgTBinDump(volatile struct MrfEgRegs *pEg);
 int EvgSetTriggerEvent(volatile struct MrfEgRegs *pEg, int trigger, int code, int enable);
+int EvgGetTriggerEventCode(volatile struct MrfEgRegs *pEg, int trigger);
+int EvgGetTriggerEventEnable(volatile struct MrfEgRegs *pEg, int trigger);
 void EvgTriggerEventDump(volatile struct MrfEgRegs *pEg);
 int EvgSetUnivOutMap(volatile struct MrfEgRegs *pEg, int output, int map);
+int EvgGetUnivOutMap(volatile struct MrfEgRegs *pEg, int output);
+int EvgSetFPOutMap(volatile struct MrfEgRegs *pEg, int output, int map);
+int EvgGetFPOutMap(volatile struct MrfEgRegs *pEg, int output);
+int EvgSetTBOutMap(volatile struct MrfEgRegs *pEg, int output, int map);
+int EvgGetTBOutMap(volatile struct MrfEgRegs *pEg, int output);
 int EvgSetDBufMode(volatile struct MrfEgRegs *pEg, int enable);
 int EvgGetDBufStatus(volatile struct MrfEgRegs *pEg);
 int EvgSendDBuf(volatile struct MrfEgRegs *pEg, char *dbuf, int size);
+int EvgGetFormFactor(volatile struct MrfEgRegs *pEg);
+void EvgIrqAssignHandler(volatile struct MrfEgRegs *pEg, int fd, void (*handler)(int));
+void EvgIrqUnassignHandler(int vector, void (*handler)(int));
+int EvgIrqEnable(volatile struct MrfEgRegs *pEg, int mask);
+int EvgGetIrqFlags(volatile struct MrfEgRegs *pEg);
+int EvgClearIrqFlags(volatile struct MrfEgRegs *pEg, int mask);
+void EvgIrqHandled(int fd);
+int EvgTimestampEnable(volatile struct MrfEgRegs *pEg, int enable);
+int EvgGetTimestampEnable(volatile struct MrfEgRegs *pEg);
+int EvgTimestampLoad(volatile struct MrfEgRegs *pEg, int timestamp);
+int EvgTimestampGet(volatile struct MrfEgRegs *pEg);
