@@ -13,22 +13,23 @@
 /*
   Note: Byte ordering is big-endian.
  */
+#include <stdint.h>
 
 #define EVR_CPCI230_MEM_WINDOW      0x00008000
 #define EVR_CPCI300TG_MEM_WINDOW    0x00040000
 
 #ifndef u16
-#define u16 unsigned short
+#define u16 uint16_t
 #endif
 #ifndef u32
-#define u32 unsigned int
+#define u32 uint32_t
 #endif
 
 #ifndef be16_to_cpu
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be16_to_cpu(x) bswap_16(x)
 #else
-#define be16_to_cpu(x) ((unsigned short)(x))
+#define be16_to_cpu(x) ((u16)(x))
 #endif
 #endif
 
@@ -36,7 +37,7 @@
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define be32_to_cpu(x) bswap_32(x)
 #else
-#define be32_to_cpu(x) ((unsigned long)(x))
+#define be32_to_cpu(x) ((u32)(x))
 #endif
 #endif
 
@@ -57,6 +58,9 @@
 #define EVR_LOG_SIZE        512
 #define EVR_MAX_GPIOS       32
 #define EVR_GTXS            8
+
+/* 03-12-2013 KHKIM, to avoid byte alignment issue for the register map */
+#pragma pack(push, 1)
 
 struct PulseStruct {
   u32  Control;
@@ -166,6 +170,8 @@ struct MrfErRegs {
   u32  Resv0x8000[(0x20000-0x8000)/4];      /* 8000-1FFFF: Reserved */
   char GTXMem[EVR_GTXS][0x4000];            /* 20000-3FFFF: GTX Pattern Memory */ 
 };
+
+#pragma pack(pop)
 
 
 /* -- Control Register bit mappings */
@@ -339,8 +345,11 @@ int EvrSetPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig,
 		   int set, int clear);
 int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig,
 		   int set, int clear);
-int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
-		      u32 delay, u32 width);
+int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
+		      int delay, int width);
+int EvrGetPulsePresc(volatile struct MrfErRegs *pEr, int pulse);
+int EvrGetPulseDelay(volatile struct MrfErRegs *pEr, int pulse);
+int EvrGetPulseWidth(volatile struct MrfErRegs *pEr, int pulse);
 int EvrGetPulsePresc(volatile struct MrfErRegs *pEr, int pulse);
 int EvrGetPulseDelay(volatile struct MrfErRegs *pEr, int pulse);
 int EvrGetPulseWidth(volatile struct MrfErRegs *pEr, int pulse);
@@ -375,7 +384,7 @@ int EvrSetGPIODir(volatile struct MrfErRegs *pEr, int dir);
 int EvrSetGPIOOut(volatile struct MrfErRegs *pEr, int dout);
 int EvrGetGPIOIn(volatile struct MrfErRegs *pEr);
 int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable);
-int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, u32 dly0, u32 dly1);
+int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, int dly0, int dly1);
 void EvrDumpHex(volatile struct MrfErRegs *pEr);
 int EvrSetFracDiv(volatile struct MrfErRegs *pEr, int fracdiv);
 int EvrGetFracDiv(volatile struct MrfErRegs *pEr);
@@ -389,7 +398,7 @@ int EvrGetSecondsCounter(volatile struct MrfErRegs *pEr);
 int EvrGetTimestampLatch(volatile struct MrfErRegs *pEr);
 int EvrGetSecondsLatch(volatile struct MrfErRegs *pEr);
 int EvrSetTimestampDBus(volatile struct MrfErRegs *pEr, int enable);
-int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, u32 div);
+int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, int div);
 int EvrGetPrescaler(volatile struct MrfErRegs *pEr, int presc);
 int EvrSetPrescalerPolarity(volatile struct MrfErRegs *pEr, int polarity);
 int EvrSetExtEvent(volatile struct MrfErRegs *pEr, int ttlin, int code, int edge_enable, int level_enable);
@@ -406,5 +415,7 @@ int EvrGetFormFactor(volatile struct MrfErRegs *pEr);
 int EvrSetFineDelay(volatile struct MrfErRegs *pEr, int channel, int delay);
 int EvrCMLEnable(volatile struct MrfErRegs *pEr, int channel, int state);
 int EvrSetCMLMode(volatile struct MrfErRegs *pEr, int channel, int mode);
+
+int EvrOutputEnable(volatile struct MrfErRegs *pEr, int state);
 
 #endif	/*	ERAPI_H	*/

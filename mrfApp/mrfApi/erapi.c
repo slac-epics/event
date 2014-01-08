@@ -12,11 +12,14 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <stdint.h>
 #include <endian.h>
 #include <byteswap.h>
 #include <errno.h>
 #include <signal.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
+#include <inttypes.h>
 #else /* assume VxWorks */
 #ifndef VXWORKS
 #define VXWORKS 1
@@ -35,13 +38,13 @@
 #include <tickLib.h>
 #include <iv.h>
 #endif
-#include <string.h>
-#include <unistd.h>
 
 #include <stdio.h>
 #include <string.h>
 
 #include "erapi.h"
+
+void EvrIrqHandlerThreadCreate(void(*handler)(int));
 
 #if 0	/* Enable DEBUG statements */
 #define DEBUG 1
@@ -496,7 +499,7 @@ int EvrDumpFIFO(volatile struct MrfErRegs *pEr)
       i = EvrGetFIFOEvent(pEr, &fe);
       if (!i)
 	{
-	  printf("FIFO Code %08lx, %08lx:%08lx\n",
+	  printf("FIFO Code %08x, %08x:%08x\n",
 		 fe.EventCode, fe.TimestampHigh, fe.TimestampLow);
 	}
     }
@@ -526,7 +529,7 @@ int EvrDumpLog(volatile struct MrfErRegs *pEr)
   if (i > 512) i = 512;
   for (; i; i--)
     {
-      printf("%02x Log Code %08lx, %08lx:%08lx\n", j++,
+      printf("%02x Log Code %08x, %08x:%08x\n", j++,
 	     be32_to_cpu(pEr->Log[pos].EventCode),
 	     be32_to_cpu(pEr->Log[pos].TimestampHigh),
 	     be32_to_cpu(pEr->Log[pos].TimestampLow));
@@ -556,8 +559,8 @@ int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig
   return 0;
 }
 
-int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
-		      u32 delay, u32 width)
+int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
+		      int delay, int width)
 {
   if (pulse < 0 || pulse >= EVR_MAX_PULSES)
     return -1;
@@ -566,7 +569,6 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, u32 presc,
   pEr->Pulse[pulse].Delay = be32_to_cpu(delay);
   pEr->Pulse[pulse].Prescaler = be32_to_cpu(presc);
 
-  return 0;
   if ( erapiDebug	>= 1 )
   {
 	/*
@@ -622,7 +624,7 @@ void EvrDumpPulses(volatile struct MrfErRegs *pEr, int pulses)
 
   for (i = 0; i < pulses; i++)
     {
-      DEBUG_PRINTF("Pulse %02x Presc %08lx Delay %08lx Width %08lx", i,
+      DEBUG_PRINTF("Pulse %02x Presc %08x Delay %08x Width %08x", i,
 		   be32_to_cpu(pEr->Pulse[i].Prescaler), 
 		   be32_to_cpu(pEr->Pulse[i].Delay), 
 		   be32_to_cpu(pEr->Pulse[i].Width));
@@ -690,8 +692,6 @@ int EvrSetPulseProperties(volatile struct MrfErRegs *pEr, int pulse, int polarit
 
 int EvrSetPrescalerTrig(volatile struct MrfErRegs *pEr, int prescaler, int trigs)
 {
-  int result;
-
   if (prescaler < 0 || prescaler >= EVR_MAX_PRESCALERS)
     return -1;
 
@@ -701,8 +701,6 @@ int EvrSetPrescalerTrig(volatile struct MrfErRegs *pEr, int prescaler, int trigs
 
 int EvrSetDBusTrig(volatile struct MrfErRegs *pEr, int dbus, int trigs)
 {
-  int result;
-
   if (dbus < 0 || dbus >= 8)
     return -1;
 
@@ -940,7 +938,7 @@ int EvrUnivDlyEnable(volatile struct MrfErRegs *pEr, int dlymod, int enable)
   return 0;
 }
 
-int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, u32 dly0, u32 dly1)
+int EvrUnivDlySetDelay(volatile struct MrfErRegs *pEr, int dlymod, int dly0, int dly1)
 {
   u32 gpio;
   int sh = 0;
@@ -1041,7 +1039,7 @@ void EvrDumpHex(volatile struct MrfErRegs *pEr)
     {
       printf("%08x: ", i);
       for (j = 0; j < 8; j++)
-	printf("%08lx ", be32_to_cpu(*p++));
+	printf("%08x ", be32_to_cpu(*p++));
       printf("\n");
     }
 }
@@ -1160,7 +1158,7 @@ int EvrSetTimestampDBus(volatile struct MrfErRegs *pEr, int enable)
   return be32_to_cpu(pEr->Control);  
 }
 
-int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, u32 div)
+int EvrSetPrescaler(volatile struct MrfErRegs *pEr, int presc, int div)
 {
   if (presc >= 0 && presc < EVR_MAX_PRESCALERS)
     {
