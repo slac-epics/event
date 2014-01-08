@@ -18,9 +18,9 @@ int main(int argc, char *argv[])
 
   if (argc < 2)
     {
-      printf("Usage: %s /dev/era3\n", argv[0]);
-      printf("Assuming: /dev/era3\n");
-      argv[1] = "/dev/era3";
+      printf("Usage: %s /dev/er3a3\n", argv[0]);
+      printf("Assuming: /dev/er3a3\n");
+      argv[1] = "/dev/er3a3";
     }
 
   fdEr = EvrOpen(&pEr, argv[1]);
