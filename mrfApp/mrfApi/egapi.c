@@ -229,7 +229,7 @@ void EvgEvanDump(volatile struct MrfEgRegs *pEg)
   while (EvgEvanGetEvent(pEg, &evan) == 0)
     {
       ts = (((double) evan.TimestampHigh) * 65536.0*65536.0 + evan.TimestampLow) / (499654000.0/4.0);
-      printf("%08lx:%08lx %3.9g %02lx\n", evan.TimestampHigh, evan.TimestampLow, ts, evan.EventCode); 
+      printf("%08x:%08x %3.9g %02x\n", evan.TimestampHigh, evan.TimestampLow, ts, evan.EventCode); 
     }
 }
 
@@ -278,7 +278,7 @@ void EvgMXCDump(volatile struct MrfEgRegs *pEg)
 
   for (mxc = 0; mxc < EVG_MXCS; mxc++)
     {
-      DEBUG_PRINTF("MXC%d Prescaler %08lx (%ld) Trig %08lx State %d\n",
+      DEBUG_PRINTF("MXC%d Prescaler %08x (%d) Trig %08x State %d\n",
 		   mxc,
 		   be32_to_cpu(pEg->MXC[mxc].Prescaler),
 		   be32_to_cpu(pEg->MXC[mxc].Prescaler),
@@ -338,6 +338,7 @@ void EvgDBusDump(volatile struct MrfEgRegs *pEg)
 int EvgSetDBusEvent(volatile struct MrfEgRegs *pEg, int enable)
 {
   pEg->DBusEvent = be32_to_cpu(enable);
+  return 0;
 }
 
 int EvgGetDBusEvent(volatile struct MrfEgRegs *pEg)
@@ -487,7 +488,7 @@ void EvgSeqRamDump(volatile struct MrfEgRegs *pEg, int ram)
  
   for (pos = 0; pos < EVG_MAX_SEQRAMEV; pos++)
     if (pEg->SeqRam[ram][pos].EventCode)
-      DEBUG_PRINTF("Ram%d: Timestamp %08lx Code %02lx\n",
+      DEBUG_PRINTF("Ram%d: Timestamp %08x Code %02x\n",
 		   ram,
 		   be32_to_cpu(pEg->SeqRam[ram][pos].Timestamp),
 		   be32_to_cpu(pEg->SeqRam[ram][pos].EventCode));
@@ -779,7 +780,7 @@ void EvgFPinDump(volatile struct MrfEgRegs *pEg)
   for (fp = 0; fp < EVG_MAX_FPIN_MAP; fp++)
     {
       int map = be32_to_cpu(pEg->FPInMap[fp]); 
-      DEBUG_PRINTF("FPIn%d Mapped to Trig %08lx, DBus %02lx, IRQ %d, seqtrig %d\n", fp,
+      DEBUG_PRINTF("FPIn%d Mapped to Trig %08x, DBus %02x, IRQ %d, seqtrig %d\n", fp,
 		   (map >> C_EVG_INMAP_TRIG_BASE)
 		   & ((1 << EVG_MAX_TRIGGERS) - 1),
 		   (map >> C_EVG_INMAP_DBUS_BASE)
@@ -893,7 +894,7 @@ void EvgTBinDump(volatile struct MrfEgRegs *pEg)
   for (tb = 0; tb < EVG_MAX_TBIN_MAP; tb++)
     {
       int map = be32_to_cpu(pEg->TBInMap[tb]); 
-      DEBUG_PRINTF("TBIn%d Mapped to Trig %08lx, DBus %02lx, IRQ %d, seqtrig %d\n", tb,
+      DEBUG_PRINTF("TBIn%d Mapped to Trig %08x, DBus %02x, IRQ %d, seqtrig %d\n", tb,
 		   (map >> C_EVG_INMAP_TRIG_BASE)
 		   & ((1 << EVG_MAX_TRIGGERS) - 1),
 		   (map >> C_EVG_INMAP_DBUS_BASE)
@@ -1141,6 +1142,7 @@ int EvgTimestampLoad(volatile struct MrfEgRegs *pEg, int timestamp)
 {
   pEg->TimestampValue = be32_to_cpu(timestamp);
   pEg->TimestampCtrl |= be32_to_cpu(1 << C_EVG_TSCTRL_LOAD);
+  return 0;
 }
 
 int EvgTimestampGet(volatile struct MrfEgRegs *pEg)
