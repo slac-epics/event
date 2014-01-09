@@ -57,7 +57,11 @@
 #include "alarm.h"            /* INVALID_ALARM             */
 
 
-#define  MAX_PATTERN_DELTA_TIME  100 /* sec */
+#if defined(__linux__) && !defined(ntp_adjtime)
+#define ntp_adjtime(arg) adjtimex((arg))
+#endif
+
+#define  MAX_PATTERN_DELTA_TIME  100 /* sec  or 10? */
 
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
@@ -492,8 +496,6 @@ static long evrPatternSim(longSubRecord *psub)
   epicsTimeStamp         prev_time;
   double                 delta_time;
   int                    idx;
-  void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum);
-  void evrSend(void *pCard, epicsInt16 messageSize, void *message);
 
 /*------------- parse input into sub outputs ----------------------------*/
 

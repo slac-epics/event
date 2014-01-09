@@ -25,11 +25,13 @@
 =============================================================================*/
 
 #include <stdlib.h> 		/* for calloc             */
+#include <dbScan.h>             /* for post_event         */
 #include "drvSup.h" 		/* for DRVSUPFN           */
 #include "errlog.h"		/* for errlogPrintf       */
 #include "epicsExport.h" 	/* for epicsExportAddress */
 #include "epicsEvent.h" 	/* for epicsEvent*        */
 #include "epicsThread.h" 	/* for epicsThreadCreate  */
+#include "epicsMessageQueue.h"
 #include "evrMessage.h"		/* for evrMessageCreate   */
 #include "evrTime.h"		/* for evrTimeCount       */
 #include "evrPattern.h"		/* for evrPattern         */
@@ -57,6 +59,7 @@ struct drvet drvEvr = {
 };
 epicsExportAddress(drvet, drvEvr);
 
+static epicsMessageQueueId  eventTaskQueue;
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
@@ -71,6 +74,10 @@ typedef struct {
   void * arg;
 
 } evrFiducialFunc_ts;
+
+typedef struct {
+  epicsInt16 eventNum;
+} EventMessage;
 
 ELLLIST evrFiducialFuncList_s;
 static epicsMutexId evrRWMutex_ps = 0; 
@@ -89,6 +96,8 @@ static int evrReport( int interest )
       epicsUInt32 pulseIDfromTime;
       epicsUInt32 pulseIDfromEvr = 0;
       epicsTimeStamp currentTime;
+	  /* TODO: Mv FormFactorToString() from drvLinuxEvr.c to a file used
+	   * in both linux and RTEMS and call it here. */
       printf("Pattern data from %s card %d\n",
              (pCard->FormFactor==1)?"PMC":(pCard->FormFactor==2)?"Embedded":
              (pCard->FormFactor==0xF)?"SLAC":"VME",
@@ -131,15 +140,21 @@ static int evrReport( int interest )
 =============================================================================*/
 void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 {
+  epicsUInt32 evrClockCounter;
   unsigned int messageType = ((evrMessageHeader_ts *)message)->type;
+
+  ErGetTicks(0, &evrClockCounter);
 
   /* Look for error from the driver or the wrong message size */
   if ((pCard && ((ErCardStruct *)pCard)->DBuffError) ||
       (messageSize != sizeof(evrMessagePattern_ts))) {
     evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
-  } else {
+  }
+  else {
     if (evrMessageWrite(messageType, (evrMessage_tu *)message))
       evrMessageCheckSumError(EVR_MESSAGE_PATTERN);
+    else
+	  evrMessageClockCounter(EVR_MESSAGE_PATTERN, evrClockCounter);
   }
 }
 
@@ -153,7 +168,7 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
        too long processing each interrupt.
        
 =============================================================================*/
-void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
+void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
   if(eventNum==event_to_peek_fiducial) {
     fiducial_time_stamp[fiducial_time_stamp_ix]= timeNum;
@@ -164,12 +179,22 @@ void evrEvent(void *pCard, epicsInt16 eventNum, epicsUInt32 timeNum)
   if (eventNum == EVENT_FIDUCIAL) {
     lastfid = timeNum;
     if (readyForFiducial) {
+  	  epicsUInt32  evrClockCounter;
       readyForFiducial = 0;
+      ErGetTicks(0, &evrClockCounter);
+      evrMessageClockCounter(EVR_MESSAGE_FIDUCIAL, evrClockCounter);
       evrMessageStart(EVR_MESSAGE_FIDUCIAL);
       epicsEventSignal(evrTaskEventSem);
     } else {
       evrMessageNoDataError(EVR_MESSAGE_FIDUCIAL);
     }
+  } else {
+	  /*---------------------
+	   * Schedule processing for any event-driven records
+	   */
+  	  EventMessage eventMessage;
+	  eventMessage.eventNum  = eventNum;
+	  epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
   }
   evrTimeCount((unsigned int)eventNum, (unsigned int) timeNum);
 }
@@ -224,11 +249,21 @@ static int evrTask()
 {  
   epicsEventWaitStatus status;
   epicsUInt32          mpsModifier;
+  int                  messagePending;
+  EventMessage         eventMessage;
 
   if (evrTimeInit(0,0)) {
     errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
     return -1;
   }
+
+  if(!pCard) {
+    errlogPrintf("evrTask: could not find an EVR module\n");
+    return -1;
+  }
+
+  eventMessage.eventNum  = EVENT_FIDUCIAL;
+
   for (;;)
   {
     readyForFiducial = 1;
@@ -249,6 +284,11 @@ static int evrTask()
         epicsMutexUnlock(evrRWMutex_ps);
       }   
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
+
+      epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+      messagePending = epicsMessageQueuePending(eventTaskQueue);
+      evrMessageQ(EVR_MESSAGE_FIDUCIAL, messagePending);
+
     /* If timeout or other error, process the data which will result in bad
        status since there is nothing to do.  Then advance the pipeline so
        that the bad status makes it from N-3 to N-2 then to N-2 and
@@ -264,6 +304,7 @@ static int evrTask()
         return -1;
       }
     }
+
     /* Now do record processing */
     evrMessageStart(EVR_MESSAGE_PATTERN);
     epicsEventSignal(evrRecordEventSem);
@@ -295,6 +336,26 @@ static int evrRecord()
   return 0;
 }
 
+
+static int evrEventTask(void)
+{
+	EventMessage eventMessage;
+
+    for(;;) {   
+      epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+      evrTimeEventProcessing(eventMessage.eventNum);
+      post_event(eventMessage.eventNum);
+      /* pCard cannot be NULL since the only entities which send messages are
+	   *  - the evrTask which bails out if pCard is NULL
+	   *  - the evrEvent handler which is not installed if pCard is NULL
+	   */
+      if ( eventMessage.eventNum >= 0 && eventMessage.eventNum < sizeof(pCard->IoScanPvt)/sizeof(pCard->IoScanPvt[0]) ) {
+		scanIoRequest( pCard->IoScanPvt[eventMessage.eventNum] );
+	  }
+    }
+
+    return 0;
+}
 /*=============================================================================
                                                          
   Name: evrInitialize
@@ -314,7 +375,7 @@ int evrInitialize()
   }
   evrInitialized = -1;
 
-#ifdef _X86_
+#if defined(_X86_) || defined(_X86_64_)
   Get_evrTicksPerUsec_for_X86(); 
 #endif
 
@@ -336,6 +397,7 @@ int evrInitialize()
     errlogPrintf("evrInitialize: unable to create the EVR task semaphore\n");
     return -1;
   }
+
   evrRecordEventSem = epicsEventMustCreate(epicsEventEmpty);
   if (!evrRecordEventSem) {
     errlogPrintf("evrInitialize: unable to create the EVR record task semaphore\n");
@@ -349,6 +411,11 @@ int evrInitialize()
     return -1;
   }
   ellInit(&evrFiducialFuncList_s);
+
+
+  pCard = ErGetCardStruct(0);
+
+  eventTaskQueue = epicsMessageQueueCreate(256, sizeof(EventMessage));
   
   /* Create the processing tasks */
   if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh+1,
@@ -357,6 +424,14 @@ int evrInitialize()
     errlogPrintf("evrInitialize: unable to create the EVR task\n");
     return -1;
   }
+
+  if(!epicsThreadCreate("evrEventTask", epicsThreadPriorityHigh,
+                        epicsThreadGetStackSize(epicsThreadStackMedium),
+                        (EPICSTHREADFUNC)evrEventTask,0)) {
+    errlogPrintf("evrInitialize: unable to crate the evrEvent task\n");
+    return -1;
+  }
+
   if (!epicsThreadCreate("evrRecord", epicsThreadPriorityScanHigh+10,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
                          (EPICSTHREADFUNC)evrRecord, 0)) {
