@@ -23,8 +23,25 @@ static void evrEEPROMFixupCall(const iocshArgBuf * args) {
 	printf("ERROR: command %s not supported in Linux.\n", __func__);
 }
 
+
+static const iocshArg        erapiDebugSetArg0      = {"erapi debug level", iocshArgInt};
+static const iocshArg *const erapiDebugSetArgs[]    = {&erapiDebugSetArg0};
+static const iocshFuncDef    erapiDebugSetDef       = {"erapiDebugSet", 1, erapiDebugSetArgs};
+extern unsigned int erapiDebug;
+static void erapiDebugSetCall(const iocshArgBuf *args)
+{
+    if(args) {
+        erapiDebug = args[0].ival;
+     }
+
+}
+
 /* Registration APIs */
 static void drvMrfRegister() {
+     iocshRegister(&evrEEPROMFixupDef, evrEEPROMFixupCall);
+     iocshRegister(&erapiDebugSetDef,  erapiDebugSetCall);
+
+
 }
 epicsExportRegistrar(drvMrfRegister);
 

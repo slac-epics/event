@@ -1239,17 +1239,18 @@ int ErConfigure (
 	default:
 	    printf( "ErConfigure: WARNING: Unknown firmware revision on PMC EVR!\n" );
 	    break;
-	case PMC_EVR_FIRMWARE_REV_VME1:
+	case EVR_FIRMWARE_REV_VME1:
 	    break;
-	case (PMC_EVR_FIRMWARE_REV_LINUX1 & 0xFFFF):	/* VME Firmware field is only 16 bits */
-	case (PMC_EVR_FIRMWARE_REV_LINUX2 & 0xFFFF):	/* VME Firmware field is only 16 bits */
-	case (PMC_EVR_FIRMWARE_REV_LINUX3 & 0xFFFF):	/* VME Firmware field is only 16 bits */
-#if 0	/* REV_LINUX4 is same as REV_LINUX2 in 16 bits */
-	case (PMC_EVR_FIRMWARE_REV_LINUX4 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (EVR_FIRMWARE_REV_LINUX1 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (EVR_FIRMWARE_REV_LINUX2 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (EVR_FIRMWARE_REV_LINUX3 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (EVR_FIRMWARE_REV_LINUX4 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+#if 0	/* REV_LINUX5 is same as REV_LINUX2 in 16 bits */
+	case (EVR_FIRMWARE_REV_LINUX5 & 0xFFFF):	/* VME Firmware field is only 16 bits */
 #endif
-	case (PMC_EVR_FIRMWARE_REV_LINUX5 & 0xFFFF):	/* VME Firmware field is only 16 bits */
+	case (EVR_FIRMWARE_REV_LINUX6 & 0xFFFF):	/* VME Firmware field is only 16 bits */
 	    fprintf ( stderr,
-	       "\nErConfigure ERROR: This PMC EVR has firmware for a linux\n"
+	       "\nErConfigure ERROR: This EVR has firmware for a linux\n"
 	       "based system and cannot be used under RTEMS!\n" );
 	    epicsMutexDestroy (pCard->CardLock);
 	    free (pCard);
@@ -1386,9 +1387,15 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     * Get the two halfs of the event counter.
     * Read the low-order word twice to check for rollover.
     */
-    LoWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
-    HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
-    LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+    if(pCard->FormFactor == VME_EVR) {
+        LoWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+    } else {
+        LoWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+        LoWord_2 = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+    }
 
    /*---------------------
     * If we had low-order word rollover, use the second low-order read.
@@ -1397,7 +1404,11 @@ epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
     */
     if (LoWord_2 < LoWord) {
         LoWord = LoWord_2;
-        HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        if(pCard->FormFactor == VME_EVR) 
+            HiWord = MRF_VME_REG16_READ(&pEr->EventCounterHi);
+        else
+            HiWord = MRF_VME_REG16_READ(&pEr->EventCounterLo);
+
     }/*end if there was low-order word wraparound*/
 
    /*---------------------
