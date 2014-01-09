@@ -182,10 +182,10 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
                                           1,2,3 = time associated w next pulses
                                           4 = last active pulse
         evrModifier_ta  modifier_a        Write    First 6 longwords of the pattern
-        unsigned long * patternStatus_p   Write    Pattern Status (see evrPattern.h)
-        unsigned long * edefAvgDoneMask_p Write    EDEF average-done mask
-        unsigned long * edefMinorMask_p   Write    EDEF minor severity mask
-        unsigned long * edefMajorMask_p   Write    EDEF major severity mask
+        epicsUInt32   * patternStatus_p   Write    Pattern Status (see evrPattern.h)
+        epicsUInt32   * edefAvgDoneMask_p Write    EDEF average-done mask
+        epicsUInt32   * edefMinorMask_p   Write    EDEF minor severity mask
+        epicsUInt32   * edefMajorMask_p   Write    EDEF major severity mask
 
   Rem:  Routine to get the epics timestamp and pattern from the evr timestamp
         table that is populated from incoming broadcast from EVG.
@@ -649,6 +649,14 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
   return epicsTimeOK;
 }
 
+/* For IOCs that don't support iocClock (linux), supply a dummy
+   iocClockRegister to keep the linker happy. */
+#ifndef EVR_DRIVER_SUPPORT
+void iocClockRegister(TIMECURRENTFUN getCurrent,
+                      TIMEEVENTFUN   getEvent) 
+{
+}
+#endif
 
 /*=============================================================================
 
@@ -915,7 +923,19 @@ static int evrTimeProc (longSubRecord *psub)
   B  Minimum of Fiducial Delay Time (us)
   C  Minimum of Fiducial Delay Time (us)
  
-  D - L Spare
+  D  Absolute Fiducial Delay (us) - based on the evr clock outer
+  E  Minimum of Absolute Fiducial Delay (us)
+  F  Maximum of Absolute Fiducial Delay (us) 
+
+  G  Absolute start time for the data buffer handling (us)  
+  H  Minimum of the start time for the data buffer handling (us)
+  I  Maximum of the start time for the data buffer handling (us)
+  
+  J  Pended message for the evrEvent task
+  K  Maximum number of pended message for the evrEventTask
+
+  L Spare
+
   M  fiducial counter
   N  Number of times M has rolled over
   O  Number of same pulses
@@ -949,6 +969,13 @@ static long evrTimeDiag (longSubRecord *psub)
                    &dummy,  &psub->v,&psub->w,&psub->x,&psub->z);
   evrMessageCountsFiducial(EVR_MESSAGE_FIDUCIAL,
                            &psub->a, &psub->b, &psub->c);
+
+  evrMessageCountsClockCounter(EVR_MESSAGE_FIDUCIAL,
+                               &psub->d, &psub->e, &psub->f);
+  evrMessageCountsClockCounter(EVR_MESSAGE_PATTERN,
+                               &psub->g, &psub->h, &psub->i);
+  evrMessageCountsQ(EVR_MESSAGE_FIDUCIAL,
+                    &psub->j, &psub->k);
 
   if (psub->r > 0) {
     psub->r           = 0;
@@ -1261,6 +1288,22 @@ static long evrTimeEvent(longSubRecord *psub)
     epicsMutexUnlock(evrTimeRWMutex_ps);
     return epicsTimeOK;
 }
+
+long evrTimeEventProcessing(epicsInt16 eventNum)
+{
+
+  if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
+    eventCodeTime_as[eventNum].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
+    eventCodeTime_as[eventNum].status = evr_aps[evrTimeCurrent]->timeStatus;
+    epicsMutexUnlock(evrTimeRWMutex_ps);
+    return epicsTimeOK;
+  }
+  /* invalid mutex id or lock error - must set status to invalid for the caller */
+  eventCodeTime_as[eventNum].status = epicsTimeERROR;
+  return epicsTimeERROR;
+}
+
+
 
 /*=============================================================================
 
