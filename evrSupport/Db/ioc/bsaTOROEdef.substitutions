@@ -10,7 +10,7 @@
 #
 file bsaATTREdef.db
 {
-#           Device  Attribute  Input           EGU  HOPR LOPR PREC ADEL   Link
-  pattern {   D       , ATTR , I              , EG , HO , LO , PR , AD ,  LNK    }
-	  { $(DEVICE) , TMIT , $(DEVICE):TMIT , "" , 5  , 0  , 3  , 0  ,$(SLCLNK)}
+#           Device  Attribute  Input           EGU       HOPR LOPR PREC ADEL   Link
+  pattern {   D       , ATTR , I              , EG     , HO     , LO     , PR     , AD     ,  LNK    }
+	  { $(DEVICE) , TMIT , $(DEVICE):TMIT , $(EGU) , $(HOPR), $(LOPR), $(PREC), $(ADEL),$(SLCLNK)}
 }
