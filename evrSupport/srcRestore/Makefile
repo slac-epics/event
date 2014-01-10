@@ -18,6 +18,7 @@ CFG +=  CONFIG_RESTORE
 RESTORES += evrDevTrig.cwConfig
 RESTORES += evrIocTrig.cwConfig
 RESTORES += evrPMXXTrig.cwConfig
+RESTORES += evrTrig.req.template
 
 
 include $(TOP)/configure/RULES

@@ -16,6 +16,10 @@ DB += evr.db
 DB += evrWithDelays.db
 DB += evrWithExtDelays.db
 DB += evrWithFrontPanel.db
+DB += evrPmc.db
+DB += evrWithDelaysPmc.db
+DB += evrWithExtDelaysPmc.db
+DB += evrWithFrontPanelPmc.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
