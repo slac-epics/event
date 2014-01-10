@@ -1,11 +1,29 @@
-Instructions for RTEMS EVR users                    Last Updated 3/1/2010
+Instructions for RTEMS EVR users                    Last Updated 6/6/2012
 --------------------------------
+These instructions are for EVENT module event-R3-2-2-br_generaltime branch or later
+and include instructions for updating to epics-R2-14-12. Before starting please read
+the sections
+ 'V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
+ 'Consideration for Autosave', and
+ 'Adding Timing Display autogen to your application'
+which is included near the end of this README
+
+If you are still using an older EVENT module please use the README for that specific
+module version
+
 
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
 
-(1) Add EVENT, GENERALTIME, and RESTORE or AUTOSAVE to configure/RELEASE and 
-clean/rebuild configure.
+(1) Add EVENT and AUTOSAVE to configure/RELEASE and 
+clean/rebuild configure. If this is a move to epics-R3-14-12 you will need
+to remove the GENERALTIME and RESTORE modules, update all other modules
+in your RELEASE file to those built for epics-R3-14-12, and use AUTOSAVE
+instead of RESTORE. Before proceeding please read the AUTOSAVE module README file, and
+the sections of this README
+  'V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
+  'Consideration for Autosave' 
+which are included near the end of this README file.
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
 
@@ -13,7 +31,7 @@ clean/rebuild configure.
    xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
    xxx_LIBS += mrfVme64x
-   xxx_LIBS += restore or autosave
+   xxx_LIBS += autosave
 
 Note that the order of the above libraries is important.
 
@@ -22,7 +40,7 @@ Note that the order of the above libraries is important.
 
    xxx_DBD += evrSupport.dbd
    xxx_DBD += devMrfEr.dbd
-   xxx_DBD += dbRestore.dbd or autosave.dbd
+   xxx_DBD += autosave.dbd
 
 (4) Add EVR databases to your application.  For an example, see:
 	event/<release>/evrIoc/Db/evrXL05.substitutions
@@ -32,7 +50,9 @@ Note that the order of the above libraries is important.
 
 (6) For IOCs with triggered devices, add trigger databases to your application.
     For an example, see:
-	event/<release>/evrIoc/Db/trigXL05.substitutions
+	event/<release>/evrIoc/Db/trigXL05.substitutions. Also add event EDM display
+    auto-generation to your trigger database file. See section 'Adding Timing Display
+    autogen to your application'.
 
 (7) For IOCs with beam-synchronous acquisition (BSA), add BSA databases to 
     your application.  For an example, see:
@@ -44,25 +64,9 @@ Note that the order of the above libraries is important.
     Consult with the HLA group to determine the proper values of <dev> and
     <secn> for your application.
 
-(9) For IOCs with triggered devices, add setpoints to the proper 
-    configuration file used to save and restore setpoints.  
-    The setpoint PVs include:
-	Per IOC:
-	$(IOC):FIDUCIALRATE.HIHI /LOG
-	$(IOC):FIDUCIALRATE.LOLO /LOG
-	$(IOC):TREF /LOG
-	Per triggered device:
-	$(DEV)TDES
-	$(DEV)TCON
-	$(DEV)TWID /LOG
-	$(DEV)TPOL /LOG
-	$(DEV)TCTL /LOG
-
-(9a) If the IOC is using ChannelWatcher to save setpoints, add the above 
-     setpoints to the IOC's ChannelWatcher configuration file.  
-     The .cwConfig file can be created from a .cwsubstitutions file.  
-     For an example, see:
-	event/<release>/evrIoc/srcRestore/trigXL05.cwsubstitutions
+(9) For IOCs with triggered devices, see below section 
+    'Consideration for Autosave' for instructions on setting up
+    autosave of your trigger save/restore setpoints.
 
 (10) For IOCs with triggered devices, add the trigger delays to the Channel
      Archiver.
@@ -232,6 +236,8 @@ III - Adding event databases and EVR configuration to your IOC startup file:
     PMC:      ErConfigure(<instance>,    0    ,    0   ,   0   ,1)
     Embedded: ErConfigure(<instance>,    0    ,<vector>,<level>,2)
 
+    PCI-E:    ErConfigure(<instance>,    0    ,    0   ,   0   ,4)
+
     where instance = EVR instance, starting from 0, incrementing by 1
                      for each subsequent card.  Only 1 EVR instance
 		     is allowed for Embedded EVRs.
@@ -248,6 +254,8 @@ III - Adding event databases and EVR configuration to your IOC startup file:
     and   0        = VME
        or 1        = PMC
        or 2	   = Embedded
+
+       or 4        = PCI-E
 
 (5) Add evrInitialize (after ErConfigure) if a fiducial routine will be
     registered before iocInit driver initialization:
@@ -330,8 +338,8 @@ NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
 VI - Checkout Instructions
 --------------------------
 
-(1) Errors when loading event databases, contact drogind.
-(2) Errors from ErConfigure, contact saa.
+(1) Errors when loading event databases, contact khkim.
+(2) Errors from ErConfigure, contact khkim.
 (3) ErConfigure is successful but EVR has red LEDs, contact jedu to make 
 sure your fiber is connected properly from EVG through fanout modules to
 your EVR.
@@ -366,3 +374,373 @@ each display next to your IOC name (all channels must be connected):
     properly restored on reboot.
 (9) Check that the Channel Archiver is recording all your trigger delays and
     that there are no disconnected channels.
+
+
+
+V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues
+------------------------------------------------------------------------------------
+
+(1) Pick a correct event module
+
+    Recommend event-R3-2-2-br_generaltime-2-2 or later version
+    Edit configure/RELEASE file to use the latest event module
+    Please, check up the module dependency also.
+
+(2) Edit *evr.substitutions file for the er record instance
+    We can use the following database templates which have been used from old version of event module
+    for the er record instance.
+    . evr.db, evrWithDelays.db, evrWithExtDelays.db, evrWithFrontPanel.db
+
+    The new event module also provides new template for the Linux PMC platform
+    . evrPmc.db, evrWithDelayPmc.db, evrWithExtDelaysPmc.db, evrWithFronPanelPmc.db
+    If you are planing to use the Linux PMC EVR, please choose these template
+
+    (Remark) Please, find more details in the slides: 'How to use Tming System as a Client'.
+
+(3) Edit *evr.substitutions file for the trigger/event configuration
+
+    Please, use evrEventCtrl.db template for the trigger/event configuration
+    Need to need to describe a list of event number which will be used for the trigger,
+    and also need to put initial trigger configuration.
+    But, it can be changed at runtime if we need.
+
+    (Remark) the trigger/event cofniguration part was not changed from the previous version,
+    but, need to consider for each beam program. Each beam program has different event list.
+
+(4) Edit *pattern.substitutions file to choose proper timeslots, and propoer event list for each beam program
+
+    Put correct active timeslots for the macors: ST1ST, and TS2ND for the evrPatternAll.db.
+    The evrPatternAll.db is a common template for all of beam programs.
+
+    Please, put a correct evrEvent*.db template. Each beam program has own template
+
+    (Remark) Please, look at 'consideration for the multiple beam program' section in this file
+             and also look at the slies: 'How to use Timing System as a Client'.
+
+(5) Edit *trig.substitutions file for the event code invariant delay and, the automatic generating EDM screen
+
+    Put new macros: TOUT and ACTV for the evrDevTrig.db template. It is for the event code invariant delay.
+    Please, find more detialed information in the 'consideration to use the event invariant delay' section in this file.
+    Also, can find an example in the slides: 'How to use Timing System as a Client'.
+
+
+    Put new comment tags in the evrDevTrig.db section in the substitutions file. It is for the automatic generating EDM screen.
+    Please read below section Adding Timing Display autogen to your application'.
+    Also, please find more detailed information and example in the slides: 'How to use Timing System as a Client'.
+
+
+(6) Edit Makefile in the src/Db directory for the automatic generating EDM screen
+
+    Need to put new target to generate the EDM screen from the *trig.substitutions file
+
+	example)
+
+		gen_trig_edl:
+		<TAB>	create_edm_event_msi.py   IOC-XT01-IM01trig.substitutions
+
+    The *trig.substitutions file name should be matched with yours.
+
+
+(7) Misc.
+
+    - Please, look at the section for the 'Consideration for the autusave' in this file
+    - Recommend to use high level delay and width PVs for the save-restore
+    - Need to use save-restore for the er record setting
+    - Please, do not use the pre-scaler for the extended delay
+      . the event code invariant delay does not work properly with the pre-scaler
+      . EVR provides enough range for the delay without the pre-scaler
+
+
+
+Consideration for the multiple beam program
+------------------------------------------------
+
+Now, we have mulitple beam programs. Each beam program has different event configuration.
+Thus, ioc engineer needs to choose correct evrEvent database for thier own application.
+And, ioc engineer also need to choose correct timeslots for the each beam program.
+Please, look at the following tables.
+
+	------------	-----------------	---------------------
+	Beam program	evrEvent database	Active Time Slots
+						TS1ST		TS2ND
+	------------	-----------------	-----		-----
+	LCLS		evrEventAll.db		1		4
+	FACET		evrEventFACET.db	2		5
+	XTA		evrEventXTA.db		3(or 0)*	6
+	------------	-----------------	---------------------
+
+Please, reflect above table into your <application>pattern.substitutions
+
+(Remark *) The XTA beam has maximum rate 10 Hz. If you really don't need 120 Hz timestamp,
+           you can drop one of active timeslot which should be timeslot 3.
+           Becuase, the beam runs on the timeslot 6.
+
+
+Each beam program has different event code and different concern about the timeslot.
+For example FACET has 3 own event code, inject-201, scavenger-202, and beam event-203 (**).
+These should be refleced on the trigger configuration in the individual application.
+Please, update your <application>evr.substitutions file. You can find "file evrEventCtrl.db" section
+in the file and look at the "ID" macro which means the event number.
+
+You also need to reflect the different concern about the timeslot.
+FACET beam runs on the timeslot 5 instead of the timeslot 4.
+So, you may need to change each 4x event numbers to 5x.
+
+Same considerations are required for the XTA. The XTA own event codes are the followings.
+RF full rate - 201, Beam full rate -202, Beam rate limited - 203 (**)
+You may want to use event number 6x for the XTA due to the beam runs on timeslot 6.
+
+
+Consideration to use the event invariant delay
+---------------------------------------------------
+
+We have made changes on the evrDevTrg.db. This database has new macros: TOUT and ACTV.
+We need to put those two macros into the section for the evrDevTrig.db  
+in the "<application>trig.subsititutions" file.
+
+The TOUT macro provides mapping between the output channel and the event invariant logic.
+We can use OUT0, OUT1, ..., OUTA, OUTB, OUTC to describe the output channel.
+Actually, front panel trigger outputs share the events with the real panel triggers.
+So, you can use, OUT0, OUT1, OUT2 for the front panel.
+
+
+Consideration for Autosave
+---------------------------
+
+The event module support two ways to use the autosave.
+
+
+	# autosave/restore settings
+	# this session should be located after loading up the database
+
+	save_restoreSet_status_prefix( "<<EVR_NAME>>")
+	save_restoreSet_IncompleteSetsOk(1)
+	save_restoreSet_DatedBackupFiles(1)
+
+	set_requestfile_path("/data", "autosave-req")
+	set_requestfile_path("./")
+	set_savefile_path("/data","autosave")
+
+	# To restore from the sav file which is generated by the INFO field
+	set_pass0_restoreFile("info_position.sav")
+	set_pass0_restoreFile("info_setting.sav")
+
+
+	# This session should be located very last in your start up script
+	# Make request file
+	chdir("/data/autosave-req")
+	makeAutosaveFiles()
+	# Set monitoring for autosave
+	create_monitor_set("info_positions.req", 5, "DEV=<<EVR_NAME>>")
+	create_monitor_set("info_settings.req", 30, "DEV=<<EVR_NAME>>") 
+
+
+
+Consideration for the Linux PMC EVR
+------------------------------------
+
+1) Synchornous signal catch for the EVR interrupt
+The linux driver generates signal (SIGIO) when the interrupt is occured.
+In the prvious version, the signal is proceeded by _MAIN_ thread with
+the registered signal handler. But, the _MAIN_ thread does not have RT priority,
+it drags the real-timer performance for the interrupt handling. As a result,
+it makes many issues on processing on the evrTask and the evrRecord.
+To avoid this issue, we added highest RT priority thread and the new thread handles 
+the signal synchornousely. To use this new feature, we need to add the followings
+in the <application>Main.cpp file to block the signal for the _MAIN_ thread.
+
+
+int main(int argc,char *argv[])
+{
+    sigset_t set;
+
+    /*
+     * if it is possible, proceed the memory locking 
+     * to avoid real-time peformance dragg do to swapping.
+     */
+    #if _POSIX_MEMLOCK > 0
+    if(mlockall(MCL_CURRENT | MCL_FUTURE) == -1) {
+        printf("Fatal error: memory locking fail\n");
+        return -1;
+    }
+    #endif
+
+    /* Blocking SIGIO signal for the _MAIN_ thread */
+    sigemptyset(&set);
+    sigaddset(&set, SIGIO);
+    pthread_sigmask(SIG_BLOCK, &set, NULL);
+
+    if(argc>=2) {
+        iocsh(argv[1]);
+        epicsThreadSleep(.2);
+    }
+    iocsh(NULL);
+    epicsExit(0);
+    return(0);
+}
+
+
+2) erapi chages
+MRF provides APIs for both EVR and EVG. These APIs are included in the followings files.
+    erapi.c
+    erapi.h
+
+We have put a new thread (irqHandler thread) for linux platform.
+This thread receive the SIGIO signal sychronousely from the kernel module, and does the irq handling.
+We have modfied the erapi.c for this new thread.
+
+For upgrading the APIs, Please, follow the following procedure.
+
+- copy above files into mrfApp/src directory
+- add the following line into very top in the erapi.c
+
+    void EvrIrqHandlerThreadCreate(void(*handler)(int));
+
+- make chage for the EvrIrqAssignHdler()
+
+void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
+                         void (*handler)(int))
+{
+  struct sigaction act;
+  int oflags;
+  int result;
+
+/*
+
+  act.sa_handler = handler;
+  sigemptyset(&act.sa_mask);
+  act.sa_flags = 0;
+
+  result = sigaction(SIGIO, &act, NULL);
+  printf("sigaction returned %d\n", result);
+*/
+
+  EvrIrqHandlerThreadCreate(handler);
+
+  fcntl(fd, F_SETOWN, getpid());
+  oflags = fcntl(fd, F_GETFL);
+  fcntl(fd, F_SETFL, oflags | FASYNC);
+  /* Now enable handler */
+  EvrIrqHandled(fd);
+}
+
+
+Adding Timing Display autogen to your application
+------------------------------------------------------
+ IOC Engineer steps:
+ 1) Add the following comment tags to your *trig*.substitutions file:
+
+          <snip>
+    file evrDevTrig.db 
+    {
+    #EVR EVR:XT01:IM01
+    #FILE evnt_xt01_im01
+    #CONTROLPV1 SIOC:SYS6:AL00:MODE
+    #CONTROLPV2 SIOC:SYS6:AL00:TOD 
+         <snip>
+  where #EVR is your EVR device name, #FILE is the output evnt*.edl filename,
+  and CONTROLPV* indicates the PV names for mode and time of day at screen bottom,
+  (indicating PRODUCTION or DEVELOPMENT, and Time of Day) from approproate IOC. 
+  Note that the ":SYS*:" area will change depending on the machine.
+  Note that if CONTROLPV* tags are omitted, the PVs default to "SYS0" for LCLS
+  Note that FACET maps to SYS1 and acctest maps to SYS6
+
+ 2) Add to your Db/Makefile
+    gen_trig_edl:
+	   <TAB>create_edm_event_msi.py <*trig*.substitutions1 file>
+      <TAB>create_edm_event_msi.py <*trig*.substitutions2 file>
+              ....
+ Note:
+ $TOOLS/script contains the create_edm_event_msi.py script used
+ $EDM/templates contain the edm template files used by create_edm_event_msi.py 
+ $EDM/install is the area to which generated screens are copied
+
+ Example: See /afs/slac/g/acctest/epics/iocTop/R3-14-12/BeamCharge/MAIN_TRUNK/BeamChargeApp/Db/xta
+ inspect IOC-XT01-IM01trig.substitutions and Makefile
+
+ Note that the following example output from create_edm_event_msi.py is normal:
+[drogind@cdlx08 xta]$ make gen_trig_edl
+ create_edm_event_msi.py IOC-XT01-IM01trig.substitutions
+ channel count =  1
+ System as determined from CONTROLPV1  SYS6
+ Done generating  evnt_xt01_im01_msi.substitution
+ EDM templates from /afs/slac/g/acctest/tools/edm/display/templates
+ Generating EDL file /afs/slac/g/acctest/tools/edm/display/install/evnt_xt01_im01.edl
+ Warning: unexpanded macros in ouput
+
+ For any other errors, please consult with Murali or Debbie
+ -------------------------------------------------------------
+
+
+General BSA template
+--------------------
+
+Exising BSA templates are depended on a specific system. 
+There is demand to get a new BSA template which is not depend on a specific system,
+is also have more flexibility to adjust PV fields.
+So, we made a new general BSA template which named "bsaGENEdef.db."
+IOC engineer has to set the following macros on his/her subsitutuion file to use the
+new template.
+
+	$(DEVICE)	device information, prefix of PV name
+			ex) TCAV:LI28:800
+	$(ATRB)		attibute name for the BSA PV
+	$(IN)		PV name for the data source
+	$(EGU)		Engineering Unit
+	$(HOPR)		High operation range
+	$(LOPR)		Low operation range
+	$(PREC)		Precision
+	$(ADEL)		Archive Deadband
+	$(FLNK)		forward link to hook a processing chain after the BSA processing
+			if you don't want to use it, Please, put double quote into subsitution file
+			to make an empty allocation for the forward link.
+
+
+Library and DBD files for EVG applicaton
+----------------------------------------
+
+RTEMS/VME
+	Library		DBD
+ 	evrSupport
+ 	devMrfEg	devMrfEg.dbd
+	devMrfEr
+	mrfVme64x
+
+Library and DBD files for EVR application
+-----------------------------------------
+
+RTEMS/VME&PMC 
+	Library		DBD
+	evrSupport	evrSupport.dbd
+	devMrfEr	devMrfEr.dbd
+	mrfVme64x
+
+LINUX/PMC&PCI
+	Library		DBD
+	evrSupport	evrSupport.dbd
+	devMrfEr	devMrfEr.dbd
+	drvMrf
+
+
+----------------------------------------------------
+How to use event-R3-5-0 and later, for IOC Engineers
+----------------------------------------------------
+
+Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Event Code Invariant Delay)
+from your trig.substitution file. (there is no more trigger event code name. 
+The forward/backward propagation and event code invariant delay is a default mode)
+
+IOC engineer need to put new macro SYS to describe the beam program in the trig.substitution file
+Please, follow the following rule.
+
+SYS=SYS0: LCLS 
+SYS=SYS1: FACET
+SYS=SYS6: NLCTA
+
+Note) 
+If you really want to disable the event code invariant delay,
+you can put ACTV macro and set it to ZERO.
+Then the feature will be disabled. The intrinsic delay (EVG delay)
+will be set to 13004 as a default.
+If you want to change the default value, you can use TEC macro.
+Please, put your default instrinsic delay value for the TEC macro.
