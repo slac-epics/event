@@ -1,9 +1,193 @@
 Release Notes for the event package
 -----------------------------------
-event-R3-2-2-br_generaltime-1-3:  (KHKIM) 11-07-2011
-        * Fix the BSA problem on EVG
-        * Support installing ChannelWatcher configuration files (ELW) 12-14-2011
-          from  "evrSupport/srcRestore" in EPICS R3-14-12
+event-R4-0-0:
+      * remove tag event-R3-5-0 and force tag it to event-R4-0-0
+
+event-R3-5-0:
+      * Removing Beam Program Dependency from Event Module
+        - do not require SITE_FACILITY information in the RELEASE_SITE file
+        - readout the list of event name and EVG delay (intrinsic delay) 
+          from waveform PVs in the PNET soft IOC
+      * Remove event name from PV (no more TEC macro in the trig.substitution file)
+        - Please, read README file for more detailed information
+      * Remove ACTV macro for the trig.subsitution file
+        - the forward/backward propagation & event invariant delay (fixed delay) are default one
+        - Please, read README file for more detailed information
+
+
+event-R3-4-0:
+      * Sync with event-R3-2-2-br_generaltime-2-4
+
+evemt-R3-2-2-br_generaltime-4-1: July 18 ,2013
+      (KHKIM):
+      Add dynamic update event code description: the new PVs shows the description of event code and it will be updated
+                                                 when the event code is changed
+      Fix colon (:) issues in the event template - evrDevTrig.db
+      - Please, look at README file for the details.
+
+      Provide a general BSA template to give maximum flexibility, but ioc engineer has to care additional macros
+      - Please, look at README file for the details.
+
+      clean up linux library to eliminate mrfApi.
+      - Please, read README file to get more detail information
+
+
+event-R3-2-2-br_generaltime-4-0: 
+      (STRAUMAN):
+        * Fixed a number of compiler warnings
+          -- evrMessage.c: corrected order of parameters passed to memset().
+          -- evrMessage.h: added test for _X86_64_ enable intel-specific
+                           hacks on 64-bit platforms, too.
+          -- evrModifier5.c: longSubRecord fields should accessed via
+                           epicsUInt32* pointers rather than (non-portable)
+                           unsigned long *.
+          -- longSubRecord.c: added bogus use of otherwise unused variable.
+          -- bsa.c:        include "errlog.h"
+        * Moved all usage of event-related message queue out of drvMrfEr/devMrfEr
+          and into drvEvr.c.
+          -- drvMrfEr.h:   removed peventTaskQueue field from card struct
+          -- devMrfEr.c:   removed test for event #1 ('FIDUCIAL' in slac-speak)
+                           and posting to message queue). This can and should be
+                           done from the user-specific callback that is hooked
+                           into the driver or devsup.
+          -- drvEvr.c:     o Added typedef for 'EventMessage' instead of redeclaring
+                             at multiple places.
+                           o Compute I/O-intr scanlist from event number rather
+                             than making it part of an EventMessage.
+                           o Let evrEvent (handler) post all non-fiducial events
+                             to message queue (this was formerly done from devMrfEr's
+                             interrupt handler).
+                           o Moved creation of message queue to initialization routine,
+                             *before* any of the asynchronous tasks/ISR which may
+                             use the queue are created/hooked.
+                           o evrTask: moved posting of FIDUCIAL event message
+                             into 'if' block which is executed only if no timeout
+                             has occurred. (Previously the task would post a
+                             FIDUCIAL message on each timeout which is incorrect).
+                             Fixed as per Stephanie Allison's email 2013/05/22.
+      (STRAUMAN):
+        Support for output triggers under linux now working: 
+        * Added declaration of EvrOutputEnable() routine.
+        * Mods to drvLinuxEvr.c:
+          -- Bug Fix ==> ErSetOtp() must map pulsegen to TBOut if DBUS
+             is disabled (not if it is enabled)
+          -- Added some more debugging messages (if ErDebug > 0 only)
+          -- Initialize UniversalIO channels to Hi-Z.
+          -- Added compile-time option to limit the number of trigger events
+             and set to zero so that these never use pulse generators nor TBO pins...
+          -- Support for PCIe-EVR-300 which has no TBOuts but uses UniversalIO.
+             ## Introduced EvrSetOutMap() which maps to UnivIO pins on 
+                the PCIe-EVR-300 and to TBOuts on other boards. 
+                This is a quick hack to make this board work.
+                The entire driver should be re-written with better support 
+                for differences between board flavors.
+      (KHKIM):
+      Bug fix for the forward/backward propagation
+      Working on output triggers:
+       * Let ErConfigure() call EvrOutputEnable() for PCIE_EVR_FIRMWARE_REV_LINUX4
+      Support 64 bits machine
+        * 64bits bug fix for the erapi.h
+        * 64bits bug fix for the longSubRecord
+        * 64bits bug fix for the evrMessage
+        * 64bits bug fix for the evrTime
+        * use <stdhint.h> for the erapi (vendor's API)
+
+      Add new platform PCI-E, Please, look at README file for the ErConfigure().
+      Note1) hardware trigger does not work for PCI-E
+             PCI-E EVR300 has new bit in control register 0x004 bit#27 OUTEN
+             it should be set for the hardware trigger, but not implemented in the code yet.
+      Note2) PMC EVR230 has additional triggers though J4 connector. (called TBOut[n]).
+             it does not work properly. I suspect the pulse generator allocation in the linux driver.
+             We need to fix it. But, Front Panel Triggers (Called FTOut[n]) works.
+
+
+event-R3-2-2-br_generaltime-3-1: (KHKIM)  Mar. 14, 2013
+        * upgrade vendor's APIs  for linux platform
+        * move signal blocking from main() to ErConfigure for linux platform
+
+event-R3-2-2-br_generaltime-3-0: (KHKIM)  Feb. 22, 2013
+        * fix deadlock issue
+    M RELEASE_NOTES
+    M evrSupport/Db/evr/evrEvent.db
+    M evrSupport/src/drvEvr.c
+    M evrSupport/src/evrMessage.c
+    M evrSupport/src/evrMessage.h
+    M evrSupport/src/evrTime.c
+    M mrfApp/src/devMrfEr.c
+
+        * bug fix on the epics event generation
+    M evrSupport/src/drvEvr.c
+    M mrfApp/src/devMrfEr.c
+    M mrfApp/src/drvMrfEr.h
+
+
+event-R3-2-2-br_generaltime-2-8: (KHKIM)  Feb. 12, 2013
+        * FACET
+          make new event number 214 PMAQ (Profile Monitor DACQ)
+        * confiugre/CONFIG_SITE
+          filter-out the vxworks from the target arch. until the event module is available for the vxworks
+
+event-R3-2-2-br_generaltime-2-7: (KHKIM)
+        * introduce new task to process the evr events and the timestamp updating
+          this new thread will prevent some of race conditions for the multi-core platform
+        * the original code updates the timestmap via record processing, we push it down to the new event thread
+          to prevent race condition on the record processing and timestamp for the event driven record
+
+event-R3-2-2-br_generaltime-2-6: (KHKIM)
+        * remove MUTEX in the ErGetTicsk to prevent locking
+        * change the double buffer algorithm to prevent the timeslot offset issue
+        * re-arrange the order of interrupt handling t prevent the timeslot offset issue for the linux/linuxRT
+        * code handles evr timestamp counter swapping issue
+
+event-R3-2-2-br_generaltime-2-5: (KHKIM)
+        * add new diagnostic to measure the abolute time (interrupt delay)
+          for the fiducial processing and the data buffer handling
+        * fix confliction in evrEventAll.substitution file
+          - EVG delay for event number 163, 164 were not matched with the mpgEventAll in the EVG application
+          - Add new event (event number 163) for the A-line kicker
+
+event-R3-2-2-br_generaltime-2-4: (KHKIM)
+        * update README file
+        * fix configure/RELEASE file: EPICS_MODULES=$(MODULES_SITE_TOP)
+        * explicitly describe the target platforms
+        * include linuxRT as a target platform
+          configure/CONFIG_SITE
+           CROSS_COMPILER_TARGET_ARCHS = RTEMS-beatnik  RTEMS-uC5282 linuxRT-x86
+        * fix linux ISR handling issues to avoid missing interrupts
+          - fix interrupt ACK
+          - re-organize the task level handler
+          This change should affect on the linux and linuxRT targets.
+        * fix the fidcuial processing diagnostics for the intel x86 platform
+        * put more diagnostics for the linux-x86 and x86 base linuxRT platform
+          - to measure the evrTask delay due to the epicsEventSignal(semaphore)
+        * switch the signal handling mechanism from ansynchronous way to synchronous way
+        * re-write the double buffer algorithm for the data buffer handling (evrMessage*)
+
+
+event-R3-2-2-br_generaltime-2-3: (KHKIM)
+        * put a variable into RELEASE_SITE file to recognize the beam program
+          need to put the following into RELEASE_SITE after did eco
+          SITE_FACILITY = [LCLS | FACET | XTA]
+
+        * change info field to use info_settings.req
+
+event-R3-2-2-br_generaltime-2-2: (KHKIM) 04-18-2012
+        * bug fixing in linux driver
+        * add FACET events: ACC STDBY
+        * add up more information into README
+
+event-R3-2-2-br_generaltime-2-1: (KHKIM) 02-29-2012
+        * Merge from head of event-R3-2-2-br_facet to get suppring FACET.
+        * Add evrEventXTA.db to support XTA project
+        * Add mrfApi for the linux platform
+        * Add info(autosaveFields_pass0, "VAL") and PINI=YES for autosave to evrDevTrig.db
+        * Add additional macros to bsaTOROEdef.substitutions, egu, hopr, lopr, prec, adel
+
+event-R3-3-2-br_generaltime-2-0: (KHKIM) 01-24-2012
+        * Merge from MAIN_TRUK: evnet-R3-3-1
+
+event-R3-3-2:
+       * Sync with event-R3-2-2-br_generaltime-2-3
 
 event-R3-3-1:
        * Merge from event-R3-2-2-br_facet branch to the MAIN_TRUNK
