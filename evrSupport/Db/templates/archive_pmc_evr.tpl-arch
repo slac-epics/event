@@ -435,3 +435,22 @@ $(EVR):EVENT11CTRL.ENM 1 monitor
 $(EVR):EVENT12CTRL.ENM 1 monitor
 $(EVR):EVENT13CTRL.ENM 1 monitor
 $(EVR):EVENT14CTRL.ENM 1 monitor
+
+$(EVR):TRIG0:TCTL	10	monitor
+$(EVR):TRIG0:TDES	10	monitor
+$(EVR):TRIG0:TOFFSET	10	monitor
+$(EVR):TRIG0:TPOL	10	monitor
+$(EVR):TRIG0:TWID	10	monitor
+
+$(EVR):TRIG1:TCTL	10	monitor
+$(EVR):TRIG1:TDES	10	monitor
+$(EVR):TRIG1:TOFFSET	10	monitor
+$(EVR):TRIG1:TPOL	10	monitor
+$(EVR):TRIG1:TWID	10	monitor
+
+$(EVR):TRIG2:TCTL	10	monitor
+$(EVR):TRIG2:TDES	10	monitor
+$(EVR):TRIG2:TOFFSET	10	monitor
+$(EVR):TRIG2:TPOL	10	monitor
+$(EVR):TRIG2:TWID	10	monitor
+

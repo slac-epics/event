@@ -439,3 +439,45 @@ $(EVR):EVENT12CTRL.ENM 1 monitor
 $(EVR):EVENT13CTRL.ENM 1 monitor
 $(EVR):EVENT14CTRL.ENM 1 monitor
 
+$(EVR):TRIG0:TCTL	10	monitor
+$(EVR):TRIG0:TDES	10	monitor
+$(EVR):TRIG0:TOFFSET	10	monitor
+$(EVR):TRIG0:TPOL	10	monitor
+$(EVR):TRIG0:TWID	10	monitor
+
+$(EVR):TRIG1:TCTL	10	monitor
+$(EVR):TRIG1:TDES	10	monitor
+$(EVR):TRIG1:TOFFSET	10	monitor
+$(EVR):TRIG1:TPOL	10	monitor
+$(EVR):TRIG1:TWID	10	monitor
+
+$(EVR):TRIG2:TCTL	10	monitor
+$(EVR):TRIG2:TDES	10	monitor
+$(EVR):TRIG2:TOFFSET	10	monitor
+$(EVR):TRIG2:TPOL	10	monitor
+$(EVR):TRIG2:TWID	10	monitor
+
+$(EVR):TRIG3:TCTL	10	monitor
+$(EVR):TRIG3:TDES	10	monitor
+$(EVR):TRIG3:TOFFSET	10	monitor
+$(EVR):TRIG3:TPOL	10	monitor
+$(EVR):TRIG3:TWID	10	monitor
+
+$(EVR):TRIG4:TCTL	10	monitor
+$(EVR):TRIG4:TDES	10	monitor
+$(EVR):TRIG4:TOFFSET	10	monitor
+$(EVR):TRIG4:TPOL	10	monitor
+$(EVR):TRIG4:TWID	10	monitor
+
+$(EVR):TRIG5:TCTL	10	monitor
+$(EVR):TRIG5:TDES	10	monitor
+$(EVR):TRIG5:TOFFSET	10	monitor
+$(EVR):TRIG5:TPOL	10	monitor
+$(EVR):TRIG5:TWID	10	monitor
+
+$(EVR):TRIG6:TCTL	10	monitor
+$(EVR):TRIG6:TDES	10	monitor
+$(EVR):TRIG6:TOFFSET	10	monitor
+$(EVR):TRIG6:TPOL	10	monitor
+$(EVR):TRIG6:TWID	10	monitor
+
