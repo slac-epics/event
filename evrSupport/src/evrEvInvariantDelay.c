@@ -97,9 +97,12 @@ static long aSubEvOffset(aSubRecord *prec)
        (eventNumber<0 || eventNumber>255)   /* out of range for event number */) {
         *poutputDelay = defaultDelay;                   /* if something is wrong, just use default delay */
     }
-    else
+    else {
 		*poutputDelay = *(pdelayArray + eventNumber);  /* Everything is OK, let's use look up table */
 
+		/* Save the computed delay as the new default */
+		*(long*)(prec->d) = *poutputDelay;
+	}
     return 0;
 }
 

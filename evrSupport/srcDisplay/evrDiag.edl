@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 37
-y 100
+x 512
+y 465
 w 524
 h 528
 font "helvetica-medium-r-18.0"
@@ -62,9 +62,9 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 0
+x 4
 y 0
-w 336
+w 124
 h 40
 font "helvetica-medium-r-12.0"
 fgColor index 14
@@ -1025,7 +1025,7 @@ endObjectProperties
 object activeMessageButtonClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 328
 y 64
@@ -1219,7 +1219,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 356
 y 336
@@ -1235,6 +1235,7 @@ precision 0
 nullColor index 18
 smartRefresh
 newPos
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -1260,7 +1261,7 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
 x 344
 y 8
@@ -1281,5 +1282,48 @@ setPosition {
   0 "parentWindow"
 }
 icon
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 124
+y 8
+w 112
+h 24
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+value {
+  "Firmware Version"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 244
+y 8
+w 92
+h 24
+controlPv "$(EVR):CTRL.FPGV"
+format "hex"
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "monitors"
 endObjectProperties
 
