@@ -1,12 +1,26 @@
-Instructions for RTEMS EVR users                    Last Updated 6/6/2012
+Instructions for EVR users                    Last Updated 6/6/2012
 --------------------------------
-These instructions are for EVENT module event-R3-2-2-br_generaltime branch or later
-and include instructions for updating to epics-R2-14-12. Before starting please read
-the sections
- 'V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
- 'Consideration for Autosave', and
- 'Adding Timing Display autogen to your application'
-which is included near the end of this README
+These instructions are for EVENT module event-R3-5-0 branch or later.
+The basic steps when configuring a new IOC are in parts I through IV.
+
+Contents:
+I    - Adding event module support to your IOC application
+II   - Adding event databases and EVR configuration to your IOC startup file
+III  - Adding Timing Display autogen to your application
+IV   - Hardware Setup
+V    - Special One-Time PMC Setup
+VI   - Checkout Instructions
+VII  - Migrating IOCs to event-R3-5-0 and later, for IOC Eng
+VIII - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch or later) issues
+IX   - Using event module C functions and global variables in your IOC application
+X    - Consideration for the multiple beam program
+XI   - Consideration to use the event invariant delay
+XII  - Consideration for Autosave
+XIII - Consideration for the Linux PMC EVR
+XIV  - General BSA template
+XV   - Library and DBD files for EVG applicaton
+XVI  - Library and DBD files for EVR application
+
 
 If you are still using an older EVENT module please use the README for that specific
 module version
@@ -21,16 +35,16 @@ to remove the GENERALTIME and RESTORE modules, update all other modules
 in your RELEASE file to those built for epics-R3-14-12, and use AUTOSAVE
 instead of RESTORE. Before proceeding please read the AUTOSAVE module README file, and
 the sections of this README
-  'V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
+  'VII - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
   'Consideration for Autosave' 
 which are included near the end of this README file.
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
 
    xxx_LIBS += evrSupport
-   xxx_LIBS += generalTime
    xxx_LIBS += devMrfEr
-   xxx_LIBS += mrfVme64x
+   xxx_LIBS += mrfVme64x (VME systems only)
+   xxx_LIBS += drvMrf (Linux systems only)
    xxx_LIBS += autosave
 
 Note that the order of the above libraries is important.
@@ -117,92 +131,7 @@ DB_INSTALLS += $(EVENT)/db/eventCodeSequenceAll.db
 
 
 
-
-II - Using event module functions and global variables in your IOC application:
--------------------------------------------------------------------------------
-
-(1) If you want a routine to run after the fiducial at 360hz by the evrTask,
-    (which runs at epicsThreadPriorityHigh+1), register the routine in your
-    initialization code:
-
-	#include "evrTime.h"
-	static void *optionalInput = 0;
-	static void fiducialRoutine(void * optionalInput) {
-	... your 360hz logic here ...
-	... to get the current or the one of the next 2 360hz patterns...
-	    evrModifier_ta modifier_a;
-	    epicsTimeStamp time_s;
-	    unsigned long  patternStatus; /* see evrPattern.h for values */
-	    int status = evrTimeGetFromPipeline(&time_s, 
-		<evrTimeCurrent, evrTimeNext1, evrTimeNext2, evrTimeActive>,
-		modifier_a, &patternStatus, 0,0,0);
-	... check status - status is non-zero when same/missing pulses ...
-	...   in the pipeline or bad timestamp.
-	... check patternStatus - status is non-zero when there is a timeout,
-	...   unsynchronized pulse ID, and other PATTERN error listed in 
-	...   evrPattern.h.
-	... use BEAMCODE, TIMESLOT macros defined in evrPattern.h ... 
-	...   to parse out beam code and time slot from modifier_a
-	...   TIMESLOT is zero if pattern is bad.
-	... use PULSEID macro defined in evrTime.h ... 
-	...   to parse out pulse ID from time_s
-	...   PULSEID is set to PULSEID_INVALID when pattern is bad.
-	... do your 360hz logic requiring pattern here ...
-	}
-	... in your init code ...
-	... must be called after ErConfigure and evrInitialize ...
-	... set optionalInput as needed for your application ...
-	evrTimeRegister((FIDUCIALFUNCTION)fiducialRoutine, optionalInput);
-	...
-
-    See event/<release>/evrIoc/src/mpsEvrProc.c for an example.
-
-(2) If you prefer not to use the FLNK to provide input to BSA, use the
-    API directly:
-
-	#include "bsa.h"
-	... your initialization logic - do at or before iocInit ....
-	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
-	char[PVNAME_STRINGSZ] bsaName = <BSA name for the data>
-	void                 *dpvt = 0; /* unique per value */
-	status = bsaSecnInit(bsaName, 0, &dpvt);
-
-	... your data processing logic here ...
-	... to update BSA after data is ready ...
-	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
-	epicsTimeStamp dataTimeStamp = <timestamp of your data>
-	double         dataValue = <value of your data>
-	epicsEnum16    dataStat = <EPICS alarm status of your data>
-	epicsEnum16    dataSevr = <EPICS alarm severity of your data>
-	void          *dpvt = <value of dpvt from bsaSecnInit>
-	status = bsaSecnAvg(&dataTimeStamp, dataValue, dataStat, dataSevr, dpvt);
-
-(3) Two global variables providing the high resolution time of the fiducial
-    are available for diagnostics purposes:
-	evrFiducialTime - high resolution time of the last fiducial 
-			  (360hz update)
-	evrActiveFiducialTime - high resolution time of the last 
-                          timeslot 1 or 4 fiducial (120hz update)
-    These values are also provided in <ioc>:FIDUCIAL.A and B, respectively.
-
-(4) A general-purpose pattern-matching function is available for applications
-    that need to check pattern modifiers against inclusion and exclusion
-    masks, with optional beam code and time slot check.  To call:
-
-	#include "evrPattern.h"
-
-	    evrModifier_ta modifier_a;
-	... get the pattern modifiers (ie, using evrTimeGetFromPipeline)  ...
-	    evrModifier_ta inclusion_a, exclusion_a;
-	    unsigned long  beamcode; /* 0 = any beam code */
-	    unsigned long  timeslot; /* 0 = any time slot */
-	... fill in inclusion and exclusion masks, beamcode, and timeslot ...
-	    int matches = evrPatternCheck(beamcode, timeslot, 
-					  inclusion_a, exclusion_a, 
-					  modifier_a); 
-	... check matches - 0 = no match, 1 = match ...
-
-III - Adding event databases and EVR configuration to your IOC startup file:
+II - Adding event databases and EVR configuration to your IOC startup file:
 ----------------------------------------------------------------------------
 
 (1) If your IOC supports beam-synchronous acquisition, it will need to support
@@ -263,6 +192,54 @@ III - Adding event databases and EVR configuration to your IOC startup file:
 
 (6) For IOCs with triggers, add a line to restore the trigger setpoints 
     before iocInit.  See the ChannelWatcher README file.
+
+
+III - Adding Timing Display autogen to your application
+------------------------------------------------------
+ IOC Engineer steps:
+ 1) Add the following comment tags to your *trig*.substitutions file:
+
+          <snip>
+    file evrDevTrig.db 
+    {
+    #EVR EVR:XT01:IM01
+    #FILE evnt_xt01_im01
+    #CONTROLPV1 SIOC:SYS6:AL00:MODE
+    #CONTROLPV2 SIOC:SYS6:AL00:TOD 
+         <snip>
+  where #EVR is your EVR device name, #FILE is the output evnt*.edl filename,
+  and CONTROLPV* indicates the PV names for mode and time of day at screen bottom,
+  (indicating PRODUCTION or DEVELOPMENT, and Time of Day) from approproate IOC. 
+  Note that the ":SYS*:" area will change depending on the machine.
+  Note that if CONTROLPV* tags are omitted, the PVs default to "SYS0" for LCLS
+  Note that FACET maps to SYS1 and acctest maps to SYS6
+
+ 2) Add to your Db/Makefile
+    gen_trig_edl:
+	   <TAB>create_edm_event_msi.py <*trig*.substitutions1 file>
+      <TAB>create_edm_event_msi.py <*trig*.substitutions2 file>
+              ....
+ Note:
+ $TOOLS/script contains the create_edm_event_msi.py script used
+ $EDM/templates contain the edm template files used by create_edm_event_msi.py 
+ $EDM/install is the area to which generated screens are copied
+
+ Example: See /afs/slac/g/acctest/epics/iocTop/R3-14-12/BeamCharge/MAIN_TRUNK/BeamChargeApp/Db/xta
+ inspect IOC-XT01-IM01trig.substitutions and Makefile
+
+ Note that the following example output from create_edm_event_msi.py is normal:
+[drogind@cdlx08 xta]$ make gen_trig_edl
+ create_edm_event_msi.py IOC-XT01-IM01trig.substitutions
+ channel count =  1
+ System as determined from CONTROLPV1  SYS6
+ Done generating  evnt_xt01_im01_msi.substitution
+ EDM templates from /afs/slac/g/acctest/tools/edm/display/templates
+ Generating EDL file /afs/slac/g/acctest/tools/edm/display/install/evnt_xt01_im01.edl
+ Warning: unexpanded macros in ouput
+
+ For any other errors, please consult with Murali or Debbie
+ -------------------------------------------------------------
+    
 
 IV - Hardware Setup:
 ---------------------
@@ -374,11 +351,38 @@ each display next to your IOC name (all channels must be connected):
     properly restored on reboot.
 (9) Check that the Channel Archiver is recording all your trigger delays and
     that there are no disconnected channels.
+    
+    
+VII - How to use event-R3-5-0 and later, for IOC Engineers
+----------------------------------------------------
+
+Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Event Code Invariant Delay)
+from your trig.substitution file. (there is no more trigger event code name. 
+The forward/backward propagation and event code invariant delay is a default mode)
+
+IOC engineer need to put new macro SYS to describe the beam program in the trig.substitution file
+Please, follow the following rule.
+
+SYS=SYS0: LCLS 
+SYS=SYS1: FACET
+SYS=SYS6: NLCTA
+
+Note) 
+If you really want to disable the event code invariant delay,
+you can put ACTV macro and set it to ZERO.
+Then the feature will be disabled. The intrinsic delay (EVG delay)
+will be set to 13004 as a default.
+If you want to change the default value, you can use TEC macro.
+Please, put your default instrinsic delay value for the TEC macro.
 
 
-
-V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues
+VIII - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues
 ------------------------------------------------------------------------------------
+
+Before starting please read this section and
+ 'X - Consideration for Autosave', and
+ 'XII - Adding Timing Display autogen to your application'
+which are included near the end of this README
 
 (1) Pick a correct event module
 
@@ -451,12 +455,97 @@ V - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) iss
       . EVR provides enough range for the delay without the pre-scaler
 
 
+IX - Using event module functions and global variables in your IOC application:
+-------------------------------------------------------------------------------
 
-Consideration for the multiple beam program
+(1) If you want a routine to run after the fiducial at 360hz by the evrTask,
+    (which runs at epicsThreadPriorityHigh+1), register the routine in your
+    initialization code:
+
+	#include "evrTime.h"
+	static void *optionalInput = 0;
+	static void fiducialRoutine(void * optionalInput) {
+	... your 360hz logic here ...
+	... to get the current or the one of the next 2 360hz patterns...
+	    evrModifier_ta modifier_a;
+	    epicsTimeStamp time_s;
+	    unsigned long  patternStatus; /* see evrPattern.h for values */
+	    int status = evrTimeGetFromPipeline(&time_s, 
+		<evrTimeCurrent, evrTimeNext1, evrTimeNext2, evrTimeActive>,
+		modifier_a, &patternStatus, 0,0,0);
+	... check status - status is non-zero when same/missing pulses ...
+	...   in the pipeline or bad timestamp.
+	... check patternStatus - status is non-zero when there is a timeout,
+	...   unsynchronized pulse ID, and other PATTERN error listed in 
+	...   evrPattern.h.
+	... use BEAMCODE, TIMESLOT macros defined in evrPattern.h ... 
+	...   to parse out beam code and time slot from modifier_a
+	...   TIMESLOT is zero if pattern is bad.
+	... use PULSEID macro defined in evrTime.h ... 
+	...   to parse out pulse ID from time_s
+	...   PULSEID is set to PULSEID_INVALID when pattern is bad.
+	... do your 360hz logic requiring pattern here ...
+	}
+	... in your init code ...
+	... must be called after ErConfigure and evrInitialize ...
+	... set optionalInput as needed for your application ...
+	evrTimeRegister((FIDUCIALFUNCTION)fiducialRoutine, optionalInput);
+	...
+
+    See event/<release>/evrIoc/src/mpsEvrProc.c for an example.
+
+(2) If you prefer not to use the FLNK to provide input to BSA, use the
+    API directly:
+
+	#include "bsa.h"
+	... your initialization logic - do at or before iocInit ....
+	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
+	char[PVNAME_STRINGSZ] bsaName = <BSA name for the data>
+	void                 *dpvt = 0; /* unique per value */
+	status = bsaSecnInit(bsaName, 0, &dpvt);
+
+	... your data processing logic here ...
+	... to update BSA after data is ready ...
+	... for every value that BSA needs (ie, X,Y,TMIT for each device) ...
+	epicsTimeStamp dataTimeStamp = <timestamp of your data>
+	double         dataValue = <value of your data>
+	epicsEnum16    dataStat = <EPICS alarm status of your data>
+	epicsEnum16    dataSevr = <EPICS alarm severity of your data>
+	void          *dpvt = <value of dpvt from bsaSecnInit>
+	status = bsaSecnAvg(&dataTimeStamp, dataValue, dataStat, dataSevr, dpvt);
+
+(3) Two global variables providing the high resolution time of the fiducial
+    are available for diagnostics purposes:
+	evrFiducialTime - high resolution time of the last fiducial 
+			  (360hz update)
+	evrActiveFiducialTime - high resolution time of the last 
+                          timeslot 1 or 4 fiducial (120hz update)
+    These values are also provided in <ioc>:FIDUCIAL.A and B, respectively.
+
+(4) A general-purpose pattern-matching function is available for applications
+    that need to check pattern modifiers against inclusion and exclusion
+    masks, with optional beam code and time slot check.  To call:
+
+	#include "evrPattern.h"
+
+	    evrModifier_ta modifier_a;
+	... get the pattern modifiers (ie, using evrTimeGetFromPipeline)  ...
+	    evrModifier_ta inclusion_a, exclusion_a;
+	    unsigned long  beamcode; /* 0 = any beam code */
+	    unsigned long  timeslot; /* 0 = any time slot */
+	... fill in inclusion and exclusion masks, beamcode, and timeslot ...
+	    int matches = evrPatternCheck(beamcode, timeslot, 
+					  inclusion_a, exclusion_a, 
+					  modifier_a); 
+	... check matches - 0 = no match, 1 = match ...
+
+
+
+X - Consideration for the multiple beam program
 ------------------------------------------------
 
-Now, we have mulitple beam programs. Each beam program has different event configuration.
-Thus, ioc engineer needs to choose correct evrEvent database for thier own application.
+Now, we have mulitple beam programs. Each beam program has a different event configuration.
+Thus, an ioc engineer needs to choose correct evrEvent database for thier own application.
 And, ioc engineer also need to choose correct timeslots for the each beam program.
 Please, look at the following tables.
 
@@ -469,15 +558,15 @@ Please, look at the following tables.
 	XTA		evrEventXTA.db		3(or 0)*	6
 	------------	-----------------	---------------------
 
-Please, reflect above table into your <application>pattern.substitutions
+Please follow the above table in your <application>pattern.substitutions
 
-(Remark *) The XTA beam has maximum rate 10 Hz. If you really don't need 120 Hz timestamp,
-           you can drop one of active timeslot which should be timeslot 3.
-           Becuase, the beam runs on the timeslot 6.
+(Remark *) The XTA beam has maximum rate 10 Hz. If you really don't need 120 Hz timestamps,
+           you can drop one of the active timeslots which should be timeslot 3,
+           becuase, the beam runs on the timeslot 6.
 
 
-Each beam program has different event code and different concern about the timeslot.
-For example FACET has 3 own event code, inject-201, scavenger-202, and beam event-203 (**).
+Each beam program has different event codes and different concerns about the timeslots.
+For example FACET has 3 custom event code, inject-201, scavenger-202, and beam event-203 (**).
 These should be refleced on the trigger configuration in the individual application.
 Please, update your <application>evr.substitutions file. You can find "file evrEventCtrl.db" section
 in the file and look at the "ID" macro which means the event number.
@@ -491,7 +580,7 @@ RF full rate - 201, Beam full rate -202, Beam rate limited - 203 (**)
 You may want to use event number 6x for the XTA due to the beam runs on timeslot 6.
 
 
-Consideration to use the event invariant delay
+XI - Consideration to use the event invariant delay
 ---------------------------------------------------
 
 We have made changes on the evrDevTrg.db. This database has new macros: TOUT and ACTV.
@@ -504,10 +593,10 @@ Actually, front panel trigger outputs share the events with the real panel trigg
 So, you can use, OUT0, OUT1, OUT2 for the front panel.
 
 
-Consideration for Autosave
+XII - Consideration for Autosave
 ---------------------------
 
-The event module support two ways to use the autosave.
+The event module supports two ways to use autosave.
 
 
 	# autosave/restore settings
@@ -536,11 +625,11 @@ The event module support two ways to use the autosave.
 
 
 
-Consideration for the Linux PMC EVR
+XIII - Consideration for the Linux PMC EVR
 ------------------------------------
 
 1) Synchornous signal catch for the EVR interrupt
-The linux driver generates signal (SIGIO) when the interrupt is occured.
+The linux driver generates signal (SIGIO) when the interrupt occurs.
 In the prvious version, the signal is proceeded by _MAIN_ thread with
 the registered signal handler. But, the _MAIN_ thread does not have RT priority,
 it drags the real-timer performance for the interrupt handling. As a result,
@@ -625,54 +714,7 @@ void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 }
 
 
-Adding Timing Display autogen to your application
-------------------------------------------------------
- IOC Engineer steps:
- 1) Add the following comment tags to your *trig*.substitutions file:
-
-          <snip>
-    file evrDevTrig.db 
-    {
-    #EVR EVR:XT01:IM01
-    #FILE evnt_xt01_im01
-    #CONTROLPV1 SIOC:SYS6:AL00:MODE
-    #CONTROLPV2 SIOC:SYS6:AL00:TOD 
-         <snip>
-  where #EVR is your EVR device name, #FILE is the output evnt*.edl filename,
-  and CONTROLPV* indicates the PV names for mode and time of day at screen bottom,
-  (indicating PRODUCTION or DEVELOPMENT, and Time of Day) from approproate IOC. 
-  Note that the ":SYS*:" area will change depending on the machine.
-  Note that if CONTROLPV* tags are omitted, the PVs default to "SYS0" for LCLS
-  Note that FACET maps to SYS1 and acctest maps to SYS6
-
- 2) Add to your Db/Makefile
-    gen_trig_edl:
-	   <TAB>create_edm_event_msi.py <*trig*.substitutions1 file>
-      <TAB>create_edm_event_msi.py <*trig*.substitutions2 file>
-              ....
- Note:
- $TOOLS/script contains the create_edm_event_msi.py script used
- $EDM/templates contain the edm template files used by create_edm_event_msi.py 
- $EDM/install is the area to which generated screens are copied
-
- Example: See /afs/slac/g/acctest/epics/iocTop/R3-14-12/BeamCharge/MAIN_TRUNK/BeamChargeApp/Db/xta
- inspect IOC-XT01-IM01trig.substitutions and Makefile
-
- Note that the following example output from create_edm_event_msi.py is normal:
-[drogind@cdlx08 xta]$ make gen_trig_edl
- create_edm_event_msi.py IOC-XT01-IM01trig.substitutions
- channel count =  1
- System as determined from CONTROLPV1  SYS6
- Done generating  evnt_xt01_im01_msi.substitution
- EDM templates from /afs/slac/g/acctest/tools/edm/display/templates
- Generating EDL file /afs/slac/g/acctest/tools/edm/display/install/evnt_xt01_im01.edl
- Warning: unexpanded macros in ouput
-
- For any other errors, please consult with Murali or Debbie
- -------------------------------------------------------------
-
-
-General BSA template
+XIV - General BSA template
 --------------------
 
 Exising BSA templates are depended on a specific system. 
@@ -695,8 +737,7 @@ new template.
 			if you don't want to use it, Please, put double quote into subsitution file
 			to make an empty allocation for the forward link.
 
-
-Library and DBD files for EVG applicaton
+XV - Library and DBD files for EVG applicaton
 ----------------------------------------
 
 RTEMS/VME
@@ -706,7 +747,7 @@ RTEMS/VME
 	devMrfEr
 	mrfVme64x
 
-Library and DBD files for EVR application
+XVI - Library and DBD files for EVR application
 -----------------------------------------
 
 RTEMS/VME&PMC 
@@ -721,26 +762,3 @@ LINUX/PMC&PCI
 	devMrfEr	devMrfEr.dbd
 	drvMrf
 
-
-----------------------------------------------------
-How to use event-R3-5-0 and later, for IOC Engineers
-----------------------------------------------------
-
-Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Event Code Invariant Delay)
-from your trig.substitution file. (there is no more trigger event code name. 
-The forward/backward propagation and event code invariant delay is a default mode)
-
-IOC engineer need to put new macro SYS to describe the beam program in the trig.substitution file
-Please, follow the following rule.
-
-SYS=SYS0: LCLS 
-SYS=SYS1: FACET
-SYS=SYS6: NLCTA
-
-Note) 
-If you really want to disable the event code invariant delay,
-you can put ACTV macro and set it to ZERO.
-Then the feature will be disabled. The intrinsic delay (EVG delay)
-will be set to 13004 as a default.
-If you want to change the default value, you can use TEC macro.
-Please, put your default instrinsic delay value for the TEC macro.
