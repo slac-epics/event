@@ -888,7 +888,7 @@ epicsUInt16 ErGetFpgaVersion(ErCardStruct *pCard)
 
 	/* no need for a lock, this is a read only register */
 	version = be32_to_cpu(pEr->FPGAVersion);
-	return ((version >> 16) & 0xFF00) | (version & 0xFF);
+	return version;
 }
 
 /**************************************************************************************************
