@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1925
-y 1263
+x 247
+y 46
 w 650
 h 676
 font "helvetica-medium-r-18.0"
@@ -19,10 +19,10 @@ ctlBgColor1 index 25
 ctlBgColor2 index 7
 topShadowColor index 1
 botShadowColor index 14
-title "$(EVR) Event Receiver"
+title "$(EVR) SLAC Event Receiver"
 showGrid
 snapToGrid
-gridSize 8
+gridSize 4
 endScreenProperties
 
 # (Rectangle)
@@ -488,7 +488,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 136
@@ -508,13 +508,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 136
@@ -534,13 +535,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 136
@@ -560,13 +562,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 136
@@ -582,9 +585,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -653,7 +655,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 168
@@ -673,13 +675,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 168
@@ -699,13 +702,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 168
@@ -725,13 +729,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 168
@@ -747,9 +752,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -818,7 +822,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 200
@@ -838,13 +842,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 200
@@ -864,13 +869,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 200
@@ -890,13 +896,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 200
@@ -912,9 +919,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -983,7 +989,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 232
@@ -1003,13 +1009,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 232
@@ -1029,13 +1036,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 232
@@ -1055,13 +1063,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 232
@@ -1077,9 +1086,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -1148,7 +1156,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 264
@@ -1168,13 +1176,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 264
@@ -1194,13 +1203,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 264
@@ -1220,13 +1230,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 264
@@ -1242,9 +1253,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -1313,7 +1323,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 296
@@ -1333,13 +1343,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 296
@@ -1359,13 +1370,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 296
@@ -1385,13 +1397,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 296
@@ -1407,9 +1420,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -1478,7 +1490,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 328
@@ -1498,13 +1510,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 328
@@ -1524,13 +1537,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 328
@@ -1550,13 +1564,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 328
@@ -1572,9 +1587,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -1643,7 +1657,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 360
@@ -1663,13 +1677,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 360
@@ -1689,13 +1704,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 360
@@ -1715,13 +1731,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 360
@@ -1737,9 +1754,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -1808,7 +1824,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 392
@@ -1828,13 +1844,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 392
@@ -1854,13 +1871,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 392
@@ -1880,13 +1898,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 392
@@ -1902,9 +1921,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -1973,7 +1991,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 424
@@ -1993,13 +2011,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 424
@@ -2019,13 +2038,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 424
@@ -2045,13 +2065,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 424
@@ -2067,9 +2088,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -2138,7 +2158,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 456
@@ -2158,13 +2178,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 456
@@ -2184,13 +2205,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 456
@@ -2210,13 +2232,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 456
@@ -2232,9 +2255,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -2303,7 +2325,7 @@ endObjectProperties
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 240
 y 488
@@ -2323,13 +2345,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 316
 y 488
@@ -2349,13 +2372,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 392
 y 488
@@ -2375,13 +2399,14 @@ fastUpdate
 useHexPrefix
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
-minor 2
+minor 5
 release 0
 x 468
 y 488
@@ -2397,9 +2422,8 @@ nullColor index 18
 fastUpdate
 newPos
 objType "controls"
+noExecuteClipMask
 endObjectProperties
-
-# dhz
 
 # (Static Text)
 object activeXTextClass
@@ -2430,7 +2454,7 @@ endObjectProperties
 object activeMessageButtonClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 590
 y 572
@@ -2606,7 +2630,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 418
+x 348
 y 64
 w 66
 h 28
@@ -2804,7 +2828,7 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 2
+minor 3
 release 0
 x 40
 y 64
@@ -2868,22 +2892,145 @@ value {
 }
 endObjectProperties
 
-# (Text Update)
-object TextupdateClass
+# (Message Button)
+object activeMessageButtonClass
 beginObjectProperties
-major 10
-minor 0
+major 4
+minor 1
 release 0
-x 500
-y 64
-w 64
+x 424
+y 568
+w 56
 h 24
-controlPv "$(EVR):EVENT1NAME"
+fgColor index 44
+onColor index 4
+offColor index 4
+topShadowColor index 1
+botShadowColor index 11
+controlPv "LOC\\VisFrml=e:0,hide,show"
+pressValue "show"
+releaseValue "hide"
+onLabel "Shown"
+offLabel "Hidden"
+toggle
+3d
+font "helvetica-medium-i-10.0"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 424
+y 600
+w 56
+h 24
 fgColor index 14
-fgAlarm
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Diag"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evrDiag.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 320
+y 600
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Seq Codes"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/seqEventCodes.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "ECS=ECS:SYS0,EVG=EVNT:SYS0"
+}
+replaceSymbols {
+  0 1
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 320
+y 568
+w 100
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "LCLS Codes"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/lclsEventCodes.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVG=EVNT:SYS0,EVR=$(EVR)"
+}
+replaceSymbols {
+  0 1
+}
+propagateMacros {
+  0 0
+}
+icon
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 424
+y 64
+w 140
+h 24
+controlPv "$(EVR):EVENT1_NAME"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
 bgColor index 12
-font "helvetica-medium-i-12.0"
-lineWidth 1
-lineAlarm
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
 endObjectProperties
 

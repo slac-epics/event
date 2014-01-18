@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 450
-y 115
+x 356
+y 61
 w 768
-h 304
+h 460
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -19,7 +19,7 @@ ctlBgColor1 index 25
 ctlBgColor2 index 7
 topShadowColor index 1
 botShadowColor index 14
-title "$(EVR) PMC EVR-230"
+title "$(EVR) VME EVR-230"
 showGrid
 snapToGrid
 gridSize 4
@@ -34,7 +34,7 @@ release 0
 x 8
 y 132
 w 752
-h 136
+h 288
 lineColor index 3
 fill
 fillColor index 3
@@ -71,7 +71,7 @@ fgColor index 14
 bgColor index 3
 useDisplayBg
 value {
-  "PMC EVR-230 Event Receiver"
+  "VME EVR-230 Event Receiver"
   "$(EVR)"
 }
 endObjectProperties
@@ -175,8 +175,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 628
-y 276
+x 632
+y 428
 w 128
 h 24
 controlPv "$(IOC):TOD"
@@ -1659,5 +1659,1235 @@ smartRefresh
 useHexPrefix
 newPos
 objType "monitors"
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 260
+w 724
+h 24
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 259
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "3"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 596
+y 259
+w 100
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "FP 3 Trig..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_unitmain.edl"
+}
+menuLabel {
+  0 "Triggers"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG3,T=Front Panel,CH=3,LOCA=$(LOCA)"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 504
+y 259
+w 80
+h 24
+controlPv "$(EVR):TRIG3:TDES"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 424
+y 259
+w 72
+h 24
+controlPv "$(EVR):TRIG3:TWID"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 708
+y 259
+w 40
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_dev_diag.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG3,T=Front Panel,CH=3"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 120
+y 259
+w 168
+h 24
+controlPv "$(EVR):TRIG3:TCTL.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 259
+w 65
+h 24
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+value {
+  "Front Panel"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 259
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG3:TPOL"
+indicatorPv "$(EVR):TRIG3:TPOL"
+onLabel "Invert"
+offLabel "Normal"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 296
+y 259
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG3:TCTL"
+indicatorPv "$(EVR):TRIG3:TCTL"
+onLabel "Enabled"
+offLabel "Disabled"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 292
+w 724
+h 24
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 290
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "4"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 596
+y 290
+w 100
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "FP 4 Trig..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_unitmain.edl"
+}
+menuLabel {
+  0 "Triggers"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG4,T=Front Panel,CH=4,LOCA=$(LOCA)"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 504
+y 290
+w 80
+h 24
+controlPv "$(EVR):TRIG4:TDES"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 424
+y 290
+w 72
+h 24
+controlPv "$(EVR):TRIG4:TWID"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 708
+y 290
+w 40
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_dev_diag.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG4,T=Front Panel,CH=4"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 120
+y 290
+w 168
+h 24
+controlPv "$(EVR):TRIG4:TCTL.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 290
+w 65
+h 24
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+value {
+  "Front Panel"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 290
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG4:TPOL"
+indicatorPv "$(EVR):TRIG4:TPOL"
+onLabel "Invert"
+offLabel "Normal"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 296
+y 290
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG4:TCTL"
+indicatorPv "$(EVR):TRIG4:TCTL"
+onLabel "Enabled"
+offLabel "Disabled"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 320
+w 724
+h 24
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 321
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "5"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 596
+y 321
+w 100
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "FP 5 Trig..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_unitmain.edl"
+}
+menuLabel {
+  0 "Triggers"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG5,T=Front Panel,CH=5,LOCA=$(LOCA)"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 504
+y 321
+w 80
+h 24
+controlPv "$(EVR):TRIG5:TDES"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 424
+y 321
+w 72
+h 24
+controlPv "$(EVR):TRIG5:TWID"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 708
+y 321
+w 40
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_dev_diag.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG5,T=Front Panel,CH=5"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 120
+y 321
+w 168
+h 24
+controlPv "$(EVR):TRIG5:TCTL.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 321
+w 65
+h 24
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+value {
+  "Front Panel"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 321
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG5:TPOL"
+indicatorPv "$(EVR):TRIG5:TPOL"
+onLabel "Invert"
+offLabel "Normal"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 296
+y 321
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG5:TCTL"
+indicatorPv "$(EVR):TRIG5:TCTL"
+onLabel "Enabled"
+offLabel "Disabled"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 352
+w 724
+h 24
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 352
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "6"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 596
+y 352
+w 100
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "FP 6 Trig..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_unitmain.edl"
+}
+menuLabel {
+  0 "Triggers"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG6,T=Front Panel,CH=6,LOCA=$(LOCA)"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 504
+y 352
+w 80
+h 24
+controlPv "$(EVR):TRIG6:TDES"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 424
+y 352
+w 72
+h 24
+controlPv "$(EVR):TRIG6:TWID"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 708
+y 352
+w 40
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_dev_diag.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG6,T=Front Panel,CH=6"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 120
+y 352
+w 168
+h 24
+controlPv "$(EVR):TRIG6:TCTL.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 352
+w 65
+h 24
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+value {
+  "Front Panel"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 352
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG6:TPOL"
+indicatorPv "$(EVR):TRIG6:TPOL"
+onLabel "Invert"
+offLabel "Normal"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 296
+y 352
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG6:TCTL"
+indicatorPv "$(EVR):TRIG6:TCTL"
+onLabel "Enabled"
+offLabel "Disabled"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 24
+y 384
+w 724
+h 24
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 100
+y 383
+w 16
+h 24
+font "helvetica-bold-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "7"
+}
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 596
+y 383
+w 100
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "FP 7 Trig..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_unitmain.edl"
+}
+menuLabel {
+  0 "Triggers"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG7,T=Front Panel,CH=7,LOCA=$(LOCA)"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 504
+y 383
+w 80
+h 24
+controlPv "$(EVR):TRIG7:TDES"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 424
+y 383
+w 72
+h 24
+controlPv "$(EVR):TRIG7:TWID"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 708
+y 383
+w 40
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_dev_diag.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG7,T=Front Panel,CH=7"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 120
+y 383
+w 168
+h 24
+controlPv "$(EVR):TRIG7:TCTL.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 24
+y 383
+w 65
+h 24
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+value {
+  "Front Panel"
+}
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 383
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG7:TPOL"
+indicatorPv "$(EVR):TRIG7:TPOL"
+onLabel "Invert"
+offLabel "Normal"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 296
+y 383
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG7:TCTL"
+indicatorPv "$(EVR):TRIG7:TCTL"
+onLabel "Enabled"
+offLabel "Disabled"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+endGroup
+
 endObjectProperties
 
