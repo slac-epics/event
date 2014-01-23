@@ -3261,7 +3261,7 @@ buttonLabel "Triggers"
 numPvs 4
 numDsps 1
 displayFileName {
-  0 "evrTriggerDiags"
+  0 "evrScreens/evrTriggerDiags.edl"
 }
 menuLabel {
   0 "Triggers"

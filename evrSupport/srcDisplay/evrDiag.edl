@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 512
-y 465
+x 1653
+y 492
 w 524
 h 528
 font "helvetica-medium-r-18.0"
@@ -1325,5 +1325,32 @@ nullColor index 14
 useHexPrefix
 newPos
 objType "monitors"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 388
+y 432
+w 92
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "Old Diags"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evrDiags.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+icon
 endObjectProperties
 
