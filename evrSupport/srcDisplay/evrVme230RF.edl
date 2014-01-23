@@ -19,7 +19,7 @@ ctlBgColor1 index 25
 ctlBgColor2 index 7
 topShadowColor index 1
 botShadowColor index 14
-title "$(EVR) VME EVR-230"
+title "$(EVR) VME EVR-230-RF"
 showGrid
 snapToGrid
 gridSize 4
@@ -71,7 +71,7 @@ fgColor index 14
 bgColor index 3
 useDisplayBg
 value {
-  "VME EVR-230 Event Receiver"
+  "VME EVR-230-RF Event Receiver"
   "$(EVR)"
 }
 endObjectProperties
