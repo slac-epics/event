@@ -34,6 +34,15 @@ DB += bsaPHASEdef.db
 DB += bsaPWREdef.db
 DB += bsaEnergyEdef.db
 
+# Files for easier IOC deployment, with reasonable defaults
+# for each system when $SYS is defined
+DB += Bsa.db
+DB += Pattern.db
+DB += VME-trig.db
+DB += VME-TTB-trig.db
+DB += PMC-trig.db
+DB += EvrPmc.db
+
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
