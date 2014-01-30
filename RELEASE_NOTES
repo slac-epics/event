@@ -1,5 +1,12 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-1-0:
+      * New general purpose db files. All site specific configuration is
+      handled by defining SYS macros to give reasonable defaults. The new
+      files are Bsa.db, EvrPmc.db, Pattern.db, PMC-trig.db, VME-trig.db,
+      and VME-TTB-trig.db. Details documented in the corresponding
+      substitutions files.
+
 event-R4-0-1:
       * Add new firmware version 0x11000007 into compatible list for the PMC
 event-R4-0-0:

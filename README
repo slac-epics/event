@@ -6,7 +6,8 @@ The basic steps when configuring a new IOC are in parts I through IV.
 Contents:
 I    - Adding event module support to your IOC application
 II   - Adding event databases and EVR configuration to your IOC startup file
-III  - Adding Timing Display autogen to your application
+IIIa - Standard EDM Screens and Their Macros
+IIIb  - Adding Timing Display autogen to your application
 IV   - Hardware Setup
 V    - Special One-Time PMC Setup
 VI   - Checkout Instructions
@@ -55,35 +56,42 @@ Note that the order of the above libraries is important.
    xxx_DBD += evrSupport.dbd
    xxx_DBD += devMrfEr.dbd
    xxx_DBD += autosave.dbd
+   
+(4) In most cases, you can load existing db files with resonable defaults and
+    standardized names, and skip steps 5-8 below.
+    To do that, add to xxxApp/Db/Makefile:
+    DB_INSTALLS += EvrPmc.db
+    DB_INSTALLS += Pattern.db
+    DB_INSTALLS += PMC-trig.db (if EVR is PMC type)
+    DB_INSTALLS += VME-trig.db (if EVR is VME type)
+    DB_INSTALLS += VME-TTB-trig.db (for a rear transition or breakout board) 
+    DB_INSTALLS += Bsa.db (if BSA will be used)
 
-(4) Add EVR databases to your application.  For an example, see:
+(5) Add EVR databases to your application.  For an example, see:
 	event/<release>/evrIoc/Db/evrXL05.substitutions
 
-(5) Add pattern-related databases to your application.  For an example, see:
+(6) Add pattern-related databases to your application.  For an example, see:
 	event/<release>/evrIoc/Db/evrPatternXL05.substitutions
 
-(6) For IOCs with triggered devices, add trigger databases to your application.
+(7) For IOCs with triggered devices, add trigger databases to your application.
     For an example, see:
 	event/<release>/evrIoc/Db/trigXL05.substitutions. Also add event EDM display
     auto-generation to your trigger database file. See section 'Adding Timing Display
     autogen to your application'.
 
-(7) For IOCs with beam-synchronous acquisition (BSA), add BSA databases to 
+(8) For IOCs with beam-synchronous acquisition (BSA), add BSA databases to 
     your application.  For an example, see:
 	event/<release>/evrIoc/Db/bsaXL05.substitutions
 
-(8) For each record that is an input to BSA, add a forward-link (FLNK) to 
+(9) For each record that is an input to BSA, add a forward-link (FLNK) to 
     record processing that occurs at beam or trigger time:
 	  field(FLNK, "<dev>:EF<secn>")
     Consult with the HLA group to determine the proper values of <dev> and
     <secn> for your application.
 
-(9) For IOCs with triggered devices, see below section 
+(10) For IOCs with triggered devices, see below section 
     'Consideration for Autosave' for instructions on setting up
     autosave of your trigger save/restore setpoints.
-
-(10) For IOCs with triggered devices, add the trigger delays to the Channel
-     Archiver.
 
 (11) For IOCs with triggered devices which use event codes that are generated 
     at a "slow" rate (rate slower than beam full rate like a 10Hz event code), 
@@ -144,6 +152,14 @@ II - Adding event databases and EVR configuration to your IOC startup file:
     reasons, then this command is not needed. 
 
 (2) Load databases created in the previous section (before iocInit).
+    If using the general purpose db files from step 4 above, define macros
+    as documented at the top of the corresponding substitutions files, e.g.
+    
+dbLoadRecords("db/EvrPmc.db","EVR=EVR:B34:EV05,CRD=0, SYS=SYS0")
+dbLoadRecords("db/Pattern.db","IOC=IOC:B34:EV05, SYS=SYS0")
+dbLoadRecords("db/Bsa.db","DEVICE=TRIG:B34:EV05, ATRB=COUNTER")
+dbLoadRecords("db/PMC-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV05")
+dbLoadRecords("db/VME-TTB-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV05")
 
 (3) If any of the EVRs on your IOC is a VME model 200 and you are running 
     RTEMS 4.9.1 on an MVME6100, add the following lines before ErConfigure 
@@ -193,8 +209,39 @@ II - Adding event databases and EVR configuration to your IOC startup file:
 (6) For IOCs with triggers, add a line to restore the trigger setpoints 
     before iocInit.  See the ChannelWatcher README file.
 
+IIIa - Standard EDM Screens and Their Macros
+------------------------------------------------------
+At the top of most of the timing db files you will find an edl file listed that
+is associated with that db file. Here are the standard ones, the macros that
+should be passed to each, and how to define those macros.
 
-III - Adding Timing Display autogen to your application
+Trigger settings
+Db file: *trig.db
+EDL file: evnt_trig_*.edl to match hardware (PMC/VME, with/without transition board variations)
+Macros: DEV, LOCA, UNIT, IOC, SYS
+Macros are the same ones used with *trig.db. The default value for DEV is 
+TRIG:$(LOCA):$(UNIT). If the triggers in your EVR don't all have the same prefix
+(TRIG:LOCA:UNIT or DEV), you can't use this screen. Copy the appropriate screen
+and customize PV names, or use the display autogen approach.
+
+The following will have all macros derived from the trigger screen macros when
+launched from trigger screen using the "Experts" button:
+evrPatternDiags.edl (Pattern.db)
+evrDiags.edl (EvrPmc.db)
+evrTriggerDiags.edl (EvrPmc.db)
+
+BSA diagnostics
+Db file: Bsa.db
+EDL file: evnt_bsa_dev_edefs.edl
+Macros: 
+DEV_BASE - the BSA data source prefix, e.g. BPMS:IN10:371, TRIG:B34:EV05
+BSA - the name of the edef specific screen, e.g. evnt_bsa_dev, evnt_bsa_llrf...
+The other macros depend on the screen specified as $(BSA). These are for evnt_bsa_dev:
+DEV - prefix for the data source, generally $(DEV_BASE):
+SECN - part of PV name defined as SECN, ATTR, or ATRB in the bsa db file, e.g. COUNTER
+SYS - SYS0 etc.
+
+IIIb - Adding Timing Display autogen to your application
 ------------------------------------------------------
  IOC Engineer steps:
  1) Add the following comment tags to your *trig*.substitutions file:
@@ -365,6 +412,7 @@ Please, follow the following rule.
 
 SYS=SYS0: LCLS 
 SYS=SYS1: FACET
+SYS=SYS2: LCLS II
 SYS=SYS6: NLCTA
 
 Note) 
