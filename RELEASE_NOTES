@@ -6,6 +6,9 @@ event-R4-1-0:
       files are Bsa.db, EvrPmc.db, Pattern.db, PMC-trig.db, VME-trig.db,
       and VME-TTB-trig.db. Details documented in the corresponding
       substitutions files.
+      * enable RX loopback so that signal from EVG may be daisychained to
+      slaved EVRs.
+      
 
 event-R4-0-1:
       * Add new firmware version 0x11000007 into compatible list for the PMC
