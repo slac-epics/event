@@ -179,22 +179,27 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
   if (eventNum == EVENT_FIDUCIAL) {
     lastfid = timeNum;
     if (readyForFiducial) {
-  	  epicsUInt32  evrClockCounter;
+      epicsUInt32  evrClockCounter;                                      // NEW
       readyForFiducial = 0;
-      ErGetTicks(0, &evrClockCounter);
-      evrMessageClockCounter(EVR_MESSAGE_FIDUCIAL, evrClockCounter);
+      ErGetTicks(0, &evrClockCounter);                                   // NEW
+      evrMessageClockCounter(EVR_MESSAGE_FIDUCIAL, evrClockCounter);     // NEW
       evrMessageStart(EVR_MESSAGE_FIDUCIAL);
       epicsEventSignal(evrTaskEventSem);
     } else {
       evrMessageNoDataError(EVR_MESSAGE_FIDUCIAL);
     }
   } else {
+#if 0
+    /*
+     * MCB - No.  This is conflicting with our usual way of doing things!
+     */
 	  /*---------------------
 	   * Schedule processing for any event-driven records
 	   */
   	  EventMessage eventMessage;
 	  eventMessage.eventNum  = eventNum;
 	  epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+#endif
   }
   evrTimeCount((unsigned int)eventNum, (unsigned int) timeNum);
 }
@@ -285,7 +290,10 @@ static int evrTask()
       }   
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
 
+#if 0
+      /* MCB - No, this is done elsewhere! */
       epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+#endif
       messagePending = epicsMessageQueuePending(eventTaskQueue);
       evrMessageQ(EVR_MESSAGE_FIDUCIAL, messagePending);
 
@@ -337,6 +345,11 @@ static int evrRecord()
 }
 
 
+#if 0
+/*
+ * MCB - No.  We are doing all of this at other points in the code, and we really don't
+ * want to move it here.
+ */
 static int evrEventTask(void)
 {
 	EventMessage eventMessage;
@@ -356,6 +369,7 @@ static int evrEventTask(void)
 
     return 0;
 }
+#endif
 /*=============================================================================
                                                          
   Name: evrInitialize
@@ -425,12 +439,15 @@ int evrInitialize()
     return -1;
   }
 
+#if 0
+  /* MCB - We don't need this. */
   if(!epicsThreadCreate("evrEventTask", epicsThreadPriorityHigh,
                         epicsThreadGetStackSize(epicsThreadStackMedium),
                         (EPICSTHREADFUNC)evrEventTask,0)) {
     errlogPrintf("evrInitialize: unable to crate the evrEvent task\n");
     return -1;
   }
+#endif
 
   if (!epicsThreadCreate("evrRecord", epicsThreadPriorityScanHigh+10,
                          epicsThreadGetStackSize(epicsThreadStackMedium),

@@ -909,7 +909,6 @@ int evrMessageCountsFiducial(unsigned int messageIdx,
                              epicsUInt32 *procTimeDelay_p,
                              epicsUInt32 *procTimeDelayMin_p,
                              epicsUInt32 *procTimeDelayMax_p)
-
 {
    evrMessage_ts *em_ps = evrMessage_as + messageIdx;
 

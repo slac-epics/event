@@ -499,7 +499,7 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
               break;
       }
       if (i == TO_LIM) {
-          if (fiddbg) {
+          if (fiddbg & 1) {
               printf("ETGF %lld %lld!\n", *idx, eventCodeTime_as[eventCode].idx);fflush(stdout);
           }
           status = 0x1ffff; /* We missed, so at least flag this as invalid! */
@@ -1224,8 +1224,8 @@ static long evrTimeEvent(longSubRecord *psub)
                  */
                 *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
                 newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-                if (fiddbg) {
-                    printf("ETE1!\n");fflush(stdout);
+                if (fiddbg & 1) {
+                    printf("ETE1, delta=%d, oldfid=%x, newfid=%x!\n", delta, oldfid, newfid);fflush(stdout);
                 }
                 pevrTime->status = epicsTimeERROR;
                 last_good = NULL;
@@ -1267,7 +1267,7 @@ static long evrTimeEvent(longSubRecord *psub)
              */
             *newts   = evr_aps[evrTimeCurrent]->pattern_s.time;
             newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-            if (fiddbg) {
+            if (fiddbg & 1) {
                 printf("ETE2!\n");fflush(stdout);
             }
             pevrTime->status = epicsTimeERROR;
@@ -1417,7 +1417,7 @@ epicsRegisterFunction(evrTimeRate);
 epicsRegisterFunction(evrTimeEvent);
 epicsRegisterFunction(evrTimeGetFiducial);
 
-void mcbtime(int arg1, int arg2)
+void evtdbg(int arg1, int arg2)
 {
     int doreset = 0;
     if (arg1 < 0) {
