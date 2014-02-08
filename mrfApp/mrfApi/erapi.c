@@ -587,7 +587,7 @@ int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
 	  if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
 		printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,
 				pulse, be32_to_cpu(pEr->Pulse[pulse].Prescaler), presc );
-	  else if ( presc != 0 )
+	  else if ( presc != 0 && erapiDebug >= 2 )
 		printf( "%s Pulse %d: Success! prescaler is now %d\n", __func__, pulse, presc );
 	}
   }
