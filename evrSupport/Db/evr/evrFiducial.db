@@ -106,11 +106,11 @@ record(ao, "$(DEV):TREF") {
   field(DTYP, "Raw Soft Channel")
   field(OMSL, "supervisory")
   field(LINR, "SLOPE")
-  field(EGU, "nsec")
+  field(EGU, "ns")
   field(HOPR, "2.8E06")
   field(DRVH, "2.8E06")
   field(PINI, "YES")
-  field(ESLO, "8.40336692324359")
+  field(ESLO, "8.403361345")
   field(VAL, "$(VAL)")
   field(PREC, "0")
 }
