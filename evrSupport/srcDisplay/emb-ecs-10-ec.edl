@@ -206,7 +206,7 @@ x 308
 y 4
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)0DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)0DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -323,7 +323,7 @@ x 308
 y 28
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)1DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)1DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -441,7 +441,7 @@ x 308
 y 52
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)2DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)2DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -559,7 +559,7 @@ x 308
 y 76
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)3DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)3DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -677,7 +677,7 @@ x 308
 y 100
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)4DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)4DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -795,7 +795,7 @@ x 308
 y 124
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)5DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)5DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -913,7 +913,7 @@ x 308
 y 148
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)6DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)6DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -1031,7 +1031,7 @@ x 308
 y 172
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)7DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)7DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -1149,7 +1149,7 @@ x 308
 y 196
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)8DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)8DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -1267,7 +1267,7 @@ x 308
 y 220
 w 60
 h 20
-controlPv "$(EVG):1:ECS_$(DEC)9DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:ECS_$(DEC)9DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"

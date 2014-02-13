@@ -150,7 +150,7 @@ x 196
 y 0
 w 60
 h 24
-controlPv "$(EVG):1:$(NAME1)DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:$(NAME1)DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -222,7 +222,7 @@ x 196
 y 28
 w 60
 h 24
-controlPv "$(EVG):1:$(NAME2)DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:$(NAME2)DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"
@@ -247,7 +247,7 @@ x 196
 y 56
 w 60
 h 24
-controlPv "$(EVG):1:$(NAME3)DLY"
+controlPv "CALC\\\{A*8.403361345\}($(EVG):1:$(NAME3)DLY.A)"
 format "float"
 font "helvetica-bold-r-12.0"
 fontAlign "center"

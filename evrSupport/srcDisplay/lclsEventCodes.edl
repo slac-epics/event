@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1486
-y 24
+x 1288
+y 84
 w 831
 h 936
 font "helvetica-bold-r-12.0"
@@ -157,13 +157,12 @@ y 4
 w 249
 h 27
 font "helvetica-bold-r-24.0"
-fgColor index 76
+fgColor index 19
 bgColor index 3
 useDisplayBg
 value {
   "LCLS Event Codes     "
 }
-autoSize
 endObjectProperties
 
 # (Static Text)
@@ -1536,5 +1535,26 @@ w 544
 h 1
 lineColor index 14
 fillColor index 14
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 4
+w 268
+h 32
+font "helvetica-bold-r-14.0"
+fontAlign "center"
+fgColor index 19
+bgColor index 3
+useDisplayBg
+value {
+  "Note: Delay times are computed"
+  "based on the nominal 119MHz clock"
+}
 endObjectProperties
 
