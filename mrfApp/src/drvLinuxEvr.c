@@ -1962,15 +1962,19 @@ LOCAL_RTN void ErDrvReportCall(const iocshArgBuf * args)
 }
 
 /* iocsh command: fiddbg */
-LOCAL const iocshArg fiddbgArg0 = {"Level" , iocshArgInt};
-LOCAL const iocshArg *const fiddbgArgs[1] = {&fiddbgArg0};
-LOCAL const iocshFuncDef fiddbgDef = {"fiddbg", 1, fiddbgArgs};
-int fiddbg = 0;
+LOCAL const iocshArg fiddbgArg0 = {"Mask" , iocshArgInt};
+LOCAL const iocshArg fiddbgArg1 = {"Count" , iocshArgInt};
+LOCAL const iocshArg *const fiddbgArgs[2] = {&fiddbgArg0, &fiddbgArg1};
+LOCAL const iocshFuncDef fiddbgDef = {"fiddbg", 2, fiddbgArgs};
+int fiddbg = 0, fiddbgcnt = 0;
 
 LOCAL_RTN void fiddbgCall(const iocshArgBuf * args)
 {
     fiddbg = args[0].ival;
-    printf("Fiducial debugging mask is %d.\n", fiddbg);
+    fiddbgcnt = args[1].ival;
+    if (!fiddbgcnt)
+        fiddbgcnt = 200;
+    printf("Fiducial debugging is %d (0x%x).\n", fiddbg, fiddbg);
     fflush(stdout);
 }
 
