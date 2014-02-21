@@ -95,6 +95,7 @@ typedef struct {
   int                 fifostatus[MAX_TS_QUEUE];
   unsigned long long  idx;
   int                 count;         /* # times this event has happened	 */
+  int                 dbgcnt;
   int                 fidq[MAX_TS_QUEUE];
   int                 fidR;
   int                 fidW;
@@ -490,7 +491,7 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
               break;
       }
       if (i == TO_LIM) {
-          if (fiddbg) {
+          if (fiddbg & 1) {
               printf("ETGF %lld %lld!\n", *idx, eventCodeTime_as[eventCode].idx);fflush(stdout);
           }
           status = 0x1ffff; /* We missed, so at least flag this as invalid! */
@@ -606,6 +607,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
           eventCodeTime_as[idx].time    = mod720time;
           eventCodeTime_as[idx].status  = epicsTimeERROR;
           eventCodeTime_as[idx].count   = 0;
+          eventCodeTime_as[idx].dbgcnt  = 0;
           eventCodeTime_as[idx].fidR    = -1;
           eventCodeTime_as[idx].fidW    = 0;
         }
@@ -999,8 +1001,10 @@ int evrTimeCount(unsigned int eventCode, unsigned int fiducial)
     else
       pevrTime->count = 1;
     pevrTime->fidq[pevrTime->fidW] = fiducial;
-    if (++pevrTime->fidW == MAX_TS_QUEUE)
+    if (pevrTime->fidW == MAX_TS_QUEUE - 1)
         pevrTime->fidW = 0;
+    else
+        pevrTime->fidW++;
     return epicsTimeOK;
   }
   return epicsTimeERROR;
@@ -1067,6 +1071,43 @@ static long evrTimeEvent(longSubRecord *psub)
         epicsTimeStamp *newts = &pevrTime->time;
         int newfid;
 
+        if (pevrTime->dbgcnt >= pevrTime->count) {
+            printf("%s: IRQ count %d, record proc count %d, not executing evrTimeEvent\n",
+                   psub->name, pevrTime->count, pevrTime->dbgcnt);
+            epicsMutexUnlock(evrTimeRWMutex_ps);
+            return epicsTimeERROR;
+        }
+
+        if (pevrTime->dbgcnt < EVR_MAX_INT)
+            pevrTime->dbgcnt++;
+        else
+            pevrTime->dbgcnt = 1;
+        if ((fiddbg & 0xe) && fiddbgcnt > 0) {
+            int diff = pevrTime->dbgcnt - pevrTime->count;
+            /*
+             * This *should* be zero.  It could be negative, if we have fallen behind.
+             * Positive is an error.
+             */
+            if (diff > 0 && (fiddbg & 2)) {
+                printf("ERROR: event %d has IRQ count %d but evrTimeEvent count %d!\n",
+                       psub->a, pevrTime->count, pevrTime->dbgcnt);
+                if (!--fiddbgcnt)
+                    fiddbg &= ~2;
+            }
+            if (diff == -1 && (fiddbg & 4)) {
+                printf("WARNING: slightly behind: event %d has IRQ count %d but evrTimeEvent count %d!\n",
+                       psub->a, pevrTime->count, pevrTime->dbgcnt);
+                if (!--fiddbgcnt)
+                    fiddbg &= ~4;
+            }
+            if (diff < -1 && (fiddbg & 8)) {
+                printf("WARNING: way behind: event %d has IRQ count %d but evrTimeEvent count %d!\n",
+                       psub->a, pevrTime->count, pevrTime->dbgcnt);
+                if (!--fiddbgcnt)
+                    fiddbg &= ~8;
+            }
+        }
+
         if (pevrTime->fidR < 0) {
             pevrTime->fidR = (pevrTime->fidW + MAX_TS_QUEUE - 1) & MAX_TS_QUEUE_MASK;
         }
@@ -1092,9 +1133,11 @@ static long evrTimeEvent(longSubRecord *psub)
             pevrTime->status = epicsTimeOK;
             last_good = newts;
 #if DEBUG_TIME_CORRECTION
-            printf("evrTimeEvent(%d) arrived early at %08x:%08x.\n",
-                   psub->a, newts->secPastEpoch, newts->nsec);
-            fflush(stdout);
+            if (fiddbg & 1) {
+                printf("evrTimeEvent(%d) arrived early at %08x:%08x.\n",
+                       psub->a, newts->secPastEpoch, newts->nsec);
+                fflush(stdout);
+            }
 #endif
         } else if (last_good || (evr_aps[evrTimeCurrent]->timeStatus == epicsTimeOK &&
                                  (evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff) != 0x1ffff)) {
@@ -1115,11 +1158,13 @@ static long evrTimeEvent(longSubRecord *psub)
                 last_good = &evr_aps[evrTimeCurrent]->pattern_s.time;
             oldfid = last_good->nsec & 0x1ffff;
 #if DEBUG_TIME_CORRECTION
-            printf("evrTimeEvent(%d) needs correction for fiducial 0x%x at time %08x:%08x (good=%08x:%08x).\n",
-                   psub->a, newfid, 
-                   evr_aps[evrTimeCurrent]->pattern_s.time.secPastEpoch,
-                   evr_aps[evrTimeCurrent]->pattern_s.time.nsec,
-                   last_good->secPastEpoch, last_good->nsec);
+            if (fiddbg & 1) {
+                printf("evrTimeEvent(%d) needs correction for fiducial 0x%x at time %08x:%08x (good=%08x:%08x).\n",
+                       psub->a, newfid, 
+                       evr_aps[evrTimeCurrent]->pattern_s.time.secPastEpoch,
+                       evr_aps[evrTimeCurrent]->pattern_s.time.nsec,
+                       last_good->secPastEpoch, last_good->nsec);
+            }
 #endif
             /*
              * We start by calculating the time delta in terms of fiducials.
@@ -1145,7 +1190,7 @@ static long evrTimeEvent(longSubRecord *psub)
                  */
                 *newts = evr_aps[evrTimeCurrent]->pattern_s.time;
                 newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-                if (fiddbg) {
+                if (fiddbg & 1) {
                     printf("ETE1!\n");fflush(stdout);
                 }
                 pevrTime->status = epicsTimeERROR;
@@ -1154,7 +1199,9 @@ static long evrTimeEvent(longSubRecord *psub)
                 *newts = *last_good;        /* Start from the last good time */
                 delta *= 2777778;           /* Scale the delta to ns */
 #if DEBUG_TIME_CORRECTION
-                printf("Delta = %d ns (0x%08x)\n", delta, delta);
+                if (fiddbg & 1) {
+                    printf("Delta = %d ns (0x%08x)\n", delta, delta);
+                }
 #endif
                 newts->nsec &= 0xfffe0000;  /* Clear the fiducial */
                 while (-delta > (int)newts->nsec) { /* Borrow! */
@@ -1172,9 +1219,11 @@ static long evrTimeEvent(longSubRecord *psub)
                 newts->nsec |= newfid;      /* Insert the fiducial */
                 pevrTime->status = epicsTimeOK;
 #if DEBUG_TIME_CORRECTION
-                printf("evrTimeEvent(%d) corrected to %08x:%08x.\n",
-                       psub->a, newts->secPastEpoch, newts->nsec);
-                fflush(stdout);
+                if (fiddbg & 1) {
+                    printf("evrTimeEvent(%d) corrected to %08x:%08x.\n",
+                           psub->a, newts->secPastEpoch, newts->nsec);
+                    fflush(stdout);
+                }
 #endif
                 /*
                  * Next time we need to construct a time, we'll start with this!
@@ -1188,7 +1237,7 @@ static long evrTimeEvent(longSubRecord *psub)
              */
             *newts   = evr_aps[evrTimeCurrent]->pattern_s.time;
             newts->nsec |= 0x1ffff;  /* Make sure it's invalid! */
-            if (fiddbg) {
+            if (fiddbg & 1) {
                 printf("ETE2!\n");fflush(stdout);
             }
             pevrTime->status = epicsTimeERROR;
@@ -1322,7 +1371,7 @@ epicsRegisterFunction(evrTimeRate);
 epicsRegisterFunction(evrTimeEvent);
 epicsRegisterFunction(evrTimeGetFiducial);
 
-void mcbtime(int arg1, int arg2)
+void evtdbg(int arg1, int arg2)
 {
     int doreset = 0;
     if (arg1 < 0) {
@@ -1341,8 +1390,11 @@ void mcbtime(int arg1, int arg2)
                eventCodeTime_as[arg1].fifotime[lidx].nsec);
         printf("    lastfid    = %05x\n", lastfid);
         printf("    fidW = %d, fidR = %d\n", eventCodeTime_as[arg1].fidW, eventCodeTime_as[arg1].fidR);
-        if (doreset)
+        printf("    count = %d, dbgcnt = %d\n", eventCodeTime_as[arg1].count, eventCodeTime_as[arg1].dbgcnt);
+        if (doreset) {
             eventCodeTime_as[arg1].fidR = -1;
+            eventCodeTime_as[arg1].dbgcnt = eventCodeTime_as[arg1].count;
+        }
         arg1++;
     } while (arg1 <= arg2);
     fflush(stdout);
