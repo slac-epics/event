@@ -1966,6 +1966,12 @@ LOCAL const iocshArg fiddbgArg0 = {"Mask" , iocshArgInt};
 LOCAL const iocshArg fiddbgArg1 = {"Count" , iocshArgInt};
 LOCAL const iocshArg *const fiddbgArgs[2] = {&fiddbgArg0, &fiddbgArg1};
 LOCAL const iocshFuncDef fiddbgDef = {"fiddbg", 2, fiddbgArgs};
+
+/*
+ * Note: When new debug variables are added here that are referenced
+ * by the common EVR code, please add the same debug variables to drvMrfEr.c
+ * as well to avoid link errors in the RTEMS build.
+ */
 int fiddbg = 0, fiddbgcnt = 0;
 
 LOCAL_RTN void fiddbgCall(const iocshArgBuf * args)
