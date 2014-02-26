@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1314
-y 145
+x 474
+y 409
 w 760
 h 562
 font "helvetica-medium-r-12.0"
@@ -164,7 +164,7 @@ major 4
 minor 5
 release 0
 x 668
-y 200
+y 168
 w 72
 h 24
 controlPv "$(TRIG):TDES"
@@ -191,7 +191,7 @@ major 4
 minor 1
 release 0
 x 668
-y 184
+y 152
 w 72
 h 16
 font "helvetica-medium-r-12.0"
@@ -211,7 +211,7 @@ major 4
 minor 1
 release 0
 x 596
-y 184
+y 152
 w 68
 h 16
 font "helvetica-medium-r-12.0"
@@ -251,7 +251,7 @@ major 4
 minor 5
 release 0
 x 596
-y 200
+y 168
 w 68
 h 24
 controlPv "$(TRIG):TWID"
@@ -444,7 +444,7 @@ release 0
 x 536
 y 68
 w 179
-h 16
+h 14
 font "helvetica-bold-r-12.0"
 fgColor index 14
 bgColor index 3
@@ -2319,7 +2319,7 @@ x 684
 y 376
 w 60
 h 24
-controlPv "$(TRIG):TDLY.RVAL"
+controlPv "$(TRIG):BW_TICKCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2421,7 +2421,7 @@ x 684
 y 344
 w 60
 h 24
-controlPv "$(TRIG):TWID2.RVAL"
+controlPv "$(TRIG):BW_TWID_TICKS"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3326,7 +3326,7 @@ release 0
 x 592
 y 436
 w 151
-h 60
+h 48
 font "helvetica-medium-i-10.0"
 fontAlign "center"
 fgColor index 12
@@ -3338,9 +3338,70 @@ value {
   "119MHz clock => 8.403 ns cycle"
   "Prescalar is the number of"
   "clock cycles/tick"
-  "Example:"
-  "Prescalar 119 => 1usec tick"
+  "Assumes nominal 119MHz freq"
 }
 autoSize
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 596
+y 208
+w 140
+h 24
+
+beginGroup
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 596
+y 208
+w 72
+h 24
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "min delay"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 668
+y 208
+w 72
+h 24
+controlPv "$(TRIG):TDES.LOW"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 12
+precision 1
+nullColor index 14
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+endGroup
+
+visPv "$(TRIG):TDES.SEVR"
+visMin "1"
+visMax "4"
 endObjectProperties
 

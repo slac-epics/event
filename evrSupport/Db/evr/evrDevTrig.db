@@ -158,14 +158,11 @@ record(ao, "$(TRIG):TDLY")
   field(DESC, "Trigger EVR Delay")
   field(DTYP, "Raw Soft Channel")
   field(OMSL, "closed_loop")
-  field(DOL, "$(TRIG):TDLYCALC.VAL")
+  field(DOL, "$(TRIG):TDLYCALC.VAL NPP MS")
   field(LINR, "SLOPE")
   field(ESLO, "8.403361345")
-  field(OUT, "$(EVR):CTRL.$(TDES) PP")
-# Technically, TDLY.VAL has units of ns, but the only
-# source to display the tick count is TDLY.RVAL, so to get
-# ticks for TDLY.RVAL's EGU, we use ticks here.
-  field(EGU, "ticks")
+  field(OUT, "$(EVR):CTRL.$(TDES) PP NMS")
+  field(EGU, "ns")
   field(HOPR, "1000000000")
   field(DRVH, "1000000000")
 }
@@ -187,8 +184,9 @@ record(calc, "$(TRIG):TDLYCALC")
   field(INPB, "$(EVR):TREF CPP")
   field(INPC, "$(TRIG):TOFFSET.VAL")
   field(INPD, "8.403361345")
-  field(EGU, "ns")
+  field(EGU,  "ns")
   field(HOPR, "1000000000")
+  field(PREC, "1")
   field(SDIS, "$(TRIG):FW_SW.VAL")
   field(FLNK, "$(TRIG):FW_FOUT")
 }
@@ -220,7 +218,23 @@ record(ao, "$(TRIG):TDES")
   field(VAL, "$(DES=0)")
   field(MDEL, "-1")
   field(PINI, "YES")
+  field(FLNK, "$(TRIG):BW_DIS")
   info(autosaveFields, "VAL")
+}
+
+# Update TDES.LOW based on 0 tick delay
+# Setting at 0.01 lower than calculated to avoid
+# flagging 0 delays on EC 140 due to rounding errors
+record(calcout, "$(TRIG):TDES_CALC_LOW")
+{
+  field(DESC, "TDES low limit calc" )
+  field(CALC, "A*B-C-0.01")
+  field(INPA, "$(TRIG):TOFFSET.VAL CPP MS")
+  field(INPB, "8.403361345")
+  field(INPC, "$(EVR):TREF CPP MS")
+  field(EGU,  "ns")
+  field(PREC, "2")
+  field(OUT,  "$(TRIG):TDES.LOW PP NMS")
 }
 
 record(ai, "$(TRIG):FW_SW")
@@ -231,28 +245,52 @@ record(ai, "$(TRIG):BW_SW")
 {
 }
 
-record(calc, "$(TRIG):BW_TDLYCALC")
+# Grab the delay tick count for easy edm viewing w/ EGU of ticks
+record(longin, "$(TRIG):BW_TICKCALC")
 {
-  field(DESC, "Backward Prop.")
-  field(SCAN, "Passive")
-# field(SDIS, "$(TRIG):BW_SW.VAL")
-  field(FLNK, "$(TRIG):FW_DIS")
-  field(CALC, "(A+C)*D-B")
-  field(INPA, "$(EVR):CTRL.$(TDES) CPP")
-  field(INPB, "$(EVR):TREF CPP")
-  field(INPC, "$(TRIG):TOFFSET.VAL CPP")
-  field(INPD, "8.403361345")
-  field(EGU,  "ns")
-  field(PREC, "2")
+  field(DESC, "Tick count from delay gen" )
+  field(INP,  "$(EVR):CTRL.$(TDES) CPP MS")
+  field(EGU,  "ticks")
+  field(FLNK, "$(TRIG):BW_TDLYCALC")
 }
 
+# Compute time delay in ns after the event code
+record(calc, "$(TRIG):BW_TDLYCALC")
+{
+  field(DESC, "Backward delay after EC" )
+  field(SCAN, "Passive")
+  field(CALC, "A*B")
+  field(INPA, "$(TRIG):BW_TICKCALC NPP MS")
+  field(INPB, "8.403361345")
+  field(EGU,  "ns")
+  field(PREC, "2")
+  field(FLNK, "$(TRIG):BW_TDESCALC")
+}
+
+# Compute desired delay relative to TREF (ns)
+record(calc, "$(TRIG):BW_TDESCALC")
+{
+  field(DESC, "Backward TDES calc" )
+  field(SCAN, "Passive")
+  field(CALC, "(A+B)*C-D")
+  field(INPA, "$(TRIG):TOFFSET.VAL CPP MS")
+  field(INPB, "$(TRIG):BW_TICKCALC NPP MS")
+  field(INPC, "8.403361345")
+  field(INPD, "$(EVR):TREF CPP MS")
+  field(EGU,  "ns")
+  field(PREC, "2")
+  field(FLNK, "$(TRIG):FW_DIS")
+}
+
+# Updates TDES from BW_TDESCALC when processed
 record(ao, "$(TRIG):BW_TDES")
 {
   field(OUT, "$(TRIG):TDES.VAL PP")
-  field(DOL, "$(TRIG):BW_TDLYCALC.VAL")
+  field(DOL, "$(TRIG):BW_TDESCALC.VAL")
   field(OMSL, "closed_loop")
 }
 
+# Enable forward calc path after short delay
 record(seq, "$(TRIG):BW_SEQ")
 {
   field(DLY1, "1.")
@@ -260,6 +298,7 @@ record(seq, "$(TRIG):BW_SEQ")
   field(LNK1, "$(TRIG):FW_SW.VAL PP")
 }
 
+# Disable forward calc path
 record(ao, "$(TRIG):FW_DIS")
 {
   field(FLNK, "$(TRIG):BW_FOUT")
@@ -269,10 +308,13 @@ record(ao, "$(TRIG):FW_DIS")
   field(SDIS, "$(TRIG):BW_SW.VAL")
 }
 
+# Backward fanout
+# Processes BW_TDES to update TDES,
+# then enables forward calc path
 record(fanout, "$(TRIG):BW_FOUT")
 {
-  field(FLNK, "$(TRIG):BW_SEQ")
   field(LNK1, "$(TRIG):BW_TDES")
+  field(FLNK, "$(TRIG):BW_SEQ")
 }
 
 record(seq, "$(TRIG):PROP_SEQ2")
@@ -468,6 +510,7 @@ record(ao, "$(TRIG):TWID2")
   field(OMSL, "closed_loop")
   field(LINR, "SLOPE")
   field(EGU, "ns")
+  field(PREC, "1")
   field(HOPR, "1000000000")
   field(DRVH, "1000000000")
   field(ESLO, "8.403361345")
@@ -477,13 +520,22 @@ record(ao, "$(TRIG):TWID2")
   field(DOL, "$(TRIG):TWID.VAL")
 }
 
+# Grab the width tick count for easy edm viewing w/ EGU of ticks
+record(longin, "$(TRIG):BW_TWID_TICKS")
+{
+  field(DESC, "Width from delay gen" )
+  field(INP,  "$(EVR):CTRL.$(TWID) CPP MS")
+  field(EGU,  "ticks")
+  field(FLNK, "$(TRIG):BW_CALCTWID")
+}
+
 record(calc, "$(TRIG):BW_CALCTWID")
 {
-  field(SCAN, "Passive")
-  field(SDIS, "$(TRIG):BW_SW2.VAL")
-  field(FLNK, "$(TRIG):FW_DIS2")
-  field(CALC, "A*B")
-  field(INPA, "$(EVR):CTRL.$(TWID) CPP")
+  field(INPA, "$(TRIG):BW_TICKCALC NPP MS")
   field(INPB, "8.403361345")
+  field(CALC, "A*B")
+  field(EGU,  "ns")
+  field(PREC, "1")
+  field(FLNK, "$(TRIG):FW_DIS2")
 }
 

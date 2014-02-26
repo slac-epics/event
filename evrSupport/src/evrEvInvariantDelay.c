@@ -35,6 +35,8 @@ static long lsubTrigSel(longSubRecord *prec)
        }
    }
 
+   prec->val	= 0;
+   prec->brsv	= INVALID_ALARM;
    return -1;
 }
 
@@ -59,6 +61,11 @@ static long lsubEvSel(longSubRecord *prec)
 
 static long aSubEvOffsetInit(aSubRecord *prec)
 {
+	assert( dbValueSize(prec->fta)  == sizeof(epicsUInt32) );
+	assert( dbValueSize(prec->ftb)  == sizeof(epicsUInt32) );
+	assert( dbValueSize(prec->ftc)  == sizeof(epicsUInt32) );
+	assert( dbValueSize(prec->ftd)  == sizeof(epicsUInt32) );
+	assert( dbValueSize(prec->ftva) == sizeof(epicsUInt32) );
 
     return 0;
 }
@@ -68,9 +75,9 @@ static long aSubEvOffsetInit(aSubRecord *prec)
  *   Input/Output list 
  *   -----------------
  *
- * INPA: Input for event number: event number selector (long type)
- * INPB: Activate/Deactivate event invariant delay (long type)
- * INPC: Input for EVG delay - lookup PV (long type waveform)
+ * INPA: Input for event number: event number selector (epicsUInt32 type)
+ * INPB: Activate/Deactivate event invariant delay (epicsUInt32 type)
+ * INPC: Input for EVG delay - lookup PV (epicsUInt32 type waveform)
  * INPD: Input for previous delay (just in case, if EVNT:SYSx:1:DELAY array is not available, invalid severity)
 
  * OUTA: Output for delay
@@ -78,18 +85,17 @@ static long aSubEvOffsetInit(aSubRecord *prec)
  */
 static long aSubEvOffset(aSubRecord *prec)
 {
-    long eventNumber   = *(long*)(prec->a);
-    long activeFlag    = *(long*)(prec->b);
-    long *pdelayArray  =  (long*)(prec->c);
-    long defaultDelay  = *(long*)(prec->d);
-    long *poutputDelay =  (long*)(prec->vala);
-    epicsEnum16 sevr;
+    epicsUInt32		eventNumber		= *(epicsUInt32*)(prec->a);
+    epicsUInt32		activeFlag		= *(epicsUInt32*)(prec->b);
+    epicsUInt32 *	pdelayArray		=  (epicsUInt32*)(prec->c);
+    epicsUInt32		defaultDelay	= *(epicsUInt32*)(prec->d);
+    epicsUInt32	*	poutputDelay	=  (epicsUInt32*)(prec->vala);
+    epicsEnum16		sevr;
 
     if(dbGetSevr(&prec->inpc, &sevr)) {
         printf("%s: CA connection serverity check error\n", prec->name);
         return 0;
     }
-
 
     if(sevr                          ||     /* record is not initialized */
        !activeFlag                   ||     /* deactivate */
@@ -101,11 +107,10 @@ static long aSubEvOffset(aSubRecord *prec)
 		*poutputDelay = *(pdelayArray + eventNumber);  /* Everything is OK, let's use look up table */
 
 		/* Save the computed delay as the new default */
-		*(long*)(prec->d) = *poutputDelay;
+		*(epicsUInt32*)(prec->d) = *poutputDelay;
 	}
     return 0;
 }
-
 
 
 epicsRegisterFunction(lsubTrigSelInit);
