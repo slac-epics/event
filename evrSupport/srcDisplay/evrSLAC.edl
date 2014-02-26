@@ -3,9 +3,9 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1715
-y 94
-w 768
+x 1301
+y 401
+w 800
 h 592
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
@@ -33,7 +33,7 @@ minor 0
 release 0
 x 8
 y 132
-w 752
+w 784
 h 424
 lineColor index 3
 fill
@@ -48,7 +48,7 @@ minor 0
 release 0
 x 0
 y 0
-w 768
+w 800
 h 40
 lineColor index 56
 fill
@@ -71,7 +71,7 @@ fgColor index 14
 bgColor index 3
 useDisplayBg
 value {
-  "SLAC pciE Event Receiver"
+  "SLAC PCIe Event Receiver"
   "$(EVR)"
 }
 endObjectProperties
@@ -82,7 +82,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 700
+x 740
 y 8
 w 48
 h 24
@@ -101,7 +101,7 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 632
+x 660
 y 564
 w 128
 h 24
@@ -123,7 +123,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 336
+x 376
 y 8
 w 88
 h 24
@@ -150,7 +150,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 640
+x 680
 y 8
 w 56
 h 24
@@ -177,7 +177,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 536
+x 576
 y 8
 w 100
 h 24
@@ -210,7 +210,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 432
+x 472
 y 8
 w 100
 h 24
@@ -240,21 +240,6 @@ propagateMacros {
 icon
 endObjectProperties
 
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 8
-y 60
-w 160
-h 60
-lineColor index 3
-fill
-fillColor index 3
-endObjectProperties
-
 # (Static Text)
 object activeXTextClass
 beginObjectProperties
@@ -262,167 +247,7 @@ major 4
 minor 1
 release 0
 x 8
-y 52
-w 48
-h 16
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-value {
-  "Info"
-}
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 324
-y 60
-w 292
-h 60
-lineColor index 3
-fill
-fillColor index 3
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 324
-y 52
-w 132
-h 16
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-value {
-  "Fiducial Pattern Status"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 332
-y 72
-w 56
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "right"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "Fiducial"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 488
-y 76
-w 119
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "Pattern State"
-}
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 176
-y 60
-w 136
-h 60
-lineColor index 3
-fill
-fillColor index 3
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 176
-y 52
-w 80
-h 16
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-value {
-  "EVR Status"
-}
-endObjectProperties
-
-# (Rectangle)
-object activeRectangleClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 628
-y 60
-w 132
-h 60
-lineColor index 3
-fill
-fillColor index 3
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 628
-y 52
-w 80
-h 16
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "      TREF"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 8
-y 128
+y 124
 w 68
 h 16
 font "helvetica-bold-r-12.0"
@@ -454,125 +279,13 @@ value {
 autoSize
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 180
-y 68
-w 36
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "right"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "Link"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 224
-y 68
-w 56
-h 20
-controlPv "$(EVR):LINK"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 16
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 40
-smartRefresh
-useHexPrefix
-newPos
-objType "monitors"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 400
-y 96
-w 76
-h 20
-controlPv "$(EVR):FIDUCIALRATE"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 16
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 40
-smartRefresh
-useHexPrefix
-newPos
-objType "monitors"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 488
-y 96
-w 119
-h 20
-controlPv "$(EVR):PATTERNSTATE"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 16
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 40
-smartRefresh
-useHexPrefix
-newPos
-objType "monitors"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 632
-y 76
-w 124
-h 16
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "Reference Time (ns)"
-}
-endObjectProperties
-
 # (Related Display)
 object relatedDisplayClass
 beginObjectProperties
 major 4
 minor 3
 release 0
-x 272
+x 312
 y 8
 w 56
 h 24
@@ -591,228 +304,6 @@ setPosition {
   0 "parentWindow"
 }
 icon
-endObjectProperties
-
-# (Lines)
-object activeLineClass
-beginObjectProperties
-major 4
-minor 0
-release 1
-x 284
-y 64
-w 24
-h 24
-lineColor index 14
-fill
-fillColor index 15
-fillAlarm
-alarmPv "$(EVR):STATUS"
-numPoints 5
-xPoints {
-  0 296
-  1 284
-  2 296
-  3 308
-  4 296
-}
-yPoints {
-  0 64
-  1 76
-  2 88
-  3 76
-  4 64
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 48
-y 68
-w 112
-h 20
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 4
-value {
-  "$(IOC)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 48
-y 96
-w 112
-h 20
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 4
-value {
-  "$(EVR)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 16
-y 96
-w 28
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "EVR"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 16
-y 68
-w 28
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "IOC"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 180
-y 96
-w 36
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "right"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "Rx Err"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 224
-y 96
-w 84
-h 20
-controlPv "$(EVR):CTRL.TAXI"
-font "courier-medium-r-12.0"
-fontAlign "center"
-fgColor index 16
-fgAlarm
-bgColor index 12
-limitsFromDb
-precision 1
-nullColor index 40
-smartRefresh
-useHexPrefix
-newPos
-objType "monitors"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 400
-y 72
-w 76
-h 20
-controlPv "$(EVR):Fiducial"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 16
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 40
-smartRefresh
-useHexPrefix
-newPos
-objType "monitors"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 332
-y 96
-w 56
-h 20
-font "helvetica-medium-r-12.0"
-fontAlign "right"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "Fid. Rate"
-}
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 636
-y 96
-w 119
-h 20
-controlPv "$(EVR):TREF"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 16
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 40
-smartRefresh
-useHexPrefix
-showUnits
-newPos
-objType "monitors"
 endObjectProperties
 
 # (Static Text)
@@ -841,11 +332,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 203
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -859,29 +351,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
-y 172
-w 16
-h 24
-font "helvetica-bold-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "0"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 96
+x 80
 y 234
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -889,339 +364,14 @@ value {
 }
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 44
-y 152
-w 36
-h 16
-font "helvetica-medium-r-10.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Trigger#"
-}
-endObjectProperties
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 172
-w 64
-h 24
-controlPv "$(EVR):TRIG0:TWID"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 25
-fgAlarm
-bgColor index 5
-editable
-motifWidget
-limitsFromDb
-nullColor index 18
-nullCondition "disabled"
-newPos
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 280
-y 172
-w 55
-h 24
-fgColor index 25
-fgAlarm
-onColor index 6
-offColor index 3
-inconsistentColor index 40
-topShadowColor index 1
-botShadowColor index 11
-controlPv "$(EVR):TRIG0:TCTL"
-indicatorPv "$(EVR):TRIG0:TCTL"
-onLabel "Enabled"
-offLabel "Disabled"
-3d
-font "helvetica-medium-r-12.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 340
-y 172
-w 52
-h 24
-fgColor index 25
-fgAlarm
-onColor index 6
-offColor index 3
-inconsistentColor index 40
-topShadowColor index 1
-botShadowColor index 11
-controlPv "$(EVR):TRIG0:TPOL"
-indicatorPv "$(EVR):TRIG0:TPOL"
-onLabel "Invert"
-offLabel "Normal"
-3d
-font "helvetica-medium-r-12.0"
-objType "controls"
-endObjectProperties
-
-# (Related Display)
-object relatedDisplayClass
-beginObjectProperties
-major 4
-minor 3
-release 0
-x 716
-y 172
-w 36
-h 24
-fgColor index 80
-bgColor index 4
-topShadowColor index 1
-botShadowColor index 11
-font "helvetica-medium-r-12.0"
-buttonLabel "..."
-numPvs 4
-numDsps 1
-displayFileName {
-  0 "evrScreens/evnt_dev_diag.edl"
-}
-setPosition {
-  0 "parentWindow"
-}
-symbols {
-  0 "EVR=$(EVR),TRIG=$(EVR):TRIG0,T=FP,CH=0"
-}
-icon
-endObjectProperties
-
-# (Related Display)
-object relatedDisplayClass
-beginObjectProperties
-major 4
-minor 3
-release 0
-x 624
-y 172
-w 88
-h 24
-fgColor index 80
-bgColor index 4
-topShadowColor index 1
-botShadowColor index 11
-font "helvetica-medium-r-12.0"
-buttonLabel "FP 0 Trig..."
-numPvs 4
-numDsps 1
-displayFileName {
-  0 "evrScreens/evnt_unitmain.edl"
-}
-menuLabel {
-  0 "Triggers"
-}
-setPosition {
-  0 "parentWindow"
-}
-symbols {
-  0 "EVR=$(EVR),TRIG=$(EVR):TRIG0,T=FP,CH=0,LOCA=$(LOCA)"
-}
-icon
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 464
-y 172
-w 72
-h 24
-controlPv "$(EVR):TRIG0:TDES"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 25
-fgAlarm
-bgColor index 5
-editable
-motifWidget
-limitsFromDb
-nullColor index 18
-nullCondition "disabled"
-newPos
-objType "controls"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 116
-y 156
-w 160
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Description"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 280
-y 156
-w 55
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "State"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 464
-y 156
-w 72
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Delay(ns)*"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 396
-y 156
-w 64
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Width(ns)"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 340
-y 156
-w 52
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Polarity"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 624
-y 156
-w 88
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Event Selection"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 716
-y 156
-w 36
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Diag"
-}
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 396
-y 203
+x 416
+y 204
 w 64
 h 24
 controlPv "$(EVR):TRIG1:TWID"
@@ -1245,8 +395,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 203
+x 748
+y 204
 w 36
 h 24
 fgColor index 80
@@ -1275,8 +425,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 203
+x 656
+y 204
 w 88
 h 24
 fgColor index 80
@@ -1308,8 +458,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 203
+x 484
+y 204
 w 72
 h 24
 controlPv "$(EVR):TRIG1:TDES"
@@ -1333,35 +483,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
-y 172
-w 160
-h 24
-controlPv "$(EVR):TRIG0:TCTL.DESC"
-format "string"
-font "courier-bold-r-12.0"
-fontAlign "center"
-fgColor index 25
-bgColor index 5
-editable
-motifWidget
-nullColor index 18
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 116
+x 96
 y 203
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG1:TCTL.DESC"
 format "string"
@@ -1385,27 +509,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
-y 172
-w 65
-h 24
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 25
-useDisplayBg
-value {
-  "Front Panel"
-}
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
+x 12
 y 203
 w 65
 h 24
@@ -1425,8 +529,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 234
+x 656
+y 236
 w 88
 h 24
 fgColor index 80
@@ -1458,8 +562,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 234
+x 484
+y 236
 w 72
 h 24
 controlPv "$(EVR):TRIG2:TDES"
@@ -1483,8 +587,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 234
+x 416
+y 236
 w 64
 h 24
 controlPv "$(EVR):TRIG2:TWID"
@@ -1508,8 +612,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 234
+x 748
+y 236
 w 36
 h 24
 fgColor index 80
@@ -1538,9 +642,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 234
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG2:TCTL.DESC"
 format "string"
@@ -1564,7 +668,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 234
 w 65
 h 24
@@ -1584,8 +688,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 203
+x 360
+y 204
 w 52
 h 24
 fgColor index 25
@@ -1610,8 +714,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 234
+x 360
+y 236
 w 52
 h 24
 fgColor index 25
@@ -1636,8 +740,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 203
+x 300
+y 204
 w 55
 h 24
 fgColor index 25
@@ -1662,8 +766,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 234
+x 300
+y 236
 w 55
 h 24
 fgColor index 25
@@ -1688,11 +792,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 265
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -1706,8 +811,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 265
+x 656
+y 264
 w 88
 h 24
 fgColor index 80
@@ -1739,8 +844,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 265
+x 484
+y 264
 w 72
 h 24
 controlPv "$(EVR):TRIG3:TDES"
@@ -1764,8 +869,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 265
+x 416
+y 264
 w 64
 h 24
 controlPv "$(EVR):TRIG3:TWID"
@@ -1789,8 +894,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 265
+x 748
+y 264
 w 36
 h 24
 fgColor index 80
@@ -1819,9 +924,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 265
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG3:TCTL.DESC"
 format "string"
@@ -1845,7 +950,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 265
 w 65
 h 24
@@ -1865,8 +970,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 265
+x 360
+y 264
 w 52
 h 24
 fgColor index 25
@@ -1891,8 +996,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 265
+x 300
+y 264
 w 55
 h 24
 fgColor index 25
@@ -1917,11 +1022,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 297
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -1935,8 +1041,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 297
+x 656
+y 296
 w 88
 h 24
 fgColor index 80
@@ -1968,8 +1074,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 297
+x 484
+y 296
 w 72
 h 24
 controlPv "$(EVR):TRIG4:TDES"
@@ -1993,8 +1099,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 297
+x 416
+y 296
 w 64
 h 24
 controlPv "$(EVR):TRIG4:TWID"
@@ -2018,8 +1124,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 297
+x 748
+y 296
 w 36
 h 24
 fgColor index 80
@@ -2048,9 +1154,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 297
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG4:TCTL.DESC"
 format "string"
@@ -2074,7 +1180,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 297
 w 65
 h 24
@@ -2094,8 +1200,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 297
+x 360
+y 296
 w 52
 h 24
 fgColor index 25
@@ -2120,8 +1226,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 297
+x 300
+y 296
 w 55
 h 24
 fgColor index 25
@@ -2146,11 +1252,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 328
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -2164,7 +1271,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
+x 656
 y 328
 w 88
 h 24
@@ -2197,7 +1304,7 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
+x 484
 y 328
 w 72
 h 24
@@ -2222,7 +1329,7 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
+x 416
 y 328
 w 64
 h 24
@@ -2247,7 +1354,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
+x 748
 y 328
 w 36
 h 24
@@ -2277,9 +1384,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 328
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG5:TCTL.DESC"
 format "string"
@@ -2303,7 +1410,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 328
 w 65
 h 24
@@ -2323,7 +1430,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
+x 360
 y 328
 w 52
 h 24
@@ -2349,7 +1456,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
+x 300
 y 328
 w 55
 h 24
@@ -2375,11 +1482,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 359
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -2393,8 +1501,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 359
+x 656
+y 360
 w 88
 h 24
 fgColor index 80
@@ -2426,8 +1534,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 359
+x 484
+y 360
 w 72
 h 24
 controlPv "$(EVR):TRIG6:TDES"
@@ -2451,8 +1559,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 359
+x 416
+y 360
 w 64
 h 24
 controlPv "$(EVR):TRIG6:TWID"
@@ -2476,8 +1584,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 359
+x 748
+y 360
 w 36
 h 24
 fgColor index 80
@@ -2506,9 +1614,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 359
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG6:TCTL.DESC"
 format "string"
@@ -2532,7 +1640,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 359
 w 65
 h 24
@@ -2552,8 +1660,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 359
+x 360
+y 360
 w 52
 h 24
 fgColor index 25
@@ -2578,8 +1686,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 359
+x 300
+y 360
 w 55
 h 24
 fgColor index 25
@@ -2604,11 +1712,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 390
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -2622,8 +1731,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 390
+x 656
+y 392
 w 88
 h 24
 fgColor index 80
@@ -2655,8 +1764,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 390
+x 484
+y 392
 w 72
 h 24
 controlPv "$(EVR):TRIG7:TDES"
@@ -2680,8 +1789,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 390
+x 416
+y 392
 w 64
 h 24
 controlPv "$(EVR):TRIG7:TWID"
@@ -2705,8 +1814,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 390
+x 748
+y 392
 w 36
 h 24
 fgColor index 80
@@ -2735,9 +1844,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 390
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG7:TCTL.DESC"
 format "string"
@@ -2761,7 +1870,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 390
 w 65
 h 24
@@ -2781,8 +1890,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 390
+x 360
+y 392
 w 52
 h 24
 fgColor index 25
@@ -2807,8 +1916,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 390
+x 300
+y 392
 w 55
 h 24
 fgColor index 25
@@ -2827,37 +1936,17 @@ font "helvetica-medium-r-12.0"
 objType "controls"
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 540
-y 156
-w 80
-h 16
-font "helvetica-medium-i-12.0"
-fontAlign "center"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Comp Delay *"
-}
-endObjectProperties
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 172
-w 80
+x 560
+y 204
+w 92
 h 24
-controlPv "$(EVR):TRIG0:BW_TDLYCALC"
+controlPv "$(EVR):TRIG1:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2878,11 +1967,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 203
-w 80
+x 560
+y 236
+w 92
 h 24
-controlPv "$(EVR):TRIG1:BW_TDLYCALC"
+controlPv "$(EVR):TRIG2:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2903,11 +1992,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 234
-w 80
+x 560
+y 264
+w 92
 h 24
-controlPv "$(EVR):TRIG2:BW_TDLYCALC"
+controlPv "$(EVR):TRIG3:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2928,11 +2017,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 265
-w 80
+x 560
+y 296
+w 92
 h 24
-controlPv "$(EVR):TRIG3:BW_TDLYCALC"
+controlPv "$(EVR):TRIG4:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2953,36 +2042,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 297
-w 80
-h 24
-controlPv "$(EVR):TRIG4:BW_TDLYCALC"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 16
-fgAlarm
-bgColor index 12
-limitsFromDb
-nullColor index 40
-smartRefresh
-useHexPrefix
-showUnits
-newPos
-objType "monitors"
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 540
+x 560
 y 328
-w 80
+w 92
 h 24
-controlPv "$(EVR):TRIG5:BW_TDLYCALC"
+controlPv "$(EVR):TRIG5:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3003,11 +2067,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 359
-w 80
+x 560
+y 360
+w 92
 h 24
-controlPv "$(EVR):TRIG6:BW_TDLYCALC"
+controlPv "$(EVR):TRIG6:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3028,11 +2092,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 390
-w 80
+x 560
+y 392
+w 92
 h 24
-controlPv "$(EVR):TRIG7:BW_TDLYCALC"
+controlPv "$(EVR):TRIG7:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3053,11 +2117,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 422
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -3071,8 +2136,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 422
+x 656
+y 424
 w 88
 h 24
 fgColor index 80
@@ -3104,8 +2169,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 422
+x 484
+y 424
 w 72
 h 24
 controlPv "$(EVR):TRIG8:TDES"
@@ -3129,8 +2194,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 422
+x 416
+y 424
 w 64
 h 24
 controlPv "$(EVR):TRIG8:TWID"
@@ -3154,8 +2219,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 422
+x 748
+y 424
 w 36
 h 24
 fgColor index 80
@@ -3184,9 +2249,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 422
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG8:TCTL.DESC"
 format "string"
@@ -3210,7 +2275,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 422
 w 65
 h 24
@@ -3230,8 +2295,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 422
+x 360
+y 424
 w 52
 h 24
 fgColor index 25
@@ -3256,8 +2321,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 422
+x 300
+y 424
 w 55
 h 24
 fgColor index 25
@@ -3282,11 +2347,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 453
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -3300,8 +2366,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
-y 453
+x 656
+y 452
 w 88
 h 24
 fgColor index 80
@@ -3333,8 +2399,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
-y 453
+x 484
+y 452
 w 72
 h 24
 controlPv "$(EVR):TRIG9:TDES"
@@ -3358,8 +2424,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
-y 453
+x 416
+y 452
 w 64
 h 24
 controlPv "$(EVR):TRIG9:TWID"
@@ -3383,8 +2449,8 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
-y 453
+x 748
+y 452
 w 36
 h 24
 fgColor index 80
@@ -3413,9 +2479,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 453
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIG9:TCTL.DESC"
 format "string"
@@ -3439,7 +2505,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 453
 w 65
 h 24
@@ -3459,8 +2525,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
-y 453
+x 360
+y 452
 w 52
 h 24
 fgColor index 25
@@ -3485,8 +2551,8 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
-y 453
+x 300
+y 452
 w 55
 h 24
 fgColor index 25
@@ -3511,11 +2577,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 484
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -3529,7 +2596,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
+x 656
 y 484
 w 88
 h 24
@@ -3562,7 +2629,7 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
+x 484
 y 484
 w 72
 h 24
@@ -3587,7 +2654,7 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
+x 416
 y 484
 w 64
 h 24
@@ -3612,7 +2679,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
+x 748
 y 484
 w 36
 h 24
@@ -3642,9 +2709,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 484
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIGA:TCTL.DESC"
 format "string"
@@ -3668,7 +2735,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 484
 w 65
 h 24
@@ -3688,7 +2755,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
+x 360
 y 484
 w 52
 h 24
@@ -3714,7 +2781,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
+x 300
 y 484
 w 55
 h 24
@@ -3740,11 +2807,12 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 96
+x 80
 y 516
-w 16
+w 12
 h 24
 font "helvetica-bold-r-12.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
@@ -3758,7 +2826,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 624
+x 656
 y 516
 w 88
 h 24
@@ -3791,7 +2859,7 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 464
+x 484
 y 516
 w 72
 h 24
@@ -3816,7 +2884,7 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 396
+x 416
 y 516
 w 64
 h 24
@@ -3841,7 +2909,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 716
+x 748
 y 516
 w 36
 h 24
@@ -3871,9 +2939,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 116
+x 96
 y 516
-w 160
+w 200
 h 24
 controlPv "$(EVR):TRIGB:TCTL.DESC"
 format "string"
@@ -3897,7 +2965,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 20
+x 12
 y 516
 w 65
 h 24
@@ -3917,7 +2985,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 340
+x 360
 y 516
 w 52
 h 24
@@ -3943,7 +3011,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 280
+x 300
 y 516
 w 55
 h 24
@@ -3969,11 +3037,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 422
-w 80
+x 560
+y 424
+w 92
 h 24
-controlPv "$(EVR):TRIG8:BW_TDLYCALC"
+controlPv "$(EVR):TRIG8:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3994,11 +3062,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
-y 453
-w 80
+x 560
+y 452
+w 92
 h 24
-controlPv "$(EVR):TRIG9:BW_TDLYCALC"
+controlPv "$(EVR):TRIG9:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -4019,11 +3087,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
+x 560
 y 484
-w 80
+w 92
 h 24
-controlPv "$(EVR):TRIGA:BW_TDLYCALC"
+controlPv "$(EVR):TRIGA:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -4044,11 +3112,955 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 540
+x 560
 y 516
-w 80
+w 92
 h 24
-controlPv "$(EVR):TRIGB:BW_TDLYCALC"
+controlPv "$(EVR):TRIGB:BW_TDESCALC"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 40
+smartRefresh
+useHexPrefix
+showUnits
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 8
+y 56
+w 180
+h 60
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 8
+y 48
+w 48
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Info"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 344
+y 56
+w 304
+h 60
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 344
+y 48
+w 132
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Fiducial Pattern Status"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 68
+w 56
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "right"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Fiducial"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 508
+y 72
+w 132
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Pattern State"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 196
+y 56
+w 136
+h 60
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 196
+y 48
+w 80
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "EVR Status"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 656
+y 56
+w 132
+h 60
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 656
+y 48
+w 80
+h 16
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "      TREF"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 200
+y 64
+w 36
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "right"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Link"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 244
+y 64
+w 56
+h 20
+controlPv "$(EVR):LINK"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 420
+y 92
+w 76
+h 20
+controlPv "$(EVR):FIDUCIALRATE"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 508
+y 92
+w 132
+h 20
+controlPv "$(EVR):PATTERNSTATE"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 660
+y 72
+w 124
+h 16
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Reference Time (ns)"
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 304
+y 60
+w 24
+h 24
+lineColor index 14
+fill
+fillColor index 15
+fillAlarm
+alarmPv "$(EVR):STATUS"
+numPoints 5
+xPoints {
+  0 316
+  1 304
+  2 316
+  3 328
+  4 316
+}
+yPoints {
+  0 60
+  1 72
+  2 84
+  3 72
+  4 60
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 64
+w 136
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+value {
+  "$(IOC)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 48
+y 92
+w 136
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 4
+value {
+  "$(EVR)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 16
+y 92
+w 28
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "EVR"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 16
+y 64
+w 28
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "IOC"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 200
+y 92
+w 36
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "right"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Rx Err"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 244
+y 92
+w 84
+h 20
+controlPv "$(EVR):CTRL.TAXI"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 420
+y 68
+w 76
+h 20
+controlPv "$(EVR):Fiducial"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 352
+y 92
+w 56
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "right"
+fgColor index 14
+bgColor index 4
+useDisplayBg
+value {
+  "Fid. Rate"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 664
+y 92
+w 119
+h 20
+controlPv "$(EVR):TREF"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 40
+smartRefresh
+useHexPrefix
+showUnits
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 80
+y 168
+w 12
+h 24
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "0"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 40
+y 148
+w 36
+h 16
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Trigger#"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 416
+y 168
+w 64
+h 24
+controlPv "$(EVR):TRIG0:TWID"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 300
+y 168
+w 55
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG0:TCTL"
+indicatorPv "$(EVR):TRIG0:TCTL"
+onLabel "Enabled"
+offLabel "Disabled"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 360
+y 168
+w 52
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 40
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(EVR):TRIG0:TPOL"
+indicatorPv "$(EVR):TRIG0:TPOL"
+onLabel "Invert"
+offLabel "Normal"
+3d
+font "helvetica-medium-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 748
+y 168
+w 36
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_dev_diag.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG0,T=FP,CH=0"
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 656
+y 168
+w 88
+h 24
+fgColor index 80
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "FP 0 Trig..."
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/evnt_unitmain.edl"
+}
+menuLabel {
+  0 "Triggers"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "EVR=$(EVR),TRIG=$(EVR):TRIG0,T=FP,CH=0,LOCA=$(LOCA)"
+}
+icon
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 484
+y 168
+w 72
+h 24
+controlPv "$(EVR):TRIG0:TDES"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+newPos
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 96
+y 152
+w 176
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Description"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 300
+y 152
+w 55
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "State"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 484
+y 152
+w 72
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Delay(ns)*"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 416
+y 152
+w 64
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Width(ns)"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 360
+y 152
+w 52
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Polarity"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 656
+y 152
+w 88
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Event Selection"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 748
+y 152
+w 36
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Diag"
+}
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 96
+y 168
+w 200
+h 24
+controlPv "$(EVR):TRIG0:TCTL.DESC"
+format "string"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+bgColor index 5
+editable
+motifWidget
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 12
+y 168
+w 65
+h 24
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 25
+useDisplayBg
+value {
+  "Front Panel"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 560
+y 152
+w 92
+h 16
+font "helvetica-medium-i-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Comp Delay *"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 560
+y 168
+w 92
+h 24
+controlPv "$(EVR):TRIG0:BW_TDESCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16

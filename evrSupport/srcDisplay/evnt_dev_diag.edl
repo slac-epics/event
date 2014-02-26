@@ -11,10 +11,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1772
-y 182
+x 1284
+y 97
 w 784
-h 557
+h 582
 font "helvetica-medium-r-12.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-medium-r-12.0"
@@ -42,7 +42,7 @@ release 0
 x 16
 y 168
 w 756
-h 372
+h 404
 font "helvetica-medium-r-12.0"
 fgColor index 14
 bgColor index 3
@@ -442,7 +442,7 @@ major 4
 minor 1
 release 0
 x 52
-y 464
+y 488
 w 660
 h 2
 font "helvetica-medium-r-10.0"
@@ -457,7 +457,7 @@ major 4
 minor 0
 release 1
 x 144
-y 448
+y 472
 w 0
 h 0
 lineColor index 14
@@ -469,9 +469,9 @@ xPoints {
   2 144
 }
 yPoints {
-  0 448
-  1 448
-  2 448
+  0 472
+  1 472
+  2 472
 }
 endObjectProperties
 
@@ -482,7 +482,7 @@ major 4
 minor 1
 release 0
 x 112
-y 392
+y 416
 w 4
 h 72
 font "helvetica-medium-r-12.0"
@@ -496,9 +496,9 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 148
-y 360
-w 112
+x 196
+y 384
+w 128
 h 28
 font "helvetica-medium-r-14.0"
 fontAlign "center"
@@ -516,8 +516,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 300
-y 396
+x 380
+y 420
 w 4
 h 70
 font "helvetica-medium-r-12.0"
@@ -531,8 +531,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 520
-y 396
+x 560
+y 420
 w 4
 h 70
 font "helvetica-medium-r-12.0"
@@ -546,16 +546,17 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 352
-y 360
-w 112
+x 392
+y 384
+w 164
 h 28
 font "helvetica-medium-r-14.0"
 fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
-  "Delay"
+  "Delay after Event Code"
+  "TDLY"
 }
 endObjectProperties
 
@@ -565,8 +566,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 252
-y 476
+x 332
+y 500
 w 38
 h 22
 font "helvetica-medium-r-14.0"
@@ -584,8 +585,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 316
-y 476
+x 396
+y 500
 w 46
 h 22
 font "helvetica-medium-r-14.0"
@@ -603,38 +604,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 260
-y 464
-w 1
-h 10
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 14
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 280
-y 464
-w 1
-h 10
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 14
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
 x 340
-y 464
+y 488
 w 1
 h 10
 font "helvetica-medium-r-12.0"
@@ -648,8 +619,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 320
-y 464
+x 360
+y 488
 w 1
 h 10
 font "helvetica-medium-r-12.0"
@@ -663,8 +634,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 380
-y 464
+x 420
+y 488
 w 1
 h 10
 font "helvetica-medium-r-12.0"
@@ -678,8 +649,38 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 584
-y 396
+x 400
+y 488
+w 1
+h 10
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 14
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 460
+y 488
+w 1
+h 10
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 14
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 624
+y 420
 w 4
 h 70
 font "helvetica-medium-r-12.0"
@@ -694,7 +695,7 @@ major 4
 minor 1
 release 0
 x 636
-y 440
+y 464
 w 74
 h 18
 font "helvetica-medium-r-14.0"
@@ -712,7 +713,7 @@ major 4
 minor 0
 release 1
 x 708
-y 464
+y 488
 w 4
 h 4
 lineColor index 14
@@ -727,10 +728,10 @@ xPoints {
   3 712
 }
 yPoints {
-  0 466
-  1 464
-  2 468
-  3 466
+  0 490
+  1 488
+  2 492
+  3 490
 }
 endObjectProperties
 
@@ -741,7 +742,7 @@ major 4
 minor 1
 release 0
 x 80
-y 476
+y 500
 w 64
 h 22
 font "helvetica-medium-r-14.0"
@@ -759,9 +760,9 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 480
-y 476
-w 64
+x 536
+y 492
+w 52
 h 22
 font "helvetica-medium-r-14.0"
 fontAlign "center"
@@ -778,9 +779,9 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 564
-y 476
-w 64
+x 604
+y 492
+w 52
 h 22
 font "helvetica-medium-r-14.0"
 fontAlign "center"
@@ -823,9 +824,9 @@ major 4
 minor 1
 release 0
 x 112
-y 264
+y 252
 w 4
-h 68
+h 80
 font "helvetica-medium-r-12.0"
 fgColor index 14
 bgColor index 14
@@ -852,7 +853,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 520
+x 560
 y 192
 w 4
 h 76
@@ -867,10 +868,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 520
-y 268
+x 560
+y 256
 w 4
-h 64
+h 76
 font "helvetica-medium-r-12.0"
 fgColor index 34
 bgColor index 25
@@ -882,16 +883,16 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 352
+x 188
 y 188
-w 72
+w 136
 h 20
 font "helvetica-bold-r-14.0"
 fontAlign "center"
 fgColor index 39
 bgColor index 3
 value {
-  "-TDES"
+  "Negative TDES"
 }
 endObjectProperties
 
@@ -901,16 +902,16 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 440
+x 396
 y 188
-w 72
+w 132
 h 20
 font "helvetica-bold-r-14.0"
 fontAlign "center"
 fgColor index 39
 bgColor index 3
 value {
-  "+TDES"
+  "Positive TDES"
 }
 endObjectProperties
 
@@ -938,10 +939,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 584
-y 268
+x 624
+y 256
 w 4
-h 64
+h 76
 font "helvetica-medium-r-12.0"
 fgColor index 47
 bgColor index 47
@@ -1002,8 +1003,8 @@ major 4
 minor 5
 release 0
 x 196
-y 240
-w 88
+y 272
+w 128
 h 24
 controlPv "$(EVR):TREF"
 font "helvetica-medium-r-12.0"
@@ -1026,9 +1027,9 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 440
-y 240
-w 72
+x 424
+y 272
+w 116
 h 24
 controlPv "$(TRIG):TDES"
 font "helvetica-medium-r-12.0"
@@ -1051,8 +1052,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 140
-y 432
+x 196
+y 456
 w 128
 h 24
 controlPv "$(TRIG):TOFFSET"
@@ -1076,11 +1077,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 348
-y 432
-w 128
+x 424
+y 456
+w 116
 h 24
-controlPv "$(TRIG):TDLY.RVAL"
+controlPv "$(TRIG):BW_TICKCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -1244,10 +1245,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 564
-y 340
-w 64
-h 22
+x 604
+y 336
+w 52
+h 24
 font "helvetica-medium-r-14.0"
 fontAlign "center"
 fgColor index 14
@@ -1263,10 +1264,10 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 480
-y 340
-w 64
-h 22
+x 540
+y 336
+w 52
+h 24
 font "helvetica-medium-r-14.0"
 fontAlign "center"
 fgColor index 14
@@ -1301,8 +1302,8 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 300
-y 468
+x 380
+y 492
 w 12
 h 48
 lineColor index 14
@@ -1312,12 +1313,12 @@ lineWidth 2
 arrows "to"
 numPoints 2
 xPoints {
-  0 300
-  1 300
+  0 380
+  1 380
 }
 yPoints {
-  0 516
-  1 468
+  0 540
+  1 492
 }
 endObjectProperties
 
@@ -1327,16 +1328,16 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 252
-y 512
-w 120
+x 332
+y 536
+w 96
 h 20
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 14
 bgColor index 3
 value {
-  "Event Code X (ECx)"
+  "Event Code X"
 }
 endObjectProperties
 
@@ -1346,7 +1347,7 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 432
+x 348
 y 192
 w 0
 h 140
@@ -1355,8 +1356,8 @@ fillColor index 4
 lineWidth 4
 numPoints 2
 xPoints {
-  0 432
-  1 432
+  0 348
+  1 348
 }
 yPoints {
   0 192
@@ -1370,21 +1371,21 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 432
-y 220
-w 88
+x 348
+y 260
+w 212
 h 0
 lineColor index 14
 fillColor index 4
 arrows "both"
 numPoints 2
 xPoints {
-  0 432
-  1 520
+  0 348
+  1 560
 }
 yPoints {
-  0 220
-  1 220
+  0 260
+  1 260
 }
 endObjectProperties
 
@@ -1395,8 +1396,8 @@ major 4
 minor 0
 release 1
 x 112
-y 284
-w 320
+y 260
+w 232
 h 0
 lineColor index 14
 fillColor index 4
@@ -1404,11 +1405,11 @@ arrows "both"
 numPoints 2
 xPoints {
   0 112
-  1 432
+  1 344
 }
 yPoints {
-  0 284
-  1 284
+  0 260
+  1 260
 }
 endObjectProperties
 
@@ -1418,8 +1419,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 224
-y 272
+x 240
+y 248
 w 40
 h 24
 font "helvetica-bold-r-14.0"
@@ -1436,8 +1437,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 360
-y 464
+x 440
+y 488
 w 1
 h 10
 font "helvetica-medium-r-12.0"
@@ -1451,21 +1452,21 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 304
-y 400
-w 216
+x 384
+y 424
+w 176
 h 0
 lineColor index 14
 fillColor index 4
 arrows "both"
 numPoints 2
 xPoints {
-  0 304
-  1 520
+  0 384
+  1 560
 }
 yPoints {
-  0 400
-  1 400
+  0 424
+  1 424
 }
 endObjectProperties
 
@@ -1476,8 +1477,8 @@ major 4
 minor 0
 release 1
 x 116
-y 400
-w 184
+y 424
+w 264
 h 0
 lineColor index 14
 fillColor index 4
@@ -1485,11 +1486,11 @@ arrows "both"
 numPoints 2
 xPoints {
   0 116
-  1 300
+  1 380
 }
 yPoints {
-  0 400
-  1 400
+  0 424
+  1 424
 }
 endObjectProperties
 
@@ -1499,11 +1500,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 348
-y 404
-w 128
+x 424
+y 428
+w 116
 h 24
-controlPv "$(TRIG):TDLYCALC"
+controlPv "$(TRIG):BW_TDLYCALC"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -1524,8 +1525,8 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 140
-y 404
+x 196
+y 428
 w 128
 h 24
 controlPv "$(TRIG):TOFFSET_NS"
@@ -1549,7 +1550,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 344
+x 272
 y 172
 w 193
 h 14
@@ -1569,20 +1570,20 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 348
-y 264
+x 156
+y 252
 w 0
-h 68
+h 80
 lineColor index 25
 fillColor index 4
 lineWidth 4
 numPoints 2
 xPoints {
-  0 348
-  1 348
+  0 156
+  1 156
 }
 yPoints {
-  0 264
+  0 252
   1 332
 }
 endObjectProperties
@@ -1593,7 +1594,7 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 348
+x 156
 y 192
 w 0
 h 140
@@ -1603,8 +1604,8 @@ lineWidth 4
 lineStyle "dash"
 numPoints 2
 xPoints {
-  0 348
-  1 348
+  0 156
+  1 156
 }
 yPoints {
   0 192
@@ -1631,5 +1632,117 @@ value {
   "Note: Delay times are computed"
   "based on the nominal 119MHz clock"
 }
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 356
+y 300
+w 63
+h 24
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "min TDES"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 424
+y 300
+w 116
+h 24
+controlPv "$(TRIG):TDES.LOW"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 12
+precision 1
+nullColor index 14
+smartRefresh
+useHexPrefix
+showUnits
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 300
+y 356
+w 96
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Event Code 140"
+}
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 348
+y 332
+w 12
+h 28
+lineColor index 14
+fill
+fillColor index 14
+lineWidth 2
+arrows "to"
+numPoints 2
+xPoints {
+  0 348
+  1 348
+}
+yPoints {
+  0 360
+  1 332
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 428
+y 532
+w 52
+h 24
+controlPv "$(TRIG):LSUB_EVSEL"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+limitsFromDb
+nullColor index 14
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
 endObjectProperties
 
