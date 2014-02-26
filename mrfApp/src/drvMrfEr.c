@@ -112,11 +112,16 @@
 #include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
 #include "pci_mrfev.h"		/* MRF PCI device id's	*/
 
+/*
+ * These debug variables are included to avoid link errors in the RTEMS build.
+ * Their linux counterparts are in drvLinuxEvr.c
+ */
+int fiddbg		= 0;
+int fiddbgcnt	= 0;
 
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
 /**************************************************************************************************/
-int fiddbg = 0;
 
 #ifdef DEBUG_PRINT
 int drvMrfErFlag = DP_ERROR;            /* Interest level can be set from the command shell       */

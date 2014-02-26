@@ -218,6 +218,7 @@ record(ao, "$(TRIG):TDES")
   field(VAL, "$(DES=0)")
   field(MDEL, "-1")
   field(PINI, "YES")
+  field(LSV,  "MINOR")
   field(FLNK, "$(TRIG):BW_DIS")
   info(autosaveFields, "VAL")
 }
