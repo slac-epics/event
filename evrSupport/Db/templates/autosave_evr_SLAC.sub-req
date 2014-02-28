@@ -1,9 +1,0 @@
-#
-# EVR autosave sample substitutions file
-#
-file autosave_evr_SLAC.tpl-req
-{
-	{	IOC	= $(IOC),	EVR	= $(EVR)	}
-}
-
-
