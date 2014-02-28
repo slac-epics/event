@@ -1,0 +1,225 @@
+#########################################################################################
+#
+# NOTE:	For Linux systems, you must install the Micro-Research Finland driver
+#	Sudo privileges are required to install this package.
+#	The easiest way to install it is via the pci_mrfev yum package.
+#	This package is available from the pcds group at SLAC, bhill@slac.stanford.edu
+#	via the yum repository: pcds
+#	To access the pcds repository, add the following as /etc/yum.repos.d/pcds.repo
+[pcds]
+gpgcheck=0
+name=Red Hat Enterprise Linux $releasever - $basearch - PCDS
+baseurl=file:///reg/common/package/repositories/pcds/RHEL5/$basearch
+
+[pcds-noarch]
+gpgcheck=0
+name=Red Hat Enterprise Linux $releasever - noarch - PCDS
+baseurl=file:///reg/common/package/repositories/pcds/RHEL5/noarch
+
+[pcds-source]
+gpgcheck=0
+name=Red Hat Enterprise Linux $releasever - Source - PCDS
+baseurl=file:///reg/common/package/repositories/pcds/RHEL5/src
+
+#	Now install the package via:
+#		sudo yum install pci_mrfev
+#
+#	The PMC EVR 230 modules as received from the factory need to
+#	have their flash updated.  This can be done by running the
+#	following script with one new EVR 230 board installed.
+#		sudo /usr/src/pci_mrfev-1.0.2/flashfw 
+#
+#	Detailed examples of running these commands can be seen below.
+#
+#########################################################################################
+
+
+#########################################################################################
+#	First, identify the PCI bus, slot, and function for the EVR card
+#########################################################################################
+% lspci
+...
+03:00.0 PCI bridge: Intel Corporation 6311ESB/6321ESB PCI Express Downstream Port E1 (rev 01)
+07:00.0 PCI bridge: PLX Technology, Inc. PEX 8533 32-lane, 6-port PCI Express Switch (rev aa)
+08:01.0 PCI bridge: PLX Technology, Inc. PEX 8533 32-lane, 6-port PCI Express Switch (rev aa)
+08:08.0 PCI bridge: PLX Technology, Inc. PEX 8533 32-lane, 6-port PCI Express Switch (rev aa)
+08:09.0 PCI bridge: PLX Technology, Inc. PEX 8533 32-lane, 6-port PCI Express Switch (rev aa)
+09:00.0 PCI bridge: PLX Technology, Inc. PEX 8114 PCI Express-to-PCI/PCI-X Bridge (rev bd)
+0a:04.0 Bridge: PLX Technology, Inc. PCI9030 32-bit 33MHz PCI <-> IOBus Bridge (rev 01)
+0b:00.0 PCI bridge: PLX Technology, Inc. PEX 8114 PCI Express-to-PCI/PCI-X Bridge (rev bd)
+...
+
+#########################################################################################
+#	NOTE:	The PCI entry for the EVR will be for the PLX 9030 IOBus Bridge,
+#	in this case, bus 0a, slot 04, function 0:
+#		0a:04.0 Bridge: PLX Technology, Inc. PCI9030 32-bit 33MHz PCI <-> IOBus Bridge (rev 01)
+#	Use lspci to dump the PCI config space for the EVR
+#	The vendor (10B5) and device (9030) codes are at offset 0x00
+#	The subvendor and subdevice codes are at offset 0x2C, and in a new EVR,
+#	are the same as the vendor and device codes.
+#########################################################################################
+% lspci -s 0a:04.0 -x
+0a:04.0 Bridge: PLX Technology, Inc. PCI9030 32-bit 33MHz PCI <-> IOBus Bridge (rev 01)
+00: b5 10 30 90 03 00 90 02 01 00 80 06 08 00 00 00
+10: 00 20 40 d8 00 00 00 00 00 00 40 d8 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 b5 10 30 90
+30: 00 00 00 00 40 00 00 00 00 00 00 00 0b 01 00 00
+
+
+% yum info pci_mrfev
+Loading "security" plugin
+Loading "rhnplugin" plugin
+*Note* Red Hat Network repositories are not listed below. You must run this command as root to access 
+RHN repositories.
+RHN support will be disabled.
+Available Packages
+Name   : pci_mrfev
+Arch   : noarch
+Version: 1.0.2
+Release: dkms
+Size   : 126 k
+Repo   : pcds-noarch
+Summary: EVR/EVG driver dkms package
+Description:
+This package contains the DKMS enabled version of Micro
+Research Finland's driver for their Event generator/receiver
+system.
+
+
+% sudo yum install pci_mrfev
+Loading "security" plugin
+Loading "rhnplugin" plugin
+rhel-x86_64-client-workst 100% |=========================| 1.1 kB    00:00     
+rhel-x86_64-client-supple 100% |=========================| 1.1 kB    00:00     
+rhel-x86_64-client-5      100% |=========================| 1.1 kB    00:00     
+Setting up Install Process
+Parsing package install arguments
+Resolving Dependencies
+--> Running transaction check
+---> Package pci_mrfev.noarch 0:1.0.2-dkms set to be updated
+--> Processing Dependency: dkms >= 1.00 for package: pci_mrfev
+--> Running transaction check
+---> Package dkms.noarch 0:2.1.0.1-1 set to be updated
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+=============================================================================
+ Package                 Arch       Version          Repository        Size 
+=============================================================================
+Installing:
+ pci_mrfev               noarch     1.0.2-dkms       pcds-noarch       126 k
+Installing for dependencies:
+ dkms                    noarch     2.1.0.1-1        pcds              100 k
+
+Transaction Summary
+=============================================================================
+Install      2 Package(s)         
+Update       0 Package(s)         
+Remove       0 Package(s)         
+
+Total download size: 226 k
+Is this ok [y/N]: y
+Downloading Packages:
+Running rpm_check_debug
+Running Transaction Test
+Finished Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing: dkms                         ######################### [1/2] 
+  Installing: pci_mrfev                    ######################### [2/2] 
+
+Creating symlink /var/lib/dkms/pci_mrfev/1.0.2/source ->
+                 /usr/src/pci_mrfev-1.0.2
+
+DKMS: add Completed.
+
+Kernel preparation unnecessary for this kernel.  Skipping...
+
+Building module:
+cleaning build area....
+make KERNELRELEASE=2.6.18-92.el5 -C /lib/modules/2.6.18-92.el5/build SUBDIRS=/var/lib/dkms/pci_mrfev/1
+.0.2/build modules....
+cleaning build area....
+
+DKMS: build Completed.
+
+pci_mrfevr.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/2.6.18-92.el5/extra/
+
+pci_mrfevg.ko:
+Running module version sanity check.
+ - Original module
+   - No original module exists within this kernel
+ - Installation
+   - Installing to /lib/modules/2.6.18-92.el5/extra/
+Adding any weak-modules
+
+depmod....
+
+DKMS: install Completed.
+Starting EVR/EVG driver
+ERROR: EVR/EVG with wrong firmware detected (PCI IDs 0a:04.0), run /usr/src/pci_mrfev-1.0.2/flashfw to
+ fix.
+[FAILED]
+Installed: pci_mrfev.noarch 0:1.0.2-dkms
+Dependency Installed: dkms.noarch 0:2.1.0.1-1
+Complete!
+
+% lspci -s 0a:04.0 -x
+0a:04.0 Bridge: PLX Technology, Inc. PCI9030 32-bit 33MHz PCI <-> IOBus Bridge (rev 01)
+00: b5 10 30 90 03 00 90 02 01 00 80 06 08 00 00 00
+10: 00 20 40 d8 00 00 00 00 00 00 40 d8 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 b5 10 30 90
+30: 00 00 00 00 40 00 00 00 00 00 00 00 0b 01 00 00
+
+
+#################################################################
+# NOTE:	Event Receiver devices not yet installed
+#################################################################
+% ls /dev/er*          
+ls: /dev/er*: No such file or directory
+
+% sudo /usr/src/pci_mrfev-1.0.2/flashfw 
+Found 0 Event Generators.
+Creating device nodes...
+Found 1 Event Receivers.
+Creating device nodes...
+Creating nodes /dev/era[0-3] for major 252
+Programming firmware... 
+767+1 records in
+767+1 records out
+392870 bytes (393 kB) copied, 36.9882 seconds, 10.6 kB/s
+Programming EEPROM... 
+6+1 records in
+6+1 records out
+3217 bytes (3.2 kB) copied, 1.36082 seconds, 2.4 kB/s
+Done. You now need to reboot the system to reset the EVR/EVG.
+
+% lspci -s 0a:04.0 -x
+0a:04.0 Bridge: PLX Technology, Inc. PCI9030 32-bit 33MHz PCI <-> IOBus Bridge (rev 01)
+00: b5 10 30 90 03 00 90 02 01 00 80 06 08 00 00 00
+10: 00 20 40 d8 01 00 00 00 00 00 40 d8 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 b5 10 30 90
+30: 00 00 00 00 40 00 00 00 00 00 00 00 0b 01 00 00
+
+#################################################################
+#	After a reboot, the Event Receiver devices are installed.
+#	The vendor (10B5) and device (9030) codes at offset 0x00
+#	are unchanged, while the subvendor (1A3E) and subdevice (11E6)
+#	codes at offset 0x2C have been updated.
+#################################################################
+% ls /dev/er*
+/dev/era0  /dev/era1  /dev/era2  /dev/era3
+
+% lspci -s 0a:04.0 -x
+0a:04.0 Signal processing controller: PLX Technology, Inc. PCI9030 32-bit 33MHz PCI <-> IOBus Bridge (rev 01)
+00: b5 10 30 90 03 00 90 02 01 00 80 11 08 00 00 00
+10: 00 00 11 d8 00 00 00 00 00 00 10 d8 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 3e 1a e6 11
+30: 00 00 00 00 40 00 00 00 00 00 00 00 0b 01 00 00
+
