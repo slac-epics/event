@@ -490,7 +490,7 @@ record(ao, "$(TRIG):BW_TWID")
 {
   field(SDIS, "$(TRIG):BW_SW2.VAL")
   field(OUT, "$(TRIG):TWID.VAL PP")
-  field(DOL, "$(TRIG):BW_CALCTWID.VAL")
+  field(DOL, "$(TRIG):BW_TWIDCALC.VAL")
   field(OMSL, "closed_loop")
 }
 
@@ -527,12 +527,12 @@ record(longin, "$(TRIG):BW_TWID_TICKS")
   field(DESC, "Width from delay gen" )
   field(INP,  "$(EVR):CTRL.$(TWID) CPP MS")
   field(EGU,  "ticks")
-  field(FLNK, "$(TRIG):BW_CALCTWID")
+  field(FLNK, "$(TRIG):BW_TWIDCALC")
 }
 
-record(calc, "$(TRIG):BW_CALCTWID")
+record(calc, "$(TRIG):BW_TWIDCALC")
 {
-  field(INPA, "$(TRIG):BW_TICKCALC NPP MS")
+  field(INPA, "$(TRIG):BW_TWID_TICKS NPP MS")
   field(INPB, "8.403361345")
   field(CALC, "A*B")
   field(EGU,  "ns")
