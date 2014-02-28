@@ -1,7 +1,0 @@
-record(stringin, "$(IOC):EVENT_$(EVENT)") {
-    field(DTYP, "Soft Timestamp")
-    field(INP, "@%m/%d/%Y %H:%M:%S")
-    
-    field(SCAN, "Event")
-    field(EVNT, $(EVENT))
-}

@@ -1,5 +1,0 @@
-record(stringout, "$(DEV):FP$(N)L")
-{
-  field(DESC, "$(LABEL)")
-  field(PINI, "YES")
-}
