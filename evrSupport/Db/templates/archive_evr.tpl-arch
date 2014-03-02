@@ -419,16 +419,25 @@ $(EVR):TRIG0:TDES	10	monitor
 $(EVR):TRIG0:TOFFSET	10	monitor
 $(EVR):TRIG0:TPOL	10	monitor
 $(EVR):TRIG0:TWID	10	monitor
+$(EVR):TRIG0:EC		10	monitor
+$(EVR):TRIG0:CNT	10	
+$(EVR):TRIG0:RATE	10
 
 $(EVR):TRIG1:TCTL	10	monitor
 $(EVR):TRIG1:TDES	10	monitor
 $(EVR):TRIG1:TOFFSET	10	monitor
 $(EVR):TRIG1:TPOL	10	monitor
 $(EVR):TRIG1:TWID	10	monitor
+$(EVR):TRIG1:EC		10	monitor
+$(EVR):TRIG1:CNT	10	
+$(EVR):TRIG1:RATE	10
 
 $(EVR):TRIG2:TCTL	10	monitor
 $(EVR):TRIG2:TDES	10	monitor
 $(EVR):TRIG2:TOFFSET	10	monitor
 $(EVR):TRIG2:TPOL	10	monitor
 $(EVR):TRIG2:TWID	10	monitor
+$(EVR):TRIG2:EC		10	monitor
+$(EVR):TRIG2:CNT	10	
+$(EVR):TRIG2:RATE	10
 
