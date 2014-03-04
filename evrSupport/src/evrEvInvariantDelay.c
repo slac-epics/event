@@ -15,34 +15,39 @@
 
 static long lsubTrigSelInit(longSubRecord *prec)
 {
-    /* printf("lsubTrigSelInit for %s\n", prec->name); */
+    if ( prec->tpro )
+    	printf("lsubTrigSelInit for %s\n", prec->name);
 
     return 0;
 }
 
+/* Find index of first non-zero input */
 static long lsubTrigSel(longSubRecord *prec)
 {
-   epicsUInt32    i   = 0;
-   epicsUInt32    *p  = &prec->a;
-   epicsUInt32    *pp = &prec->z;
+	epicsUInt32    i   = 0;
+	epicsUInt32    *p  = &prec->a;
+	epicsUInt32    *pp = &prec->z;
 
-   /* printf("lsubTrigSel for %s\n", prec->name);  */
+	for(i=0; (p+i) <= pp; i++) {
+		if(*(p+i)) {
+			prec->val = i;
+			if ( prec->tpro >= 2 )
+				printf( "lsubTrigSel %s: Input %u non-zero\n", prec->name, i );
+			return 0;
+		}
+	}
 
-   for(i=0; (p+i) <= pp; i++) {
-       if(*(p+i)) {
-           prec->val = i;
-           return 0;
-       }
-   }
-
-   prec->val	= 0;
-   prec->brsv	= INVALID_ALARM;
-   return -1;
+	if ( prec->tpro >= 2 )
+		printf( "lsubTrigSel %s: No inputs non-zero!\n", prec->name );
+	prec->val	= 0;
+	prec->brsv	= INVALID_ALARM;
+	return -1;
 }
 
 static long lsubEvSelInit(longSubRecord *prec)
 {
-    /* printf("lsubEvSelInit for %s\n", prec->name); */
+	if ( prec->tpro )
+    	printf("lsubEvSelInit for %s\n", prec->name);
 
     return 0;
 }
@@ -52,9 +57,10 @@ static long lsubEvSel(longSubRecord *prec)
     epicsUInt32  i  = prec->v;
     epicsUInt32  *p = &prec->a;
 
-    /* printf("lsubEvSel for %s\n", prec->name); */
-
     prec->val = *(p+i);
+
+	if ( prec->tpro >= 2 )
+    	printf("lsubEvSel %s: Input %u is %u\n", prec->name, i, prec->val);
 
     return 0;
 }
@@ -112,6 +118,32 @@ static long aSubEvOffset(aSubRecord *prec)
     return 0;
 }
 
+static long lsubCountNonZeroInit(longSubRecord *prec)
+{
+    if ( prec->tpro )
+		printf("lsubCountNonZeroInit for %s\n", prec->name);
+    return 0;
+}
+
+static long lsubCountNonZero(longSubRecord *prec)
+{
+	epicsUInt32    count	= 0;
+	epicsUInt32    i		= 0;
+	epicsUInt32    *p		= &prec->a;
+	epicsUInt32    *pp		= &prec->z;
+
+	for ( i = 0; (p+i) <= pp; i++ )
+	{
+		if ( *(p+i) )
+			++count;
+	}
+
+	if ( prec->tpro >= 2 )
+		printf("lsubCountNonZero %s: Count is %u\n", prec->name, count );
+
+	prec->val	= count;
+	return 0;
+}
 
 epicsRegisterFunction(lsubTrigSelInit);
 epicsRegisterFunction(lsubTrigSel);
@@ -119,3 +151,5 @@ epicsRegisterFunction(lsubEvSelInit);
 epicsRegisterFunction(lsubEvSel);
 epicsRegisterFunction(aSubEvOffsetInit);
 epicsRegisterFunction(aSubEvOffset);
+epicsRegisterFunction(lsubCountNonZeroInit);
+epicsRegisterFunction(lsubCountNonZero);
