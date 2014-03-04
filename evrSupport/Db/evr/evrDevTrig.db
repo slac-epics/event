@@ -27,7 +27,7 @@
 #
 
 # Trigger type
-record(bo, "$(TRIG):TYPE")
+record(bo, "$(TRIG):TYPE" )
 {
   field(DOL,  "$(TYPE)")
   field(OMSL, "closed_loop")
@@ -552,26 +552,26 @@ record(calc, "$(TRIG):BW_TWIDCALC")
 # Records for fetching the trigger's event code, count, rate, and event name.
 record( longSub, "$(TRIG):CNT" )
 {
-  field( DESC, "Trigger Count" )
-  field( SNAM, "evrTimeEvent" )
-  field( BRSV, "INVALID" )
-  field( INPA, "$(TRIG):LSUB_EVSEL NPP" )
-  field( SCAN, ".1 second" )
+	field( DESC, "Trigger Count" )
+	field( SNAM, "evrTimeEvent" )
+	field( BRSV, "INVALID" )
+	field( INPA, "$(TRIG):LSUB_EVSEL NPP" )
+	field( SCAN, ".1 second" )
 }
 
 record( sub, "$(TRIG):RATE" )
 {
-  field( DESC, "Trigger Rate" )
-  field( SNAM, "evrTimeRate" )
-  field( BRSV, "INVALID" )
-  field( SCAN, "Event" )
-  field( EVNT, "121" )
-  field( PRIO, "MEDIUM" )
-  field( INPE, "$(TRIG):LSUB_EVSEL NPP" )
-  field( EGU,  "Hz" )
-  field( PREC, "1" )
-  field( LOW,  "0" )
-  field( LSV,  "MINOR" )
+	field( DESC, "Trigger Rate" )
+	field( SNAM, "evrTimeRate" )
+	field( BRSV, "INVALID" )
+	field( SCAN, "Event" )
+	field( EVNT, "121" )
+	field( PRIO, "MEDIUM" )
+	field( INPE, "$(TRIG):LSUB_EVSEL NPP" )
+	field( EGU,  "Hz" )
+	field( PREC, "1" )
+	field( LOW,  "0" )
+	field( LSV,  "MINOR" )
 }
 
 # This record returns a copy of the event code name
@@ -580,17 +580,65 @@ record( sub, "$(TRIG):RATE" )
 # for a different event code.
 record( stringin, "$(TRIG):EC_NAME" )
 {
-  field( DESC,  "Get event code name" )
-  field( DTYP,  "MRF Event Receiver" )
-  field( INP,   "#C$(CARD) S0 @" )
-  field( EVNT,  "0" )
+	field( DESC,  "Get event code name" )
+	field( DTYP,  "MRF Event Receiver" )
+	field( INP,   "#C$(CARD) S0 @" )
+	field( EVNT,  "0" )
 }
 
 record( longout, "$(TRIG):EC" )
 {
-  field( DESC,  "Trigger's Event code" )
-  field( OMSL,  "closed_loop" )
-  field( DOL,   "$(TRIG):LSUB_EVSEL CPP MS" )
-  field( OUT,	"$(TRIG):EC_NAME.EVNT" )
-  field( FLNK,	"$(TRIG):EC_NAME.EVNT PP MS" )
+	field( DESC, "Trigger's Event code" )
+	field( OMSL, "closed_loop" )
+	field( DOL,  "$(TRIG):LSUB_EVSEL CPP MS" )
+	field( OUT,  "$(TRIG):EC_NAME.EVNT" )
+	field( FLNK, "$(TRIG):EC_NAME.EVNT PP MS" )
+}
+
+# PV to fetch the current number of enabled outputs for
+# this trigger's control record
+# Processes whenever any of the 14 CTRL_N_OUTPUTS_ON PV's updates
+# Uses the LSUB_TRGSEL value to specify which control
+# record's count to read
+record( longSub, "$(TRIG):CTRL_N_OUTPUTS_ON" )
+{
+	field( DESC, "# outputs for this ctrl" )
+	field( SCAN, "Passive" )
+	field( INAM, "lsubEvSelInit" )
+	field( SNAM, "lsubEvSel" )
+	field( INPA, "$(EVR):EVENT1CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPB, "$(EVR):EVENT2CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPC, "$(EVR):EVENT3CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPD, "$(EVR):EVENT4CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPE, "$(EVR):EVENT5CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPF, "$(EVR):EVENT6CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPG, "$(EVR):EVENT7CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPH, "$(EVR):EVENT8CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPI, "$(EVR):EVENT9CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPJ, "$(EVR):EVENT10CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPK, "$(EVR):EVENT11CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPL, "$(EVR):EVENT12CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPM, "$(EVR):EVENT13CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPN, "$(EVR):EVENT14CTRL_N_OUTPUTS_ON CPP NMS" )
+	field( INPV, "$(TRIG):LSUB_TRGSEL.VAL NMS" )
+	field( FLNK, "$(TRIG):CTRL_IS_SHARED_CALC" )
+}
+
+# PV to determine if this trigger shares it's control record
+# with other outputs
+record( calc, "$(TRIG):CTRL_IS_SHARED_CALC" )
+{
+	field( INPA, "$(TRIG):CTRL_N_OUTPUTS_ON NPP NMS" )
+	field( INPB, "$(TRIG):TCTL CPP MS" )
+	field( CALC, "B?(A>1):(A>0)" )
+	field( PINI, "YES" )
+	field( FLNK, "$(TRIG):CTRL_IS_SHARED" )
+}
+
+record( bo, "$(TRIG):CTRL_IS_SHARED" )
+{
+	field( DOL,  "$(TRIG):CTRL_IS_SHARED_CALC" )
+	field( OMSL, "closed_loop" )
+	field( ZNAM, "Private" )
+	field( ONAM, "Shared" )
 }

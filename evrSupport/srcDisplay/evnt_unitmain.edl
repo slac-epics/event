@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 474
-y 409
+x 435
+y 328
 w 760
 h 562
 font "helvetica-medium-r-12.0"
@@ -144,16 +144,17 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 168
+x 160
 y 68
-w 80
+w 40
 h 16
 font "helvetica-medium-r-14.0"
+fontAlign "center"
 fgColor index 14
 bgColor index 5
 useDisplayBg
 value {
-  "Event Code"
+  "Code"
 }
 endObjectProperties
 
@@ -2298,7 +2299,7 @@ x 684
 y 312
 w 60
 h 24
-controlPv "$(TRIG):TCTL"
+controlPv "$(TRIG):TPOL"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2438,28 +2439,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 168
-y 88
-w 40
-h 24
-controlPv "$(EVR):EVENT1CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 216
 y 88
 w 50
@@ -2491,27 +2470,6 @@ font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
 fgAlarm
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 168
-y 120
-w 40
-h 24
-controlPv "$(EVR):EVENT2CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
 bgColor index 12
 nullColor index 18
 smartRefresh
@@ -2567,27 +2525,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 168
-y 152
-w 40
-h 24
-controlPv "$(EVR):EVENT3CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 216
 y 152
 w 50
@@ -2614,27 +2551,6 @@ y 152
 w 50
 h 24
 controlPv "$(EVR):EVENT3CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 168
-y 184
-w 40
-h 24
-controlPv "$(EVR):EVENT4CTRL.ENM"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2735,27 +2651,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 168
-y 216
-w 40
-h 24
-controlPv "$(EVR):EVENT5CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 247
 w 50
@@ -2782,27 +2677,6 @@ y 247
 w 50
 h 24
 controlPv "$(EVR):EVENT6CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 168
-y 248
-w 40
-h 24
-controlPv "$(EVR):EVENT6CTRL.ENM"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2861,27 +2735,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 168
-y 280
-w 40
-h 24
-controlPv "$(EVR):EVENT7CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 310
 w 50
@@ -2908,27 +2761,6 @@ y 310
 w 50
 h 24
 controlPv "$(EVR):EVENT8CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 168
-y 312
-w 40
-h 24
-controlPv "$(EVR):EVENT8CTRL.ENM"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2987,27 +2819,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 168
-y 344
-w 40
-h 24
-controlPv "$(EVR):EVENT9CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 374
 w 50
@@ -3034,27 +2845,6 @@ y 374
 w 50
 h 24
 controlPv "$(EVR):EVENT10CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 168
-y 376
-w 40
-h 24
-controlPv "$(EVR):EVENT10CTRL.ENM"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3113,27 +2903,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 168
-y 404
-w 40
-h 24
-controlPv "$(EVR):EVENT11CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 437
 w 50
@@ -3160,27 +2929,6 @@ y 437
 w 50
 h 24
 controlPv "$(EVR):EVENT12CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 168
-y 436
-w 40
-h 24
-controlPv "$(EVR):EVENT12CTRL.ENM"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3239,27 +2987,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 168
-y 468
-w 40
-h 24
-controlPv "$(EVR):EVENT13CTRL.ENM"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 500
 w 50
@@ -3286,27 +3013,6 @@ y 500
 w 50
 h 24
 controlPv "$(EVR):EVENT14CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 168
-y 500
-w 40
-h 24
-controlPv "$(EVR):EVENT14CTRL.ENM"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3403,5 +3109,444 @@ endGroup
 visPv "$(TRIG):TDES.SEVR"
 visMin "1"
 visMax "4"
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 88
+w 40
+h 24
+controlPv "$(EVR):EVENT1CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 120
+w 40
+h 24
+controlPv "$(EVR):EVENT2CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 152
+w 40
+h 24
+controlPv "$(EVR):EVENT3CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 184
+w 40
+h 24
+controlPv "$(EVR):EVENT4CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 215
+w 40
+h 24
+controlPv "$(EVR):EVENT5CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 247
+w 40
+h 24
+controlPv "$(EVR):EVENT6CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 310
+w 40
+h 24
+controlPv "$(EVR):EVENT8CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 279
+w 40
+h 24
+controlPv "$(EVR):EVENT7CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 342
+w 40
+h 24
+controlPv "$(EVR):EVENT9CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 374
+w 40
+h 24
+controlPv "$(EVR):EVENT10CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 405
+w 40
+h 24
+controlPv "$(EVR):EVENT11CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 437
+w 40
+h 24
+controlPv "$(EVR):EVENT12CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 469
+w 40
+h 24
+controlPv "$(EVR):EVENT13CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 500
+w 40
+h 24
+controlPv "$(EVR):EVENT14CTRL.ENM"
+font "courier-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 348
+y 16
+w 76
+h 20
+
+beginGroup
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 348
+y 16
+w 76
+h 20
+controlPv "$(TRIG):TDES"
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 6
+limitsFromDb
+nullColor index 14
+useHexPrefix
+newPos
+objType "controls"
+endObjectProperties
+
+endGroup
+
+visPv "LAS:SR63:EVR:09:EVENT13CTRL.OUT0"
+visMin "1"
+visMax "2"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 220
+y 52
+w 315
+h 14
+font "helvetica-medium-r-12.0"
+fgColor index 19
+bgColor index 3
+useDisplayBg
+value {
+  "TODO: Disable event code field while any outputs use it"
+}
+autoSize
 endObjectProperties
 

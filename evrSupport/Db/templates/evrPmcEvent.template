@@ -9,7 +9,7 @@ record( erevent, "$(DEV):$(NAME)CTRL" )
   field( OUT0, "$(P0=0)" )
   field( OUT1, "$(P1=0)" )
   field( OUT2, "$(P2=0)" )
-  field( VME,  "$(IRQ=0)" )
+  field( VME,  "$(IRQ=1)" )
   field(FLNK, "$(EVRFLNK=$(EVR):Triggers)")
 }
 
@@ -68,4 +68,28 @@ record( longout, "$(DEV):$(NAME)_ID" )
   field( DOL,	"$(DEV):$(NAME)CTRL.ENM NPP MS" )
   field( OUT,	"$(DEV):$(NAME)_NAME.EVNT" )
   field( FLNK,	"$(DEV):$(NAME)_NAME.EVNT PP MS" )
+}
+
+# Compute the number of enabled output triggers using this CTRL
+# (Total number of outputs enabled: OUT0, OUT1, OUT2, ...)
+record( longSub, "$(DEV):$(NAME)CTRL_N_OUTPUTS_ON" )
+{
+	field( INAM, "lsubCountNonZeroInit" )
+	field( SNAM, "lsubCountNonZero" )
+	field( DESC,  "# of ctrl outputs on" )
+	field( PINI,  "YES" )
+	field( INPA, "$(EVR):$(NAME)CTRL.OUT0 CPP NMS")
+	field( INPB, "$(EVR):$(NAME)CTRL.OUT1 CPP NMS")
+	field( INPC, "$(EVR):$(NAME)CTRL.OUT2 CPP NMS")
+	field( INPD, "$(EVR):$(NAME)CTRL.OUT3 CPP NMS")
+	field( INPE, "$(EVR):$(NAME)CTRL.OUT4 CPP NMS")
+	field( INPF, "$(EVR):$(NAME)CTRL.OUT5 CPP NMS")
+	field( INPG, "$(EVR):$(NAME)CTRL.OUT6 CPP NMS")
+	field( INPH, "$(EVR):$(NAME)CTRL.OUT7 CPP NMS")
+	field( INPI, "$(EVR):$(NAME)CTRL.OUT8 CPP NMS")
+	field( INPJ, "$(EVR):$(NAME)CTRL.OUT9 CPP NMS")
+	field( INPK, "$(EVR):$(NAME)CTRL.OUTA CPP NMS")
+	field( INPL, "$(EVR):$(NAME)CTRL.OUTB CPP NMS")
+	field( INPM, "$(EVR):$(NAME)CTRL.OUTC CPP NMS")
+	field( INPN, "$(EVR):$(NAME)CTRL.OUTD CPP NMS")
 }

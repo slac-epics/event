@@ -11,8 +11,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 470
-y 411
+x 492
+y 227
 w 784
 h 582
 font "helvetica-medium-r-12.0"
@@ -471,21 +471,6 @@ bgColor index 3
 value {
   "Time of ECx"
 }
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 380
-y 420
-w 4
-h 70
-font "helvetica-medium-r-12.0"
-fgColor index 31
-bgColor index 32
 endObjectProperties
 
 # (Static Text)
@@ -1273,30 +1258,6 @@ major 4
 minor 0
 release 1
 x 348
-y 192
-w 0
-h 140
-lineColor index 34
-fillColor index 4
-lineWidth 4
-numPoints 2
-xPoints {
-  0 348
-  1 348
-}
-yPoints {
-  0 192
-  1 332
-}
-endObjectProperties
-
-# (Lines)
-object activeLineClass
-beginObjectProperties
-major 4
-minor 0
-release 1
-x 348
 y 260
 w 224
 h 0
@@ -1320,7 +1281,7 @@ beginObjectProperties
 major 4
 minor 0
 release 1
-x 80
+x 84
 y 260
 w 260
 h 0
@@ -1329,8 +1290,8 @@ fillColor index 4
 arrows "both"
 numPoints 2
 xPoints {
-  0 80
-  1 340
+  0 84
+  1 344
 }
 yPoints {
   0 260
@@ -1904,5 +1865,44 @@ bgColor index 3
 value {
   "Positive TDES"
 }
+endObjectProperties
+
+# (Lines)
+object activeLineClass
+beginObjectProperties
+major 4
+minor 0
+release 1
+x 348
+y 192
+w 0
+h 140
+lineColor index 34
+fillColor index 4
+lineWidth 4
+numPoints 2
+xPoints {
+  0 348
+  1 348
+}
+yPoints {
+  0 192
+  1 332
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 380
+y 420
+w 4
+h 68
+font "helvetica-medium-r-12.0"
+fgColor index 31
+bgColor index 32
 endObjectProperties
 
