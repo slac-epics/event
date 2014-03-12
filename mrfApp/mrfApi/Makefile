@@ -31,26 +31,47 @@ mrfApi_SRCS			+=	egapi.c
 mrfApi_SRCS			+=	erapi.c
 
 #---------------------
+# Got tired of seeing all the build warnings on these
+# Define BUILD_MRF_TOOLS if you want to try any of these
+#BUILD_MRF_TOOLS	= 1
+ifdef BUILD_MRF_TOOLS
 # Build the MRF Diagnostic tools
+PROD_IOC_Linux		+= evan_monitor
+PROD_IOC_Linux		+= evrpresc
+PROD_IOC_Linux		+= mmap_test
+PROD_IOC_Linux		+= irqtest
+PROD_IOC_Linux		+= irq_monitor
+PROD_IOC_Linux		+= factest
+PROD_IOC_Linux		+= apitest
+PROD_IOC_Linux		+= albaseq
+PROD_IOC_Linux		+= dbusclk
+PROD_IOC_Linux		+= timestampgen
+PROD_IOC_Linux		+= simple
+PROD_IOC_Linux		+= MRMTest
+PROD_IOC_Linux		+= propdel
+PROD_IOC_Linux		+= tgtest
+PROD_IOC_Linux		+= tgrfgen
+PROD_IOC_Linux		+= ELI
+PROD_IOC_Linux		+= ELIHytec
+PROD_IOC_Linux		+= freqset
+PROD_IOC_Linux		+= XL_flash
+PROD_IOC_Linux		+= pcieout
+endif
 
 # ? Monitor 
-PROD_IOC_Linux		+= evan_monitor
 evan_monitor_SRCS	+= evan_monitor.c
 evan_monitor_SRCS	+= egapi.c
 
 # EVR Prescaler enable
-PROD_IOC_Linux		+= evrpresc
 evrpresc_SRCS		+= evrpresc.c
 evrpresc_SRCS		+= erapi.c
 
 # Memory map test
-PROD_IOC_Linux		+= mmap_test
 mmap_test_SRCS		+= mmap_test.c
 mmap_test_SRCS		+= erapi.c
 #mmap_test_SRCS		+= egapi.c
 
 # IRQ test
-PROD_IOC_Linux		+= irqtest
 irqtest_SRCS		+= irqtest.c
 irqtest_SRCS		+= erapi.c
 irqtest_LIBS		+= mrfApi
@@ -58,68 +79,52 @@ irqtest_LIBS		+= mrfApi
 #irqtest_SRCS_Linux  += evrIrqHandlerThread.c
 
 # IRQ monitor
-PROD_IOC_Linux		+= irq_monitor
 irq_monitor_SRCS	+= irq_monitor.c
 irq_monitor_LIBS	+= mrfApi
 
 # Factory Test
-PROD_IOC_Linux		+= factest
 factest_SRCS		+= factest.c
 factest_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= apitest
 apitest_SRCS		= apitest.c egapi.c erapi.c
 apitest_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= albaseq
 albaseq_SRCS		= albaseq.c egapi.c erapi.c
 albaseq_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= dbusclk
 dbusclk_SRCS		= dbusclk.c egapi.c
 dbusclk_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= timestampgen
 timestampgen_SRCS	= timestampgen.c egapi.c erapi.c
 timestampgen_LIBS	+= mrfApi
 
-PROD_IOC_Linux		+= simple
 simple_SRCS			= simple.c egapi.c erapi.c
 simple_LIBS			+= mrfApi
 
-PROD_IOC_Linux		+= MRMTest
 MRMTest_SRCS		= MRMTest.c egapi.c erapi.c
 MRMTest_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= propdel
 propdel_SRCS		= propdel.c egapi.c erapi.c
 propdel_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= tgtest
 tgtest_SRCS			= tgtest.c egapi.c erapi.c
 tgtest_LIBS			+= mrfApi
 
-PROD_IOC_Linux		+= tgrfgen
 tgrfgen_SRCS		= tgrfgen.c erapi.c
 tgrfgen_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= ELI
 ELI_SRCS			= ELI.c erapi.c
 ELI_LIBS			+= mrfApi
 
-PROD_IOC_Linux		+= ELIHytec
 ELIHytec_SRCS		= ELIHytec.c erapi.c
 ELIHytec_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= freqset
 freqset_SRCS		= freqset.c erapi.c
 freqset_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= XL_flash
 XL_flash_SRCS		= XL_flash.c
 XL_flash_LIBS		+= mrfApi
 
-PROD_IOC_Linux		+= pcieout
 pcieout_SRCS		= pcieout.c erapi.c
 pcieout_LIBS		+= mrfApi
 
