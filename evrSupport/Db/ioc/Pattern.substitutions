@@ -12,6 +12,7 @@
 #       SYS1 for FACET
 #       SYS2 for LCLS II
 #
+#   Optional:
 #	LINK4	Set to "" if the IOC is not slc-aware.  
 #		Otherwise, set to "IOC:<loca>:<unit>:FANOUTSLC".  
 #

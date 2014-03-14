@@ -47,19 +47,19 @@ file evrDevTrig.db
 #           Device	   , Description    ,polarity,width,delay,event , EVR  , EVR,  IOC 
 #			                                         code   ,location,unit
   pattern { DEV ,                                     , CH, DESC               , POL, WID, DES,  LOCA   , UNIT   , IOC   ,  DRVL  ,  DRVH , TCTL, TPOL, TWID, TDES,CTL,TOUT, SYS           }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  0,  "Spare rear Trig 1",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  1,  "Spare rear Trig 2",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  2,  "Spare rear Trig 3",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  3,  "Spare rear Trig 4",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  4,  "Spare rear Trig 5",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  5,  "Spare rear Trig 6",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  6,  "Spare rear Trig 7",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  7,  "Spare rear Trig 8",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  8,  "Spare rear Trig 9",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  9,  "Spare rear Trig 10", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  10, "Spare rear Trig 11", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPA, OTAP, OTAW, OTAD, 1, OUTA, '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  11, "Spare rear Trig 12", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPB, OTBP, OTBW, OTBD, 1, OUTB, '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  12, "Spare rear Trig 13", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPC, OTCP, OTCW, OTCD, 1, OUTC, '$(SYS=SYS0)' }
-	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  13, "Spare rear Trig 14", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPD, OTDP, OTDW, OTDD, 1, OUTD, '$(SYS=SYS0)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  0,  "Spare rear Trig 1",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  1,  "Spare rear Trig 2",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  2,  "Spare rear Trig 3",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  3,  "Spare rear Trig 4",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  4,  "Spare rear Trig 5",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  5,  "Spare rear Trig 6",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  6,  "Spare rear Trig 7",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  7,  "Spare rear Trig 8",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  8,  "Spare rear Trig 9",  0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  9,  "Spare rear Trig 10", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTP$(CH), OT$(CH)P, OT$(CH)W, OT$(CH)D, 1, OUT$(CH), '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  10, "Spare rear Trig 11", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPA, OTAP, OTAW, OTAD, 1, OUTA, '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  11, "Spare rear Trig 12", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPB, OTBP, OTBW, OTBD, 1, OUTB, '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  12, "Spare rear Trig 13", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPC, OTCP, OTCW, OTCD, 1, OUTC, '$(SYS)' }
+	 { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH))",  13, "Spare rear Trig 14", 0 , 100, 10 ,  '$(LOCA)', '$(UNIT)', '$(IOC)', -2.8E06, 2.8E06, OTPD, OTDP, OTDW, OTDD, 1, OUTD, '$(SYS)' }
 }
 

@@ -52,9 +52,9 @@ file evrDevTrig.db
 #           Device	   , Description    ,polarity,width,delay,event , EVR  , EVR,  IOC 
 #			                                         code   ,location,unit
   pattern { DEV                                         , CH, DESC          , POL, WID, DES,  LOCA ,   UNIT     , IOC     ,  DRVL  ,  DRVH   , TCTL     , TPOL    , TWID    , TDES    , CTL, TOUT    , SYS  }
-	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  0, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS=SYS0)' }
-	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  1, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS=SYS0)' }
-	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  2, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS=SYS0)' }
-	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  3, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS=SYS0)' }
+	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  0, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS)' }
+	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  1, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS)' }
+	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  2, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS)' }
+	  { "\$(DEV$(CH)=\$(DEV=TRIG:\$(LOCA):\$(UNIT)):$(CH)F)",  3, "Channel $(CH)", 0 , 100, 10 , '$(LOCA)','$(UNIT)', '$(IOC)', -2.8E06, 2.8E06  , DG$(CH)E , DG$(CH)P, DG$(CH)W, DG$(CH)D, 1  , OUT$(CH), '$(SYS)' }
 }
 

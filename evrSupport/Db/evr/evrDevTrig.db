@@ -21,7 +21,7 @@ record(aSub, "$(DEV)ASUB_LKUOFFSET") {
   field(SNAM, "aSubEvOffset")
   field(INPA, "$(DEV)LSUB_EVSEL.VAL MS")
   field(INPB, "$(ACTV=1)")
-  field(INPC, "EVNT:$(SYS=SYS0):1:DELAY CPP MS")
+  field(INPC, "EVNT:$(SYS):1:DELAY CPP MS")
   field(FLNK, "$(DEV)TDES")
   field(FTA, "LONG")
   field(FTB, "LONG")
