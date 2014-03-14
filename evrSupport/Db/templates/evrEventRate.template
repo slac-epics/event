@@ -8,21 +8,24 @@ record(event, "$(DEV):$(NAME)") {
   field(FLNK, "$(DEV):$(NAME)CNT")
 }
 
-record(calc, "$(DEV):$(NAME)CNT") {
-  field(DESC, "$(NAME) Counter")
-  field(CALC, "A+1")
-  field(INPA, "$(DEV):$(NAME)CNT NPP MS")
+record( longSub, "$(DEV):$(NAME)CNT") {
+  field( DESC, "$(NAME) Counter")
+  field( SNAM, "evrTimeEvent" )
+  field( BRSV, "INVALID" )
+  field( INPA, "$(DEV):$(NAME)CTRL.ENM NPP NMS")
+  field( SCAN, ".1 second" )
 }
 
-record(calc, "$(DEV):$(NAME)RATE") {
+record(sub, "$(DEV):$(NAME)RATE") {
   field(DESC, "$(NAME) Rate")
-  field(SCAN, "1 second")
-  field(CALC, "A-B")
-  field(INPA,  "$(DEV):$(NAME)CNT NPP MS")
-  field(INPB,  "$(DEV):$(NAME)RATE.LA")
-  field(INPE,  "$(DEV):$(NAME)")
-  field(LOW,  "0")
-  field(LSV,  "MINOR")
+  field(SNAM, "evrTimeRate")
+  field(BRSV, "INVALID")
+  field(SCAN, "Event")
+  field(EVNT, "121")
+  field(PRIO, "MEDIUM")
+  field(INPE, "$(DEV):$(NAME)CTRL.ENM MS")
+  field(EGU,  "Hz")
+  field(PREC, "1")
 }
 
 record (stringout, "$(DEV):$(NAME)NAME") {
