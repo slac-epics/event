@@ -14,24 +14,24 @@ configFile=$1-event.cwConfig
 cp $templatedir/evrEvents.template.cwConfig .
 cp $templatedir/evrEvrs.template.cwConfig .
 
+echo "# triggers"  > $configFile
+grep -of $templatedir/trigPatterns.grep iocInfo/IOC.pvlist | grep -v 'W_' >> $configFile
+
 events=$(grep -o 'EVR\:[[:alnum:]\:_]*\:EVENT[0-9]*CTRL' iocInfo/IOC.pvlist)
-echo "# events"  > $1-event.cwConfig
+echo "# events"  >> $configFile
 
     for event in $events;
       do
-                echo "file evrEvents.template.cwConfig EVENT="$event >> $1-event.cwConfig
+                echo "file evrEvents.template.cwConfig EVENT="$event >> $configFile
     done
 
 evrs=$(grep -o 'EVR\:[[:alnum:]\:_]*\:CTRL' iocInfo/IOC.pvlist)
-echo "# evrs"  >> $1-event.cwConfig
+echo "# evrs"  >> $configFile
 
     for evr in $evrs;
       do
-                echo "file evrEvrs.template.cwConfig EVR="$evr >> $1-event.cwConfig
+                echo "file evrEvrs.template.cwConfig EVR="$evr >> $configFile
     done
-
-echo "# triggers"  >> $1-event.cwConfig
-grep -of $templatedir/trigPatterns.grep iocInfo/IOC.pvlist | grep -v 'W_' >> $1-event.cwConfig
 
 # Finally, use the contstructed cwConfig file to get values.
 CWget $configFile evrPreUpgrade$DATE
