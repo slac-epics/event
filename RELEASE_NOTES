@@ -1,5 +1,11 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-1-1:
+      Removed SYS=SYS1 as a default value. This forces us to define SYS,
+      and pay attention to its definition. The IOC will break on startup
+      with useful error messages rather than behaving oddly when SYS is
+      undefined.
+
 event-R4-1-0:
       * New general purpose db files. All site specific configuration is
       handled by defining SYS macros to give reasonable defaults. The new
