@@ -1,4 +1,4 @@
-Instructions for EVR users                    Last Updated 6/6/2012
+Instructions for EVR users                    Last Updated 1/29/2014
 --------------------------------
 These instructions are for EVENT module event-R3-5-0 branch or later.
 The basic steps when configuring a new IOC are in parts I through IV.
@@ -407,7 +407,8 @@ Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Even
 from your trig.substitution file. (there is no more trigger event code name. 
 The forward/backward propagation and event code invariant delay is a default mode)
 
-IOC engineer need to put new macro SYS to describe the beam program in the trig.substitution file
+IOC engineers need to put new macro SYS to describe the beam program in the
+trig.substitutions and evr.substitutions files
 Please, follow the following rule.
 
 SYS=SYS0: LCLS 
