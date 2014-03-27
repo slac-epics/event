@@ -405,6 +405,11 @@ epicsStatus ErProcess (erRecord  *pRec)
     */
     if (pRec->enab & !ErMasterEnableGet(pCard))
         ErMasterEnableSet (pCard, epicsTrue);
+
+
+   #ifdef __linux__
+   ErUpdateRam(pCard, pCard->ErEventTab); /* update mapping ram, 03-27-2014 Kukhee Kim */
+   #endif
   
    /*---------------------
     * Unlock the card mutex, mark the record "processed", and return success
