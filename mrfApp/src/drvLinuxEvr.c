@@ -29,7 +29,8 @@
 #include <byteswap.h>
 #include "erapi.h"
 
-#define DEVNODE_NAME_BASE "/dev/er"
+#define DEVNODE_NAME_BASE  "/dev/er"
+#define DEVNODE_NAME_BASE1 "/dev/er3"
 #ifdef EVENT_CLOCK_SPEED
     #define FR_SYNTH_WORD   EVENT_CLOCK_SPEED
 #else
@@ -459,6 +460,7 @@ static int ErConfigure (
  int ret, fdEvr;
  int  actualFormFactor;
  char strDevice[strlen(DEVNODE_NAME_BASE) + 3];
+ char strDevice1[strlen(DEVNODE_NAME_BASE1) + 3];
  struct LinuxErCardStruct *pLinuxErCard;
  struct ErCardStruct *pCard;
  struct MrfErRegs *pEr;
@@ -499,12 +501,27 @@ static int ErConfigure (
   epicsMutexUnlock(ErConfigureLock);
   return ERROR;
  }
-        printf("EvrOpen, device = %s\n", strDevice);
+
+ ret = snprintf(strDevice1, strlen(DEVNODE_NAME_BASE1) + 3, DEVNODE_NAME_BASE "%c3", Card + 'a');
+ if (ret < 0) {
+  errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
+  epicsMutexUnlock(ErConfigureLock);
+  return ERROR;
+ }
+
+ printf("Try EvrOpen, device = %s\n", strDevice);
  fdEvr = EvrOpen(&pEr, strDevice);
  if (fdEvr < 0) {
   errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
-  epicsMutexUnlock(ErConfigureLock);
-  return ERROR;
+
+  printf("Try EvrOpen, device = %s\n", strDevice1);
+  fdEvr = EvrOpen(&pEr, strDevice1);
+
+  if(fdEvr < 0) {
+    errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+    epicsMutexUnlock(ErConfigureLock);
+    return ERROR;
+  }
  }
 
  /* Check the firmware version */
