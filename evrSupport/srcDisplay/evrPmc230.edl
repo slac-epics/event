@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 459
-y 96
+x 133
+y 33
 w 801
 h 304
 font "helvetica-medium-r-18.0"
@@ -82,7 +82,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 732
+x 740
 y 8
 w 48
 h 24
@@ -123,7 +123,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 368
+x 308
 y 8
 w 88
 h 24
@@ -150,7 +150,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 672
+x 616
 y 8
 w 56
 h 24
@@ -177,9 +177,9 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 568
+x 512
 y 8
-w 100
+w 96
 h 24
 fgColor index 14
 bgColor index 4
@@ -210,7 +210,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 464
+x 404
 y 8
 w 100
 h 24
@@ -572,7 +572,7 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 304
+x 244
 y 8
 w 56
 h 24
@@ -1715,7 +1715,7 @@ x 560
 y 172
 w 92
 h 24
-controlPv "$(EVR):TRIG0:BW_TDESCALC"
+controlPv "$(EVR):TRIG0:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -1740,7 +1740,7 @@ x 560
 y 204
 w 92
 h 24
-controlPv "$(EVR):TRIG1:BW_TDESCALC"
+controlPv "$(EVR):TRIG1:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -1765,7 +1765,7 @@ x 560
 y 236
 w 92
 h 24
-controlPv "$(EVR):TRIG2:BW_TDESCALC"
+controlPv "$(EVR):TRIG2:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -1778,5 +1778,146 @@ useHexPrefix
 showUnits
 newPos
 objType "monitors"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 200
+y 276
+w 88
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "emb Trig 2"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/emb-trig.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "TRIG=$(EVR):TRIG2,CH=2,T=FP,EVR=$(EVR),LOCA=$(LOCA)"
+}
+replaceSymbols {
+  0 1
+}
+propagateMacros {
+  0 0
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 8
+y 276
+w 88
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "emb Trig 0"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/emb-trig.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "TRIG=$(EVR):TRIG0,CH=0,T=FP,EVR=$(EVR),LOCA=$(LOCA)"
+}
+replaceSymbols {
+  0 1
+}
+propagateMacros {
+  0 0
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 104
+y 276
+w 88
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "emb Trig 1"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "evrScreens/emb-trig.edl"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "TRIG=$(EVR):TRIG1,CH=1,T=FP,EVR=$(EVR),LOCA=$(LOCA)"
+}
+replaceSymbols {
+  0 1
+}
+propagateMacros {
+  0 0
+}
+icon
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 3
+release 0
+x 680
+y 8
+w 52
+h 24
+fgColor index 14
+bgColor index 4
+topShadowColor index 1
+botShadowColor index 11
+font "helvetica-medium-r-12.0"
+buttonLabel "IOC"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "iocScreens/ioc_soft.edl"
+}
+menuLabel {
+  0 "IOC"
+}
+setPosition {
+  0 "parentWindow"
+}
+symbols {
+  0 "IOC=$(IOC)"
+}
+icon
 endObjectProperties
 

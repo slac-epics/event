@@ -151,26 +151,36 @@ static long process(psub)
 	long		 status=0;
 	unsigned char	pact=psub->pact;
 
-        if(!psub->pact || !psub->sadr){
+	if(!psub->pact || !psub->sadr){
 		psub->pact = TRUE;
 		status = fetch_values(psub);
 		psub->pact = FALSE;
 	}
-        if(status==0) status = do_sub(psub);
+	if(status==0)
+		status = do_sub(psub);
+	if( psub->tpro )
+		printf( "%s: Process %s: value %d\n",
+				epicsThreadGetNameSelf(), psub->name, psub->val );
+
 	/* check if device support set pact */
-        if ( !pact && psub->pact ) return(0);
+	if ( !pact && psub->pact )
+		return(0);
 	/*previously we had different rules. Lets support old subs*/
-        psub->pact = TRUE;
-	if(status==1) return(0);
+	psub->pact = TRUE;
+	if(status==1)
+		return(0);
+
 	recGblGetTimeStamp(psub);
-        /* check for alarms */
-        checkAlarms(psub);
-        /* check event list */
-        monitor(psub);
-        /* process the forward scan link record */
-        recGblFwdLink(psub);
-        psub->pact = FALSE;
-        return(0);
+	/* check for alarms */
+	checkAlarms(psub);
+
+	/* check event list */
+	monitor(psub);
+
+	/* process the forward scan link record */
+	recGblFwdLink(psub);
+	psub->pact = FALSE;
+	return(0);
 }
 
 static long get_units(paddr,units)

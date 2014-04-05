@@ -1946,7 +1946,7 @@ x 560
 y 204
 w 92
 h 24
-controlPv "$(EVR):TRIG1:BW_TDESCALC"
+controlPv "$(EVR):TRIG1:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -1971,7 +1971,7 @@ x 560
 y 236
 w 92
 h 24
-controlPv "$(EVR):TRIG2:BW_TDESCALC"
+controlPv "$(EVR):TRIG2:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -1996,7 +1996,7 @@ x 560
 y 264
 w 92
 h 24
-controlPv "$(EVR):TRIG3:BW_TDESCALC"
+controlPv "$(EVR):TRIG3:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2021,7 +2021,7 @@ x 560
 y 296
 w 92
 h 24
-controlPv "$(EVR):TRIG4:BW_TDESCALC"
+controlPv "$(EVR):TRIG4:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2046,7 +2046,7 @@ x 560
 y 328
 w 92
 h 24
-controlPv "$(EVR):TRIG5:BW_TDESCALC"
+controlPv "$(EVR):TRIG5:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2071,7 +2071,7 @@ x 560
 y 360
 w 92
 h 24
-controlPv "$(EVR):TRIG6:BW_TDESCALC"
+controlPv "$(EVR):TRIG6:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -2096,7 +2096,7 @@ x 560
 y 392
 w 92
 h 24
-controlPv "$(EVR):TRIG7:BW_TDESCALC"
+controlPv "$(EVR):TRIG7:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3041,7 +3041,7 @@ x 560
 y 424
 w 92
 h 24
-controlPv "$(EVR):TRIG8:BW_TDESCALC"
+controlPv "$(EVR):TRIG8:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3066,7 +3066,7 @@ x 560
 y 452
 w 92
 h 24
-controlPv "$(EVR):TRIG9:BW_TDESCALC"
+controlPv "$(EVR):TRIG9:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3091,7 +3091,7 @@ x 560
 y 484
 w 92
 h 24
-controlPv "$(EVR):TRIGA:BW_TDESCALC"
+controlPv "$(EVR):TRIGA:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -3116,7 +3116,7 @@ x 560
 y 516
 w 92
 h 24
-controlPv "$(EVR):TRIGB:BW_TDESCALC"
+controlPv "$(EVR):TRIGB:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16
@@ -4060,7 +4060,7 @@ x 560
 y 168
 w 92
 h 24
-controlPv "$(EVR):TRIG0:BW_TDESCALC"
+controlPv "$(EVR):TRIG0:BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 16

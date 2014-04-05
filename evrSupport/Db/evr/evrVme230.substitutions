@@ -61,6 +61,20 @@ file evrDevTrig.db
 	{	7,	$(EVR):TRIG$(N),	OT,		OTP$(N)	}
 }
 
+# Make a set of event control records for each output trigger
+file evrPmcEvent.template
+{
+    pattern
+    { DEV,      	NAME,	ID,  P0,P1,P2,IRQ, EVRFLNK	}
+    { $(EVR):TRIG0,	EVENT,	140,  0, 0, 0, 1,	""	}
+    { $(EVR):TRIG1,	EVENT,	140,  0, 0, 0, 1,	""	}
+    { $(EVR):TRIG2,	EVENT,	140,  0, 0, 0, 1,	""	}
+    { $(EVR):TRIG3,	EVENT,	140,  0, 0, 0, 1,	""	}
+    { $(EVR):TRIG4,	EVENT,	140,  0, 0, 0, 1,	""	}
+    { $(EVR):TRIG5,	EVENT,	140,  0, 0, 0, 1,	""	}
+    { $(EVR):TRIG6,	EVENT,	140,  0, 0, 0, 1,	""	}
+    { $(EVR):TRIG7,	EVENT,	140,  0, 0, 0, 1,	""	}
+}
 
 #
 # Create 14 event controls

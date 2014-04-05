@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 435
+x 1284
 y 328
 w 760
-h 562
+h 600
 font "helvetica-medium-r-12.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-medium-r-12.0"
@@ -64,7 +64,7 @@ release 0
 x 0
 y 48
 w 752
-h 500
+h 536
 lineColor index 3
 fill
 fillColor index 3
@@ -371,7 +371,7 @@ release 0
 x 528
 y 72
 w 1
-h 456
+h 488
 lineColor index 14
 fillColor index 14
 endObjectProperties
@@ -402,38 +402,18 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 12
-y 4
-w 109
-h 14
-font "helvetica-bold-r-12.0"
+x 8
+y 0
+w 236
+h 40
+font "helvetica-bold-r-14.0"
 fgColor index 14
 bgColor index 3
 useDisplayBg
 value {
-  "$(DESC):$(LOCA)"
-}
-autoSize
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 12
-y 20
-w 164
-h 14
-font "helvetica-bold-r-12.0"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
+  "$(EVR)"
   "Trigger Output Chan: $(CH)"
 }
-autoSize
 endObjectProperties
 
 # (Static Text)
@@ -482,7 +462,7 @@ major 4
 minor 0
 release 0
 x 536
-y 500
+y 532
 w 50
 h 24
 fgColor index 25
@@ -504,7 +484,7 @@ major 4
 minor 0
 release 0
 x 536
-y 468
+y 500
 w 50
 h 24
 fgColor index 25
@@ -526,7 +506,7 @@ major 4
 minor 0
 release 0
 x 536
-y 436
+y 468
 w 50
 h 24
 fgColor index 25
@@ -548,7 +528,7 @@ major 4
 minor 0
 release 0
 x 536
-y 404
+y 436
 w 50
 h 24
 fgColor index 25
@@ -570,7 +550,7 @@ major 4
 minor 0
 release 0
 x 536
-y 376
+y 408
 w 50
 h 24
 fgColor index 25
@@ -592,7 +572,7 @@ major 4
 minor 0
 release 0
 x 536
-y 344
+y 376
 w 50
 h 24
 fgColor index 25
@@ -614,7 +594,7 @@ major 4
 minor 0
 release 0
 x 536
-y 312
+y 344
 w 50
 h 24
 fgColor index 25
@@ -636,7 +616,7 @@ major 4
 minor 0
 release 0
 x 536
-y 88
+y 120
 w 50
 h 24
 fgColor index 25
@@ -658,7 +638,7 @@ major 4
 minor 0
 release 0
 x 536
-y 120
+y 152
 w 50
 h 24
 fgColor index 25
@@ -680,7 +660,7 @@ major 4
 minor 0
 release 0
 x 536
-y 152
+y 184
 w 50
 h 24
 fgColor index 25
@@ -702,7 +682,7 @@ major 4
 minor 0
 release 0
 x 536
-y 184
+y 216
 w 50
 h 24
 fgColor index 25
@@ -724,7 +704,7 @@ major 4
 minor 0
 release 0
 x 536
-y 216
+y 248
 w 50
 h 24
 fgColor index 25
@@ -746,7 +726,7 @@ major 4
 minor 0
 release 0
 x 536
-y 248
+y 280
 w 50
 h 24
 fgColor index 25
@@ -768,7 +748,7 @@ major 4
 minor 0
 release 0
 x 536
-y 280
+y 312
 w 50
 h 24
 fgColor index 25
@@ -783,26 +763,6 @@ font "helvetica-bold-r-10.0"
 objType "controls"
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 8
-y 532
-w 389
-h 14
-font "helvetica-bold-r-12.0"
-fgColor index 14
-bgColor index 3
-useDisplayBg
-value {
-  "Note: Event Codes can be changed or re-enabled in Trigger Panel."
-}
-autoSize
-endObjectProperties
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
@@ -810,7 +770,7 @@ major 4
 minor 5
 release 0
 x 8
-y 88
+y 120
 w 144
 h 24
 controlPv "$(EVR):EVENT1_NAME"
@@ -831,7 +791,7 @@ major 4
 minor 5
 release 0
 x 8
-y 120
+y 152
 w 144
 h 24
 controlPv "$(EVR):EVENT2_NAME"
@@ -852,7 +812,7 @@ major 4
 minor 5
 release 0
 x 8
-y 152
+y 184
 w 144
 h 24
 controlPv "$(EVR):EVENT3_NAME"
@@ -873,7 +833,7 @@ major 4
 minor 5
 release 0
 x 8
-y 184
+y 216
 w 144
 h 24
 controlPv "$(EVR):EVENT4_NAME"
@@ -894,7 +854,7 @@ major 4
 minor 5
 release 0
 x 8
-y 215
+y 248
 w 144
 h 24
 controlPv "$(EVR):EVENT5_NAME"
@@ -915,7 +875,7 @@ major 4
 minor 5
 release 0
 x 8
-y 247
+y 280
 w 144
 h 24
 controlPv "$(EVR):EVENT6_NAME"
@@ -936,7 +896,7 @@ major 4
 minor 5
 release 0
 x 8
-y 279
+y 312
 w 144
 h 24
 controlPv "$(EVR):EVENT7_NAME"
@@ -957,7 +917,7 @@ major 4
 minor 5
 release 0
 x 8
-y 310
+y 344
 w 144
 h 24
 controlPv "$(EVR):EVENT8_NAME"
@@ -978,7 +938,7 @@ major 4
 minor 5
 release 0
 x 8
-y 342
+y 376
 w 144
 h 24
 controlPv "$(EVR):EVENT9_NAME"
@@ -999,7 +959,7 @@ major 4
 minor 5
 release 0
 x 8
-y 374
+y 408
 w 144
 h 24
 controlPv "$(EVR):EVENT10_NAME"
@@ -1020,7 +980,7 @@ major 4
 minor 5
 release 0
 x 8
-y 405
+y 436
 w 144
 h 24
 controlPv "$(EVR):EVENT11_NAME"
@@ -1041,7 +1001,7 @@ major 4
 minor 5
 release 0
 x 8
-y 437
+y 468
 w 144
 h 24
 controlPv "$(EVR):EVENT12_NAME"
@@ -1062,7 +1022,7 @@ major 4
 minor 5
 release 0
 x 8
-y 469
+y 500
 w 144
 h 24
 controlPv "$(EVR):EVENT13_NAME"
@@ -1083,7 +1043,7 @@ major 4
 minor 5
 release 0
 x 8
-y 500
+y 532
 w 144
 h 24
 controlPv "$(EVR):EVENT14_NAME"
@@ -1123,11 +1083,11 @@ major 4
 minor 5
 release 0
 x 332
-y 88
+y 120
 w 112
 h 24
 controlPv "$(EVR):EVENT1CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1164,7 +1124,7 @@ major 4
 minor 0
 release 0
 x 444
-y 88
+y 120
 w 8
 h 24
 lineColor index 12
@@ -1179,7 +1139,7 @@ major 4
 minor 0
 release 0
 x 500
-y 88
+y 120
 w 8
 h 24
 lineColor index 12
@@ -1194,11 +1154,11 @@ major 4
 minor 5
 release 0
 x 332
-y 120
+y 152
 w 112
 h 24
 controlPv "$(EVR):EVENT2CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1216,11 +1176,11 @@ major 4
 minor 5
 release 0
 x 460
-y 120
+y 152
 w 40
 h 24
 controlPv "$(EVR):EVENT2RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1239,7 +1199,7 @@ major 4
 minor 0
 release 0
 x 444
-y 120
+y 152
 w 8
 h 24
 lineColor index 12
@@ -1254,7 +1214,7 @@ major 4
 minor 0
 release 0
 x 500
-y 120
+y 152
 w 8
 h 24
 lineColor index 12
@@ -1269,11 +1229,11 @@ major 4
 minor 5
 release 0
 x 332
-y 152
+y 184
 w 112
 h 24
 controlPv "$(EVR):EVENT3CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1291,11 +1251,11 @@ major 4
 minor 5
 release 0
 x 460
-y 152
+y 184
 w 40
 h 24
 controlPv "$(EVR):EVENT3RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1314,7 +1274,7 @@ major 4
 minor 0
 release 0
 x 444
-y 152
+y 184
 w 8
 h 24
 lineColor index 12
@@ -1329,7 +1289,7 @@ major 4
 minor 0
 release 0
 x 500
-y 152
+y 184
 w 8
 h 24
 lineColor index 12
@@ -1344,11 +1304,11 @@ major 4
 minor 5
 release 0
 x 332
-y 184
+y 216
 w 112
 h 24
 controlPv "$(EVR):EVENT4CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1366,11 +1326,11 @@ major 4
 minor 5
 release 0
 x 460
-y 184
+y 216
 w 40
 h 24
 controlPv "$(EVR):EVENT4RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1389,7 +1349,7 @@ major 4
 minor 0
 release 0
 x 444
-y 184
+y 216
 w 8
 h 24
 lineColor index 12
@@ -1404,7 +1364,7 @@ major 4
 minor 0
 release 0
 x 500
-y 184
+y 216
 w 8
 h 24
 lineColor index 12
@@ -1419,11 +1379,11 @@ major 4
 minor 5
 release 0
 x 332
-y 216
+y 248
 w 112
 h 24
 controlPv "$(EVR):EVENT5CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1441,11 +1401,11 @@ major 4
 minor 5
 release 0
 x 460
-y 216
+y 248
 w 40
 h 24
 controlPv "$(EVR):EVENT5RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1464,7 +1424,7 @@ major 4
 minor 0
 release 0
 x 444
-y 216
+y 248
 w 8
 h 24
 lineColor index 12
@@ -1479,7 +1439,7 @@ major 4
 minor 0
 release 0
 x 500
-y 216
+y 248
 w 8
 h 24
 lineColor index 12
@@ -1494,11 +1454,11 @@ major 4
 minor 5
 release 0
 x 332
-y 248
+y 280
 w 112
 h 24
 controlPv "$(EVR):EVENT6CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1516,11 +1476,11 @@ major 4
 minor 5
 release 0
 x 460
-y 248
+y 280
 w 40
 h 24
 controlPv "$(EVR):EVENT6RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1539,7 +1499,7 @@ major 4
 minor 0
 release 0
 x 444
-y 248
+y 280
 w 8
 h 24
 lineColor index 12
@@ -1554,7 +1514,7 @@ major 4
 minor 0
 release 0
 x 500
-y 248
+y 280
 w 8
 h 24
 lineColor index 12
@@ -1569,11 +1529,11 @@ major 4
 minor 5
 release 0
 x 332
-y 280
+y 312
 w 112
 h 24
 controlPv "$(EVR):EVENT7CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1591,11 +1551,11 @@ major 4
 minor 5
 release 0
 x 460
-y 280
+y 312
 w 40
 h 24
 controlPv "$(EVR):EVENT7RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1614,7 +1574,7 @@ major 4
 minor 0
 release 0
 x 444
-y 280
+y 312
 w 8
 h 24
 lineColor index 12
@@ -1629,7 +1589,7 @@ major 4
 minor 0
 release 0
 x 500
-y 280
+y 312
 w 8
 h 24
 lineColor index 12
@@ -1644,11 +1604,11 @@ major 4
 minor 5
 release 0
 x 332
-y 312
+y 344
 w 112
 h 24
 controlPv "$(EVR):EVENT8CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1666,11 +1626,11 @@ major 4
 minor 5
 release 0
 x 460
-y 312
+y 344
 w 40
 h 24
 controlPv "$(EVR):EVENT8RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1689,7 +1649,7 @@ major 4
 minor 0
 release 0
 x 444
-y 312
+y 344
 w 8
 h 24
 lineColor index 12
@@ -1704,7 +1664,7 @@ major 4
 minor 0
 release 0
 x 500
-y 312
+y 344
 w 8
 h 24
 lineColor index 12
@@ -1719,11 +1679,11 @@ major 4
 minor 5
 release 0
 x 332
-y 344
+y 376
 w 112
 h 24
 controlPv "$(EVR):EVENT9CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1741,11 +1701,11 @@ major 4
 minor 5
 release 0
 x 460
-y 344
+y 376
 w 40
 h 24
 controlPv "$(EVR):EVENT9RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1764,7 +1724,7 @@ major 4
 minor 0
 release 0
 x 444
-y 344
+y 376
 w 8
 h 24
 lineColor index 12
@@ -1779,7 +1739,7 @@ major 4
 minor 0
 release 0
 x 500
-y 344
+y 376
 w 8
 h 24
 lineColor index 12
@@ -1794,11 +1754,11 @@ major 4
 minor 5
 release 0
 x 332
-y 376
+y 408
 w 112
 h 24
 controlPv "$(EVR):EVENT10CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1816,11 +1776,11 @@ major 4
 minor 5
 release 0
 x 460
-y 376
+y 408
 w 40
 h 24
 controlPv "$(EVR):EVENT10RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1839,7 +1799,7 @@ major 4
 minor 0
 release 0
 x 444
-y 376
+y 408
 w 8
 h 24
 lineColor index 12
@@ -1854,7 +1814,7 @@ major 4
 minor 0
 release 0
 x 500
-y 376
+y 408
 w 8
 h 24
 lineColor index 12
@@ -1869,11 +1829,11 @@ major 4
 minor 5
 release 0
 x 332
-y 408
+y 440
 w 112
 h 24
 controlPv "$(EVR):EVENT11CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1891,11 +1851,11 @@ major 4
 minor 5
 release 0
 x 460
-y 408
+y 440
 w 40
 h 24
 controlPv "$(EVR):EVENT11RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1914,7 +1874,7 @@ major 4
 minor 0
 release 0
 x 444
-y 408
+y 440
 w 8
 h 24
 lineColor index 12
@@ -1929,7 +1889,7 @@ major 4
 minor 0
 release 0
 x 500
-y 408
+y 440
 w 8
 h 24
 lineColor index 12
@@ -1944,11 +1904,11 @@ major 4
 minor 5
 release 0
 x 332
-y 437
+y 468
 w 112
 h 24
 controlPv "$(EVR):EVENT12CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1966,11 +1926,11 @@ major 4
 minor 5
 release 0
 x 460
-y 437
+y 468
 w 40
 h 24
 controlPv "$(EVR):EVENT12RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -1989,7 +1949,7 @@ major 4
 minor 0
 release 0
 x 444
-y 437
+y 468
 w 8
 h 24
 lineColor index 12
@@ -2004,7 +1964,7 @@ major 4
 minor 0
 release 0
 x 500
-y 437
+y 468
 w 8
 h 24
 lineColor index 12
@@ -2019,11 +1979,11 @@ major 4
 minor 5
 release 0
 x 332
-y 469
+y 500
 w 112
 h 24
 controlPv "$(EVR):EVENT13CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -2041,11 +2001,11 @@ major 4
 minor 5
 release 0
 x 460
-y 469
+y 500
 w 40
 h 24
 controlPv "$(EVR):EVENT13RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -2064,7 +2024,7 @@ major 4
 minor 0
 release 0
 x 444
-y 469
+y 500
 w 8
 h 24
 lineColor index 12
@@ -2079,7 +2039,7 @@ major 4
 minor 0
 release 0
 x 500
-y 469
+y 500
 w 8
 h 24
 lineColor index 12
@@ -2094,11 +2054,11 @@ major 4
 minor 5
 release 0
 x 332
-y 500
+y 532
 w 112
 h 24
 controlPv "$(EVR):EVENT14CNT"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -2116,11 +2076,11 @@ major 4
 minor 5
 release 0
 x 460
-y 500
+y 532
 w 40
 h 24
 controlPv "$(EVR):EVENT14RATE"
-font "courier-medium-r-12.0"
+font "helvetica-medium-r-12.0"
 fontAlign "right"
 fgColor index 16
 fgAlarm
@@ -2139,7 +2099,7 @@ major 4
 minor 0
 release 0
 x 444
-y 500
+y 532
 w 8
 h 24
 lineColor index 12
@@ -2154,7 +2114,7 @@ major 4
 minor 0
 release 0
 x 500
-y 500
+y 532
 w 8
 h 24
 lineColor index 12
@@ -2169,7 +2129,7 @@ major 4
 minor 5
 release 0
 x 460
-y 88
+y 120
 w 40
 h 24
 controlPv "$(EVR):EVENT1RATE"
@@ -2320,7 +2280,7 @@ x 684
 y 376
 w 60
 h 24
-controlPv "$(TRIG):BW_TICKCALC"
+controlPv "$(TRIG):BW_TDLY"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2440,7 +2400,7 @@ major 4
 minor 5
 release 0
 x 216
-y 88
+y 120
 w 50
 h 24
 controlPv "$(EVR):EVENT1CTRL.ENAB"
@@ -2462,7 +2422,7 @@ major 4
 minor 5
 release 0
 x 272
-y 88
+y 120
 w 50
 h 24
 controlPv "$(EVR):EVENT1CTRL.VME"
@@ -2484,7 +2444,7 @@ major 4
 minor 5
 release 0
 x 216
-y 120
+y 152
 w 50
 h 24
 controlPv "$(EVR):EVENT2CTRL.ENAB"
@@ -2505,7 +2465,7 @@ major 4
 minor 5
 release 0
 x 272
-y 120
+y 152
 w 50
 h 24
 controlPv "$(EVR):EVENT2CTRL.VME"
@@ -2526,7 +2486,7 @@ major 4
 minor 5
 release 0
 x 216
-y 152
+y 184
 w 50
 h 24
 controlPv "$(EVR):EVENT3CTRL.ENAB"
@@ -2547,7 +2507,7 @@ major 4
 minor 5
 release 0
 x 272
-y 152
+y 184
 w 50
 h 24
 controlPv "$(EVR):EVENT3CTRL.VME"
@@ -2568,7 +2528,7 @@ major 4
 minor 5
 release 0
 x 216
-y 184
+y 216
 w 50
 h 24
 controlPv "$(EVR):EVENT4CTRL.ENAB"
@@ -2589,7 +2549,7 @@ major 4
 minor 5
 release 0
 x 272
-y 184
+y 216
 w 50
 h 24
 controlPv "$(EVR):EVENT4CTRL.VME"
@@ -2610,7 +2570,7 @@ major 4
 minor 5
 release 0
 x 216
-y 215
+y 248
 w 50
 h 24
 controlPv "$(EVR):EVENT5CTRL.ENAB"
@@ -2631,7 +2591,7 @@ major 4
 minor 5
 release 0
 x 272
-y 215
+y 248
 w 50
 h 24
 controlPv "$(EVR):EVENT5CTRL.VME"
@@ -2652,7 +2612,7 @@ major 4
 minor 5
 release 0
 x 272
-y 247
+y 280
 w 50
 h 24
 controlPv "$(EVR):EVENT6CTRL.VME"
@@ -2673,7 +2633,7 @@ major 4
 minor 5
 release 0
 x 216
-y 247
+y 280
 w 50
 h 24
 controlPv "$(EVR):EVENT6CTRL.ENAB"
@@ -2694,7 +2654,7 @@ major 4
 minor 5
 release 0
 x 272
-y 279
+y 312
 w 50
 h 24
 controlPv "$(EVR):EVENT7CTRL.VME"
@@ -2715,7 +2675,7 @@ major 4
 minor 5
 release 0
 x 216
-y 279
+y 312
 w 50
 h 24
 controlPv "$(EVR):EVENT7CTRL.ENAB"
@@ -2736,7 +2696,7 @@ major 4
 minor 5
 release 0
 x 272
-y 310
+y 344
 w 50
 h 24
 controlPv "$(EVR):EVENT8CTRL.VME"
@@ -2757,7 +2717,7 @@ major 4
 minor 5
 release 0
 x 216
-y 310
+y 344
 w 50
 h 24
 controlPv "$(EVR):EVENT8CTRL.ENAB"
@@ -2778,7 +2738,7 @@ major 4
 minor 5
 release 0
 x 272
-y 342
+y 376
 w 50
 h 24
 controlPv "$(EVR):EVENT9CTRL.VME"
@@ -2799,7 +2759,7 @@ major 4
 minor 5
 release 0
 x 216
-y 342
+y 376
 w 50
 h 24
 controlPv "$(EVR):EVENT9CTRL.ENAB"
@@ -2820,7 +2780,7 @@ major 4
 minor 5
 release 0
 x 272
-y 374
+y 408
 w 50
 h 24
 controlPv "$(EVR):EVENT10CTRL.VME"
@@ -2841,7 +2801,7 @@ major 4
 minor 5
 release 0
 x 216
-y 374
+y 408
 w 50
 h 24
 controlPv "$(EVR):EVENT10CTRL.ENAB"
@@ -2862,7 +2822,7 @@ major 4
 minor 5
 release 0
 x 272
-y 405
+y 436
 w 50
 h 24
 controlPv "$(EVR):EVENT11CTRL.VME"
@@ -2883,7 +2843,7 @@ major 4
 minor 5
 release 0
 x 216
-y 405
+y 436
 w 50
 h 24
 controlPv "$(EVR):EVENT11CTRL.ENAB"
@@ -2904,7 +2864,7 @@ major 4
 minor 5
 release 0
 x 272
-y 437
+y 468
 w 50
 h 24
 controlPv "$(EVR):EVENT12CTRL.VME"
@@ -2925,7 +2885,7 @@ major 4
 minor 5
 release 0
 x 216
-y 437
+y 468
 w 50
 h 24
 controlPv "$(EVR):EVENT12CTRL.ENAB"
@@ -2946,7 +2906,7 @@ major 4
 minor 5
 release 0
 x 272
-y 469
+y 500
 w 50
 h 24
 controlPv "$(EVR):EVENT13CTRL.VME"
@@ -2967,7 +2927,7 @@ major 4
 minor 5
 release 0
 x 216
-y 469
+y 500
 w 50
 h 24
 controlPv "$(EVR):EVENT13CTRL.ENAB"
@@ -2988,7 +2948,7 @@ major 4
 minor 5
 release 0
 x 272
-y 500
+y 532
 w 50
 h 24
 controlPv "$(EVR):EVENT14CTRL.VME"
@@ -3009,7 +2969,7 @@ major 4
 minor 5
 release 0
 x 216
-y 500
+y 532
 w 50
 h 24
 controlPv "$(EVR):EVENT14CTRL.ENAB"
@@ -3118,38 +3078,11 @@ major 4
 minor 5
 release 0
 x 160
-y 88
-w 40
-h 24
-controlPv "$(EVR):EVENT1CTRL.ENM"
-font "courier-bold-r-12.0"
-fontAlign "center"
-fgColor index 25
-fgAlarm
-bgColor index 5
-editable
-motifWidget
-limitsFromDb
-nullColor index 18
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 160
 y 120
 w 40
 h 24
-controlPv "$(EVR):EVENT2CTRL.ENM"
-font "courier-bold-r-12.0"
+controlPv "$(EVR):EVENT1CTRL.ENM"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3175,8 +3108,8 @@ x 160
 y 152
 w 40
 h 24
-controlPv "$(EVR):EVENT3CTRL.ENM"
-font "courier-bold-r-12.0"
+controlPv "$(EVR):EVENT2CTRL.ENM"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3202,8 +3135,8 @@ x 160
 y 184
 w 40
 h 24
-controlPv "$(EVR):EVENT4CTRL.ENM"
-font "courier-bold-r-12.0"
+controlPv "$(EVR):EVENT3CTRL.ENM"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3226,11 +3159,38 @@ major 4
 minor 5
 release 0
 x 160
-y 215
+y 216
+w 40
+h 24
+controlPv "$(EVR):EVENT4CTRL.ENM"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 248
 w 40
 h 24
 controlPv "$(EVR):EVENT5CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3253,11 +3213,11 @@ major 4
 minor 5
 release 0
 x 160
-y 247
+y 280
 w 40
 h 24
 controlPv "$(EVR):EVENT6CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3280,11 +3240,11 @@ major 4
 minor 5
 release 0
 x 160
-y 310
+y 344
 w 40
 h 24
 controlPv "$(EVR):EVENT8CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3307,11 +3267,11 @@ major 4
 minor 5
 release 0
 x 160
-y 279
+y 312
 w 40
 h 24
 controlPv "$(EVR):EVENT7CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3334,11 +3294,11 @@ major 4
 minor 5
 release 0
 x 160
-y 342
+y 376
 w 40
 h 24
 controlPv "$(EVR):EVENT9CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3361,11 +3321,11 @@ major 4
 minor 5
 release 0
 x 160
-y 374
+y 408
 w 40
 h 24
 controlPv "$(EVR):EVENT10CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3388,11 +3348,11 @@ major 4
 minor 5
 release 0
 x 160
-y 405
+y 436
 w 40
 h 24
 controlPv "$(EVR):EVENT11CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3415,38 +3375,11 @@ major 4
 minor 5
 release 0
 x 160
-y 437
+y 468
 w 40
 h 24
 controlPv "$(EVR):EVENT12CTRL.ENM"
-font "courier-bold-r-12.0"
-fontAlign "center"
-fgColor index 25
-fgAlarm
-bgColor index 5
-editable
-motifWidget
-limitsFromDb
-nullColor index 18
-smartRefresh
-fastUpdate
-newPos
-objType "controls"
-noExecuteClipMask
-endObjectProperties
-
-# (Text Control)
-object activeXTextDspClass
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 160
-y 469
-w 40
-h 24
-controlPv "$(EVR):EVENT13CTRL.ENM"
-font "courier-bold-r-12.0"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3472,8 +3405,8 @@ x 160
 y 500
 w 40
 h 24
-controlPv "$(EVR):EVENT14CTRL.ENM"
-font "courier-bold-r-12.0"
+controlPv "$(EVR):EVENT13CTRL.ENM"
+font "helvetica-bold-r-12.0"
 fontAlign "center"
 fgColor index 25
 fgAlarm
@@ -3489,18 +3422,195 @@ objType "controls"
 noExecuteClipMask
 endObjectProperties
 
-# (Group)
-object activeGroupClass
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 160
+y 532
+w 40
+h 24
+controlPv "$(EVR):EVENT14CTRL.ENM"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+smartRefresh
+fastUpdate
+newPos
+objType "controls"
+noExecuteClipMask
+endObjectProperties
+
+# (Button)
+object activeButtonClass
 beginObjectProperties
 major 4
 minor 0
 release 0
-x 348
-y 16
-w 76
-h 20
+x 536
+y 88
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(TRIG):EVENTCTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-10.0"
+objType "controls"
+endObjectProperties
 
-beginGroup
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 8
+y 88
+w 144
+h 24
+controlPv "$(TRIG):EVENT_NAME"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 12
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 332
+y 88
+w 112
+h 24
+controlPv "$(TRIG):EVENTCNT"
+font "helvetica-medium-r-12.0"
+fontAlign "right"
+fgColor index 16
+fgAlarm
+bgColor index 12
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 444
+y 88
+w 8
+h 24
+lineColor index 12
+fill
+fillColor index 12
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 500
+y 88
+w 8
+h 24
+lineColor index 12
+fill
+fillColor index 12
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 460
+y 88
+w 40
+h 24
+controlPv "$(TRIG):EVENTRATE"
+font "helvetica-medium-r-12.0"
+fontAlign "right"
+fgColor index 16
+bgColor index 12
+limitsFromDb
+nullColor index 18
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+noExecuteClipMask
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 216
+y 88
+w 50
+h 24
+controlPv "$(TRIG):EVENTCTRL.ENAB"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 5
+release 0
+x 272
+y 88
+w 50
+h 24
+controlPv "$(TRIG):EVENTCTRL.VME"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
 
 # (Text Control)
 object activeXTextDspClass
@@ -3508,45 +3618,24 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 348
-y 16
-w 76
-h 20
-controlPv "$(TRIG):TDES"
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 6
+x 160
+y 88
+w 40
+h 24
+controlPv "$(TRIG):EVENTCTRL.ENM"
+font "helvetica-bold-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 5
+editable
+motifWidget
 limitsFromDb
-nullColor index 14
-useHexPrefix
+nullColor index 18
+smartRefresh
+fastUpdate
 newPos
 objType "controls"
-endObjectProperties
-
-endGroup
-
-visPv "LAS:SR63:EVR:09:EVENT13CTRL.OUT0"
-visMin "1"
-visMax "2"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 220
-y 52
-w 315
-h 14
-font "helvetica-medium-r-12.0"
-fgColor index 19
-bgColor index 3
-useDisplayBg
-value {
-  "TODO: Disable event code field while any outputs use it"
-}
-autoSize
+noExecuteClipMask
 endObjectProperties
 
