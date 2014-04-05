@@ -11,8 +11,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 492
-y 227
+x 823
+y 48
 w 784
 h 582
 font "helvetica-medium-r-12.0"
@@ -41,7 +41,7 @@ minor 1
 release 0
 x 16
 y 168
-w 756
+w 760
 h 404
 font "helvetica-medium-r-12.0"
 fgColor index 14
@@ -129,7 +129,7 @@ minor 0
 release 0
 x 16
 y 64
-w 752
+w 760
 h 96
 lineColor index 3
 fill
@@ -144,13 +144,14 @@ minor 1
 release 0
 x 24
 y 72
-w 181
+w 88
 h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
+font "helvetica-bold-r-14.0"
+fontAlign "center"
+fgColor index 25
 bgColor index 3
 value {
-  "EVR Delay, nsec"
+  "TDLY"
 }
 endObjectProperties
 
@@ -180,9 +181,9 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 644
+x 640
 y 104
-w 120
+w 128
 h 24
 fgColor index 80
 bgColor index 4
@@ -991,7 +992,7 @@ x 436
 y 460
 w 116
 h 24
-controlPv "$(TRIG):BW_TICKCALC"
+controlPv "$(TRIG):BW_TDLY"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -1016,7 +1017,7 @@ x 24
 y 104
 w 88
 h 24
-controlPv "$(TRIG):TDLYCALC"
+controlPv "$(TRIG):TDLY_NS"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -1115,7 +1116,7 @@ x 468
 y 104
 w 48
 h 24
-controlPv "$(TRIG):TDLYCALC.D"
+controlPv "$(TRIG):TDLY_NS.D"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -1372,7 +1373,7 @@ x 436
 y 432
 w 116
 h 24
-controlPv "$(TRIG):BW_TDLYCALC"
+controlPv "$(TRIG):BW_TDLY_NS"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15

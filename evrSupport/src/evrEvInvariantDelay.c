@@ -39,7 +39,7 @@ static long lsubTrigSel(longSubRecord *prec)
 
 	if ( prec->tpro >= 2 )
 		printf( "lsubTrigSel %s: No inputs non-zero!\n", prec->name );
-	prec->val	= 0;
+	prec->val	= -1;
 	prec->brsv	= INVALID_ALARM;
 	return -1;
 }
@@ -54,11 +54,17 @@ static long lsubEvSelInit(longSubRecord *prec)
 
 static long lsubEvSel(longSubRecord *prec)
 {
-    epicsUInt32  i  = prec->v;
-    epicsUInt32  *p = &prec->a;
+    epicsInt32		i	= prec->z;
+    epicsUInt32	*	p	= &prec->a;
 
-    prec->val = *(p+i);
+    if ( i < 0 || i >= 24 )
+	{
+		prec->val	= 0;
+		prec->brsv	= INVALID_ALARM;
+    	return -1;
+	}
 
+	prec->val = *(p+i);
 	if ( prec->tpro >= 2 )
     	printf("lsubEvSel %s: Input %u is %u\n", prec->name, i, prec->val);
 
@@ -145,6 +151,66 @@ static long lsubCountNonZero(longSubRecord *prec)
 	return 0;
 }
 
+#define	N_ASUB_ARGS		21
+static long asubCopyInToOutInit( aSubRecord * prec )
+{
+    epicsUInt32		i;
+    void		**	pVoidIn		= &prec->a;
+    void		**	pVoidOut	= &prec->vala;
+    epicsUInt32	**	pIn			= (epicsUInt32 **)pVoidIn;
+    epicsUInt32	**	pOut		= (epicsUInt32 **)pVoidOut;
+    epicsUInt32	*	pInCnt		= &prec->nea;
+    epicsUInt32	*	pOutCnt		= &prec->noa;
+    epicsEnum16	*	pInType		= &prec->fta;
+    epicsEnum16	*	pOutType	= &prec->ftva;
+
+	if ( prec->tpro )
+    	printf("asubCopyInToOutInit for %s\n", prec->name);
+    for ( i = 0; i < N_ASUB_ARGS; i++ )
+	{
+		assert( dbValueSize(*pInType)	== dbValueSize(DBF_ULONG) );
+		assert( dbValueSize(*pOutType)	== dbValueSize(DBF_ULONG) );
+		if ( prec->tpro >= 2 )
+		{
+			printf( "INP%c: pIn  = 0x%p, cnt = %u\n",
+					'A' + i, pIn[i], *pInCnt );
+			printf( "OUT%c: pOut = 0x%p, cnt = %u\n",
+					'A' + i, pOut[i], *pOutCnt );
+		}
+		pInCnt++;	pOutCnt++;
+		pInType++;	pOutType++;
+	}
+
+    return 0;
+}
+
+static long asubCopyInToOut( aSubRecord * prec )
+{
+    epicsUInt32		i;
+    void		**	pVoidIn		= &prec->a;
+    void		**	pVoidOut	= &prec->vala;
+    epicsUInt32	**	pIn			= (epicsUInt32 **)pVoidIn;
+    epicsUInt32	**	pOut		= (epicsUInt32 **)pVoidOut;
+    epicsUInt32	*	pInCnt		= &prec->nea;
+    epicsUInt32	*	pOutCnt		= &prec->noa;
+
+    for ( i = 0; i < N_ASUB_ARGS; i++ )
+	{
+		size_t		count	= *pInCnt;
+		if( count > *pOutCnt )
+			count = *pOutCnt;
+		if ( prec->tpro >= 2 )
+			printf( "%s.OUT%c: memcpy( pOut=0x%p, pIn=0x%p, cnt=%zu ) *pIn=%u\n",
+					prec->name, 'A' + i, pOut[i], pIn[i], count, *pIn[i] );
+		memcpy( pOut[i], pIn[i], count );
+		pInCnt++; pOutCnt++;
+	}
+
+	if ( prec->tpro >= 2 )
+    	printf("asubCopyInToOutInit for %s\n", prec->name);
+    return 0;
+}
+
 epicsRegisterFunction(lsubTrigSelInit);
 epicsRegisterFunction(lsubTrigSel);
 epicsRegisterFunction(lsubEvSelInit);
@@ -153,3 +219,5 @@ epicsRegisterFunction(aSubEvOffsetInit);
 epicsRegisterFunction(aSubEvOffset);
 epicsRegisterFunction(lsubCountNonZeroInit);
 epicsRegisterFunction(lsubCountNonZero);
+epicsRegisterFunction(asubCopyInToOutInit);
+epicsRegisterFunction(asubCopyInToOut);
