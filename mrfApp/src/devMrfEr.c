@@ -638,7 +638,9 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
                 printf ("ErEventProcess(%s) event number changed %d-%d\n", 
                               pRec->name, pRec->lenm, pRec->enm);
 			/* Check to see if the new event number is already used */
-			if (	(pRec->enm < EVR_NUM_EVENTS) && (pRec->enm > 0)
+			if (	(pRec->enm > 0)
+				&&	0	/* Test disabled while testing support for multiple control records w/ same EC */
+				&&	(pRec->enm < EVR_NUM_EVENTS)
 				&&	pCard->ErEventTab[pRec->enm] != 0 ) {
 			   /*----------------
 			    * The new event number is already being used by a different erevent record
@@ -666,9 +668,9 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
 				recGblSetSevr(	pRec, STATE_ALARM, MAJOR_ALARM	);
 			}
 			else {
-				/* Clear the entry for the previous event number */ 
+				/* Turn off the mask bits for the previous event number */ 
 				if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
-					pCard->ErEventTab[pRec->lenm] = 0;
+					pCard->ErEventTab[pRec->lenm] &= ~pRec->lout; /* lout is prior Mask */
 					LoadRam = epicsTrue;
 				}/*end if previous event number was valid*/
 			}
@@ -707,7 +709,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         * If the ENM field is valid, load the output mask for this event.
         */
         if (LoadMask && (pRec->enm < EVR_NUM_EVENTS) && (pRec->enm > 0)) {
-            pCard->ErEventTab[pRec->enm] = Mask;
+            pCard->ErEventTab[pRec->enm] |= pRec->lout;
             LoadRam = epicsTrue;
         }/*end if we should write new output mask for this event*/
 
@@ -726,7 +728,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         * "Enable" to "Disable", then LENM will equal ENM.)
         */
         if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
-            pCard->ErEventTab[pRec->lenm] = 0;
+            pCard->ErEventTab[pRec->lenm] &= ~pRec->lout;
             LoadRam = epicsTrue;
         }/*end if LENM was valid*/
 
@@ -1171,7 +1173,7 @@ epicsStatus ErEpicsStringoutInitRec (stringoutRecord *pRec)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      Always returns 2 (don't convert)
+|*      Returns -1 on error, 0 on success
 |*
 \**************************************************************************************************/
 
@@ -1219,15 +1221,16 @@ epicsStatus ErEpicsStringoutWrite (stringoutRecord  *pRec)
 	 * later use when the ereventRecord handles changing event codes
 	 */
 	strncpy( &pCard->EventCodeDesc[Event][0], &pRec->val[0], MAX_STRING_SIZE+1 );
+	pRec->udf = 0;
 
     /*---------------------
      * Unlock the Event Record card structure
      */
     epicsMutexUnlock (pCard->CardLock);
 
-    return (2);
-
+    return (0);
 }/*end ErEpicsStringoutWrite()*/
+
 
 /**************************************************************************************************/
 /*                         EPICS stringin Record Device Support Routines                         */
@@ -1290,6 +1293,7 @@ epicsStatus ErEpicsStringinInitRec (stringinRecord *pRec)
 
    /*---------------------
     * Extract the Event Receiver card number (card) from the record's input link.
+	* The signal number is not used here as we get the event code from our EVNT field.
     */
     Card = pRec->inp.value.vmeio.card;
 
@@ -1335,7 +1339,7 @@ epicsStatus ErEpicsStringinInitRec (stringinRecord *pRec)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      Always returns 2 (don't convert)
+|*      Returns -1 on error, 0 on success
 |*
 \**************************************************************************************************/
 
@@ -1382,6 +1386,7 @@ epicsStatus ErEpicsStringinRead (stringinRecord  *pRec)
 	 * Fetch the event code description
 	 */
 	strncpy( &pRec->val[0], &pCard->EventCodeDesc[Event][0], MAX_STRING_SIZE+1 );
+	pRec->udf = 0;
 
     /*---------------------
      * Unlock the Event Record card structure
@@ -1391,8 +1396,7 @@ epicsStatus ErEpicsStringinRead (stringinRecord  *pRec)
 	if ( pRec->tpro )
 		printf( "ErEpicsStringinRead: %s updated to %s for EC %d\n",
 				pRec->name, pRec->val, pRec->evnt );
-
-    return (2);
+    return (0);
 
 }/*end ErEpicsStringinRead()*/
 
