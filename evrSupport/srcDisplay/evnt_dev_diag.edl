@@ -11,8 +11,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 823
-y 48
+x 895
+y 428
 w 784
 h 582
 font "helvetica-medium-r-12.0"
@@ -181,16 +181,16 @@ beginObjectProperties
 major 4
 minor 3
 release 0
-x 640
+x 652
 y 104
-w 128
+w 116
 h 24
 fgColor index 80
 bgColor index 4
 topShadowColor index 1
 botShadowColor index 11
 font "helvetica-medium-r-12.0"
-buttonLabel "$(EVR)..."
+buttonLabel "More diag ..."
 numPvs 4
 numDsps 1
 displayFileName {
