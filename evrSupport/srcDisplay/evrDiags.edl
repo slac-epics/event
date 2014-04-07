@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 452
-y 68
+x 773
+y 458
 w 711
 h 631
 font "helvetica-medium-r-18.0"
@@ -52,7 +52,7 @@ minor 1
 release 0
 x 5
 y 0
-w 426
+w 408
 h 27
 font "helvetica-bold-r-24.0"
 fgColor index 76
@@ -3221,27 +3221,6 @@ value {
 autoSize
 endObjectProperties
 
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 410
-y 10
-w 201
-h 32
-font "helvetica-bold-r-14.0"
-fgColor index 14
-bgColor index 5
-useDisplayBg
-value {
-  "Changes on this display are "
-  "NOT restored on IOC reboot!"
-}
-autoSize
-endObjectProperties
-
 # (Related Display)
 object relatedDisplayClass
 beginObjectProperties
@@ -4000,7 +3979,7 @@ endObjectProperties
 object activeMessageButtonClass
 beginObjectProperties
 major 4
-minor 0
+minor 1
 release 0
 x 15
 y 345
