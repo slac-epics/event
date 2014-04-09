@@ -87,6 +87,7 @@
 #define	EVR_FIRMWARE_REV_LINUX6	0x11000303
 #define EVR_FIRMWARE_REV_SLAC1	0x1F000000
 #define EVR_FIRMWARE_REV_SLAC2	0x1FD00023
+#define EVR_FIRMWARE_REV_SLAC2	0x1FD10023
 
 /**************************************************************************************************/
 /*  Configuration Constants                                                                       */
