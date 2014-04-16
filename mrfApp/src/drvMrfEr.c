@@ -1617,40 +1617,37 @@ LOCAL_RTN
 epicsStatus ErDrvReport (int level)
 {
     int             NumCards = 0;       /* Number of configured cards we found                    */
+    int             EventNum;
     ErCardStruct   *pCard;              /* Pointer to card structure                              */
-
-    printf ("\n-------------------- %s Hardware Report --------------------\n", CardName);
 
     for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
          pCard != NULL;
          pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
-
         NumCards++;
 
-        if (pCard->FormFactor != PMC_EVR) {
- 			printf ("  Card %d in slot %d.  Firmware Version = %4.4X.\n",
-        			pCard->Cardno, pCard->Slot, ErGetFpgaVersion(pCard));
-			if (pCard->FormFactor == VME_EVR)
-                          printf ("       Form factor = VME\n");
-                        else
-                          printf ("       Form factor = Embedded\n"); 
-        } else {
+		printf ("\n-------------------- EVR#%d Hardware Report --------------------\n", pCard->Cardno);
+		printf("	Form factor %s.\n", FormFactorToString( ErGetFormFactor(pCard) ) );
+		printf("	Firmware Version = %4.4X.\n", ErGetFpgaVersion(pCard));
+		printf ("	Address = %p.\n", pCard->pEr);
+		printf ("	%s,  ", ErMasterEnableGet(pCard)? "Enabled" : "Disabled");
+		printf ("	%d Frame Errors\n", pCard->RxvioCount);
+
 #ifdef PCI
- 			printf ("  Card %d in slot %d/%d/%d.  Firmware Version = %4.4X.\n",
-        			pCard->Cardno,
-					pCard->Slot>>8, PCI_SLOT(pCard->Slot), PCI_FUNC(pCard->Slot),
-					ErGetFpgaVersion(pCard));
-            printf ("       Form factor = PMC\n");
+		printf ("  Card %d in slot %d/%d/%d.  Firmware Version = %4.4X.\n",
+				pCard->Cardno,
+				pCard->Slot>>8, PCI_SLOT(pCard->Slot), PCI_FUNC(pCard->Slot),
+				ErGetFpgaVersion(pCard));
+        printf ("       Vector = %3.3X,  Level = %d\n",
+                pCard->IrqVector, pCard->IrqLevel);
 #endif
-        }
 
-        printf ("       Address = %8.8x,  Vector = %3.3X,  Level = %d\n",
-                (int)pCard->pEr, pCard->IrqVector, pCard->IrqLevel);
-
-        printf ("       %s,  ", ErMasterEnableGet(pCard)? "Enabled" : "Disabled");
-
-        printf ("%d Frame Errors\n", pCard->RxvioCount);
-
+		printf( "ErEventTab[code]: 0x8000 is IRQ, 0x0001 is OUT0, 0x0002 is OUT1, ...\n" );
+		for (EventNum = 0; EventNum < EVR_NUM_EVENTS; EventNum++ ) {
+			if ( pCard->ErEventTab[EventNum] != 0 ) {
+				printf( "ErEventTab[%3d] = 0x%04x\n", EventNum, pCard->ErEventTab[EventNum] );
+			}
+		}
+		printf("\n");
     }/*end for each configured Event Receiver Card*/
 
    /*---------------------

@@ -104,8 +104,8 @@ LIBRARY_IOC_Linux   += devMrfEr
 # Source objects for Event Receiver Library
 devMrfEr_OBJS       += devMrfEr
 devMrfEr_OBJS       += erRecord
-devMrfEr_OBJS       += ereventRecord
-
+devMrfEr_OBJS       += ereventRecord 
+devMrfEr_OBJS       += mrfCommon 
 
 # RTEMS source
 devMrfEr_OBJS_RTEMS   += drvMrfEr

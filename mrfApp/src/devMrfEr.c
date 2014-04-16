@@ -106,6 +106,10 @@
 
 LOCAL_RTN void ErDevEventFunc (ErCardStruct*, epicsInt16, epicsUInt32);
 LOCAL_RTN void ErDevErrorFunc (ErCardStruct*, int);
+LOCAL_RTN epicsStatus ErUpdateEventTab( ErCardStruct	*	pCard,
+										epicsInt16    		EventNum,
+										epicsUInt16    		oldMask,
+										epicsUInt16    		newMask );
 
 
 /**************************************************************************************************/
@@ -635,83 +639,38 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         */
         if (pRec->enm != pRec->lenm) {
             if (DebugFlag)
-                printf ("ErEventProcess(%s) event number changed %d-%d\n", 
+                printf ("ErEventProcess(%s) event number changed from %d to %d\n", 
                               pRec->name, pRec->lenm, pRec->enm);
-			/* Check to see if the new event number is already used */
-			if (	(pRec->enm > 0)
-				&&	0	/* Test disabled while testing support for multiple control records w/ same EC */
-				&&	(pRec->enm < EVR_NUM_EVENTS)
-				&&	pCard->ErEventTab[pRec->enm] != 0 ) {
-			   /*----------------
-			    * The new event number is already being used by a different erevent record
-				* Force this record to keep it's prior event number
-				*/
-        		errlogPrintf( "ErEventProcess Error: Event Code %d already in use!\n", pRec->enm );
-				pRec->enm = pRec->lenm;
-
-			   /*----------------
-				* Clear the output mask for our old event number
-				*/
-				if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
-					pCard->ErEventTab[pRec->lenm] = 0;
-					LoadRam = epicsTrue;
-				}/*end if LENM was valid*/
-
-			   /*---------------------
-				* Disable the event and set LENM to an invalid code in order to:
-				* a) Inhibit further processing until ENAB goes back to "Enabled", and
-				* b) Force a RAM re-load when ENAB does go back to "Enabled".
-				*/
-				Mask		= 0;
-				pRec->enab	= epicsFalse;
-				pRec->lenm	= -1;
-				recGblSetSevr(	pRec, STATE_ALARM, MAJOR_ALARM	);
-			}
-			else {
-				/* Turn off the mask bits for the previous event number */ 
-				if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
-					pCard->ErEventTab[pRec->lenm] &= ~pRec->lout; /* lout is prior Mask */
-					LoadRam = epicsTrue;
-				}/*end if previous event number was valid*/
-			}
+			/* Turn off the mask bits for the previous event number */ 
+			if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
+				ErUpdateEventTab( pCard, pRec->lenm, pRec->lout, 0 );	/* lout is prior Mask */
+				ErUpdateEventTab( pCard, pRec->enm,  0, Mask );
+				LoadRam = epicsTrue;
+			}/*end if previous event number was valid*/
 
             pRec->lenm = pRec->enm;
             LoadMask = epicsTrue;
         }/*end if event number has changed*/
 
-#if 0
-		/* Update the description field each time we process the erevent
-		 * record so the description propagates to the erevent record if
-		 * the description is updated in the EVG.
-		 */
-		if ((pRec->enm < EVR_NUM_EVENTS) && (pRec->enm > 0)) {
-			/*
-			 * Update the record desc field with the description
-			 * for this event code
-			 */
-		   strncpy( &pRec->desc[0], &pCard->EventCodeDesc[pRec->enm][0],
-					MAX_STRING_SIZE+1 );
-		}
-#endif
-
        /*---------------------
         * Check to see if the output mask has changed
         */
         if (Mask != pRec->lout) {
-            if (DebugFlag)
-                printf ("ErEventProcess(%s) New RAM mask is 0x%4.4X\n", pRec->name, Mask);
+            /*if (DebugFlag)*/
+                printf( "ErEventProcess(%s) New output mask 0x%04X, old mask 0x%04X\n",
+						pRec->name, Mask, pRec->lout );
+
+			/*-------------------
+			 * If the ENM field is valid, update the output mask for this event.
+			 */
+			if ( (pRec->enm < EVR_NUM_EVENTS) && (pRec->enm > 0)) {
+				ErUpdateEventTab( pCard, pRec->enm, pRec->lout, Mask ); /* lout is prior Mask */
+				LoadRam = epicsTrue;
+			}/*end if we should write new output mask for this event*/
 
             pRec->lout = Mask;
             LoadMask = epicsTrue;
         }/*end if output mask has changed*/
-
-       /*---------------------
-        * If the ENM field is valid, load the output mask for this event.
-        */
-        if (LoadMask && (pRec->enm < EVR_NUM_EVENTS) && (pRec->enm > 0)) {
-            pCard->ErEventTab[pRec->enm] |= pRec->lout;
-            LoadRam = epicsTrue;
-        }/*end if we should write new output mask for this event*/
 
     }/*end if record is enabled*/
 
@@ -728,7 +687,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         * "Enable" to "Disable", then LENM will equal ENM.)
         */
         if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
-            pCard->ErEventTab[pRec->lenm] &= ~pRec->lout;
+			ErUpdateEventTab( pCard, pRec->lenm, pRec->lout, 0 ); /* lout is prior Mask */
             LoadRam = epicsTrue;
         }/*end if LENM was valid*/
 
@@ -1442,6 +1401,70 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     scanIoRequest (pCard->IoScanPvt[EventNum]);
 
 }/*end ErDevEventFunc()*/
+
+/**************************************************************************************************
+|* ErUpdateEventTab () -- Device Support Layer Event Table Management
+|*-------------------------------------------------------------------------------------------------
+|* 
+|* This routine is called by the driver support layer to update the event table
+|*
+|*-------------------------------------------------------------------------------------------------
+|* INPUT PARAMETERS:
+|*      pCard    = (ErCardStruct *)  Pointer to the Event Receiver card structure
+|*      EventNum = (epicsInt16)      Event number
+|*      oldMask  = (epicsUInt16)     Old Event Mask (See EVR_MAP_CHAN_*)
+|*      newMask  = (epicsUInt16)     New Event Mask (See EVR_MAP_CHAN_*)
+|*
+|*-------------------------------------------------------------------------------------------------
+|* FUNCTION:
+|* o For the specified eventy number, this routine decrements the event
+|*   table count for the old mask and increments the count for the new mask
+|*   Any non-zero counts are enabled in the master event table.
+|*
+|*-------------------------------------------------------------------------------------------------
+|* RETURNS:
+|*      Returns 0  on success
+|*      Returns -1 on error
+|*-------------------------------------------------------------------------------------------------
+|* NOTES:
+|* o 
+\**************************************************************************************************/
+
+LOCAL_RTN
+epicsStatus ErUpdateEventTab(
+    ErCardStruct	*	pCard,                  /* Pointer to Event Receiver card structure       */
+    epicsInt16    		EventNum,				/* Event number to update				          */
+    epicsUInt16    		oldMask,				/* Old output mask for this event number          */
+    epicsUInt16    		newMask )				/* New output mask for this event number          */
+{
+	/*---------------------
+     * Local variables
+     */
+	epicsUInt16		newEventTabMask	= 0;
+	unsigned int	chan			= 0;
+
+    /*if (ErDebug) */
+	printf( "devMrfEr::ErUpdateEventTab( event num %d, old 0x%04X, new 0x%04X )\n", EventNum, oldMask, newMask );
+	if ( (EventNum < 0) || (EventNum >= EVR_NUM_EVENTS) )
+		return -1;
+
+	for ( chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
+	{
+		epicsUInt16	chanMask = 1 << chan;
+		if ( (newMask & chanMask) != 0 )
+			pCard->ErEventCnt[EventNum][chan] += 1;
+		if ( (oldMask & chanMask) != 0 && pCard->ErEventCnt[EventNum][chan] > 0 )
+			pCard->ErEventCnt[EventNum][chan] -= 1;
+		if (pCard->ErEventCnt[EventNum][chan] > 0)
+			newEventTabMask |= chanMask;
+	}
+
+	pCard->ErEventTab[EventNum] = newEventTabMask;
+    /*if (ErDebug) */
+        printf( "devMrfEr::ErUpdateEventTab: New mask for event num %d is 0x%04X\n", EventNum, newEventTabMask );
+	return 0;
+}	/*end ErUpdateEventTab*/
+
 
 /**************************************************************************************************/
 /*                                 Local Callback Routines                                        */
