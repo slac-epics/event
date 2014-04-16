@@ -181,39 +181,6 @@ static epicsMutexId ErConfigureLock;
 /*                              Private APIs                                                      */
 /*                                                                                                */
 
-char *	FormFactorToString( int formFactor )
-{
-	char	*	pString;
-	switch ( formFactor )
-	{
-	default:		pString	= "Invalid";	break;
-	case PMC_EVR:	pString	= "PMC_EVR";	break;
-	case CPCI_EVR:	pString	= "cPCI_EVR";	break;
-	case VME_EVR:	pString	= "VME_EVR";	break;
-	case SLAC_EVR:	pString	= "SLAC_EVR";	break;
-	case PCIE_EVR:	pString = "PCIE_EVR";	break;
-	}
-	return pString;
-}
-
-
-int ErGetFormFactor( volatile struct MrfErRegs	*	pEr )
-{
-	int		formFactor;
-	int		id = (be32_to_cpu(pEr->FPGAVersion)>>24) & 0x0F;
-	switch ( id )
-	{
-	case 0x1:	formFactor	= PMC_EVR;	break;
-	case 0x0:	formFactor	= CPCI_EVR;	break;
-	case 0x2:	formFactor	= VME_EVR;	break;
-	case 0x7:	formFactor	= PCIE_EVR;	break;
-	case 0xf:	formFactor	= SLAC_EVR;	break;
-	default:	formFactor	= -1;		break;
-	}
-	return formFactor;
-}
-
-
 int find_free_pulsegen(struct LinuxErCardStruct *pLinuxErCard)
 {
 	enum outputs_mapping_id pulse;
@@ -516,7 +483,7 @@ static int ErConfigure (
 
 	/* Check the firmware version */
 	FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
-	printf( "PMC EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
+	printf( "PMC EVR Found with Firmware Revision 0x%08X\n", FPGAVersion );
 	switch ( FPGAVersion )
 	{
 	default:
@@ -542,7 +509,7 @@ static int ErConfigure (
 	}
 
 	/* Check the hardware signature for an EVR */
-	if(( FPGAVersion >>28) != 0x1) {
+	if ( (FPGAVersion >> 28) != 0x1 ) {
 		errlogPrintf("%s: invalid hardware signature: 0x%08x.\n", __func__, FPGAVersion );
 		EvrClose(fdEvr);
 	    epicsMutexUnlock(ErConfigureLock);
@@ -550,7 +517,7 @@ static int ErConfigure (
 	}
 
 	ret = 0;
-	actualFormFactor = ErGetFormFactor( pEr );
+	actualFormFactor = FpgaVersionToFormFactor( FPGAVersion );
 	if ( FormFactor == actualFormFactor )
 	{
 		printf( "Found a %s %s\n",
@@ -561,7 +528,7 @@ static int ErConfigure (
 		printf( "Configured for %s form factor, but %s has %s form factor.\n",
 				FormFactorToString( FormFactor ), strDevice,
 				FormFactorToString( actualFormFactor ) );
-		errlogPrintf("%s: wrong form factor %d, signature is 0x%08x.\n", __func__, FormFactor, be32_to_cpu(pEr->FPGAVersion));
+		errlogPrintf("%s: wrong form factor %d, signature is 0x%08x.\n", __func__, FormFactor, FPGAVersion);
 		EvrClose(fdEvr);
 		epicsMutexUnlock(ErConfigureLock);
 		return ERROR;
@@ -877,16 +844,19 @@ ErCardStruct *ErGetCardStruct(int Card)
 |* 
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      version   = (epicsUInt16)    The FPGA version of the requested Event Receiver Card.
+|*      version   = (epicsUInt32)    The FPGA version of the requested Event Receiver Card.
 |*
 \**************************************************************************************************/
-epicsUInt16 ErGetFpgaVersion(ErCardStruct *pCard)
-{	
+epicsUInt32 ErGetFpgaVersion(ErCardStruct *pCard)
+{
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	epicsUInt32 version;
 
 	if ( pEr == NULL )
+	{
 		errlogPrintf( "%s: NULL EVR structure pointer\n", __func__ );
+		return 0;
+	}
 
 	/* no need for a lock, this is a read only register */
 	version = be32_to_cpu(pEr->FPGAVersion);
@@ -1083,9 +1053,9 @@ void ErRegisterDevDBuffHandler (ErCardStruct *pCard, DEV_DBUFF_FUNC DBuffFunc)
  * proposed rework of update_fw_map().
  * See notes above update_fw_map implementation.
  */
-int EvrSetOutMap(volatile struct MrfErRegs *pEr, int output, int map)
+int EvrSetOutMap( ErCardStruct *pCard, volatile struct MrfErRegs *pEr, int output, int map)
 {
-	switch ( ErGetFormFactor(pEr) ) {
+	switch ( ErGetFormFactor(pCard) ) {
 		default:  break;
 		case PCIE_EVR:
 			return ( output < TOTAL_UO_CHANNELS ) ? EvrSetUnivOutMap(pEr, output, map) : -1;
@@ -1230,7 +1200,7 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 			}
 			map = pulse + PULSE_GENERATOR_0;
 			pLinuxErCard->tb_channel[DELAYED_PULSE_0 + Channel] = map;
-			EvrSetOutMap(pEr, DELAYED_PULSE_0 + Channel, map);
+			EvrSetOutMap(pCard, pEr, DELAYED_PULSE_0 + Channel, map);
 			/* If a front panel uses the same settings as this TB port we update */
 			update_fp_map(pLinuxErCard, DELAYED_PULSE_0 + Channel);
 		} else {
@@ -1243,7 +1213,7 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
-		EvrSetOutMap(pEr, DELAYED_PULSE_0 + Channel, UNUSED);
+		EvrSetOutMap(pCard, pEr, DELAYED_PULSE_0 + Channel, UNUSED);
 		pLinuxErCard->tb_channel[DELAYED_PULSE_0 + Channel] = UNUSED;
 		update_fp_map(pLinuxErCard, DELAYED_PULSE_0 + Channel);
 	}
@@ -1394,7 +1364,7 @@ void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 
 	if(Enable) {
 		epicsMutexLock(pCard->CardLock);
-		EvrSetOutMap(pEr, OTP_DBUS_0 + Channel, DBUS_0 + Channel);
+		EvrSetOutMap(pCard, pEr, OTP_DBUS_0 + Channel, DBUS_0 + Channel);
 		pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel] = DBUS_0 + Channel;
 		pLinuxErCard->OTP[Channel].DBusEnable = epicsTrue;
 		update_fp_map(pLinuxErCard, OTP_DBUS_0 + Channel);
@@ -1456,7 +1426,7 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		pLinuxErCard->tb_channel[OTL_0 + Channel] = map;
 		EvrSetPulseParams(pEr, pulse, 1, 0, 0);
 		EvrSetPulseProperties(pEr, pulse, 1, 1, 1, 0, 1);
-		EvrSetOutMap(pEr, OTL_0 + Channel, map);
+		EvrSetOutMap(pCard, pEr, OTL_0 + Channel, map);
 		/* If a front panel uses the same settings as this TB port we update */
 		update_fp_map(pLinuxErCard, OTL_0 + Channel);
 	} else {
@@ -1464,7 +1434,7 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
-		EvrSetOutMap(pEr, OTL_0 + Channel, UNUSED);
+		EvrSetOutMap(pCard, pEr, OTL_0 + Channel, UNUSED);
 		pLinuxErCard->tb_channel[OTL_0 + Channel] = UNUSED;
 		update_fp_map(pLinuxErCard, OTL_0 + Channel);
 	}		
@@ -1523,7 +1493,7 @@ void ErSetOtp(
 				}
 				map = pulse + PULSE_GENERATOR_0;
 				pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel] = map;
-				EvrSetOutMap(pEr, OTP_DBUS_0 + Channel, map);
+				EvrSetOutMap(pCard, pEr, OTP_DBUS_0 + Channel, map);
 				/* If a front panel uses the same settings as this TB port we update */
 				update_fp_map(pLinuxErCard, OTP_DBUS_0 + Channel);
 			} else {
@@ -1536,7 +1506,7 @@ void ErSetOtp(
 				epicsMutexUnlock(pCard->CardLock);
 				return;
 			}
-			EvrSetOutMap(pEr, OTP_DBUS_0 + Channel, UNUSED);
+			EvrSetOutMap(pCard, pEr, OTP_DBUS_0 + Channel, UNUSED);
 			pLinuxErCard->tb_channel[OTP_DBUS_0 + Channel] = UNUSED;
 			update_fp_map(pLinuxErCard, OTP_DBUS_0 + Channel);
 		}		
@@ -1582,7 +1552,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		map = pulse + PULSE_GENERATOR_0;
 		EvrSetPulseParams(pEr, pulse, 0, 0, 0);
 		EvrSetPulseProperties(pEr, pulse, 1, 0, 0, 1, 1);
-		EvrSetOutMap(pEr, TRIGGER_EVENT_0 + Channel, map);
+		EvrSetOutMap(pCard, pEr, TRIGGER_EVENT_0 + Channel, map);
 		pLinuxErCard->tb_channel[TRIGGER_EVENT_0 + Channel] = map;
 		/* If a front panel uses the same settings as this TB port we update */
 		update_fp_map(pLinuxErCard, TRIGGER_EVENT_0 + Channel);
@@ -1591,7 +1561,7 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 			epicsMutexUnlock(pCard->CardLock);
 			return;
 		}
-		EvrSetOutMap(pEr, TRIGGER_EVENT_0 + Channel, UNUSED);
+		EvrSetOutMap(pCard, pEr, TRIGGER_EVENT_0 + Channel, UNUSED);
 		pLinuxErCard->tb_channel[TRIGGER_EVENT_0 + Channel] = UNUSED;
 		update_fp_map(pLinuxErCard, TRIGGER_EVENT_0 + Channel);
 	}		
@@ -1782,8 +1752,7 @@ epicsStatus ErDrvReport (int level)
 {
 	int             NumCards = 0;       /* Number of configured cards we found                    */
 	ErCardStruct   *pCard;              /* Pointer to card structure                              */
-        int i, ram;
-
+	int				i, ram;
 
 	for (	pCard = (ErCardStruct *)ellFirst(&ErCardList);
 			pCard != NULL;
@@ -1792,14 +1761,14 @@ epicsStatus ErDrvReport (int level)
 		NumCards++;
 
 		printf ("\n-------------------- EVR#%d Hardware Report --------------------\n", pCard->Cardno);
-		printf("	Form factor %s.\n", FormFactorToString( ErGetFormFactor(pEr) ) );
-		printf("	Firmware Version = %4.4X.\n", ErGetFpgaVersion(pCard));
+		printf("	Form factor %s.\n", FormFactorToString( ErGetFormFactor(pCard) ) );
+		printf("	Firmware Version = %8.8X.\n", ErGetFpgaVersion(pCard));
 		printf ("	Address = %p.\n", pCard->pEr);
 		printf ("	%s,  ", ErMasterEnableGet(pCard)? "Enabled" : "Disabled");
 		printf ("	%d Frame Errors\n", pCard->RxvioCount);
 		EvrDumpStatus( pEr );
 		EvrDumpPulses(		pEr, 10 );
-		switch(ErGetFormFactor(pEr)) {
+		switch(ErGetFormFactor(pCard)) {
 		case PMC_EVR:
 			EvrDumpFPOutMap(	pEr, 3 );
 			EvrDumpTBOutMap(	pEr, 16 );
@@ -1816,6 +1785,13 @@ epicsStatus ErDrvReport (int level)
 			EvrDumpUnivOutMap(	pEr, 12 );
 			break;
 		}
+		printf( "ErEventTab[code]: 0x8000 is IRQ, 0x0001 is OUT0, 0x0002 is OUT1, ...\n" );
+		for (i = 0; i < EVR_NUM_EVENTS; i++ ) {
+			if ( pCard->ErEventTab[i] != 0 ) {
+				printf( "ErEventTab[%3d] = 0x%04x\n", i, pCard->ErEventTab[i] );
+			}
+		}
+		printf("\n");
 		if (level >= 1) {
 			struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
 			printf("\nSoftware cache:\n");
