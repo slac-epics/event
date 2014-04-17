@@ -705,20 +705,15 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     * If the event interrupt bit is specified, make sure Event FIFO interrupts are enabled.
     */
     if (LoadRam) {
-        if (DebugFlag)
-		{
+        if (DebugFlag >= 4)
             printf ("ErEventProcess(%s) enabling IRQ\n", pRec->name);
-			sleep(1);
-		}
 
         if (Mask & EVR_MAP_INTERRUPT)
             ErEventIrq (pCard, epicsTrue);
 
-        if (DebugFlag)
-		{
+        if (DebugFlag >= 4)
             printf ("ErEventProcess(%s) updating Event RAM\n", pRec->name);
-			sleep(1);
-		}
+
         ErUpdateRam (pCard, pCard->ErEventTab);
         if (DebugFlag)
 			printf ("ErEventProcess(%s) done updating Event RAM\n", pRec->name);
