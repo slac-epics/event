@@ -581,6 +581,11 @@ LOCAL_RTN void DiagDumpDataBuffer (ErCardStruct*);
 LOCAL_RTN void DiagDumpEventFifo (ErCardStruct*);
 LOCAL_RTN void DiagDumpRam (ErCardStruct*, int);
 LOCAL_RTN void DiagDumpRegs (ErCardStruct*);
+LOCAL_RTN int	EvrGetPulseLimits(	volatile struct MrfErRegs	*	pEr,
+									int								pulse,
+									epicsUInt32					*	pPrescMaxRet,
+									epicsUInt32					*	pDelayMaxRet,
+									epicsUInt32					*	pWidthMaxRet );
 
 /**************************************************************************************************/
 /*                            Common Data Structures and Tables                                   */
@@ -746,7 +751,7 @@ volatile activity_ts activity[MAX_ACTIVITY_CNT];
 |*-------------------------------------------------------------------------------------------------
 |* NOTES:
 |* Debug Level Definitions:
-|*    0: Now debug output produced.
+|*    0: No debug output produced.
 |*    1: Messages on entry to driver and device initialization routines
 |*       Messages when the event mapping RAM is changed.
 |*   10: All previous messages, plus:
@@ -846,7 +851,8 @@ int ErConfigure (
     epicsStatus            status;          /* Status return variable                             */
     epicsAddressType       addressType;     /* Address type for devRegisterAddress                */
     int                    Slot;            /* VME slot number                                    */
-    epicsUInt16		   FPGAVersion;     /* FPGA Firmware Version Number 		          */
+    epicsUInt32			FPGAVersion;		/* FPGA Firmware Version Number 		          */
+	epicsUInt32			pulse;
 
     #ifdef PCI
     /* PMC-EVR only */
@@ -1237,7 +1243,7 @@ int ErConfigure (
 	/*
 	 * Check the firmware version
 	 */
-    	FPGAVersion = ErGetFpgaVersion(pCard);
+	FPGAVersion = ErGetFpgaVersion(pCard);
 	printf( "PMC EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
 	switch ( FPGAVersion )
 	{
@@ -1298,6 +1304,15 @@ int ErConfigure (
       ErResetAll (pCard);
       epicsThreadSleep (epicsThreadSleepQuantum()*10);
     }
+
+	/* Probe for the max pulse parameters */
+	for ( pulse = 0; pulse < EVR_MAX_PULSES; pulse++ )
+	{
+    	EvrGetPulseLimits(	pEr, pulse,
+							&pCard->maxPresc[pulse],
+							&pCard->maxDelay[pulse],
+							&pCard->maxWidth[pulse] );
+	}
     
    /*---------------------
     * Set the interrupt vector in the card's registers.
@@ -1655,7 +1670,17 @@ epicsStatus ErDrvReport (int level)
     */
     if (!NumCards)
         printf ("  No Event Receiver cards were configured\n");
-    
+ 
+	if (level >= 1)
+	{
+		unsigned int i;
+		for (i = 0; i < EVR_MAX_PULSES; i++ )
+		{
+			printf(	"Pulse %2d maxPresc 0x%X, maxDelay 0x%X, maxWidth 0x%X\n", i,
+					pCard->maxPresc[i], pCard->maxDelay[i], pCard->maxWidth[i] );
+		}
+	}
+
 #ifdef DEBUG_ACTIVITY
     if (level > 0) {
       int activityIdx, activityOldIdx, activityOlderIdx, eventIdx;
@@ -2559,7 +2584,7 @@ ErCardStruct *ErGetCardStruct (int Card)
 \**************************************************************************************************/
 
 GLOBAL_RTN
-epicsUInt16 ErGetFpgaVersion (ErCardStruct *pCard)
+epicsUInt32 ErGetFpgaVersion (ErCardStruct *pCard)
 {
     volatile MrfErRegs          *pEr = (MrfErRegs *)pCard->pEr;
     return (MRF_VME_REG16_READ(&pEr->FPGAVersion));
@@ -2771,7 +2796,7 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
    /*---------------------
     * Debug print
     */
-    if (ErDebug)
+    if (ErDebug >= 2)
         printf ("RAM download for RAM %d\n", RamNumber);
 
    /*---------------------
@@ -2842,7 +2867,7 @@ void ErProgramRam (ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
     for (j=0;  j < EVR_NUM_EVENTS; j++) {
         MRF_VME_REG16_WRITE(&pEr->EventRamAddr, j);
         MRF_VME_REG16_WRITE(&pEr->EventRamData, RamBuf[j]);
-        if((ErDebug)&&(RamBuf[j] != 0))
+        if((ErDebug >= 3)&&(RamBuf[j] != 0))
             printf("Event %d: write %d  read %d \n", j, RamBuf[j],
                    MRF_VME_REG16_READ(&pEr->EventRamData));
     }/*end for each event*/
@@ -4224,6 +4249,98 @@ void DiagDumpRegs (ErCardStruct *pCard)
     printf ("--\n");
 
 }/*end DiagDumpRegs()*/
+
+/*
+ * This routine tries to set the pulse parameter
+ * registers to all 1's, then reads back the register
+ * contents in order to determine how many bits they support.
+ */
+int EvrGetPulseLimits(
+	volatile struct MrfErRegs	*	pEr,
+	int								pulse,
+	epicsUInt32					*	pPrescMaxRet,
+	epicsUInt32					*	pDelayMaxRet,
+	epicsUInt32					*	pWidthMaxRet )
+{
+	int								curDelay;
+	int								curPresc;
+	int								curWidth;
+	int								maxDelay;
+	int								maxPresc;
+	int								maxWidth;
+    epicsUInt32						FPGAVersion;
+
+	if ( pDelayMaxRet != NULL )
+		*pDelayMaxRet = 0;
+	if ( pPrescMaxRet != NULL )
+		*pPrescMaxRet = 0;
+	if ( pWidthMaxRet != NULL )
+		*pWidthMaxRet = 0;
+
+	if ( pulse < 0 || pulse >= EVR_MAX_PULSES )
+		return -1;
+
+   /*---------------------
+    * Select the requested DG channel in the pulse selection register.
+    */
+    MRF_VME_REG16_WRITE( &pEr->DelayPulseSelect, pulse );
+
+	curWidth	= MRF_VME_REG32_READ( &pEr->ExtWidth );
+	curDelay	= MRF_VME_REG32_READ( &pEr->ExtDelay );
+	curPresc	= MRF_VME_REG16_READ( &pEr->DelayPrescaler );
+
+    MRF_VME_REG16_WRITE( &pEr->DelayPrescaler, 0xFFFFFFFF );
+    MRF_VME_REG32_WRITE( &pEr->ExtDelay, 0xFFFFFFFF );
+    MRF_VME_REG32_WRITE( &pEr->ExtWidth, 0xFFFFFFFF );
+
+	maxWidth	= MRF_VME_REG32_READ( &pEr->ExtWidth );
+	maxDelay	= MRF_VME_REG32_READ( &pEr->ExtDelay );
+	maxPresc	= MRF_VME_REG16_READ( &pEr->DelayPrescaler );
+
+    MRF_VME_REG16_WRITE( &pEr->DelayPrescaler, curPresc );
+    MRF_VME_REG32_WRITE( &pEr->ExtDelay, curDelay );
+    MRF_VME_REG32_WRITE( &pEr->ExtWidth, curWidth );
+
+	FPGAVersion	= MRF_VME_REG16_READ( &pEr->FPGAVersion );
+	switch ( FPGAVersion )
+	{
+	default:
+	    break;
+	case 0x11000002:
+	case 0x11000003:
+		/*
+		 *	- An MRF firmware bug in these versions prevents
+		 *    reading prescaler on generators 2-3, so we set
+		 *    maxPresc to the known 8 bit capacity.
+		 *	- Prescaler value is R/W on generators 0-1
+		 *	- Generators 4-9 do not support prescaling and always read back 0
+		 */
+		if ( pulse == 2 || pulse == 3 )
+			maxPresc = 0xFF;
+		break;
+	}
+
+	/* Test for non-readable values */
+	if( maxDelay == 0 )
+		maxDelay = 1;
+	if( maxPresc == 0 )
+		maxPresc = 1;
+	if( maxWidth == 0 )
+		maxWidth = 1;
+
+	/* Update return parameters */
+	if ( pDelayMaxRet != NULL )
+		*pDelayMaxRet = maxDelay;
+	if ( pPrescMaxRet != NULL )
+		*pPrescMaxRet = maxPresc;
+	if ( pWidthMaxRet != NULL )
+		*pWidthMaxRet = maxWidth;
+
+    if ( ErDebug >= 1 )
+		printf(	"Pulse %2d maxPresc 0x%X, maxDelay 0x%X, maxWidth 0x%X\n",
+				pulse, maxPresc, maxDelay, maxWidth );
+	return 0;
+}
 
 /**************************************************************************************************/
 /*                                    EPICS Registery                                             */

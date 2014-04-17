@@ -107,7 +107,9 @@
 /*---------------------
  * Define the maximum size of the distributed data buffer
  */
+#ifndef	EVR_MAX_BUFFER
 #define EVR_MAX_BUFFER          MRF_MAX_DATA_BUFFER
+#endif /* EVR_MAX_BUFFER */
 
 /*---------------------
  * Define the maximum number of event receiver cards allowed
@@ -119,6 +121,10 @@
  * so that we can use a special event number for the delayed interrupt feature.
  */
 #define EVR_NUM_EVENTS          MRF_NUM_EVENTS
+
+#ifndef EVR_MAX_PULSES
+#define EVR_MAX_PULSES	12
+#endif	/* EVR_MAX_PULSES */
 
 /**************************************************************************************************/
 /*  Event Receiver Hardware Limits                                                                */
@@ -340,6 +346,9 @@ struct ErCardStruct {
     char            intMsg     [EVR_INT_MSG_LEN];    /* Buffer for interrupt debug messages       */
     char            FormFactor;              /* "VME_EVR" or "PMC_EVR" */
     char            EventCodeDesc[EVR_NUM_EVENTS][MAX_STRING_SIZE+1];   /* Event code description */
+    epicsUInt32     maxDelay [EVR_MAX_PULSES];   /* Max delay for each pulse gen	*/
+    epicsUInt32     maxPresc [EVR_MAX_PULSES];   /* Max prescale for each pulse gen	*/
+    epicsUInt32     maxWidth [EVR_MAX_PULSES];   /* Max width for each pulse gen	*/
 };/*ErCardStruct*/
 
 #endif

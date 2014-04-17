@@ -177,7 +177,7 @@ epicsStatus ErInitRecord (erRecord *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set
     */
-    if (ErDebug)
+    if ( ErDebug >= 6 )
         printf ("devMrfEr::ErInitRecord(%s) entered\n", pRec->name);
 
    /*---------------------
@@ -282,7 +282,7 @@ epicsStatus ErProcess (erRecord  *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    if (ErDebug)
+    if ( ErDebug >= 4 )
         printf ("devMrfEr: ErProcess (%s) entered\n", pRec->name);
 
    /*---------------------
@@ -501,7 +501,7 @@ epicsStatus ErEventInitRecord (ereventRecord *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    if (ErDebug)
+    if ( ErDebug >= 6 )
         printf ("devMrfEr::ErEventInitRec(%s)\n", pRec->name);
 
    /*---------------------
@@ -656,7 +656,7 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
         * Check to see if the output mask has changed
         */
         if (Mask != pRec->lout) {
-            /*if (DebugFlag)*/
+            if (DebugFlag)
                 printf( "ErEventProcess(%s) New output mask 0x%04X, old mask 0x%04X\n",
 						pRec->name, Mask, pRec->lout );
 
@@ -706,12 +706,22 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     */
     if (LoadRam) {
         if (DebugFlag)
-            printf ("ErEventProcess(%s) updating Event RAM\n", pRec->name);
+		{
+            printf ("ErEventProcess(%s) enabling IRQ\n", pRec->name);
+			sleep(1);
+		}
 
         if (Mask & EVR_MAP_INTERRUPT)
             ErEventIrq (pCard, epicsTrue);
 
+        if (DebugFlag)
+		{
+            printf ("ErEventProcess(%s) updating Event RAM\n", pRec->name);
+			sleep(1);
+		}
         ErUpdateRam (pCard, pCard->ErEventTab);
+        if (DebugFlag)
+			printf ("ErEventProcess(%s) done updating Event RAM\n", pRec->name);
     }/*end if we should re-load the Event Mapping Ram*/
 
    /*---------------------
@@ -805,7 +815,7 @@ epicsStatus ErEpicsEventInitRec (eventRecord *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    if (ErDebug)
+    if ( ErDebug >= 6 )
         printf ("ErEpicsEventInitRec(%s) Card %d, Event %d\n",
                       pRec->name, Card, Event);
 
@@ -948,7 +958,7 @@ epicsStatus ErEpicsBiInitRec (biRecord *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    if (ErDebug)
+    if ( ErDebug >= 6 )
         printf ("ErEpicsBiInitRec(%s) Card %d\n",
                       pRec->name, Card);
 
@@ -1093,7 +1103,7 @@ epicsStatus ErEpicsStringoutInitRec (stringoutRecord *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    if (ErDebug)
+    if ( ErDebug >= 6 )
         printf ("ErEpicsStringoutInitRec(%s) Card %d\n",
                       pRec->name, Card);
 
@@ -1259,7 +1269,7 @@ epicsStatus ErEpicsStringinInitRec (stringinRecord *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    if (ErDebug)
+    if ( ErDebug >= 6 )
         printf ("ErEpicsStringinInitRec(%s) Card %d\n",
                       pRec->name, Card);
 
@@ -1443,11 +1453,12 @@ epicsStatus ErUpdateEventTab(
 	epicsUInt16		newEventTabMask	= 0;
 	unsigned int	chan			= 0;
 
-    /*if (ErDebug) */
-	printf( "devMrfEr::ErUpdateEventTab( event num %d, old 0x%04X, new 0x%04X )\n", EventNum, oldMask, newMask );
+    if ( ErDebug >= 2 )
+		printf( "devMrfEr::ErUpdateEventTab( event num %d, old 0x%04X, new 0x%04X )\n",
+				EventNum, oldMask, newMask );
+
 	if ( (EventNum < 0) || (EventNum >= EVR_NUM_EVENTS) )
 		return -1;
-
 	for ( chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
 	{
 		epicsUInt16	chanMask = 1 << chan;
@@ -1460,7 +1471,7 @@ epicsStatus ErUpdateEventTab(
 	}
 
 	pCard->ErEventTab[EventNum] = newEventTabMask;
-    /*if (ErDebug) */
+    if ( ErDebug >= 1 )
         printf( "devMrfEr::ErUpdateEventTab: New mask for event num %d is 0x%04X\n", EventNum, newEventTabMask );
 	return 0;
 }	/*end ErUpdateEventTab*/
@@ -1530,23 +1541,31 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
 
    /*---------------------
     * Receiver Link Frame (Taxi) Error
+	* Use caution w/ this error msg
+	* RTEMS is crashing when I enable while EVR link is down
+	* Not clear why, as the underlying rtems_message_queue_send()
+	* is being called non-blocking.   Perhaps the crash is because
+	* pCard->intMsg is being reused by each new message.
     */
     case ERROR_TAXI:
         pRec->rxve = 0;
         pRec->taxi = pCard->RxvioCount;
-        if(ErDebug) {
+		if ( ErDebug >= 5 )
+        {
             epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
                            "ER Card %d Receiver Link (Taxi) Error.  Error repetition %d...\n",
                            Card, pCard->RxvioCount);
             epicsInterruptContextMessage (pCard->intMsg);
-        }/*end if debug flag is set*/
+        }	/*end if debug flag is set*/
         break;
 
    /*---------------------
     * Lost Heartbeat Error
+	* Use caution w/ this error msg
+	* RTEMS is crashing when I enable while EVR link is down
     */
     case ERROR_HEART:
-        if(ErDebug > 2) {
+        if ( ErDebug >= 5 ) {
             epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
                            "ER Card %d Lost Heartbeat\n", Card);
             epicsInterruptContextMessage (pCard->intMsg);
@@ -1555,9 +1574,11 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
 
    /*---------------------
     * FIFO Overflow Error
+	* Use caution w/ this error msg
+	* RTEMS is crashing when I enable while EVR link is down
     */
     case ERROR_LOST:
-        if(ErDebug) {
+        if ( ErDebug >= 5 ) {
             epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
                            "ER Card %d Event FIFO Overflow\n", Card);
             epicsInterruptContextMessage (pCard->intMsg);
@@ -1568,7 +1589,7 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Data Stream Checksum Error
     */
     case ERROR_DBUF_CHECKSUM:
-        if(ErDebug) {
+        if ( ErDebug >= 4 ) {
             epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
                            "ER Card %d Data Stream Checksum Error\n", Card);
             epicsInterruptContextMessage (pCard->intMsg);
@@ -1579,7 +1600,7 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Invalid Error Code
     */
     default:
-        if(ErDebug) {
+        if ( ErDebug >= 3 ) {
           epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
                          "ER Card %d Invalid Error Code = %d.\n", Card, ErrorNum);
           epicsInterruptContextMessage (pCard->intMsg);
@@ -1614,9 +1635,8 @@ epicsStatus ErRegisterEventHandler (int Card, USER_EVENT_FUNC EventFunc)
 {
     ErCardStruct  *pCard;
 
-    if (ErDebug){
+    if ( ErDebug >= 1 )
         printf ("ErRegisterEventHandler(%d, %p)\n", Card, (void *)EventFunc);
-    }
 
     if (NULL == (pCard = ErGetCardStruct(Card))) {
         errlogPrintf ("ErRegisterEventHandler() called with invalid card number (%d)\n", Card);
@@ -1640,7 +1660,7 @@ epicsStatus ErRegisterErrorHandler (int Card, USER_ERROR_FUNC ErrorFunc)
 {
     ErCardStruct  *pCard;
 
-    if (ErDebug){
+    if ( ErDebug >= 1 ){
         printf ("ErRegisterErrorHandler(%d, %p)\n", Card, (void *)ErrorFunc);
     }
 
