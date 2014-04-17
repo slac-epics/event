@@ -562,36 +562,57 @@ int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig
 int EvrSetPulseParams(volatile struct MrfErRegs *pEr, int pulse, int presc,
 		      int delay, int width)
 {
-  if (pulse < 0 || pulse >= EVR_MAX_PULSES)
-    return -1;
+	if (pulse < 0 || pulse >= EVR_MAX_PULSES)
+		return -1;
 
-  pEr->Pulse[pulse].Width = be32_to_cpu(width);
-  pEr->Pulse[pulse].Delay = be32_to_cpu(delay);
-  pEr->Pulse[pulse].Prescaler = be32_to_cpu(presc);
+	pEr->Pulse[pulse].Width		= be32_to_cpu(width);
+	pEr->Pulse[pulse].Delay		= be32_to_cpu(delay);
+	pEr->Pulse[pulse].Prescaler	= be32_to_cpu(presc);
 
-  if ( erapiDebug	>= 1 )
-  {
-	/*
-	 * Sanity check on prescaler value (due to fixed bug in generator allocation)
-	 * Firmware *0002:
-	 * Firmware *0003:
-	 *	- Prescaler value is R/W on generators 0-1
-	 *	- An MRF firmware bug prevents reading prescaler on generators 2-3
-	 *	- Generators 4-9 do not support prescaling and always read back 0
-	 * Firmware *0103:
-	 *	- Prescaler value is R/W on generators 0-3
-	 *	- Generators 4-9 do not support prescaling and always read back 0
-	 */
-	if ( pulse < 3 )
+	if ( erapiDebug	>= 1 )
 	{
-	  if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
-		printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,
-				pulse, be32_to_cpu(pEr->Pulse[pulse].Prescaler), presc );
-	  else if ( presc != 0 && erapiDebug >= 2 )
-		printf( "%s Pulse %d: Success! prescaler is now %d\n", __func__, pulse, presc );
+		u32	FPGAVersion		= be32_to_cpu(pEr->FPGAVersion);
+		u32	checkPrescale	= 1;
+
+		switch ( FPGAVersion )
+		{
+		default:
+			break;
+		case 0x11000002:
+		case 0x11000003:
+			/*
+			 *	- An MRF firmware bug in these versions prevents
+			 *    reading prescaler on generators 2-3, so we set
+			 *    maxPresc to the known 8 bit capacity.
+			 *	- Prescaler value is R/W on generators 0-1
+			 *	- Generators 4-9 do not support prescaling and always read back 0
+			 */
+			if ( pulse >= 2 )
+				checkPrescale = 0;
+			break;
+		 case 0x11000103:
+			/*
+			 *	- Prescaler value is R/W on generators 0-3
+			 *	- Generators 4-9 do not support prescaling and always read back 0
+			 */
+			if ( pulse >= 4 )
+				checkPrescale = 0;
+			break;
+		}
+
+		/*
+		 * Sanity check on prescaler value (due to fixed bug in generator allocation)
+		 */
+		if ( checkPrescale )
+		{
+		  if ( be32_to_cpu(pEr->Pulse[pulse].Prescaler) != presc )
+			printf( "%s Pulse %d: Unable to update prescaler from %d to %d\n", __func__,
+					pulse, be32_to_cpu(pEr->Pulse[pulse].Prescaler), presc );
+		  else if ( presc != 0 && erapiDebug >= 2 )
+			printf( "%s Pulse %d: Success! prescaler is now %d\n", __func__, pulse, presc );
+		}
 	}
-  }
-  return 0;
+	return 0;
 }
 
 int EvrGetPulsePresc(volatile struct MrfErRegs *pEr, int pulse)
@@ -624,7 +645,7 @@ void EvrDumpPulses(volatile struct MrfErRegs *pEr, int pulses)
 
   for (i = 0; i < pulses; i++)
     {
-      DEBUG_PRINTF("Pulse %02x Presc %08x Delay %08x Width %08x", i,
+      DEBUG_PRINTF("Pulse %02d Presc %X Delay %X Width %X", i,
 		   be32_to_cpu(pEr->Pulse[i].Prescaler), 
 		   be32_to_cpu(pEr->Pulse[i].Delay), 
 		   be32_to_cpu(pEr->Pulse[i].Width));

@@ -16,6 +16,7 @@
  */
 
 #define  EVR_DRIVER_SUPPORT_MODULE   /* Indicates we are in the driver support module environment */
+#include "erapi.h"
 #include "drvMrfEr.h"
 #undef	EVR_MAX_BUFFER
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
@@ -31,7 +32,6 @@
 #include <endian.h>
 #include <unistd.h>
 #include <byteswap.h>
-#include "erapi.h"
 #include "evrIrqHandlerThread.h"
 
 #define DEVNODE_NAME_BASE "/dev/er"
@@ -176,6 +176,14 @@ static ELLLIST ErCardList;                        /* Linked list of ER card stru
 static epicsBoolean bErCardListInitDone = epicsFalse;
 static epicsMutexId ErCardListLock;
 static epicsMutexId ErConfigureLock;
+
+
+int EvrGetPulseLimits(
+	volatile struct MrfErRegs	*	pEr,
+	int								pulse,
+	u32							*	pPrescMaxRet,
+	u32							*	pDelayMaxRet,
+	u32							*	pWidthMaxRet );
 
 /**************************************************************************************************/
 /*                              Private APIs                                                      */
@@ -438,6 +446,7 @@ static int ErConfigure (
 	struct ErCardStruct *pCard;
 	struct MrfErRegs *pEr;
     u32		FPGAVersion;
+	u32		pulse;
 
 	epicsMutexLock(ErCardListLock);
 	/* If not already done, initialize the driver structures */
@@ -483,7 +492,7 @@ static int ErConfigure (
 
 	/* Check the firmware version */
 	FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
-	printf( "PMC EVR Found with Firmware Revision 0x%08X\n", FPGAVersion );
+	printf( "EVR Found with Firmware Revision 0x%08X\n", FPGAVersion );
 	switch ( FPGAVersion )
 	{
 	default:
@@ -572,6 +581,15 @@ static int ErConfigure (
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);
 	ErResetAll(pCard);
+
+	/* Probe for the max pulse parameters */
+	for ( pulse = 0; pulse < EVR_MAX_PULSES; pulse++ )
+	{
+    	EvrGetPulseLimits(	pEr, pulse,
+							&pCard->maxPresc[pulse],
+							&pCard->maxDelay[pulse],
+							&pCard->maxWidth[pulse] );
+	}
 
 	/* Hack to fix firmware issue in EVR_FIRMWARE_REV_LINUX4 */
 	if ( FPGAVersion == EVR_FIRMWARE_REV_LINUX4 )
@@ -1225,6 +1243,94 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 	return;
 }
 
+/*
+ * This routine tries to set the pulse parameter
+ * registers to all 1's, then reads back the register
+ * contents in order to determine how many bits they support.
+ */
+int EvrGetPulseLimits(
+	volatile struct MrfErRegs	*	pEr,
+	int								pulse,
+	u32							*	pPrescMaxRet,
+	u32							*	pDelayMaxRet,
+	u32							*	pWidthMaxRet )
+{
+	int								curDelay;
+	int								curPresc;
+	int								curWidth;
+	int								maxDelay;
+	int								maxPresc;
+	int								maxWidth;
+    u32								FPGAVersion;
+
+	if ( pDelayMaxRet != NULL )
+		*pDelayMaxRet = 0;
+	if ( pPrescMaxRet != NULL )
+		*pPrescMaxRet = 0;
+	if ( pWidthMaxRet != NULL )
+		*pWidthMaxRet = 0;
+
+	if ( pulse < 0 || pulse >= EVR_MAX_PULSES )
+		return -1;
+
+	curWidth	= be32_to_cpu( pEr->Pulse[pulse].Width );
+	curDelay	= be32_to_cpu( pEr->Pulse[pulse].Delay );
+	curPresc	= be32_to_cpu( pEr->Pulse[pulse].Prescaler );
+
+	pEr->Pulse[pulse].Width		= be32_to_cpu( 0xFFFFFFFF );
+	pEr->Pulse[pulse].Delay		= be32_to_cpu( 0xFFFFFFFF );
+	pEr->Pulse[pulse].Prescaler	= be32_to_cpu( 0xFFFFFFFF );
+
+	maxWidth	= be32_to_cpu( pEr->Pulse[pulse].Width );
+	maxDelay	= be32_to_cpu( pEr->Pulse[pulse].Delay );
+	maxPresc	= be32_to_cpu( pEr->Pulse[pulse].Prescaler );
+
+	pEr->Pulse[pulse].Width		= be32_to_cpu( curWidth );
+	pEr->Pulse[pulse].Delay		= be32_to_cpu( curDelay );
+	pEr->Pulse[pulse].Prescaler	= be32_to_cpu( curPresc );
+
+	FPGAVersion	= be32_to_cpu(pEr->FPGAVersion);
+
+	switch ( FPGAVersion )
+	{
+	default:
+	    break;
+	case 0x11000002:
+	case 0x11000003:
+		/*
+		 *	- An MRF firmware bug in these versions prevents
+		 *    reading prescaler on generators 2-3, so we set
+		 *    maxPresc to the known 8 bit capacity.
+		 *	- Prescaler value is R/W on generators 0-1
+		 *	- Generators 4-9 do not support prescaling and always read back 0
+		 */
+		if ( pulse == 2 || pulse == 3 )
+			maxPresc = 0xFF;
+		break;
+	}
+
+	/* Test for non-readable values */
+	if( maxDelay == 0 )
+		maxDelay = 1;
+	if( maxPresc == 0 )
+		maxPresc = 1;
+	if( maxWidth == 0 )
+		maxWidth = 1;
+
+	/* Update return parameters */
+	if ( pDelayMaxRet != NULL )
+		*pDelayMaxRet = maxDelay;
+	if ( pPrescMaxRet != NULL )
+		*pPrescMaxRet = maxPresc;
+	if ( pWidthMaxRet != NULL )
+		*pWidthMaxRet = maxWidth;
+
+	if ( erapiDebug >= 1 )
+		printf(	"Pulse %2d maxPresc 0x%X, maxDelay 0x%X, maxWidth 0x%X\n",
+				pulse, maxPresc, maxDelay, maxWidth );
+	return 0;
+}
+
 /**************************************************************************************************
 |* ErSetDirq () -- Set Parameters for the Delayed Interrupt.
 |*-------------------------------------------------------------------------------------------------
@@ -1800,6 +1906,10 @@ epicsStatus ErDrvReport (int level)
 			for (i = 0; i < TOTAL_FP_CHANNELS; i++)
 				printf("fp_channel[%2d] %02x\n", i, pLinuxErCard->fp_channel[i]);
 			printf("pulse_irq %02x\n", pLinuxErCard->pulse_irq);
+			for (i = 0; i < EVR_MAX_PULSES; i++ ) {
+				printf(	"Pulse %2d maxPresc 0x%X, maxDelay 0x%X, maxWidth 0x%X\n", i,
+						pCard->maxPresc[i], pCard->maxDelay[i], pCard->maxWidth[i] );
+			}
 		}
 		if (level >= 2) {
 			struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
