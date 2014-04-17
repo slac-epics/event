@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1284
-y 328
+x 101
+y 385
 w 760
 h 600
 font "helvetica-medium-r-12.0"
@@ -2399,28 +2399,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 120
-w 50
-h 24
-controlPv "$(EVR):EVENT1CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 120
 w 50
@@ -2443,53 +2421,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 152
-w 50
-h 24
-controlPv "$(EVR):EVENT2CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 152
 w 50
 h 24
 controlPv "$(EVR):EVENT2CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 216
-y 184
-w 50
-h 24
-controlPv "$(EVR):EVENT3CTRL.ENAB"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2527,53 +2463,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 216
-w 50
-h 24
-controlPv "$(EVR):EVENT4CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 216
 w 50
 h 24
 controlPv "$(EVR):EVENT4CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 216
-y 248
-w 50
-h 24
-controlPv "$(EVR):EVENT5CTRL.ENAB"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2632,53 +2526,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 280
-w 50
-h 24
-controlPv "$(EVR):EVENT6CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 312
 w 50
 h 24
 controlPv "$(EVR):EVENT7CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 216
-y 312
-w 50
-h 24
-controlPv "$(EVR):EVENT7CTRL.ENAB"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2716,53 +2568,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 344
-w 50
-h 24
-controlPv "$(EVR):EVENT8CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 376
 w 50
 h 24
 controlPv "$(EVR):EVENT9CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 216
-y 376
-w 50
-h 24
-controlPv "$(EVR):EVENT9CTRL.ENAB"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2800,53 +2610,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 408
-w 50
-h 24
-controlPv "$(EVR):EVENT10CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 436
 w 50
 h 24
 controlPv "$(EVR):EVENT11CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 216
-y 436
-w 50
-h 24
-controlPv "$(EVR):EVENT11CTRL.ENAB"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2884,27 +2652,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 468
-w 50
-h 24
-controlPv "$(EVR):EVENT12CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 500
 w 50
@@ -2926,53 +2673,11 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 500
-w 50
-h 24
-controlPv "$(EVR):EVENT13CTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 532
 w 50
 h 24
 controlPv "$(EVR):EVENT14CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
-x 216
-y 532
-w 50
-h 24
-controlPv "$(EVR):EVENT14CTRL.ENAB"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -3574,28 +3279,6 @@ beginObjectProperties
 major 4
 minor 5
 release 0
-x 216
-y 88
-w 50
-h 24
-controlPv "$(TRIG):EVENTCTRL.ENAB"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 5
-release 0
 x 272
 y 88
 w 50
@@ -3637,5 +3320,365 @@ fastUpdate
 newPos
 objType "controls"
 noExecuteClipMask
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 152
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT2CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 184
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT3CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 216
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT4CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 248
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT5CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 280
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT6CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 344
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT8CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 312
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT7CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 376
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT9CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 408
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT10CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 440
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT11CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 472
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT12CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 504
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT13CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 536
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT14CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 120
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT1CTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 204
+y 88
+w 64
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(TRIG):EVENTCTRL.ENAB"
+onLabel "Enable"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
 endObjectProperties
 
