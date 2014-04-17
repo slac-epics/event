@@ -1325,7 +1325,7 @@ int EvrGetPulseLimits(
 	if ( pWidthMaxRet != NULL )
 		*pWidthMaxRet = maxWidth;
 
-	if ( erapiDebug >= 1 )
+	if ( ErDebug >= 1 )
 		printf(	"Pulse %2d maxPresc 0x%X, maxDelay 0x%X, maxWidth 0x%X\n",
 				pulse, maxPresc, maxDelay, maxWidth );
 	return 0;
