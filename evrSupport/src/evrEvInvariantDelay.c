@@ -105,7 +105,7 @@ static long aSubEvOffset(aSubRecord *prec)
     epicsEnum16		sevr;
 
     if(dbGetSevr(&prec->inpc, &sevr)) {
-        printf("%s: CA connection serverity check error\n", prec->name);
+        printf("%s: CA connection severity check error\n", prec->name);
         return 0;
     }
 
@@ -172,9 +172,9 @@ static long asubCopyInToOutInit( aSubRecord * prec )
 		assert( dbValueSize(*pOutType)	== dbValueSize(DBF_ULONG) );
 		if ( prec->tpro >= 2 )
 		{
-			printf( "INP%c: pIn  = 0x%p, cnt = %u\n",
+			printf( "INP%c: pIn  = %p, cnt = %u\n",
 					'A' + i, pIn[i], *pInCnt );
-			printf( "OUT%c: pOut = 0x%p, cnt = %u\n",
+			printf( "OUT%c: pOut = %p, cnt = %u\n",
 					'A' + i, pOut[i], *pOutCnt );
 		}
 		pInCnt++;	pOutCnt++;
@@ -187,27 +187,29 @@ static long asubCopyInToOutInit( aSubRecord * prec )
 static long asubCopyInToOut( aSubRecord * prec )
 {
     epicsUInt32		i;
-    void		**	pVoidIn		= &prec->a;
-    void		**	pVoidOut	= &prec->vala;
-    epicsUInt32	**	pIn			= (epicsUInt32 **)pVoidIn;
-    epicsUInt32	**	pOut		= (epicsUInt32 **)pVoidOut;
+    void		**	ppVoidIn	= &prec->a;
+    void		**	ppVoidOut	= &prec->vala;
+    epicsUInt32	**	ppIn		= (epicsUInt32 **)ppVoidIn;
+    epicsUInt32	**	ppOut		= (epicsUInt32 **)ppVoidOut;
     epicsUInt32	*	pInCnt		= &prec->nea;
-    epicsUInt32	*	pOutCnt		= &prec->noa;
+    epicsUInt32	*	pOutCnt		= &prec->nova;
 
+	if ( prec->tpro >= 2 )
+    	printf("asubCopyInToOut(%s)\n", prec->name);
     for ( i = 0; i < N_ASUB_ARGS; i++ )
 	{
 		size_t		count	= *pInCnt;
 		if( count > *pOutCnt )
 			count = *pOutCnt;
-		if ( prec->tpro >= 2 )
-			printf( "%s.OUT%c: memcpy( pOut=0x%p, pIn=0x%p, cnt=%zu ) *pIn=%u\n",
-					prec->name, 'A' + i, pOut[i], pIn[i], count, *pIn[i] );
-		memcpy( pOut[i], pIn[i], count );
+		if ( prec->tpro >= 3 )
+			printf( "%s.OUT%c: memcpy( to %p, from %p, cnt %zu ) *ppIn[%d][0]=%u\n",
+					prec->name, 'A' + i, ppOut[i], ppIn[i], count, i, *(ppIn[i]) );
+		memcpy( ppOut[i], ppIn[i], count * sizeof(epicsUInt32) );
 		pInCnt++; pOutCnt++;
 	}
 
-	if ( prec->tpro >= 2 )
-    	printf("asubCopyInToOutInit for %s\n", prec->name);
+	if ( prec->tpro >= 3 )
+    	printf("asubCopyInToOut(%s) done.\n", prec->name);
     return 0;
 }
 
