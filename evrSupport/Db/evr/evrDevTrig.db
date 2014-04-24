@@ -35,6 +35,15 @@
 # $(TRIG):TDES	- Trigger desired delay in ns
 #
 
+# New record to support the concept and U/I for Locking the trigger timing
+# This version is purely a visual indicator.
+# Subsequent versions will likely provide some level of db protection as well.
+record( bo, "$(TRIG):LOCKED" )
+{
+	field( ZNAM, "Unlocked" )
+	field( ONAM, "Locked" )
+}
+
 # Trigger type, set in substitution file
 record( bo, "$(TRIG):TYPE" )
 {
@@ -297,7 +306,9 @@ record( seq, "$(TRIG):FW_TDES_SEQ" )
 	field( DOL1, "0" )
 	field( LNK1, "$(TRIG):BW_TDES_SEQ_ENAB_CALC.A PP MS" )
 
-	field( DOL2, "$(TRIG):TDLY NPP MS" )
+#	field( DOL2, "$(TRIG):TDLY NPP MS" )
+#	field( LNK2, "$(TRIG):TDES_TICKS PP NMS" )
+	field( DOL2, "$(TRIG):TDES_TICKS NPP MS" )
 	field( LNK2, "$(EVR):CTRL.$(TYPE)$(N)D PP NMS" )
 
 	field( DOL3, "1" )
@@ -338,12 +349,24 @@ record( seq, "$(TRIG):BW_TDES_SEQ" )
 }
 
 # This PV computes the Trigger Delay in ticks
-record( calc, "$(TRIG):TDLY" )
+record( calcout, "$(TRIG):TDLY" )
 {
 	field( DESC, "Trigger EVR Delay" )
 	field( INPA, "$(TRIG):TDLY_NS NPP MS" )
 	field( INPB, "8.403361345" )
 	field( CALC, "FLOOR((A/B)+0.5)" )
+	field( EGU,  "ticks" )
+	field( OUT,  "$(TRIG):TDES_TICKS PP NMS" )
+}
+
+# This record shows the desired delay in ticks
+# (May someday allow setting desired delay in ticks,
+#  but for now is closed_loop to avoid DB process
+#  chain errors.)
+record( ao, "$(TRIG):TDES_TICKS"	)
+{
+	field( DOL,  "$(TRIG):TDLY NPP MS" )
+	field( OMSL, "closed_loop" )
 	field( EGU,  "ticks" )
 	field( FLNK, "$(TRIG):FW_TDES_SEQ" )
 }
@@ -654,33 +677,34 @@ record( aSub, "$(TRIG):FW_EC_SEQ" )
 
 	field( FTA,  "ULONG" )
 	field( FTVA, "ULONG" )
-	field( INPA, "$(TRIG):TEC NPP MS" )
-	field( OUTA, "$(TRIG):EVENTCTRL.ENM PP MS" )
+	field( INPA, "$(TRIG):TEC NPP NMS" )
+	field( OUTA, "$(TRIG):EVENTCTRL.ENM NPP NMS" )
 
 	field( FTB,  "ULONG" )
 	field( FTVB, "ULONG" )
 	field( INPB, "1" )
-	field( OUTB, "$(TRIG):EVENTCTRL.ENAB PP MS" )
+	field( OUTB, "$(TRIG):EVENTCTRL.ENAB NPP NMS" )
 
 	field( FTC,  "ULONG" )
 	field( FTVC, "ULONG" )
 	field( INPC, "1" )
+	field( OUTC, "$(TRIG):EVENTCTRL.OUT$(N)  PP  NMS" )
 
-	field( OUTC, "$(TRIG):EVENTCTRL.OUT$(N)  PP  MS" )
-	field( OUTD, "$(EVR):EVENT1CTRL.OUT$(N)  CPP NMS" )
-	field( OUTE, "$(EVR):EVENT2CTRL.OUT$(N)  CPP NMS" )
-	field( OUTF, "$(EVR):EVENT3CTRL.OUT$(N)  CPP NMS" )
-	field( OUTG, "$(EVR):EVENT4CTRL.OUT$(N)  CPP NMS" )
-	field( OUTH, "$(EVR):EVENT5CTRL.OUT$(N)  CPP NMS" )
-	field( OUTI, "$(EVR):EVENT6CTRL.OUT$(N)  CPP NMS" )
-	field( OUTJ, "$(EVR):EVENT7CTRL.OUT$(N)  CPP NMS" )
-	field( OUTK, "$(EVR):EVENT8CTRL.OUT$(N)  CPP NMS" )
-	field( OUTL, "$(EVR):EVENT9CTRL.OUT$(N)  CPP NMS" )
-	field( OUTM, "$(EVR):EVENT10CTRL.OUT$(N) CPP NMS" )
-	field( OUTN, "$(EVR):EVENT11CTRL.OUT$(N) CPP NMS" )
-	field( OUTO, "$(EVR):EVENT12CTRL.OUT$(N) CPP NMS" )
-	field( OUTP, "$(EVR):EVENT13CTRL.OUT$(N) CPP NMS" )
-	field( OUTQ, "$(EVR):EVENT14CTRL.OUT$(N) CPP NMS" )
+    # The inputs for these are all zero
+	field( OUTD, "$(EVR):EVENT1CTRL.OUT$(N)  CA NMS" )
+	field( OUTE, "$(EVR):EVENT2CTRL.OUT$(N)  CA NMS" )
+	field( OUTF, "$(EVR):EVENT3CTRL.OUT$(N)  CA NMS" )
+	field( OUTG, "$(EVR):EVENT4CTRL.OUT$(N)  CA NMS" )
+	field( OUTH, "$(EVR):EVENT5CTRL.OUT$(N)  CA NMS" )
+	field( OUTI, "$(EVR):EVENT6CTRL.OUT$(N)  CA NMS" )
+	field( OUTJ, "$(EVR):EVENT7CTRL.OUT$(N)  CA NMS" )
+	field( OUTK, "$(EVR):EVENT8CTRL.OUT$(N)  CA NMS" )
+	field( OUTL, "$(EVR):EVENT9CTRL.OUT$(N)  CA NMS" )
+	field( OUTM, "$(EVR):EVENT10CTRL.OUT$(N) CA NMS" )
+	field( OUTN, "$(EVR):EVENT11CTRL.OUT$(N) CA NMS" )
+	field( OUTO, "$(EVR):EVENT12CTRL.OUT$(N) CA NMS" )
+	field( OUTP, "$(EVR):EVENT13CTRL.OUT$(N) CA NMS" )
+	field( OUTQ, "$(EVR):EVENT14CTRL.OUT$(N) CA NMS" )
 
 	field( INPD, "0" ) field( FTD, "ULONG" ) field( FTVD, "ULONG" )
 	field( INPE, "0" ) field( FTE, "ULONG" ) field( FTVE, "ULONG" )
@@ -705,16 +729,19 @@ record( aSub, "$(TRIG):FW_EC_SEQ" )
 #
 # NOTE: The following 3 records were added to support sharing the
 # existing 14 $(EVR):EVENT4CTRL style records.
-# New scheme adds $(TRIG):EVENTCTRL and uses that, avoiding the need for these.
+# New scheme adds $(TRIG):EVENTCTRL and uses that, avoiding the requirement
+# for these, as the default will be to use the trigger specific $(TRIG):EVENTCTRL.
+# For now I'm leaving them in in case we find that users are still sharing the
+# same event ctrl record via the older screens.
 #	$(TRIG):CTRL_N_OUTPUTS_ON
 #	$(TRIG):CTRL_IS_SHARED_CALC
 #	$(TRIG):CTRL_IS_SHARED
 # also these 14
 #	$(EVR):EVENT$(N)CTRL_N_OUTPUTS_ON
-#
+
 # PV to fetch the current number of enabled outputs for
 # the control record specified by input Z.
-# Processes whenever any of the 14 CTRL_N_OUTPUTS_ON PV's updates
+# Processes whenever any of the 15 EVENT*CTRL_N_OUTPUTS_ON PV's updates
 # Uses the LSUB_TRGSEL value to specify which control
 # record's count to read
 record( longSub, "$(TRIG):CTRL_N_OUTPUTS_ON" )
