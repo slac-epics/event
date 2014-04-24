@@ -22,7 +22,8 @@ def printPvNameValue( pvName ):
         else:
             print "%s %-.30s" % ( pv.name, pv.value )
     except pyca.pyexc, msg:
-        print >> sys.stderr, "failed: pyca exception: ", msg
+        # print >> sys.stderr, "failed: pyca exception: ", msg
+        pass
     except pyca.caexc, msg:
         print >> sys.stderr, "failed: channel access exception: ", msg
     except Exception, msg:
