@@ -40,12 +40,13 @@ def cmpConfigFile( fileName ):
                     cfgValue = valStr
                 else:
                     cfgValue = stringToScalar( valStr )
+                # print "actual %s %-.30s, cfg %-.30s" % ( pv.name, pv.value, cfgValue )
                 if cfgValue == pv.value:
                     continue
                 if	(	isinstance( pv.value, float ) and
-                        (pv.value - cfgValue)/cfgValue < 0.001 ):
+                        (abs(pv.value - cfgValue)/cfgValue) < 0.0001 ):
                     continue
-                print "actual %s %-.30s, cfg %-.30s" % ( pv.name, pv.value, cfgValue )
+                print "ERROR: actual %s %-.30s != cfg %-.30s" % ( pv.name, pv.value, cfgValue )
 
     except pyca.pyexc, msg:
         print "failed: pyca exception: ", msg
