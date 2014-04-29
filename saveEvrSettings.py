@@ -31,11 +31,18 @@ def printPvNameValue( pvName ):
 
 def showPulseGenSettings( evrName, dgNumber ):
     try:
-        # Print the Delay Generator enable value
-        printPvNameValue( evrName + ":CTRL.DG%1dE" % ( dgNumber ) )
+        if ( dgNumber >= 10 ):
+            # Print the Delay Generator enable value
+            printPvNameValue( evrName + ":CTRL.DG%1cE" % ( ord('A') + dgNumber - 10 ) )
 
-        # Print Polarity
-        printPvNameValue( evrName + ":CTRL.DG%1dP" % ( dgNumber ) )
+            # Print Polarity
+            printPvNameValue( evrName + ":CTRL.DG%1cP" % ( ord('A') + dgNumber - 10 ) )
+        else:
+            # Print the Delay Generator enable value
+            printPvNameValue( evrName + ":CTRL.DG%1dE" % ( dgNumber ) )
+
+            # Print Polarity
+            printPvNameValue( evrName + ":CTRL.DG%1dP" % ( dgNumber ) )
 
         #
         # Pre-scale, delay, and width need special handling to
@@ -43,20 +50,29 @@ def showPulseGenSettings( evrName, dgNumber ):
         #
 
         # Get the Pre-scale value for this delay generator
-        preScalePv = Pv( evrName + ":CTRL.DG%1dC" % ( dgNumber ) )
+        if ( dgNumber >= 10 ):
+            preScalePv = Pv( evrName + ":CTRL.DG%1cC" % ( ord('A') + dgNumber - 10 ) )
+        else:
+            preScalePv = Pv( evrName + ":CTRL.DG%1dC" % ( dgNumber ) )
         preScalePv.connect(0.1)
         preScalePv.get(False, 0.1)
         # Note we force preScale to 1
         print "%s %-.30s" % ( preScalePv.name, 1 )
 
         # Delay
-        delayPv = Pv( evrName + ":CTRL.DG%1dD" % ( dgNumber ) )
+        if ( dgNumber >= 10 ):
+            delayPv = Pv( evrName + ":CTRL.DG%1cD" % ( ord('A') + dgNumber - 10 ) )
+        else:
+            delayPv = Pv( evrName + ":CTRL.DG%1dD" % ( dgNumber ) )
         delayPv.connect(0.1)
         delayPv.get(False, 0.1)
         print "%s %-.30s" % ( delayPv.name, delayPv.value * preScalePv.value )
 
         # Width
-        widthPv = Pv( evrName + ":CTRL.DG%1dW" % ( dgNumber ) )
+        if ( dgNumber >= 10 ):
+            widthPv = Pv( evrName + ":CTRL.DG%1cW" % ( ord('A') + dgNumber - 10 ) )
+        else:
+            widthPv = Pv( evrName + ":CTRL.DG%1dW" % ( dgNumber ) )
         widthPv.connect(0.1)
         widthPv.get(False, 0.1)
         print "%s %-.30s" % ( widthPv.name, widthPv.value * preScalePv.value )
@@ -134,6 +150,10 @@ if __name__ == "__main__":
     showPulseGenSettings( evrPvName, 5 )
     showPulseGenSettings( evrPvName, 6 )
     showPulseGenSettings( evrPvName, 7 )
+    showPulseGenSettings( evrPvName, 8 )
+    showPulseGenSettings( evrPvName, 9 )
+    showPulseGenSettings( evrPvName, 10 )
+    showPulseGenSettings( evrPvName, 11 )
 
     saveEventCtrlSettings( evrPvName, 1 )
     saveEventCtrlSettings( evrPvName, 2 )
