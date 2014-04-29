@@ -35,9 +35,6 @@ DB_INSTALLS += evrWithExtDelays.template
 # ARCHIVE += <file>.substitutions
 # ARCHIVE += <file>.template
 #
-ARCHIVE += archive_evr.archive
-ARCHIVE += archive_evr.sub-arch
-ARCHIVE += archive_evr.tpl-arch
 ARCHIVE += archive_evr_SLAC.archive
 ARCHIVE += archive_evr_SLAC.sub-arch
 ARCHIVE += archive_evr_SLAC.tpl-arch
