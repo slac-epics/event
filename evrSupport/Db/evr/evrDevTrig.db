@@ -167,7 +167,7 @@ record( seq, "$(TRIG):BW_EC_SEQ" )
 
 record( seq, "$(TRIG):FW_EC_SEQ_REENABLE" )
 {
-	field( DLY1, "0.5" )
+	field( DLY1, "0.25" )
 	field( DOL1, "1" )
 	field( LNK1, "$(TRIG):FW_EC_SEQ_ENAB PP NMS" )
 	info( autosaveFields, "DESC" )
@@ -184,6 +184,8 @@ record( ai, "$(TRIG):TOFFSET" )
 	field( PINI, "NO" )
 	field( EGU,  "ticks" )
 	field( FLNK, "$(TRIG):TOFFSET_NS" )
+	field( LOW,  "-1e-9" )
+	field( LSV,  "MINOR" )
 }
 
 record( calc, "$(TRIG):TOFFSET_NS" )
@@ -218,7 +220,7 @@ record( aSub, "$(TRIG):ASUB_LKUOFFSET" )
 	field( NOC, "256" )
 	field( OUTA, "$(TRIG):TOFFSET.VAL PP MS" )
 	field( FTVA, "LONG" )
-	field( FLNK, "$(TRIG):TDES" ) # Needed?
+#	field( FLNK, "$(TRIG):TDES" ) # Needed?
 }
 
 # PV to read currently assigned event code
@@ -248,7 +250,7 @@ record( longSub, "$(TRIG):LSUB_EVSEL" )
 	field( INPM, "$(EVR):EVENT12CTRL.ENM CPP NMS" )
 	field( INPN, "$(EVR):EVENT13CTRL.ENM CPP NMS" )
 	field( INPO, "$(EVR):EVENT14CTRL.ENM CPP NMS" )
-	field( INPZ, "$(TRIG):LSUB_TRGSEL.VAL MS" )
+	field( INPZ, "$(TRIG):LSUB_TRGSEL.VAL PP MS" )
 	field( FLNK, "$(TRIG):ASUB_LKUOFFSET" )
 }
 
@@ -281,12 +283,17 @@ record( longSub, "$(TRIG):LSUB_TRGSEL" )
 	field( FLNK, "$(TRIG):LSUB_EVSEL" )
 }
 
+# Forward trigger delay seqence enable calculation
+# Input A is used for temporary disable of the FW_TDES sequence
+# Processed on demand by FW_TDES_SEQ
 record( calcout, "$(TRIG):FW_TDES_SEQ_ENAB_CALC" )
 {
 	field( INPA, "1" )
-	field( INPB, "$(TRIG):LSUB_TRGSEL.SEVR CPP NMS" )
-	field( INPC, "$(TRIG):TDES CPP NMS" )
-	field( CALC, "A && (B==0) && (C>=0)" )
+	field( INPB, "$(TRIG):LSUB_TRGSEL.SEVR NPP NMS" )
+	field( INPC, "$(TRIG):TDES.SEVR NPP NMS" )
+	field( INPD, "$(TRIG):TDLY NPP MS" )
+	field( INPE, "$(TRIG):ASUB_LKUOFFSET.SEVR NPP NMS" )
+	field( CALC, "A&&(B==0)&&(C==0)&&(D>=0)&&(E==0)" )
 	field( OUT,  "$(TRIG):FW_TDES_SEQ_ENAB PP NMS" )
 }
 
@@ -297,29 +304,40 @@ record( bo, "$(TRIG):FW_TDES_SEQ_ENAB" )
 }
 
 # Sequence for forward delay updates
+# No delays in this record, see the re-enable
 record( seq, "$(TRIG):FW_TDES_SEQ" )
 {
-	field( SDIS, "$(TRIG):FW_TDES_SEQ_ENAB" )
+	field( SDIS, "$(TRIG):FW_TDES_SEQ_ENAB_CALC PP" )
 	field( DISV, "0" )
 	field( DESC, "Update delay seq" )
 
+#   Disable the BW_TDES_SEQ while we do the FW_TDES_SEQ
 	field( DOL1, "0" )
 	field( LNK1, "$(TRIG):BW_TDES_SEQ_ENAB_CALC.A PP MS" )
 
-#	field( DOL2, "$(TRIG):TDLY NPP MS" )
-#	field( LNK2, "$(TRIG):TDES_TICKS PP NMS" )
-	field( DOL2, "$(TRIG):TDES_TICKS NPP MS" )
-	field( LNK2, "$(EVR):CTRL.$(TYPE)$(N)D PP NMS" )
+	field( DOL2, "$(TRIG):TDLY NPP MS" )
+	field( LNK2, "$(TRIG):FW_TDES_TICK_CALC PP NMS" )
 
-	field( DOL3, "1" )
-	field( DLY3, "0.5" )
-	field( LNK3, "$(TRIG):BW_TDES_SEQ_ENAB_CALC.A PP MS" )
+	field( FLNK, "$(TRIG):BW_TDES_SEQ_REENABLE PP NMS" )
+	info( autosaveFields, "DESC" )
 }
 
+# Reenable after a short delay
+record( seq, "$(TRIG):BW_TDES_SEQ_REENABLE" )
+{
+	field( DLY1, "0.25" )
+	field( DOL1, "1" )
+	field( LNK1, "$(TRIG):BW_TDES_SEQ_ENAB_CALC.A PP NMS" )
+	info( autosaveFields, "DESC" )
+}
+
+# Backward trigger delay seqence enable calculation
+# Input A is used for temporary disable of the BW_TDES sequence
+# Processed on demand by BW_TDES_SEQ
 record( calcout, "$(TRIG):BW_TDES_SEQ_ENAB_CALC" )
 {
 	field( INPA, "1" )
-	field( INPB, "$(TRIG):LSUB_TRGSEL.SEVR CPP NMS" )
+	field( INPB, "$(TRIG):LSUB_TRGSEL.SEVR NPP NMS" )
 	field( CALC, "A && (B==0)" )
 	field( OUT,  "$(TRIG):BW_TDES_SEQ_ENAB PP NMS" )
 }
@@ -331,21 +349,31 @@ record( bo, "$(TRIG):BW_TDES_SEQ_ENAB" )
 }
 
 # Sequence for backward delay updates
+# No delays in this record, see the re-enable
 record( seq, "$(TRIG):BW_TDES_SEQ" )
 {
-	field( SDIS, "$(TRIG):BW_TDES_SEQ_ENAB" )
+	field( SDIS, "$(TRIG):BW_TDES_SEQ_ENAB_CALC PP" )
 	field( DISV, "0" )
 	field( DESC, "Backward delay seq" )
 
+#   Disable the FW_TDES_SEQ while we do the BW_TDES_SEQ
 	field( DOL1, "0" )
 	field( LNK1, "$(TRIG):FW_TDES_SEQ_ENAB_CALC.A PP MS" )
 
 	field( DOL2, "$(TRIG):BW_TDES NPP MS" )
 	field( LNK2, "$(TRIG):TDES PP NMS" )
 
-	field( DOL3, "1" )
-	field( DLY3, "0.5" )
-	field( LNK3, "$(TRIG):FW_TDES_SEQ_ENAB_CALC.A PP MS" )
+	field( FLNK, "$(TRIG):FW_TDES_SEQ_REENABLE PP NMS" )
+	info( autosaveFields, "DESC" )
+}
+
+# Reenable after a short delay
+record( seq, "$(TRIG):FW_TDES_SEQ_REENABLE" )
+{
+	field( DOL1, "1" )
+	field( DLY1, "0.25" )
+	field( LNK1, "$(TRIG):FW_TDES_SEQ_ENAB_CALC.A PP MS" )
+	info( autosaveFields, "DESC" )
 }
 
 # This PV computes the Trigger Delay in ticks
@@ -356,6 +384,8 @@ record( calcout, "$(TRIG):TDLY" )
 	field( INPB, "8.403361345" )
 	field( CALC, "FLOOR((A/B)+0.5)" )
 	field( EGU,  "ticks" )
+	field( LOW,  "-1e-9" )
+	field( LSV,  "MINOR" )
 	field( OUT,  "$(TRIG):TDES_TICKS PP NMS" )
 }
 
@@ -371,20 +401,34 @@ record( ao, "$(TRIG):TDES_TICKS"	)
 	field( FLNK, "$(TRIG):FW_TDES_SEQ" )
 }
 
+record( calcout, "$(TRIG):FW_TDES_TICK_CALC"	)
+{
+	field( INPA, "$(TRIG):TDLY NPP NMS" )
+	field( INPB, "$(TRIG):LSUB_EVSEL.SEVR NPP NMS" )
+	field( CALC, "(A>=0)&&(B==0)" )
+	field( OOPT, "When Non-zero" )
+	field( DOPT, "Use OCAL" )
+	field( OCAL, "A" )
+	field( OUT,  "$(EVR):CTRL.$(TYPE)$(N)D PP NMS" )
+	field( EGU,  "ticks" )
+}
+
 # This PV calculates the additional delay in ns
 # after the event code before the trigger is generated
 record( calc, "$(TRIG):TDLY_NS" )
 {
 	field( DESC, "Trigger Delay" )
 	field( CALC, "A+B-(C*D)" )
-	field( INPA, "$(TRIG):TDES.VAL" )
-	field( INPB, "$(EVR):TREF CPP" )
-	field( INPC, "$(TRIG):TOFFSET.VAL" )
+	field( INPA, "$(TRIG):TDES.VAL NPP MS" )
+	field( INPB, "$(EVR):TREF CPP MS" )
+	field( INPC, "$(TRIG):TOFFSET.VAL NPP MS" )
 	field( INPD, "8.403361345" )
 	field( EGU,  "ns" )
 	field( HOPR, "1000000000" )
 	field( PREC, "1" )
 	field( FLNK, "$(TRIG):TDLY" )
+	field( LOW,  "-1e-9" )
+	field( LSV,  "MINOR" )
 }
 
 # Update TDES.LOW based on 0 tick delay
@@ -394,7 +438,7 @@ record( calcout, "$(TRIG):TDES_CALC_LOW" )
 {
 	field( DESC, "TDES low limit calc" )
 	field( CALC, "A*B-C-0.01" )
-	field( INPA, "$(TRIG):TOFFSET.VAL CPP MS" )
+	field( INPA, "$(TRIG):TOFFSET.VAL CPP NMS" )
 	field( INPB, "8.403361345" )
 	field( INPC, "$(EVR):TREF CPP MS" )
 	field( EGU,  "ns" )
@@ -430,10 +474,10 @@ record( calc, "$(TRIG):BW_TDES" )
 	field( DESC, "Backward TDES calc" )
 	field( SCAN, "Passive" )
 	field( CALC, "(A+B)*C-D" )
-	field( INPA, "$(TRIG):TOFFSET.VAL CPP MS" )
+	field( INPA, "$(TRIG):TOFFSET.VAL NPP MS" )
 	field( INPB, "$(TRIG):BW_TDLY NPP MS" )
 	field( INPC, "8.403361345" )
-	field( INPD, "$(EVR):TREF CPP MS" )
+	field( INPD, "$(EVR):TREF NPP MS" )
 	field( EGU,  "ns" )
 	field( PREC, "2" )
 	field( FLNK, "$(TRIG):BW_TDES_SEQ" )
