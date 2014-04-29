@@ -51,9 +51,6 @@ ARCHIVE += archive_vme_evr.tpl-arch
 # REQ += <file>.substitutions
 # REQ += <file>.template
 #
-REQ += autosave_evr.req
-REQ += autosave_evr.sub-req
-REQ += autosave_evr.tpl-req
 REQ += autosave_evr_SLAC.req
 REQ += autosave_evr_SLAC.sub-req
 REQ += autosave_evr_SLAC.tpl-req
