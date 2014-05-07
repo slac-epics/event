@@ -55,7 +55,7 @@ file evrDevTrig.db
 	{	0,	$(EVR):TRIG$(N),	DG,		DG$(N)E	}
 	{	1,	$(EVR):TRIG$(N),	DG,		DG$(N)E	}
 	{	2,	$(EVR):TRIG$(N),	DG,		DG$(N)E	}
-	{	3,	$(EVR):TRIG$(N),	DG,		DG$(N)E	}
+	{	3,	$(EVR):TRIG$(N),	OT,		OTP$(N)	}
 }
 
 # Make a set of event control records for each output trigger
