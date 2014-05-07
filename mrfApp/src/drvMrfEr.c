@@ -1780,6 +1780,8 @@ epicsStatus ErDrvReport (int level)
 |* o As one might expect, this routine runs entirely in interrupt context.
 |*
 \**************************************************************************************************/
+int lastfid_drvMrfEr	= 0;
+int	lastec_drvMrfEr		= 0;
 
 LOCAL_RTN
 void ErIrqHandler (ErCardStruct *pCard)
@@ -1901,8 +1903,12 @@ void ErIrqHandler (ErCardStruct *pCard)
         */
         for (i=0; (MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_FNE) &&
                   (i < EVR_FIFO_EVENT_LIMIT);  i++) {
+			epicsUInt32		fifoSec;
+    		epicsUInt32     fifoFid;
 
-           /* Get the event number and timestamp */
+            /*
+			 * Get the event number and timestamp
+			 */
             if (pCard->FormFactor == VME_EVR) {
               HiWord = MRF_VME_REG16_READ(&pEr->EventTimeHi);
               LoWord = MRF_VME_REG16_READ(&pEr->EventFifo);
@@ -1913,9 +1919,15 @@ void ErIrqHandler (ErCardStruct *pCard)
             EventNum = LoWord & 0x00ff;
             Time = (HiWord<<8) | (LoWord>>8);
 
+            /* Get the low 32 timestamp bits from the extended FIFO and extract the fiducial */
+			fifoSec		= MRF_VME_REG32_READ( &pEr->EvFIFOSec );
+			fifoFid		= fifoSec & 0x1FFFF;
+
            /* Invoke the device-support layer event handler (if one is defined) */
+			lastec_drvMrfEr		= EventNum;
+			lastfid_drvMrfEr	= fifoFid;
             if (pCard->DevEventFunc != NULL)
-                (*pCard->DevEventFunc)(pCard, EventNum, Time);
+                (*pCard->DevEventFunc)( pCard, EventNum, fifoFid );
 
 #ifdef DEBUG_ACTIVITY
             if (activityGo) {
@@ -2954,9 +2966,9 @@ void ErRegisterDevErrorHandler(ErCardStruct *pCard, DEV_ERROR_FUNC ErrorFunc)
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErRegisterDevEventHandler(ErCardStruct *pCard, DEV_EVENT_FUNC EventFunc)
+void ErRegisterDevEventHandler(ErCardStruct *pCard, DEV_EVENT_FUNC DevEventFunc)
 {
-    pCard->DevEventFunc = EventFunc;
+    pCard->DevEventFunc = DevEventFunc;
 
 }/*end ErRegisterDevEventHandler()*/
 
@@ -4151,6 +4163,7 @@ void DiagDumpRegs (ErCardStruct *pCard)
     * Display the contents of selected registers
     */
     printf ("Control reg:    %4.4X \n", Csr);
+
     printf ("RAM addr&data:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->EventRamAddr),
             MRF_VME_REG16_READ(&pEr->EventRamData));
     printf ("OTP, LVL, TEV:  %4.4X %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->OutputPulseEnables),
@@ -4160,8 +4173,12 @@ void DiagDumpRegs (ErCardStruct *pCard)
             MRF_VME_REG16_READ(&pEr->EventCounterLo));
     printf ("TS ctr hi, lo:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->TimeStampLo),
             MRF_VME_REG16_READ(&pEr->TimeStampHi));
-    printf ("Evt fifo,time:  %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->EventFifo),
+    printf ("Evt fifo,time:  %4.4X %4.4X \n",
+			MRF_VME_REG16_READ(&pEr->EventFifo),
             MRF_VME_REG16_READ(&pEr->EventTimeHi));
+    printf ("Evt EvFIFOSec,EvFIFOEvCnt:  %8.8X %8.8X \n",
+			MRF_VME_REG32_READ( &pEr->EvFIFOSec ),
+			MRF_VME_REG32_READ( &pEr->EvFIFOEvCnt ) );
     printf ("PDP sel, dly,w: %4.4X %4.4X %4.4X \n", MRF_VME_REG16_READ(&pEr->DelayPulseSelect),
             MRF_VME_REG16_READ(&pEr->PulseDelay), MRF_VME_REG16_READ(&pEr->PulseWidth));
     printf ("PDP prescaler:  %4.4X \n", MRF_VME_REG16_READ(&pEr->DelayPrescaler));
