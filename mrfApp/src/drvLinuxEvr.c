@@ -2049,55 +2049,16 @@ LOCAL_RTN void ErDrvReportCall(const iocshArgBuf * args)
 	ErDrvReport((epicsInt32)args[0].ival);
 }
 
-/* iocsh command: fiddbg */
-LOCAL const iocshArg fiddbgArg0 = {"Mask" , iocshArgInt};
-LOCAL const iocshArg fiddbgArg1 = {"Count" , iocshArgInt};
-LOCAL const iocshArg *const fiddbgArgs[2] = {&fiddbgArg0, &fiddbgArg1};
-LOCAL const iocshFuncDef fiddbgDef = {"fiddbg", 2, fiddbgArgs};
-
-/*
- * Note: When new debug variables are added here that are referenced
- * by the common EVR code, please add the same debug variables to drvMrfEr.c
- * as well to avoid link errors in the RTEMS build.
- */
-int fiddbg = 0, fiddbgcnt = 0;
-
-LOCAL_RTN void fiddbgCall(const iocshArgBuf * args)
-{
-    fiddbg = args[0].ival;
-    fiddbgcnt = args[1].ival;
-    if (!fiddbgcnt)
-        fiddbgcnt = 200;
-    printf("Fiducial debugging is %d (0x%x).\n", fiddbg, fiddbg);
-    fflush(stdout);
-}
-
-/* iocsh command: evtdbg */
-LOCAL const iocshArg evtdbgArg0 = {"ECstart" , iocshArgInt};
-LOCAL const iocshArg evtdbgArg1 = {"ECfinal" , iocshArgInt};
-LOCAL const iocshArg *const evtdbgArgs[2] = {&evtdbgArg0, &evtdbgArg1};
-LOCAL const iocshFuncDef evtdbgDef = {"evtdbg", 2, evtdbgArgs};
-extern void evtdbg(int, int);
-
-LOCAL_RTN void evtdbgCall(const iocshArgBuf * args)
-{
-    int ecstart = args[0].ival, ecfinal = args[1].ival;
-    if (ecfinal < abs(ecstart))
-        ecfinal = abs(ecstart);
-    evtdbg(ecstart, ecfinal);
-}
-
 /* Registration APIs */
 LOCAL void drvMrfErRegister()
 {
 	/* Initialize global variables */
 	ErCardListLock = epicsMutexCreate();
 	ErConfigureLock = epicsMutexCreate();
+
 	/* register APIs */
 	iocshRegister(	&ErConfigureDef,	ErConfigureCall );
 	iocshRegister(	&ErDebugLevelDef,	ErDebugLevelCall );
 	iocshRegister(	&ErDrvReportDef,	ErDrvReportCall );
-	iocshRegister(	&fiddbgDef,	        fiddbgCall );
-	iocshRegister(	&evtdbgDef,	        evtdbgCall );
 }
 epicsExportRegistrar(drvMrfErRegister);

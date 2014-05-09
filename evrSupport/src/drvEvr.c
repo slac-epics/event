@@ -189,7 +189,8 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
       evrMessageNoDataError(EVR_MESSAGE_FIDUCIAL);
     }
   } else {
-#if 0
+#define USE_EVENT_MSG_Q 1
+#if USE_EVENT_MSG_Q
     /*
      * MCB - No.  This is conflicting with our usual way of doing things!
      */
@@ -198,9 +199,11 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 	   */
   	  EventMessage eventMessage;
 	  eventMessage.eventNum  = eventNum;
-	  epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
-#endif
+	  epicsMessageQueueSend( eventTaskQueue, &eventMessage, sizeof(eventMessage) );
+#endif	/* USE_EVENT_MSG_Q */
   }
+
+  /* Increment the eventCode counter */
   evrTimeCount((unsigned int)eventNum, (unsigned int) timeNum);
 }
 
@@ -290,10 +293,10 @@ static int evrTask()
       }   
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
 
-#if 0
+#if USE_EVENT_MSG_Q
       /* MCB - No, this is done elsewhere! */
       epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
-#endif
+#endif	/* USE_EVENT_MSG_Q */
       messagePending = epicsMessageQueuePending(eventTaskQueue);
       evrMessageQ(EVR_MESSAGE_FIDUCIAL, messagePending);
 
@@ -345,7 +348,7 @@ static int evrRecord()
 }
 
 
-#if 0
+#if USE_EVENT_MSG_Q
 /*
  * MCB - No.  We are doing all of this at other points in the code, and we really don't
  * want to move it here.
@@ -354,22 +357,33 @@ static int evrEventTask(void)
 {
 	EventMessage eventMessage;
 
-    for(;;) {   
-      epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
-      evrTimeEventProcessing(eventMessage.eventNum);
-      post_event(eventMessage.eventNum);
-      /* pCard cannot be NULL since the only entities which send messages are
-	   *  - the evrTask which bails out if pCard is NULL
-	   *  - the evrEvent handler which is not installed if pCard is NULL
-	   */
-      if ( eventMessage.eventNum >= 0 && eventMessage.eventNum < sizeof(pCard->IoScanPvt)/sizeof(pCard->IoScanPvt[0]) ) {
-		scanIoRequest( pCard->IoScanPvt[eventMessage.eventNum] );
-	  }
-    }
+    for(;;)
+	{
+		/* Wait for the next EventMessage */
+		epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+
+		/* Update the event code timestamps */
+		evrTimeEventProcessing(eventMessage.eventNum);
+
+		/* Tell EPICS to post the event code */
+		post_event(eventMessage.eventNum);
+
+		/* pCard cannot be NULL since the only entities which send messages are
+		*  - the evrTask which bails out if pCard is NULL
+		*  - the evrEvent handler which is not installed if pCard is NULL
+		*/
+		if (	eventMessage.eventNum >= 0
+			&&	eventMessage.eventNum < sizeof(pCard->IoScanPvt)/sizeof(pCard->IoScanPvt[0]) )
+		{
+			/* Add a process request to the scanIO queue */
+			scanIoRequest( pCard->IoScanPvt[eventMessage.eventNum] );
+		}
+	}
 
     return 0;
 }
-#endif
+#endif	/* USE_EVENT_MSG_Q */
+
 /*=============================================================================
                                                          
   Name: evrInitialize
@@ -440,15 +454,15 @@ int evrInitialize()
     return -1;
   }
 
-#if 0
+#if USE_EVENT_MSG_Q
   /* MCB - We don't need this. */
   if(!epicsThreadCreate("evrEventTask", epicsThreadPriorityHigh,
                         epicsThreadGetStackSize(epicsThreadStackMedium),
                         (EPICSTHREADFUNC)evrEventTask,0)) {
-    errlogPrintf("evrInitialize: unable to crate the evrEvent task\n");
+    errlogPrintf("evrInitialize: unable to create the evrEvent task\n");
     return -1;
   }
-#endif
+#endif	/* USE_EVENT_MSG_Q */
 
   if (!epicsThreadCreate("evrRecord", epicsThreadPriorityScanHigh+10,
                          epicsThreadGetStackSize(epicsThreadStackMedium),
@@ -518,12 +532,12 @@ int evrTimeRegister(FIDUCIALFUNCTION fiducialFunc, void * fiducialArg)
   return 0;
 }
 
-LOCAL
+static
 registryFunctionRef peek_fiducialRef [] = {
     {"peek_fiducial", (REGISTRYFUNCTION)peek_fiducial}
 };
 
-LOCAL_RTN
+static
 void peek_fiducialRegistrar (void) {
     registryFunctionRefAdd (peek_fiducialRef, NELEMENTS(peek_fiducialRef));
 }

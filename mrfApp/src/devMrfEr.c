@@ -1400,10 +1400,23 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
     if (pCard->EventFunc != NULL)
         (*(USER_EVENT_FUNC)pCard->EventFunc)(pCard->Cardno, EventNum, Time);
 
+#define USE_EVENT_MSG_Q 1
+#if USE_EVENT_MSG_Q == 0
    /*---------------------
     * Schedule processing for any event-driven records
+	* This notifies EPICS base to add callback requests
+	* for all records whose SCAN field is Event and whose
+	* EVNT field is EventNum.
+    */
+    post_event( EventNum );
+
+   /*---------------------
+    * Schedule processing for our EVR card's I/O Scan records
+	* This adds callback requests
+	* for all eventRecord PV's whose SCAN field is "I/O Intr"
     */
     scanIoRequest (pCard->IoScanPvt[EventNum]);
+#endif	/* USE_EVENT_MSG_Q */
 
 }/*end ErDevEventFunc()*/
 

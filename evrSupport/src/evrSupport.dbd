@@ -7,3 +7,7 @@ include "bsa.dbd"
 #include "generalTimeNonVx.dbd"
 include "longSubRecord.dbd"
 include "drvEvr.dbd"
+
+registrar( peek_fiducialRegistrar )
+registrar( evrSupportRegistrar )
+
