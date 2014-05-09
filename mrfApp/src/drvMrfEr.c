@@ -112,12 +112,6 @@
 #include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
 #include "pci_mrfev.h"		/* MRF PCI device id's	*/
 
-/*
- * These debug variables are included to avoid link errors in the RTEMS build.
- * Their linux counterparts are in drvLinuxEvr.c
- */
-int fiddbg		= 0;
-int fiddbgcnt	= 0;
 
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
@@ -4393,9 +4387,14 @@ LOCAL_RTN void ERCall(const iocshArgBuf * args) {
                             ER();
 }
 
-LOCAL void drvMrfErRegister() {
+LOCAL void drvMrfErRegister()
+{
+	/* Initialize global variables, if any */
+
+	/* register APIs */
     iocshRegister(&ErConfigureDef  , ErConfigureCall );
     iocshRegister(&ErDebugLevelDef , ErDebugLevelCall);
     iocshRegister(&ERDef           , ERCall          );
 }
 epicsExportRegistrar(drvMrfErRegister);
+
