@@ -1020,7 +1020,7 @@ menuLabel {
   0 "Embedded Trigger"
 }
 symbols {
-  0 "TRIG=$(EVR):TRIG0,CH=0,T=Front Panel,EVR=$(EVR)"
+  0 "TRIG=$(EVR):TRIG0,CH=0,DG=DG,T=Front Panel,EVR=$(EVR)"
 }
 replaceSymbols {
   0 1
@@ -1056,7 +1056,7 @@ menuLabel {
   0 "Embedded Trigger"
 }
 symbols {
-  0 "TRIG=$(EVR):TRIG1,CH=1,T=Front Panel,EVR=$(EVR)"
+  0 "TRIG=$(EVR):TRIG1,CH=1,DG=DG,T=Front Panel,EVR=$(EVR)"
 }
 replaceSymbols {
   0 1
@@ -1112,7 +1112,7 @@ menuLabel {
   0 "Embedded Trigger"
 }
 symbols {
-  0 "TRIG=$(EVR):TRIG2,CH=2,T=Front Panel,EVR=$(EVR)"
+  0 "TRIG=$(EVR):TRIG2,CH=2,DG=DG,T=Front Panel,EVR=$(EVR)"
 }
 replaceSymbols {
   0 1
@@ -1148,7 +1148,7 @@ menuLabel {
   0 "Embedded Trigger"
 }
 symbols {
-  0 "TRIG=$(EVR):TRIG3,CH=3,T=Front Panel,EVR=$(EVR)"
+  0 "TRIG=$(EVR):TRIG3,CH=3,DG=DG,T=Front Panel,EVR=$(EVR)"
 }
 replaceSymbols {
   0 1
