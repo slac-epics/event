@@ -38,7 +38,7 @@ def restoreConfigFile( fileName ):
                 pv.get( False, 0.1 )
                 print "old %s %-.30s" % ( pv.name, pv.value )
                 if isinstance( pv.value, str ):
-                    newValue = valStr
+                    newValue = valStr.strip( '"' )
                 else:
                     newValue = stringToScalar( valStr )
                 pv.put( newValue )

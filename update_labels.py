@@ -12,6 +12,8 @@ import sys
 
 from options import Options
 
+showCAErrors	= False
+
 def isInteresting( label ):
     if (	label != ""
         and	label != "Spare"
@@ -27,6 +29,17 @@ def isInteresting( label ):
     return False
 
 def update_labels( evrPvName, outputNum, write ):
+    triggerName = evrPvName + ":TRIG%1d:" % ( outputNum )
+    try:
+        # See if this trigger exists
+        tDesPv = Pv( triggerName + "TDES" )
+        tDesPv.connect(0.1)
+        tDesPv.get(False, 0.1)
+    except Exception, msg:
+        if showCAErrors:
+            print >> sys.stderr, "failed: pyca exception: ", msg
+        return
+
     if ( outputNum >= 10 ):
         fpLabelPv	= Pv( evrPvName + ":FP%1cL"				% (ord('A') + outputNum - 10) )
         fpDescPv	= Pv( evrPvName + ":FP%1cL.DESC"		% (ord('A') + outputNum - 10) )
