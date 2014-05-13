@@ -12,6 +12,8 @@ import sys
 
 from options import Options
 
+showCAErrors = False
+
 def printPvNameValue( pvName ):
     try:
         pv = Pv( pvName )
@@ -22,7 +24,8 @@ def printPvNameValue( pvName ):
         else:
             print "%s %-.30s" % ( pv.name, pv.value )
     except pyca.pyexc, msg:
-        # print >> sys.stderr, "failed: pyca exception: ", msg
+        if showCAErrors:
+            print >> sys.stderr, "failed: pyca exception: ", msg
         pass
     except pyca.caexc, msg:
         print >> sys.stderr, "failed: channel access exception: ", msg
@@ -30,6 +33,19 @@ def printPvNameValue( pvName ):
         print >> sys.stderr, "failed:", msg.__class__.__name__, "exception: ", msg
 
 def showPulseGenSettings( evrName, dgNumber ):
+    try:
+        # See if this pulse gen exists
+        if ( dgNumber >= 10 ):
+            enablePv = Pv( evrName + ":CTRL.DG%1cE" % ( ord('A') + dgNumber - 10 ) )
+        else:
+            enablePv = Pv( evrName + ":CTRL.DG%1dE" % ( dgNumber ) )
+        enablePv.connect(0.1)
+        enablePv.get(False, 0.1)
+    except Exception, msg:
+        if showCAErrors:
+            print >> sys.stderr, "failed: pyca exception: ", msg
+        return
+
     try:
         if ( dgNumber >= 10 ):
             # Print the Delay Generator enable value
@@ -87,6 +103,16 @@ def showPulseGenSettings( evrName, dgNumber ):
 
 def saveTriggerSettings( evrName, trigNumber ):
     triggerName = evrName + ":TRIG%1d:" % ( trigNumber )
+    try:
+        # See if this trigger exists
+        tDesPv = Pv( triggerName + "TDES" )
+        tDesPv.connect(0.1)
+        tDesPv.get(False, 0.1)
+    except Exception, msg:
+        if showCAErrors:
+            print >> sys.stderr, "failed: pyca exception: ", msg
+        return
+
     printPvNameValue( triggerName + "TEC.VAL" )
     printPvNameValue( triggerName + "TCTL.VAL" )
     printPvNameValue( triggerName + "TCTL.DESC" )
@@ -113,7 +139,7 @@ def saveEventCtrlSettings( evrName, ctrlNumber ):
 # ----------------------------------------------------------------------
 if __name__ == "__main__":
 
-    options = Options( ['evrPvName'], [], [] )
+    options = Options( ['evrPvName'], [], ['verbose'] )
     try:
         options.parse()
     except Exception, msg:
@@ -129,6 +155,8 @@ if __name__ == "__main__":
         print "EVR not accessible: ", msg
         sys.exit()
 
+    if options.verbose is not None:
+        showCAErrors = True
     saveTriggerSettings( evrPvName, 0 )
     saveTriggerSettings( evrPvName, 1 )
     saveTriggerSettings( evrPvName, 2 )

@@ -37,7 +37,7 @@ def cmpConfigFile( fileName ):
                 pv.connect(0.1)
                 pv.get( False, 0.1 )
                 if isinstance( pv.value, str ):
-                    cfgValue = valStr
+                    cfgValue = valStr.strip( '"' )
                 else:
                     cfgValue = stringToScalar( valStr )
                 # print "actual %s %-.30s, cfg %-.30s" % ( pv.name, pv.value, cfgValue )
