@@ -1,7 +1,7 @@
 Release Notes for the event package
 -----------------------------------
 event-R4-1-2:
-      * Add optional argument to ErConfigure for starting VME slot number to 
+      * Add ErConfigureWithSlot to add starting VME slot number to 
 	look for EVRs.
 event-R4-1-1:
       Removed SYS=SYS1 as a default value. This forces us to define SYS,

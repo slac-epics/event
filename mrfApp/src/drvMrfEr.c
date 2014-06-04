@@ -764,7 +764,7 @@ void ErDebugLevel (epicsInt32 Level) {
 }/*end ErDebugLevel()*/
 
 /**************************************************************************************************
-|* ErConfigure () -- Event Receiver Card Configuration Routine
+|* ErConfigureWithSlot () -- Event Receiver Card Configuration Routine
 |*-------------------------------------------------------------------------------------------------
 |*
 |* This routine is called from the startup script to initialize Event Receiver Card addresses,
@@ -788,7 +788,7 @@ void ErDebugLevel (epicsInt32 Level) {
 |*
 |*-------------------------------------------------------------------------------------------------
 |* CALLING SEQUENCE:
-|*      status = ErConfigure (Card, CardAddress, IrqVector, IrqLevel, FormFactor, StartSlot);
+|*      status = ErConfigureWithSlot (Card, CardAddress, IrqVector, IrqLevel, FormFactor, StartSlot);
 |*
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
@@ -820,7 +820,7 @@ void ErDebugLevel (epicsInt32 Level) {
  \*~~~~~~~~~~~~~~~~~~~~~~*/
 
 GLOBAL_RTN
-int ErConfigure (
+int ErConfigureWithSlot (
 
    /***********************************************************************************************/
    /*  Parameter Declarations                                                                     */
@@ -1282,7 +1282,17 @@ int ErConfigure (
     ellAdd (&ErCardList, &pCard->Link); 
     return OK;
 
-}/*end ErConfigure()*/
+}/*end ErConfigureWithSlot()*/
+GLOBAL_RTN
+int ErConfigure (
+    int Card,                               /* Logical card number for this Event Receiver card   */
+    epicsUInt32 CardAddress,                /* Starting address for this card's register map      */
+    epicsUInt32 IrqVector,                  /* if VME_EVR, Interrupt request vector, if PMC_EVR set to zero*/
+    epicsUInt32 IrqLevel,                   /* if VME_EVR, Interrupt request level. of PMC_EVR set to zero*/
+    int FormFactor)                         /* VME or PMC form factor                             */
+{
+  return ErConfigureWithSlot(Card, CardAddress, IrqVector, IrqLevel, FormFactor, 0);
+}
 
 /**************************************************************************************************
 |* ErGetTicks () -- Return the Current Value of the Event Counter
@@ -4206,7 +4216,7 @@ LOCAL const iocshFuncDef    ErConfigureDef     = {"ErConfigure", 5, ErConfigureA
 LOCAL_RTN void ErConfigureCall(const iocshArgBuf * args) {
                             ErConfigure(args[0].ival, (epicsUInt32)args[1].ival,
                                         (epicsUInt32)args[2].ival, (epicsUInt32)args[3].ival,
-                                        args[4].ival, 0);
+                                        args[4].ival);
 }
 
 LOCAL const iocshArg        ErDebugLevelArg0    = {"Level" , iocshArgInt};
