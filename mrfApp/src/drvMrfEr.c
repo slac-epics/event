@@ -788,7 +788,7 @@ void ErDebugLevel (epicsInt32 Level) {
 |*
 |*-------------------------------------------------------------------------------------------------
 |* CALLING SEQUENCE:
-|*      status = ErConfigure (Card, CardAddress, IrqVector, IrqLevel, FormFactor);
+|*      status = ErConfigure (Card, CardAddress, IrqVector, IrqLevel, FormFactor, StartSlot);
 |*
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
@@ -797,6 +797,7 @@ void ErDebugLevel (epicsInt32 Level) {
 |*      IrqVector   =  (epicsUInt32) Interrupt vector for this card.  
 |*      IrqLevel    =  (epicsUInt32) VME interrupt request level for this card.
 |*      FormFactor  =  (int)         Specifies VME or PMC version of the card.
+|*      StartSlot   =  (int)         Starting slot number in the VME crate to look for EVRs
 |*
 |*-------------------------------------------------------------------------------------------------
 |* IMPLICIT INPUTS:
@@ -829,7 +830,8 @@ int ErConfigure (
     epicsUInt32 CardAddress,                /* Starting address for this card's register map      */
     epicsUInt32 IrqVector,                  /* if VME_EVR, Interrupt request vector, if PMC_EVR set to zero*/
     epicsUInt32 IrqLevel,                   /* if VME_EVR, Interrupt request level. of PMC_EVR set to zero*/
-    int FormFactor)                         /* VME or PMC form factor                             */
+    int FormFactor,                         /* VME or PMC form factor                             */
+    int StartSlot)                          /* Starting slot number in the VME crate to look for EVRs */
 {
    /***********************************************************************************************/
    /*  Local Variables                                                                            */
@@ -925,7 +927,8 @@ int ErConfigure (
       case VME_EVR:
       case EMBEDDED_EVR:
 
-        Slot = 0;
+        if (StartSlot > 0) Slot = StartSlot-1;
+	else               Slot = 0;
         if (FormFactor == VME_EVR) {
           addressType = atVMEA24;
           int i    = -1;
@@ -4203,7 +4206,7 @@ LOCAL const iocshFuncDef    ErConfigureDef     = {"ErConfigure", 5, ErConfigureA
 LOCAL_RTN void ErConfigureCall(const iocshArgBuf * args) {
                             ErConfigure(args[0].ival, (epicsUInt32)args[1].ival,
                                         (epicsUInt32)args[2].ival, (epicsUInt32)args[3].ival,
-                                        args[4].ival);
+                                        args[4].ival, 0);
 }
 
 LOCAL const iocshArg        ErDebugLevelArg0    = {"Level" , iocshArgInt};
