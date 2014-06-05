@@ -764,7 +764,7 @@ void ErDebugLevel (epicsInt32 Level) {
 }/*end ErDebugLevel()*/
 
 /**************************************************************************************************
-|* ErConfigureWithSlot () -- Event Receiver Card Configuration Routine
+|* ErConfigure () -- Event Receiver Card Configuration Routine
 |*-------------------------------------------------------------------------------------------------
 |*
 |* This routine is called from the startup script to initialize Event Receiver Card addresses,
@@ -788,7 +788,7 @@ void ErDebugLevel (epicsInt32 Level) {
 |*
 |*-------------------------------------------------------------------------------------------------
 |* CALLING SEQUENCE:
-|*      status = ErConfigureWithSlot (Card, CardAddress, IrqVector, IrqLevel, FormFactor, StartSlot);
+|*      status = ErConfigure (Card, CardAddress, IrqVector, IrqLevel, FormFactor);
 |*
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
@@ -797,7 +797,6 @@ void ErDebugLevel (epicsInt32 Level) {
 |*      IrqVector   =  (epicsUInt32) Interrupt vector for this card.  
 |*      IrqLevel    =  (epicsUInt32) VME interrupt request level for this card.
 |*      FormFactor  =  (int)         Specifies VME or PMC version of the card.
-|*      StartSlot   =  (int)         Starting slot number in the VME crate to look for EVRs
 |*
 |*-------------------------------------------------------------------------------------------------
 |* IMPLICIT INPUTS:
@@ -820,7 +819,7 @@ void ErDebugLevel (epicsInt32 Level) {
  \*~~~~~~~~~~~~~~~~~~~~~~*/
 
 GLOBAL_RTN
-int ErConfigureWithSlot (
+int ErConfigure (
 
    /***********************************************************************************************/
    /*  Parameter Declarations                                                                     */
@@ -830,8 +829,7 @@ int ErConfigureWithSlot (
     epicsUInt32 CardAddress,                /* Starting address for this card's register map      */
     epicsUInt32 IrqVector,                  /* if VME_EVR, Interrupt request vector, if PMC_EVR set to zero*/
     epicsUInt32 IrqLevel,                   /* if VME_EVR, Interrupt request level. of PMC_EVR set to zero*/
-    int FormFactor,                         /* VME or PMC form factor                             */
-    int StartSlot)                          /* Starting slot number in the VME crate to look for EVRs */
+    int FormFactor)                         /* VME or PMC form factor                             */
 {
    /***********************************************************************************************/
    /*  Local Variables                                                                            */
@@ -927,8 +925,7 @@ int ErConfigureWithSlot (
       case VME_EVR:
       case EMBEDDED_EVR:
 
-        if (StartSlot > 0) Slot = StartSlot-1;
-	else               Slot = 0;
+        Slot = 0;
         if (FormFactor == VME_EVR) {
           addressType = atVMEA24;
           int i    = -1;
@@ -1282,17 +1279,7 @@ int ErConfigureWithSlot (
     ellAdd (&ErCardList, &pCard->Link); 
     return OK;
 
-}/*end ErConfigureWithSlot()*/
-GLOBAL_RTN
-int ErConfigure (
-    int Card,                               /* Logical card number for this Event Receiver card   */
-    epicsUInt32 CardAddress,                /* Starting address for this card's register map      */
-    epicsUInt32 IrqVector,                  /* if VME_EVR, Interrupt request vector, if PMC_EVR set to zero*/
-    epicsUInt32 IrqLevel,                   /* if VME_EVR, Interrupt request level. of PMC_EVR set to zero*/
-    int FormFactor)                         /* VME or PMC form factor                             */
-{
-  return ErConfigureWithSlot(Card, CardAddress, IrqVector, IrqLevel, FormFactor, 0);
-}
+}/*end ErConfigure()*/
 
 /**************************************************************************************************
 |* ErGetTicks () -- Return the Current Value of the Event Counter
