@@ -535,9 +535,11 @@ Descriptor */
 #ifdef EVENT_CLOCK_SPEED
     #define FR_SYNTH_WORD   EVENT_CLOCK_SPEED
 #else
-    #define FR_SYNTH_WORD   CLOCK_124950_MHZ
+	#warning EVENT_CLOCK_SPEED not defined default to 119MHz
+	#define FR_SYNTH_WORD   CLOCK_119000_MHZ
 #endif
 
+#define MAX_DG				4
 
 /**************************************************************************************************/
 /*  Prototype Function Declarations                                                               */
@@ -3037,7 +3039,7 @@ void ErResetAll (ErCardStruct *pCard)
    /*---------------------
     * Reset the delay, width, prescaler, and polarity of all Programmable Delay (DG) outputs
     */
-    for (Channel=0;  Channel < EVR_NUM_DG;  Channel++)
+    for (Channel=0;  Channel < MAX_DG;  Channel++)
         ErSetDg (pCard, Channel, epicsFalse, 0, 0, 0, 0);
 
    /*---------------------
@@ -3153,6 +3155,18 @@ void  ErSetDg (
     epicsUInt16                   EnaMask;        /* Mask for enabling or disabling the channel   */
     epicsUInt32                   PolMask;        /* Mask for setting the channel's polarity      */
     volatile MrfErRegs           *pEr;            /* Pointer to Event Receiver's register map     */
+
+	if( Channel < 0 || Channel >= MAX_DG ) {
+		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
+		return;
+	}
+
+	if ( ErDebug >= 1 )
+		printf( "%s: EVR card %d, slot %d %s DG %2d: pre=%u, del=%u, wid=%u, pol=%s.\n",
+				__func__, pCard->Cardno, pCard->Slot,
+				( Enable ? "Enable " : "Disable" ),
+				Channel, Prescaler, Delay, Width,
+				( Pol ? "Inv" : "Nml" )	);
 
    /***********************************************************************************************/
    /*  Code                                                                                       */
