@@ -3,9 +3,9 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 961
-y 376
-w 800
+x 894
+y 148
+w 882
 h 460
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
@@ -33,7 +33,7 @@ minor 0
 release 0
 x 0
 y 0
-w 800
+w 880
 h 40
 lineColor index 56
 fill
@@ -46,7 +46,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 8
 y 0
 w 256
@@ -67,7 +67,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 700
+x 824
 y 8
 w 48
 h 24
@@ -84,9 +84,9 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 3
+minor 4
 release 0
-x 336
+x 460
 y 8
 w 88
 h 24
@@ -111,9 +111,9 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 3
+minor 4
 release 0
-x 640
+x 764
 y 8
 w 56
 h 24
@@ -138,9 +138,9 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 3
+minor 4
 release 0
-x 536
+x 660
 y 8
 w 100
 h 24
@@ -171,9 +171,9 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 3
+minor 4
 release 0
-x 432
+x 556
 y 8
 w 100
 h 24
@@ -207,9 +207,9 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 3
+minor 4
 release 0
-x 232
+x 356
 y 8
 w 96
 h 24
@@ -250,7 +250,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 8
 y 48
 w 48
@@ -284,7 +284,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 344
 y 48
 w 132
@@ -303,7 +303,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 352
 y 68
 w 56
@@ -323,7 +323,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 508
 y 72
 w 132
@@ -358,7 +358,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 196
 y 48
 w 80
@@ -392,7 +392,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 656
 y 48
 w 80
@@ -410,7 +410,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 200
 y 64
 w 36
@@ -429,7 +429,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 244
 y 64
@@ -453,7 +453,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 420
 y 92
@@ -477,7 +477,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 508
 y 92
@@ -502,7 +502,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 660
 y 72
 w 124
@@ -554,7 +554,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 48
 y 64
 w 136
@@ -572,7 +572,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 48
 y 92
 w 136
@@ -590,7 +590,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 16
 y 92
 w 28
@@ -610,7 +610,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 16
 y 64
 w 28
@@ -630,7 +630,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 200
 y 92
 w 36
@@ -649,7 +649,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 244
 y 92
@@ -674,7 +674,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 420
 y 68
@@ -699,7 +699,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 352
 y 92
 w 56
@@ -718,7 +718,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 664
 y 92
@@ -747,7 +747,7 @@ minor 0
 release 0
 x 8
 y 132
-w 784
+w 866
 h 304
 lineColor index 3
 fill
@@ -758,7 +758,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 664
 y 436
@@ -781,7 +781,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 8
 y 124
 w 68
@@ -800,7 +800,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 572
 y 136
 w 98
@@ -820,7 +820,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 116
 y 136
 w 420
@@ -840,7 +840,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 16
 y 156
 w 60
@@ -860,7 +860,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 164
 y 156
 w 180
@@ -880,7 +880,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 356
 y 156
 w 55
@@ -900,7 +900,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 548
 y 156
 w 84
@@ -920,7 +920,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 480
 y 156
 w 64
@@ -940,7 +940,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 416
 y 156
 w 52
@@ -960,7 +960,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 656
 y 156
 w 68
@@ -980,7 +980,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 728
 y 156
 w 56
@@ -1003,7 +1003,7 @@ minor 1
 release 0
 x 12
 y 172
-w 776
+w 858
 h 64
 fgColor index 14
 bgColor index 0
@@ -1039,7 +1039,7 @@ minor 1
 release 0
 x 12
 y 236
-w 776
+w 858
 h 64
 fgColor index 14
 bgColor index 0
@@ -1072,7 +1072,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 96
 y 156
 w 64
@@ -1095,7 +1095,7 @@ minor 1
 release 0
 x 12
 y 300
-w 776
+w 858
 h 64
 fgColor index 14
 bgColor index 0
@@ -1131,7 +1131,7 @@ minor 1
 release 0
 x 12
 y 364
-w 776
+w 858
 h 64
 fgColor index 14
 bgColor index 0
