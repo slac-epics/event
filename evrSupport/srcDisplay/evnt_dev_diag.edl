@@ -11,8 +11,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 492
-y 322
+x 24
+y 407
 w 784
 h 582
 font "helvetica-medium-r-12.0"
@@ -942,7 +942,7 @@ x 436
 y 276
 w 116
 h 24
-controlPv "$(TRIG):TDES"
+controlPv "$(TRIG):BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -1067,7 +1067,7 @@ x 280
 y 104
 w 88
 h 24
-controlPv "$(TRIG):TDES"
+controlPv "$(TRIG):BW_TDES"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
