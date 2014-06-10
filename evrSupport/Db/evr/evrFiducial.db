@@ -32,7 +32,7 @@ record( longin, "$(DEV):Fiducial")
 {
   field( DESC, "Fiducial ID" )
   field( INP,  "$(DEV):PATTERN.L NPP MS" )
-  field( TSEL, "$(DEV):EventCode40:Count.TIME" )
+  field( TSEL, "$(DEV):EventCode:40:Count.TIME" )
 }
 
 # 360Hz fiducial PV
