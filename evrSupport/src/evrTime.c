@@ -65,6 +65,8 @@
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
+#include <recGbl.h>           /* for recGblGetTimeStamp    */
+#include <errlog.h>           /* for errlogPrintf		   */
 #include <dbAccess.h>         /* for dbNameToAddr          */
 #include <genSubRecord.h>
 #include <stdlib.h>
@@ -1515,26 +1517,32 @@ int evrTimePatternPutEnd(int modulo720Flag)
 
 long evrTimeGetFiducial(struct genSubRecord *psub)
 {
-#if 0
-    // TODO: Try this to use TSEL as the timestamp link
-	// It's the normal EPICS way of doing this and works
-	// for CA as well as local db links.
-	recGblGetTimeStamp( psub );
-	return psub->time.nsec & 0x1ffff;
-#else
-    struct dbCommon *precord;
-    if (!psub->dpvt) {
-        struct dbAddr addr;
-        if (dbNameToAddr((char *)psub->a, &addr))
-            return 0x1ffff;
-        else
-            psub->dpvt = addr.precord;
-    }
-    precord = (struct dbCommon *)psub->dpvt;
-    if (psub->tse == epicsTimeEventDeviceTime)
-        psub->time = precord->time;
-    return precord->time.nsec & 0x1ffff;
+#if 1
+	// Include this code to insist on a valid TSEL link
+	// NOTE: We should remove this once we've transitioned
+	// all code that uses INPA instead of TSEL for the timestamp,
+	// as that will then allow using TSE or TSEL to get the timestamp.
+	static unsigned int		nErrMsg		= 0;
+	unsigned int			fValidTSEL	= 0;
+	struct link			*	plink		= &psub->tsel;
+	if ( plink->type != CONSTANT )
+	{
+		struct pv_link	*	ppv_link	= &plink->value.pv_link;
+		if ( ppv_link->pvlMask & pvlOptTSELisTime )
+			fValidTSEL	= 1;
+	}
+	if ( !fValidTSEL && nErrMsg < 100 )
+	{
+		nErrMsg++;
+		errlogPrintf( "evrTimeGetFiducial: PV %s needs TSEL link defined!\n", psub->name );
+	}
 #endif
+
+	// Update the timestamp from the TSEL link
+	recGblGetTimeStamp( psub );
+	// Extract the fiducial from the timestamp and make it our vlaue
+	psub->val = psub->time.nsec & 0x1ffff;
+	return psub->val;
 }
 
 extern void eventDebug(int arg1, int arg2)
