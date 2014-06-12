@@ -20,6 +20,7 @@
 #	WID	 - Initial Trigger width, default 100ns
 #	POL	 - Initial Trigger polarity, default 0 (NORMAL)
 #	CTL	 - Initial Trigger enable, default 1 (Enabled)
+#	ACTV - Invariant Trigger Activate, default 1
 #	SYS  - EVG System specifier, default SYS0
 #	DRVH - High limit of desired delay, default  2.14748E09
 #	DRVL - Low  limit of desired delay, default -2.14748E09
@@ -116,8 +117,6 @@ record( ao, "$(TRIG):TWID" )
 # Useful when transitioning to invariant timing.
 record( ao, "$(TRIG):TDES" )
 {
-	field( SDIS, "$(EVR):INV_TIMING_ENABLED" )
-	field( DISV, "0" )
 	field( DESC, "Desired Trig Delay" )
 	field( DTYP, "Raw Soft Channel" )
 	field( OMSL, "supervisory" )
@@ -211,7 +210,7 @@ record( aSub, "$(TRIG):ASUB_LKUOFFSET" )
 	field( INAM, "aSubEvOffsetInit" )
 	field( SNAM, "aSubEvOffset" )
 	field( INPA, "$(TRIG):LSUB_EVSEL.VAL NPP MS" )
-	field( INPB, "1" )
+	field( INPB, "$(ACTV=1)" )
 	field( INPC, "EVNT:$(SYS=SYS0):1:DELAY CPP MS" )
 	field( INPD, "0" )
 	field( FTA, "LONG" )
@@ -289,8 +288,6 @@ record( longSub, "$(TRIG):LSUB_TRGSEL" )
 # Processed on demand by FW_TDES_SEQ
 record( calcout, "$(TRIG):FW_TDES_SEQ_ENAB_CALC" )
 {
-	field( SDIS, "$(EVR):INV_TIMING_ENABLED" )
-	field( DISV, "0" )
 	field( INPA, "1" )
 	field( INPB, "$(TRIG):LSUB_TRGSEL.SEVR NPP NMS" )
 	field( INPC, "$(TRIG):TDES.SEVR NPP NMS" )
@@ -341,7 +338,6 @@ record( calcout, "$(TRIG):BW_TDES_SEQ_ENAB_CALC" )
 {
 	field( INPA, "1" )
 	field( INPB, "$(TRIG):LSUB_TRGSEL.SEVR NPP NMS" )
-	field( INPC, "$(EVR):INV_TIMING_ENABLED CPP NMS" )
 	field( CALC, "A && (B==0)" )
 	field( OUT,  "$(TRIG):BW_TDES_SEQ_ENAB PP NMS" )
 }
