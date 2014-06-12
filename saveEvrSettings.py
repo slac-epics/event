@@ -122,6 +122,17 @@ def saveTriggerSettings( evrName, trigNumber ):
     printPvNameValue( triggerName + "TPOL.DESC" )
     printPvNameValue( triggerName + "TWID.VAL" )
     printPvNameValue( triggerName + "TWID.DESC" )
+    eventCtrlName = triggerName + "EVENTCTRL"
+    printPvNameValue( eventCtrlName + ".ENM" )
+    printPvNameValue( eventCtrlName + ".OUT0" )
+    printPvNameValue( eventCtrlName + ".OUT1" )
+    printPvNameValue( eventCtrlName + ".OUT2" )
+    printPvNameValue( eventCtrlName + ".OUT3" )
+    printPvNameValue( eventCtrlName + ".OUT4" )
+    printPvNameValue( eventCtrlName + ".OUT5" )
+    printPvNameValue( eventCtrlName + ".OUT6" )
+    printPvNameValue( eventCtrlName + ".OUT7" )
+    printPvNameValue( eventCtrlName + ".VME" )
 
 def saveEventCtrlSettings( evrName, ctrlNumber ):
     eventCtrlName = evrName + ":EVENT%1dCTRL" % ( ctrlNumber )

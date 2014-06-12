@@ -3613,6 +3613,40 @@ font "courier-bold-r-12.0"
 objType "controls"
 endObjectProperties
 
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 668
+y 168
+w 80
+h 24
+font "helvetica-medium-r-10.0"
+fontAlign "center"
+fgColor index 35
+bgColor index 25
+useDisplayBg
+value {
+  "Inv. Timing"
+  "Disabled"
+}
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 668
+y 168
+w 80
+h 24
+
+beginGroup
+
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
@@ -3636,6 +3670,13 @@ nullColor index 18
 nullCondition "disabled"
 newPos
 objType "controls"
+endObjectProperties
+
+endGroup
+
+visPv "$(EVR):INV_TIMING_ENABLED"
+visMin "1"
+visMax "2"
 endObjectProperties
 
 # (Text Control)
