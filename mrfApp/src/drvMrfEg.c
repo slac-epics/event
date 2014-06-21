@@ -460,8 +460,18 @@ int EgConfigure(int Card, epicsUInt32 CardAddress, epicsUInt32 internalClock) {
   MRF_VME_REG32_WRITE(&pEvg->FracDivControl, FR_SYNTH_WORD);
   if (internalClock)
     MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT_SY87729L);
-  else
-    MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT);
+  else {
+    unsigned short ver  = MRF_VME_REG16_READ(&pEvg->FPGAVersion) & 0x0fff;
+    printf("EVG firmware version: 0x%x\n", ver);
+    if(ver < 0x400) {
+        printf("RF clock configured for EVG-200\n");
+        MRF_VME_REG16_WRITE(&pEvg->RfSelect, CLOCK_SELECT);  /* for EVG-200 */
+    }
+    else {
+        printf("RF clock configured for EVG-230\n");
+        MRF_VME_REG16_WRITE(&pEvg->RfSelect, 0x01c0); /* for EVG-230 */
+    }
+  }
   pCard->pEg    = (void *)pEvg;
   pCard->Cardno = Card;
   pCard->Slot   = Slot;
