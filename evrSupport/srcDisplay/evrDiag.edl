@@ -3,10 +3,10 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1653
-y 492
-w 524
-h 528
+x 1305
+y 121
+w 564
+h 504
 font "helvetica-medium-r-18.0"
 ctlFont "helvetica-medium-r-12.0"
 btnFont "helvetica-bold-r-14.0"
@@ -31,10 +31,55 @@ beginObjectProperties
 major 4
 minor 0
 release 0
+x 288
+y 56
+w 268
+h 140
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
 x 8
-y 48
-w 508
-h 472
+y 236
+w 268
+h 260
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 288
+y 212
+w 268
+h 252
+lineColor index 3
+fill
+fillColor index 3
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 8
+y 56
+w 268
+h 164
 lineColor index 3
 fill
 fillColor index 3
@@ -48,7 +93,7 @@ minor 0
 release 0
 x 0
 y 0
-w 516
+w 564
 h 40
 lineColor index 56
 fill
@@ -61,7 +106,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 4
 y 0
 w 124
@@ -93,45 +138,6 @@ botShadowColor index 11
 label "Exit"
 font "helvetica-medium-r-12.0"
 3d
-endObjectProperties
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 332
-y 484
-w 128
-h 24
-controlPv "$(IOC):TOD"
-precision 1
-fgColor index 14
-fgAlarm
-bgColor index 12
-font "helvetica-medium-r-12.0"
-fontAlign "right"
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 356
-y 460
-w 104
-h 24
-font "helvetica-medium-r-12.0"
-fontAlign "right"
-fgColor index 14
-bgColor index 4
-useDisplayBg
-value {
-  "$(IOC)"
-}
 endObjectProperties
 
 # (Lines)
@@ -166,1065 +172,16 @@ yPoints {
 }
 endObjectProperties
 
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 124
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 124
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.N"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 124
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Fiducial Rollover"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 156
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 153
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.O"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 153
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "# of same pulses"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 184
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 184
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.P"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 184
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "# of skipped pulses"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 216
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 213
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.S"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 213
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "# of invalid pulses"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 276
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 275
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.T"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 275
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "# of fiducial interrupts"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 64
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 179
-y 64
-w 77
-h 24
-controlPv "$(EVR):CTRL.TAXI"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 64
-w 147
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Rx Error Count"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 96
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 179
-y 93
-w 77
-h 24
-controlPv "$(EVR):LINK"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 93
-w 143
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Rx Avail"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 304
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 303
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.U"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 303
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Fid. Interrupt Rollover"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 364
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 364
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.V"
-precision 3
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 364
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Min Fid Delta Start Time"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 396
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 394
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.W"
-precision 3
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 394
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Max Fid Delta Start Time"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 424
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 424
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.X"
-precision 3
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 424
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Avg Fid Processing Time"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 244
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 243
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.Y"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 243
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "# of missed fiducials"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 456
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 455
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.Z"
-precision 3
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 455
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Max Fid Processing Time"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 484
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 483
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.VAL"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 483
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Fiducial Error Status"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 20
-y 336
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 180
-y 336
-w 76
-h 24
-controlPv "$(EVR):FIDUCIALDIAG.M"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 20
-y 336
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Fiducial Counter"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Message Button)
-object activeMessageButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 328
-y 64
-w 124
-h 28
-fgColor index 25
-onColor index 5
-offColor index 3
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):FIDUCIALDIAG.R"
-pressValue "1"
-onLabel "Resetting Counters"
-offLabel "Reset Counters"
-3d
-font "helvetica-bold-r-12.0"
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 268
-y 124
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 428
-y 121
-w 76
-h 24
-controlPv "$(EVR):PATTERNSTATE"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 268
-y 121
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "Pattern State"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 268
-y 154
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 428
-y 151
-w 76
-h 24
-controlPv "$(EVR):NTPSTATE"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 268
-y 151
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "NTP State"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
-# (Group)
-object activeGroupClass
-beginObjectProperties
-major 4
-minor 0
-release 0
-x 268
-y 184
-w 236
-h 24
-
-beginGroup
-
-# (Text Update)
-object TextupdateClass
-beginObjectProperties
-major 10
-minor 0
-release 0
-x 428
-y 181
-w 76
-h 24
-controlPv "$(EVR):PATTERNDIAG.J"
-precision 1
-fgColor index 16
-fgAlarm
-bgColor index 12
-fill
-font "courier-medium-r-12.0"
-fontAlign "center"
-lineWidth 2
-lineAlarm
-endObjectProperties
-
-# (Static Text)
-object activeXTextClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 268
-y 181
-w 145
-h 24
-font "helvetica-medium-r-12.0"
-fgColor index 14
-bgColor index 3
-value {
-  "# of invalid timestamps"
-}
-endObjectProperties
-
-endGroup
-
-endObjectProperties
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
-x 356
-y 336
-w 76
-h 24
+x 456
+y 120
+w 77
+h 20
 controlPv "$(EVR):PATTERN.L"
 font "courier-medium-r-12.0"
 fontAlign "center"
@@ -1243,11 +200,11 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
-x 284
-y 336
-w 64
-h 24
+release 1
+x 296
+y 120
+w 145
+h 20
 font "helvetica-medium-r-12.0"
 fgColor index 14
 bgColor index 0
@@ -1261,7 +218,7 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 3
+minor 4
 release 0
 x 344
 y 8
@@ -1289,7 +246,7 @@ object activeXTextClass
 beginObjectProperties
 major 4
 minor 1
-release 0
+release 1
 x 124
 y 8
 w 112
@@ -1308,7 +265,7 @@ endObjectProperties
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
-minor 5
+minor 7
 release 0
 x 244
 y 8
@@ -1331,18 +288,18 @@ endObjectProperties
 object relatedDisplayClass
 beginObjectProperties
 major 4
-minor 3
+minor 4
 release 0
-x 388
-y 432
-w 92
+x 424
+y 472
+w 132
 h 24
 fgColor index 14
 bgColor index 4
 topShadowColor index 1
 botShadowColor index 11
 font "helvetica-medium-r-12.0"
-buttonLabel "Old Diags"
+buttonLabel "Old EVR screen"
 numPvs 4
 numDsps 1
 displayFileName {
@@ -1352,5 +309,1418 @@ setPosition {
   0 "parentWindow"
 }
 icon
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 8
+y 48
+w 116
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "FIDUCIALDIAG"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 288
+y 204
+w 100
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "PATTERNDIAG"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 224
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.D"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 224
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern patternCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 248
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.E"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 248
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern patternRollover"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 272
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.F"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 272
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern invalidErrCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 248
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.G"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 248
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg updateCount (# of fid)"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 272
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.H"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 272
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg updateCountRollover"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 296
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.I"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 296
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg overwriteCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 320
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.K"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 320
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg noDataCount (missed)"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 344
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.L"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 344
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg writeErrorCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 368
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.M"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 368
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg checkSumErrorCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 392
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.V"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 392
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg procTimeStartMin"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 416
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.W"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 416
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg procTimeStartMax"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 440
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.X"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 440
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg procTimeDeltaAvg"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 464
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.Z"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 464
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Msg procTimeDeltaMax"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 296
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.C"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 296
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern syncErrCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 320
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.N"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 320
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern deltaTimeMax"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 344
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.O"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 344
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern timeoutCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 368
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.Q"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 368
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern invalidMPSCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 440
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.R"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 440
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID ntpStatus"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 392
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.J"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 392
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern invalidTimeCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 456
+y 72
+w 77
+h 20
+controlPv "$(EVR):PATTERNSTATE"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 72
+w 145
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Pattern State"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 456
+y 96
+w 77
+h 20
+controlPv "$(EVR):NTPSTATE"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 96
+w 145
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "NTP State"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 456
+y 144
+w 77
+h 20
+controlPv "$(EVR):CTRL.TAXI"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 144
+w 145
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Rx Error Count"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 92
+w 76
+h 20
+controlPv "$(EVR):FIDUCIALDIAG.M"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 92
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "FID msgCount (since boot)"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 68
+w 76
+h 20
+controlPv "$(EVR):FIDUCIALDIAG.VAL"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 68
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "FID fiducialStatus"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 456
+y 168
+w 77
+h 20
+controlPv "$(EVR):LINK"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 168
+w 145
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Rx Avail"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 164
+w 76
+h 20
+controlPv "$(EVR):FIDUCIALDIAG.S"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 164
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "FID pulseErrCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 188
+w 76
+h 20
+controlPv "$(EVR):FIDUCIALDIAG.P"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 188
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "FID skipPulseCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 140
+w 76
+h 20
+controlPv "$(EVR):FIDUCIALDIAG.O"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 140
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "FID samePulseCount"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 188
+y 116
+w 76
+h 20
+controlPv "$(EVR):FIDUCIALDIAG.N"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 16
+fgAlarm
+bgColor index 12
+limitsFromDb
+precision 1
+nullColor index 40
+smartRefresh
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 16
+y 116
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+value {
+  "FID msgCountRollover"
+}
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 288
+y 472
+w 124
+h 28
+
+beginGroup
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 288
+y 472
+w 124
+h 24
+fgColor index 25
+onColor index 5
+offColor index 3
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):FIDUCIALDIAG.R"
+pressValue "1"
+onLabel "Resetting Counters"
+offLabel "Reset Counters"
+3d
+font "helvetica-bold-r-12.0"
+endObjectProperties
+
+# (Message Button)
+object activeMessageButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 288
+y 472
+w 124
+h 24
+fgColor index 25
+onColor index 5
+offColor index 3
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):PATTERNDIAG.B"
+pressValue "1"
+onLabel "Resetting Counters"
+offLabel "Reset Counters"
+3d
+font "helvetica-bold-r-12.0"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 8
+y 224
+w 224
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "FID MSG Counts via PATTERNDIAG"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 288
+y 48
+w 116
+h 20
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+value {
+  "Misc Diagnostics"
+}
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 468
+y 416
+w 76
+h 20
+controlPv "$(EVR):PATTERNDIAG.P"
+font "courier-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+fgAlarm
+bgColor index 12
+precision 0
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 296
+y 416
+w 168
+h 20
+font "helvetica-medium-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "FID Pattern patternErrCount"
+}
 endObjectProperties
 
