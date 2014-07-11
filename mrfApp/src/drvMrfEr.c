@@ -2015,6 +2015,22 @@ void ErIrqHandler (ErCardStruct *pCard)
 \**************************************************************************************************/
 
 GLOBAL_RTN
+int ErIrqShow ( unsigned int iCard )
+{
+	ErCardStruct	*	pCard	= ErGetCardStruct(iCard);
+	if ( pCard == NULL )
+	{
+		printf( "ERROR: card %d not found!\n" );
+		return -1;
+	}
+
+	epicsUInt16 Mask = ErEnableIrq( pCard, EVR_IRQ_TELL );
+	printf( "EVR Card %d IRQ Mask = 0x%2X\n", iCard, Mask );
+	return 0;
+}
+
+
+GLOBAL_RTN
 epicsUInt16 ErEnableIrq (ErCardStruct *pCard, epicsUInt16 Mask)
 {
    /*---------------------
