@@ -1450,8 +1450,10 @@ epicsStatus ErUpdateEventTab(
 		printf( "devMrfEr::ErUpdateEventTab( event num %d, old 0x%04X, new 0x%04X )\n",
 				EventNum, oldMask, newMask );
 
-	if ( (EventNum < 0) || (EventNum >= EVR_NUM_EVENTS) )
+	/* Make sure EventNum is valid, reserving event 0 for the fiducial */
+	if ( (EventNum <= 0) || (EventNum >= EVR_NUM_EVENTS) )
 		return -1;
+
 	for ( chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
 	{
 		epicsUInt16	chanMask = 1 << chan;
@@ -1462,8 +1464,8 @@ epicsStatus ErUpdateEventTab(
 		if (pCard->ErEventCnt[EventNum][chan] > 0)
 			newEventTabMask |= chanMask;
 	}
-
 	pCard->ErEventTab[EventNum] = newEventTabMask;
+
     if ( ErDebug >= 1 )
         printf( "devMrfEr::ErUpdateEventTab: New mask for event num %d is 0x%04X\n", EventNum, newEventTabMask );
 	return 0;
