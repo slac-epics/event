@@ -646,13 +646,14 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
                               pRec->name, pRec->lenm, pRec->enm);
 			/* Turn off the mask bits for the previous event number */ 
 			if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
-				ErUpdateEventTab( pCard, pRec->lenm, pRec->lout, 0 );	/* lout is prior Mask */
-				ErUpdateEventTab( pCard, pRec->enm,  0, Mask );
+				ErUpdateEventTab( pCard, pRec->lenm, pRec->lout, 0    );	/* lout is prior Mask */
+				ErUpdateEventTab( pCard, pRec->enm,  0,          Mask );
 				LoadRam = epicsTrue;
 			}/*end if previous event number was valid*/
 
-            pRec->lenm = pRec->enm;
-            LoadMask = epicsTrue;
+            pRec->lenm	= pRec->enm;
+            pRec->lout	= Mask;
+            LoadMask	= epicsTrue;
         }/*end if event number has changed*/
 
        /*---------------------
@@ -708,17 +709,17 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
     * If the event interrupt bit is specified, make sure Event FIFO interrupts are enabled.
     */
     if (LoadRam) {
-        if (DebugFlag >= 4)
+        if ( DebugFlag )
             printf ("ErEventProcess(%s) enabling IRQ\n", pRec->name);
 
         if (Mask & EVR_MAP_INTERRUPT)
             ErEventIrq (pCard, epicsTrue);
 
-        if (DebugFlag >= 4)
+        if ( DebugFlag )
             printf ("ErEventProcess(%s) updating Event RAM\n", pRec->name);
 
         ErUpdateRam (pCard, pCard->ErEventTab);
-        if (DebugFlag)
+        if ( DebugFlag )
 			printf ("ErEventProcess(%s) done updating Event RAM\n", pRec->name);
     }/*end if we should re-load the Event Mapping Ram*/
 
@@ -1420,7 +1421,7 @@ void ErDevEventFunc (ErCardStruct *pCard, epicsInt16 EventNum, epicsUInt32 Time)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* FUNCTION:
-|* o For the specified eventy number, this routine decrements the event
+|* o For the specified event number, this routine decrements the event
 |*   table count for the old mask and increments the count for the new mask
 |*   Any non-zero counts are enabled in the master event table.
 |*

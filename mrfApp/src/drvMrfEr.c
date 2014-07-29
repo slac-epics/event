@@ -1655,7 +1655,18 @@ epicsStatus ErDrvReport (int level)
 		printf( "ErEventTab[code]: 0x8000 is IRQ, 0x0001 is OUT0, 0x0002 is OUT1, ...\n" );
 		for (EventNum = 0; EventNum < EVR_NUM_EVENTS; EventNum++ ) {
 			if ( pCard->ErEventTab[EventNum] != 0 ) {
-				printf( "ErEventTab[%3d] = 0x%04x\n", EventNum, pCard->ErEventTab[EventNum] );
+				if (level == 0)
+					printf( "ErEventTab[%3d] = 0x%04x\n", EventNum, pCard->ErEventTab[EventNum] );
+				else
+				{
+					printf( "ErEventTab[%3d] = 0x%04x", EventNum, pCard->ErEventTab[EventNum] );
+					for ( unsigned int chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
+					{
+						if( pCard->ErEventCnt[EventNum][chan] > 0 )
+							printf( ", out%d cnt=%d", chan, pCard->ErEventCnt[EventNum][chan] );
+					}
+					printf( "\n" );
+				}
 			}
 		}
 		printf("\n");
