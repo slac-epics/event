@@ -1659,8 +1659,9 @@ epicsStatus ErDrvReport (int level)
 					printf( "ErEventTab[%3d] = 0x%04x\n", EventNum, pCard->ErEventTab[EventNum] );
 				else
 				{
+					unsigned int chan;
 					printf( "ErEventTab[%3d] = 0x%04x", EventNum, pCard->ErEventTab[EventNum] );
-					for ( unsigned int chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
+					for ( chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
 					{
 						if( pCard->ErEventCnt[EventNum][chan] > 0 )
 							printf( ", out%d cnt=%d", chan, pCard->ErEventCnt[EventNum][chan] );
@@ -2031,7 +2032,7 @@ int ErIrqShow ( unsigned int iCard )
 	ErCardStruct	*	pCard	= ErGetCardStruct(iCard);
 	if ( pCard == NULL )
 	{
-		printf( "ERROR: card %d not found!\n" );
+		printf( "ERROR: card %d not found!\n", iCard );
 		return -1;
 	}
 
