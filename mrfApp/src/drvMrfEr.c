@@ -1664,7 +1664,12 @@ epicsStatus ErDrvReport (int level)
 					for ( chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
 					{
 						if( pCard->ErEventCnt[EventNum][chan] > 0 )
-							printf( ", out%d cnt=%d", chan, pCard->ErEventCnt[EventNum][chan] );
+						{
+							if ( chan == EVR_MAP_IRQ_CHAN )
+								printf( ", IRQ cnt=%d", pCard->ErEventCnt[EventNum][chan] );
+							else
+								printf( ", out%d cnt=%d", chan, pCard->ErEventCnt[EventNum][chan] );
+						}
 					}
 					printf( "\n" );
 				}

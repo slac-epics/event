@@ -523,7 +523,7 @@ epicsStatus ErEventInitRecord (ereventRecord *pRec)
     * Initialize the record structure
     */
     pRec->dpvt = (void *)pCard; /* Save the address of the card structure */
-    pRec->lenm = -1;      	/* Force setting on first process         */
+    pRec->lenm = -1;      		/* Force setting on first process         */
     pRec->lout = 0;             /* Clear the 'last' event mask            */
 
     return (0);
@@ -648,11 +648,11 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
 			if ((pRec->lenm < EVR_NUM_EVENTS) && (pRec->lenm > 0)) {
 				ErUpdateEventTab( pCard, pRec->lenm, pRec->lout, 0    );	/* lout is prior Mask */
 				ErUpdateEventTab( pCard, pRec->enm,  0,          Mask );
-				LoadRam = epicsTrue;
+            	pRec->lout	= Mask;
+				LoadRam		= epicsTrue;
 			}/*end if previous event number was valid*/
 
             pRec->lenm	= pRec->enm;
-            pRec->lout	= Mask;
             LoadMask	= epicsTrue;
         }/*end if event number has changed*/
 
