@@ -1858,7 +1858,9 @@ epicsStatus ErDrvReport (int level)
 {
 	int             NumCards = 0;       /* Number of configured cards we found                    */
 	ErCardStruct   *pCard;              /* Pointer to card structure                              */
-	int				i, ram;
+	int				i;
+	int				EventNum;
+	int				ram;
 
 	for (	pCard = (ErCardStruct *)ellFirst(&ErCardList);
 			pCard != NULL;
@@ -1892,9 +1894,28 @@ epicsStatus ErDrvReport (int level)
 			break;
 		}
 		printf( "ErEventTab[code]: 0x8000 is IRQ, 0x0001 is OUT0, 0x0002 is OUT1, ...\n" );
-		for (i = 0; i < EVR_NUM_EVENTS; i++ ) {
-			if ( pCard->ErEventTab[i] != 0 ) {
-				printf( "ErEventTab[%3d] = 0x%04x\n", i, pCard->ErEventTab[i] );
+		for ( EventNum = 0; EventNum < EVR_NUM_EVENTS; EventNum++ )
+		{
+			if ( pCard->ErEventTab[EventNum] != 0 )
+			{
+				if (level == 0)
+					printf( "ErEventTab[%3d] = 0x%04x\n", EventNum, pCard->ErEventTab[EventNum] );
+				else
+				{
+					unsigned int chan;
+					printf( "ErEventTab[%3d] = 0x%04x", EventNum, pCard->ErEventTab[EventNum] );
+					for ( chan = 0; chan < EVR_MAP_N_CHAN_MAX; chan++ )
+					{
+						if( pCard->ErEventCnt[EventNum][chan] > 0 )
+						{
+							if ( chan == EVR_MAP_IRQ_CHAN )
+								printf( ", IRQ cnt=%d", pCard->ErEventCnt[EventNum][chan] );
+							else
+								printf( ", out%d cnt=%d", chan, pCard->ErEventCnt[EventNum][chan] );
+						}
+					}
+					printf( "\n" );
+				}
 			}
 		}
 		printf("\n");
@@ -1912,7 +1933,7 @@ epicsStatus ErDrvReport (int level)
 			}
 		}
 		if (level >= 2) {
-			struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
+			struct MrfErRegs *	pEr = (struct MrfErRegs *)pCard->pEr;
 			u32 ie, trig, set, clear;
 			if (ErGetRamStatus(pCard, 1))
 				ram = 1;
