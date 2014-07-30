@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1284
-y 405
+x 214
+y 862
 w 760
 h 600
 font "helvetica-medium-r-12.0"
@@ -144,7 +144,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 160
+x 228
 y 68
 w 40
 h 16
@@ -156,6 +156,33 @@ useDisplayBg
 value {
   "Code"
 }
+endObjectProperties
+
+# (Text Control)
+object activeXTextDspClass
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 668
+y 168
+w 72
+h 24
+controlPv "$(TRIG):TDES"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 25
+fgAlarm
+bgColor index 4
+editable
+motifWidget
+limitsFromDb
+nullColor index 18
+nullCondition "disabled"
+smartRefresh
+newPos
+objType "controls"
+noExecuteClipMask
 endObjectProperties
 
 # (Static Text)
@@ -341,7 +368,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 528
+x 520
 y 72
 w 1
 h 488
@@ -415,9 +442,9 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 8
+x 76
 y 68
-w 114
+w 144
 h 16
 font "helvetica-medium-r-14.0"
 fgColor index 14
@@ -428,321 +455,13 @@ value {
 }
 endObjectProperties
 
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 532
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT14CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 500
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT13CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 468
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT12CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 436
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT11CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 408
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT10CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 376
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT9CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 344
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT8CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 120
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT1CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 152
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT2CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 184
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT3CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 216
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT4CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 248
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT5CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 280
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT6CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 312
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(EVR):EVENT7CTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 120
 w 144
 h 24
@@ -763,7 +482,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 152
 w 144
 h 24
@@ -784,7 +503,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 184
 w 144
 h 24
@@ -805,7 +524,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 216
 w 144
 h 24
@@ -826,7 +545,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 248
 w 144
 h 24
@@ -847,7 +566,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 280
 w 144
 h 24
@@ -868,7 +587,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 312
 w 144
 h 24
@@ -889,7 +608,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 344
 w 144
 h 24
@@ -910,7 +629,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 376
 w 144
 h 24
@@ -931,7 +650,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 408
 w 144
 h 24
@@ -952,7 +671,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 436
 w 144
 h 24
@@ -973,7 +692,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 468
 w 144
 h 24
@@ -994,7 +713,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 500
 w 144
 h 24
@@ -1015,7 +734,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 532
 w 144
 h 24
@@ -2250,10 +1969,31 @@ major 4
 minor 7
 release 0
 x 684
+y 376
+w 60
+h 24
+controlPv "$(TRIG):BW_TDLY"
+font "helvetica-medium-r-12.0"
+fontAlign "center"
+fgColor index 15
+bgColor index 12
+nullColor index 18
+smartRefresh
+newPos
+noExecuteClipMask
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 7
+release 0
+x 684
 y 404
 w 60
 h 24
-controlPv "$(EVR):CTRL.$(DG)$(CH)C"
+controlPv "$(EVR):CTRL.DG$(CH)C"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2330,285 +2070,11 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 272
-y 120
-w 50
-h 24
-controlPv "$(EVR):EVENT1CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 152
-w 50
-h 24
-controlPv "$(EVR):EVENT2CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 184
-w 50
-h 24
-controlPv "$(EVR):EVENT3CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 216
-w 50
-h 24
-controlPv "$(EVR):EVENT4CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 248
-w 50
-h 24
-controlPv "$(EVR):EVENT5CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 280
-w 50
-h 24
-controlPv "$(EVR):EVENT6CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 312
-w 50
-h 24
-controlPv "$(EVR):EVENT7CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
+x 684
 y 344
-w 50
+w 60
 h 24
-controlPv "$(EVR):EVENT8CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 376
-w 50
-h 24
-controlPv "$(EVR):EVENT9CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 408
-w 50
-h 24
-controlPv "$(EVR):EVENT10CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 436
-w 50
-h 24
-controlPv "$(EVR):EVENT11CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 468
-w 50
-h 24
-controlPv "$(EVR):EVENT12CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 500
-w 50
-h 24
-controlPv "$(EVR):EVENT13CTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 532
-w 50
-h 24
-controlPv "$(EVR):EVENT14CTRL.VME"
+controlPv "$(TRIG):BW_TWID_TICKS"
 font "helvetica-medium-r-12.0"
 fontAlign "center"
 fgColor index 15
@@ -2713,7 +2179,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
+x 228
 y 120
 w 40
 h 24
@@ -2740,7 +2206,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
+x 228
 y 152
 w 40
 h 24
@@ -2767,7 +2233,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
+x 228
 y 184
 w 40
 h 24
@@ -2794,8 +2260,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 216
+x 228
+y 215
 w 40
 h 24
 controlPv "$(EVR):EVENT4CTRL.ENM"
@@ -2821,8 +2287,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 248
+x 228
+y 247
 w 40
 h 24
 controlPv "$(EVR):EVENT5CTRL.ENM"
@@ -2848,8 +2314,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 280
+x 228
+y 279
 w 40
 h 24
 controlPv "$(EVR):EVENT6CTRL.ENM"
@@ -2875,8 +2341,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 344
+x 228
+y 342
 w 40
 h 24
 controlPv "$(EVR):EVENT8CTRL.ENM"
@@ -2902,8 +2368,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 312
+x 228
+y 311
 w 40
 h 24
 controlPv "$(EVR):EVENT7CTRL.ENM"
@@ -2929,8 +2395,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 376
+x 228
+y 374
 w 40
 h 24
 controlPv "$(EVR):EVENT9CTRL.ENM"
@@ -2956,8 +2422,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 408
+x 228
+y 406
 w 40
 h 24
 controlPv "$(EVR):EVENT10CTRL.ENM"
@@ -2983,8 +2449,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 436
+x 228
+y 437
 w 40
 h 24
 controlPv "$(EVR):EVENT11CTRL.ENM"
@@ -3010,8 +2476,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 468
+x 228
+y 469
 w 40
 h 24
 controlPv "$(EVR):EVENT12CTRL.ENM"
@@ -3037,8 +2503,8 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
-y 500
+x 228
+y 501
 w 40
 h 24
 controlPv "$(EVR):EVENT13CTRL.ENM"
@@ -3064,7 +2530,7 @@ beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
+x 228
 y 532
 w 40
 h 24
@@ -3085,35 +2551,13 @@ objType "controls"
 noExecuteClipMask
 endObjectProperties
 
-# (Button)
-object activeButtonClass
-beginObjectProperties
-major 4
-minor 1
-release 0
-x 536
-y 88
-w 50
-h 24
-fgColor index 25
-onColor index 6
-offColor index 3
-inconsistentColor index 46
-topShadowColor index 1
-botShadowColor index 14
-controlPv "$(TRIG):EVENTCTRL.OUT$(CH)"
-3d
-font "helvetica-bold-r-10.0"
-objType "controls"
-endObjectProperties
-
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
 minor 7
 release 0
-x 8
+x 76
 y 88
 w 144
 h 24
@@ -3204,35 +2648,13 @@ objType "monitors"
 noExecuteClipMask
 endObjectProperties
 
-# (Text Monitor)
-object activeXTextDspClass:noedit
-beginObjectProperties
-major 4
-minor 7
-release 0
-x 272
-y 88
-w 50
-h 24
-controlPv "$(TRIG):EVENTCTRL.VME"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 15
-fgAlarm
-bgColor index 12
-nullColor index 18
-smartRefresh
-newPos
-noExecuteClipMask
-endObjectProperties
-
 # (Text Control)
 object activeXTextDspClass
 beginObjectProperties
 major 4
 minor 7
 release 0
-x 160
+x 228
 y 88
 w 40
 h 24
@@ -3259,7 +2681,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 152
 w 64
 h 24
@@ -3283,7 +2705,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 184
 w 64
 h 24
@@ -3307,7 +2729,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 216
 w 64
 h 24
@@ -3331,7 +2753,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 248
 w 64
 h 24
@@ -3355,7 +2777,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 280
 w 64
 h 24
@@ -3379,7 +2801,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 344
 w 64
 h 24
@@ -3403,7 +2825,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 312
 w 64
 h 24
@@ -3427,7 +2849,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 376
 w 64
 h 24
@@ -3451,7 +2873,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 408
 w 64
 h 24
@@ -3475,7 +2897,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 440
 w 64
 h 24
@@ -3499,7 +2921,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 472
 w 64
 h 24
@@ -3523,7 +2945,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 504
 w 64
 h 24
@@ -3547,8 +2969,8 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
-y 536
+x 8
+y 532
 w 64
 h 24
 fgColor index 25
@@ -3571,7 +2993,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 120
 w 64
 h 24
@@ -3595,7 +3017,7 @@ beginObjectProperties
 major 4
 minor 1
 release 0
-x 204
+x 8
 y 88
 w 64
 h 24
@@ -3613,82 +3035,1435 @@ font "courier-bold-r-12.0"
 objType "controls"
 endObjectProperties
 
-# (Text Control)
-object activeXTextDspClass
+# (Button)
+object activeButtonClass
 beginObjectProperties
 major 4
-minor 7
+minor 1
 release 0
-x 668
-y 168
-w 80
+x 272
+y 88
+w 50
 h 24
-controlPv "$(TRIG):TDES"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
 fgColor index 25
-fgAlarm
-bgColor index 5
-editable
-motifWidget
-limitsFromDb
-nullColor index 18
-nullCondition "disabled"
-newPos
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(TRIG):EVENTCTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
 objType "controls"
 endObjectProperties
 
-# (Text Control)
-object activeXTextDspClass
+# (Button)
+object activeButtonClass
 beginObjectProperties
 major 4
-minor 7
+minor 1
 release 0
-x 684
-y 376
+x 272
+y 120
+w 50
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT1CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 152
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT2CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 184
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT3CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 215
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT4CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 247
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT5CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 279
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT6CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 311
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT7CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 342
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT8CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 374
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT9CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 406
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT10CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 437
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT11CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 469
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT12CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 501
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT13CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 272
+y 532
+w 50
+h 24
+fgColor index 25
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT14CTRL.VME"
+onLabel "IRQ"
+offLabel "NoIrq"
+labelType "literal"
+3d
+font "courier-bold-r-12.0"
+objType "controls"
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 8
+y 56
+w 64
+h 28
+font "helvetica-medium-r-14.0"
+fontAlign "center"
+fgColor index 14
+bgColor index 3
+useDisplayBg
+value {
+  "Row"
+  "Enable"
+}
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 88
 w 60
 h 24
-controlPv "$(EVR):CTRL.$(DG)$(CH)D"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
-fgColor index 25
-fgAlarm
-bgColor index 4
-editable
-motifWidget
-limitsFromDb
-nullColor index 18
-nullCondition "disabled"
-smartRefresh
-newPos
-objType "controls"
-noExecuteClipMask
-endObjectProperties
 
-# (Text Control)
-object activeXTextDspClass
+beginGroup
+
+# (Button)
+object activeButtonClass
 beginObjectProperties
 major 4
-minor 7
+minor 1
 release 0
-x 684
+x 528
+y 88
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(TRIG):EVENTCTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(TRIG):EVENTCTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 88
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(TRIG):EVENTCTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(TRIG):EVENTCTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 120
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 120
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT1CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT1CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 120
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT1CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT1CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 152
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 152
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT2CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT2CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 152
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT2CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT2CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 184
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 183
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT3CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT3CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 183
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT3CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT3CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 216
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 215
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT4CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT4CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 215
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT4CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT4CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 248
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 247
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT5CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT5CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 247
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT5CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT5CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 280
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 279
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT6CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT6CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 279
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT6CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT6CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 312
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 310
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT7CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT7CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 310
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT7CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT7CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
 y 344
 w 60
 h 24
-controlPv "$(EVR):CTRL.$(DG)$(CH)W"
-font "helvetica-medium-r-12.0"
-fontAlign "center"
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 342
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT8CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT8CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 342
+w 58
+h 24
 fgColor index 25
 fgAlarm
-bgColor index 4
-editable
-motifWidget
-limitsFromDb
-nullColor index 18
-nullCondition "disabled"
-smartRefresh
-newPos
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT8CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
 objType "controls"
-noExecuteClipMask
+visPv "$(EVR):EVENT8CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 376
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 374
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT9CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT9CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 374
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT9CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT9CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 404
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 405
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT10CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT10CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 405
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT10CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT10CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 436
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 437
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT11CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT11CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 437
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT11CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT11CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 468
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 469
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT12CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT12CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 469
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT12CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT12CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 500
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 500
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT13CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT13CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 500
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT13CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT13CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
+endObjectProperties
+
+# (Group)
+object activeGroupClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 528
+y 532
+w 60
+h 24
+
+beginGroup
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 532
+w 58
+h 24
+fgColor index 10
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT14CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT14CTRL.SEVR"
+visInvert
+visMin "0"
+visMax "1"
+endObjectProperties
+
+# (Button)
+object activeButtonClass
+beginObjectProperties
+major 4
+minor 1
+release 0
+x 528
+y 532
+w 58
+h 24
+fgColor index 25
+fgAlarm
+onColor index 6
+offColor index 3
+inconsistentColor index 46
+topShadowColor index 1
+botShadowColor index 14
+controlPv "$(EVR):EVENT14CTRL.OUT$(CH)"
+3d
+font "helvetica-bold-r-12.0"
+objType "controls"
+visPv "$(EVR):EVENT14CTRL.SEVR"
+visMin "0"
+visMax "1"
+endObjectProperties
+
+endGroup
+
 endObjectProperties
 
