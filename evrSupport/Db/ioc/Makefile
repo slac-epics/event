@@ -41,7 +41,9 @@ DB += Pattern.db
 DB += VME-trig.db
 DB += VME-TTB-trig.db
 DB += PMC-trig.db
+DB += PCI-trig.db
 DB += EvrPmc.db
+DB += EvrPci.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
