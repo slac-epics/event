@@ -36,10 +36,15 @@ def cmpConfigFile( fileName ):
                 pv = Pv( pvName )
                 pv.connect(0.1)
                 pv.get( False, 0.1 )
-                if isinstance( pv.value, str ):
-                    cfgValue = valStr.strip( '"' )
-                else:
-                    cfgValue = stringToScalar( valStr )
+                try:
+                    if isinstance( pv.value, str ):
+                        cfgValue = valStr.strip( '"' )
+                    else:
+                        cfgValue = stringToScalar( valStr )
+                except ValueError:
+                    print "Error on %s, unable to parse cfg value %-.30s" % ( pv.name, cfgValue )
+                    continue
+
                 # print "actual %s %-.30s, cfg %-.30s" % ( pv.name, pv.value, cfgValue )
                 if cfgValue == pv.value:
                     continue
