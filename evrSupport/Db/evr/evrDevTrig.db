@@ -387,19 +387,36 @@ record( calcout, "$(TRIG):TDLY" )
 	field( EGU,  "ticks" )
 	field( LOW,  "-1e-9" )
 	field( LSV,  "MINOR" )
-	field( OUT,  "$(TRIG):TDES_TICKS PP NMS" )
+	field( OUT,  "$(TRIG):TDLY_TICKS PP NMS" )
+	field( FLNK, "$(TRIG):FW_TDES_SEQ" )
 }
 
-# This record shows the desired delay in ticks
+# This record shows the pulse generator desired delay in ticks
 # (May someday allow setting desired delay in ticks,
 #  but for now is closed_loop to avoid DB process
 #  chain errors.)
-record( ao, "$(TRIG):TDES_TICKS"	)
+# It may not match the current pulse generator delay, as
+# that can be set directly via CTRL.$(DG0D)
+#
+# This PV may be eliminated soon, as I think the only
+# safe way to inject a delay in ticks into this DB chain
+# is the current solution, which is to write the desired
+# delay directly to the CTRL.$(TYPE)$(N)D field.
+#
+# The other alternative would be to disable CA put operations
+# to the entire CTRL record and make this PV the only one in the module that
+# writes to the pulse generator delay.   Then this PV could
+# be the other end of the FW vs BW seq chains.
+# i.e.   TDES ---FW-->  TDLY_TICKS
+#        TDES <--BW---  TDLY_TICKS
+# instead of the current
+# i.e.   TDES ---FW-->  CTRL.DG0D
+#        TDES <--BW---  CTRL.DG0D
+record( ao, "$(TRIG):TDLY_TICKS"	)
 {
 	field( DOL,  "$(TRIG):TDLY NPP MS" )
 	field( OMSL, "closed_loop" )
 	field( EGU,  "ticks" )
-	field( FLNK, "$(TRIG):FW_TDES_SEQ" )
 }
 
 record( calcout, "$(TRIG):FW_TDES_TICK_CALC"	)
