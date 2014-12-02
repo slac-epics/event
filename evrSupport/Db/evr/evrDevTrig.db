@@ -281,7 +281,7 @@ record(bo, "$(DEV)TCTL") {
   field(OMSL, "supervisory")
   field(VAL, "$(CTL)")
   field(PINI, "YES")
-  info(autosaveFields, "VAL, DESC")
+  info(autosaveFields, "VAL")
 }
 
 record(seq, "$(DEV)TCTL_ITNSEQ") {

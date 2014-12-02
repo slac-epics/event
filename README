@@ -30,14 +30,14 @@ module version
 I - Adding the event package to your IOC application:
 -----------------------------------------------------
 
-(1) Add EVENT and AUTOSAVE to configure/RELEASE and
+(1) Add EVENT and AUTOSAVE to configure/RELEASE and 
 clean/rebuild configure. If this is a move to epics-R3-14-12 you will need
 to remove the GENERALTIME and RESTORE modules, update all other modules
 in your RELEASE file to those built for epics-R3-14-12, and use AUTOSAVE
 instead of RESTORE. Before proceeding please read the AUTOSAVE module README file, and
 the sections of this README
   'VII - R3-14-12 Migration (migration to the event-R3-2-2-br_generaltime branch) issues'
-  'Consideration for Autosave'
+  'Consideration for Autosave' 
 which are included near the end of this README file.
 
 (2) Link event libraries into your app by adding to xxxApp/src/Makefile:
@@ -50,13 +50,13 @@ which are included near the end of this README file.
 
 Note that the order of the above libraries is important.
 
-(3) Add the following .dbd files to xxxApp/src/Makefile
+(3) Add the following .dbd files to xxxApp/src/Makefile 
     or to xxxApp/src/xxxInclude.dbd:
 
    xxx_DBD += evrSupport.dbd
    xxx_DBD += devMrfEr.dbd
    xxx_DBD += autosave.dbd
-
+   
 (4) In most cases, you can load existing db files with resonable defaults and
     standardized names, and skip steps 5-8 below.
     To do that, add to xxxApp/Db/Makefile:
@@ -64,7 +64,7 @@ Note that the order of the above libraries is important.
     DB_INSTALLS += Pattern.db
     DB_INSTALLS += PMC-trig.db (if EVR is PMC type)
     DB_INSTALLS += VME-trig.db (if EVR is VME type)
-    DB_INSTALLS += VME-TTB-trig.db (for a rear transition or breakout board)
+    DB_INSTALLS += VME-TTB-trig.db (for a rear transition or breakout board) 
     DB_INSTALLS += Bsa.db (if BSA will be used)
 
 (5) Add EVR databases to your application.  For an example, see:
@@ -79,26 +79,26 @@ Note that the order of the above libraries is important.
     auto-generation to your trigger database file. See section 'Adding Timing Display
     autogen to your application'.
 
-(8) For IOCs with beam-synchronous acquisition (BSA), add BSA databases to
+(8) For IOCs with beam-synchronous acquisition (BSA), add BSA databases to 
     your application.  For an example, see:
 	event/<release>/evrIoc/Db/bsaXL05.substitutions
 
-(9) For each record that is an input to BSA, add a forward-link (FLNK) to
+(9) For each record that is an input to BSA, add a forward-link (FLNK) to 
     record processing that occurs at beam or trigger time:
 	  field(FLNK, "<dev>:EF<secn>")
     Consult with the HLA group to determine the proper values of <dev> and
     <secn> for your application.
 
-(10) For IOCs with triggered devices, see below section
+(10) For IOCs with triggered devices, see below section 
     'Consideration for Autosave' for instructions on setting up
     autosave of your trigger save/restore setpoints.
 
-(11) For IOCs with triggered devices which use event codes that are generated
-    at a "slow" rate (rate slower than beam full rate like a 10Hz event code),
+(11) For IOCs with triggered devices which use event codes that are generated 
+    at a "slow" rate (rate slower than beam full rate like a 10Hz event code), 
     if records for your devices process or finish processing 8.3 msec beyond
-    the time of the trigger (ie, profile monitors), set the TSE field of those
+    the time of the trigger (ie, profile monitors), set the TSE field of those 
     records to the event code.  The records will then be timestamped at the
-    time that the event code was received instead of the time of the last
+    time that the event code was received instead of the time of the last 
     fiducial.  The records can then be correlated with other records on other
     IOCs (ie, BPMs) that were acquired on the same pulse.  Make sure that
     the event code IRQ for all possible TSE values is enabled in your EVR
@@ -113,7 +113,7 @@ Note that the order of the above libraries is important.
 	$EDM/event/evnt_all_laser.edl
 	$EDM/event/evnt_all_profileMonitor.edl
 
-(13) Add the following PVs to ALH under the "IOC" subgroup
+(13) Add the following PVs to ALH under the "IOC" subgroup 
      of the "Event" subgroup for the applicable machine areas:
 	For each IOC:
 	<iocname>:PATTERNSTATE
@@ -143,37 +143,37 @@ II - Adding event databases and EVR configuration to your IOC startup file:
 ----------------------------------------------------------------------------
 
 (1) If your IOC supports beam-synchronous acquisition, it will need to support
-    large waveforms for channel access.  Add the following command
+    large waveforms for channel access.  Add the following command 
     before iocInit:
 
     epicsEnvSet("EPICS_CA_MAX_ARRAY_BYTES", "32000")
 
     If your IOC already supports waveforms larger than 32000 bytes for other
-    reasons, then this command is not needed.
+    reasons, then this command is not needed. 
 
 (2) Load databases created in the previous section (before iocInit).
     If using the general purpose db files from step 4 above, define macros
     as documented at the top of the corresponding substitutions files, e.g.
-
+    
 dbLoadRecords("db/EvrPmc.db","EVR=EVR:B34:EV05,CRD=0, SYS=SYS0")
 dbLoadRecords("db/Pattern.db","IOC=IOC:B34:EV05, SYS=SYS0")
 dbLoadRecords("db/Bsa.db","DEVICE=TRIG:B34:EV05, ATRB=COUNTER")
 dbLoadRecords("db/PMC-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV05")
 dbLoadRecords("db/VME-TTB-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV05")
 
-(3) If any of the EVRs on your IOC is a VME model 200 and you are running
-    RTEMS 4.9.1 on an MVME6100, add the following lines before ErConfigure
+(3) If any of the EVRs on your IOC is a VME model 200 and you are running 
+    RTEMS 4.9.1 on an MVME6100, add the following lines before ErConfigure 
     (do NOT add these lines if your EVR is PMC or VME model 230 or higher):
 
     # From Till Straumann (for RTEMS 4.9.1 upgrade):
-    # This should set the VME chip into a mode where it
+    # This should set the VME chip into a mode where it  
     # surrenders the VME bus after every transaction.
     # This means that the master has to rearbitrate for the bus for every cycle
     # (which slows things down).
     #
-    # The faster setting I had enabled would let the master hold on to
+    # The faster setting I had enabled would let the master hold on to 
     # until some other master requests it.
-    *(long*)(vmeTsi148RegBase + 0x234) &= ~ 0x18
+    *(long*)(vmeTsi148RegBase + 0x234) &= ~ 0x18    
 
 (4) Add ErConfigure for each EVR before iocInit.
 
@@ -187,11 +187,11 @@ dbLoadRecords("db/VME-TTB-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV0
     where instance = EVR instance, starting from 0, incrementing by 1
                      for each subsequent card.  Only 1 EVR instance
 		     is allowed for Embedded EVRs.
-    and   address  = VME card address, starting from 0x300000,
+    and   address  = VME card address, starting from 0x300000, 
                      incrementing by 0x100000 for each subsequent card
                      (0 for PMC and Embedded)
-    and   vector   = VME or Embedded interrupt vector.
-		     For VME, start from 0x60 and increment by 0x02 for
+    and   vector   = VME or Embedded interrupt vector.  
+		     For VME, start from 0x60 and increment by 0x02 for 
 		     each subsequent card.
                      (0 for PMC)
     and   level    = VME or Embedded interrupt level.
@@ -211,7 +211,7 @@ dbLoadRecords("db/VME-TTB-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV0
     registered before iocInit driver initialization:
 	evrInitialize()
 
-(6) For IOCs with triggers, add a line to restore the trigger setpoints
+(6) For IOCs with triggers, add a line to restore the trigger setpoints 
     before iocInit.  See the ChannelWatcher README file.
 
 IIIa - Standard EDM Screens and Their Macros
@@ -224,7 +224,7 @@ Trigger settings
 Db file: *trig.db
 EDL file: evnt_trig_*.edl to match hardware (PMC/VME, with/without transition board variations)
 Macros: DEV, LOCA, UNIT, IOC, SYS
-Macros are the same ones used with *trig.db. The default value for DEV is
+Macros are the same ones used with *trig.db. The default value for DEV is 
 TRIG:$(LOCA):$(UNIT). If the triggers in your EVR don't all have the same prefix
 (TRIG:LOCA:UNIT or DEV), you can't use this screen. Copy the appropriate screen
 and customize PV names, or use the display autogen approach.
@@ -238,7 +238,7 @@ evrTriggerDiags.edl (EvrPmc.db)
 BSA diagnostics
 Db file: Bsa.db
 EDL file: evnt_bsa_dev_edefs.edl
-Macros:
+Macros: 
 DEV_BASE - the BSA data source prefix, e.g. BPMS:IN10:371, TRIG:B34:EV05
 BSA - the name of the edef specific screen, e.g. evnt_bsa_dev, evnt_bsa_llrf...
 The other macros depend on the screen specified as $(BSA). These are for evnt_bsa_dev:
@@ -252,16 +252,16 @@ IIIb - Adding Timing Display autogen to your application
  1) Add the following comment tags to your *trig*.substitutions file:
 
           <snip>
-    file evrDevTrig.db
+    file evrDevTrig.db 
     {
     #EVR EVR:XT01:IM01
     #FILE evnt_xt01_im01
     #CONTROLPV1 SIOC:SYS6:AL00:MODE
-    #CONTROLPV2 SIOC:SYS6:AL00:TOD
+    #CONTROLPV2 SIOC:SYS6:AL00:TOD 
          <snip>
   where #EVR is your EVR device name, #FILE is the output evnt*.edl filename,
   and CONTROLPV* indicates the PV names for mode and time of day at screen bottom,
-  (indicating PRODUCTION or DEVELOPMENT, and Time of Day) from approproate IOC.
+  (indicating PRODUCTION or DEVELOPMENT, and Time of Day) from approproate IOC. 
   Note that the ":SYS*:" area will change depending on the machine.
   Note that if CONTROLPV* tags are omitted, the PVs default to "SYS0" for LCLS
   Note that FACET maps to SYS1 and acctest maps to SYS6
@@ -273,7 +273,7 @@ IIIb - Adding Timing Display autogen to your application
               ....
  Note:
  $TOOLS/script contains the create_edm_event_msi.py script used
- $EDM/templates contain the edm template files used by create_edm_event_msi.py
+ $EDM/templates contain the edm template files used by create_edm_event_msi.py 
  $EDM/install is the area to which generated screens are copied
 
  Example: See /afs/slac/g/acctest/epics/iocTop/R3-14-12/BeamCharge/MAIN_TRUNK/BeamChargeApp/Db/xta
@@ -291,7 +291,7 @@ IIIb - Adding Timing Display autogen to your application
 
  For any other errors, please consult with Murali or Debbie
  -------------------------------------------------------------
-
+    
 
 IV - Hardware Setup:
 ---------------------
@@ -300,11 +300,11 @@ IV - Hardware Setup:
     http://www.slac.stanford.edu/grp/lcls/controls/global/subsystems/timing/PMC-EVR_install_inst_v1d0.pdf
 
 (2) For VME EVRs, at times, the white tab in the IEEE handle does not pop out
-    all the way and the module blue light remains on and the module will not
+    all the way and the module blue light remains on and the module will not 
     configure.  Make sure the tab is out when seating the module.
 
-(3) Connect fiber from a nearby timing fiber fanout module to each EVR.  These
-    fanout modules are identified in the timing system block diagram by
+(3) Connect fiber from a nearby timing fiber fanout module to each EVR.  These 
+    fanout modules are identified in the timing system block diagram by 
     Mike Browne:
     https://sharepoint.slac.stanford.edu/sites/LCLS%20Document%20Storage/
     01%20-%20LCLS%20Systems/electronbeamsys/controls/Shared%20Documents/
@@ -317,21 +317,21 @@ IV - Hardware Setup:
 V - Special One-Time PMC Setup:
 --------------------------------
 
-The PMC EVRs, as delivered, have incorrect device and vendor IDs in their
-EEPROMs.  These IDs must be corrected before the module can be configured
+The PMC EVRs, as delivered, have incorrect device and vendor IDs in their 
+EEPROMs.  These IDs must be corrected before the module can be configured 
 by the software.  Use the following one-time procedure to burn in the
-correct values for each PMC EVR.
+correct values for each PMC EVR.  
 
 WARNING - WARNING - WARNING:
 IF THERE ARE OTHER PMCS CONNECTED TO YOUR CPU, IT'S POSSIBLE THIS
-PROCEDURE WILL WRITE TO THE WRONG PMC AND RUIN IT!!  REMOVE
+PROCEDURE WILL WRITE TO THE WRONG PMC AND RUIN IT!!  REMOVE 
 NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
 
 (1) Boot the CPU with an IOC application that includes the event package.
-    The "ErConfigure" command for each PMC EVR will fail if it hasn't yet
+    The "ErConfigure" command for each PMC EVR will fail if it hasn't yet 
     been corrected.
 
-(2) Type the following command to read the vendor and device ID for
+(2) Type the following command to read the vendor and device ID for 
     PMC instance 0 or 1:
 
     Cexp>evrEEPROMFixup(<0 or 1>,0)
@@ -344,7 +344,7 @@ NON-EVR PMCS BEFORE RUNNING THIS PROCEDURE TO BE SAFE.
     > Sanity check passed...
     > Informational mode only; EEPROM contents unmodified.
     ==> Call again with nonzero 'doit' argument to apply change.
-    0x00000000
+    0x00000000 
 
 (3) If the results are as expected, type the following command to correct
     the vendor and device ID:
@@ -369,60 +369,59 @@ VI - Checkout Instructions
 
 (1) Errors when loading event databases, contact khkim.
 (2) Errors from ErConfigure, contact khkim.
-(3) ErConfigure is successful but EVR has red LEDs, contact jedu to make
+(3) ErConfigure is successful but EVR has red LEDs, contact jedu to make 
 sure your fiber is connected properly from EVG through fanout modules to
 your EVR.
-(4) Unexpected or ominous messages at your console, contact saa.
-(5) Once the IOC is up and configured successfully, type "dbcar()" at the
+(4) Unexpected or ominous messages at your console, contact saa. 
+(5) Once the IOC is up and configured successfully, type "dbcar()" at the 
 Cexp prompt and make sure there are no disconnected channels.  Contact saa
 if there are.
-(6) From the home LCLS EDM display (lclshome) on a production machine, select
-"Event".  Under "EVR IOCs", select the button containing your IOC.  Select
+(6) From the home LCLS EDM display (lclshome) on a production machine, select 
+"Event".  Under "EVR IOCs", select the button containing your IOC.  Select 
 each display next to your IOC name (all channels must be connected):
   * EVR display - look for non-zero FPGA and "ON" for "Rx Link".
   * "Triggers..." display - check that all the event codes that you expect
     to use on your IOC are set.  Check that the proper channels are enabled
     for the proper event code(s).  If any records on your IOC use a non-zero
     TSE, check that the event codes used by your TSEs have the IRQ enabled.
-  * "Events..." display - check that the rate for event code 1 is exactly
+  * "Events..." display - check that the rate for event code 1 is exactly 
     360Hz.  For event codes that have the IRQ set, check that their rates
     are as expected.
-  * "Pattern..." display - check that data is changing every 2 seconds.  From
-    the main Event display, select "EVG Diags...".
-    The data on your EVR pattern display and the EVG pattern display must
-    match.  If the pattern data is all magenta, the fiber to your EVR is
+  * "Pattern..." display - check that data is changing every 2 seconds.  From 
+    the main Event display, select "EVG Diags...".  
+    The data on your EVR pattern display and the EVG pattern display must 
+    match.  If the pattern data is all magenta, the fiber to your EVR is 
     probably not connected properly.  Select "General Time" and check that
     the "Best Time Event Provider" is evrTimeGet.
-  * "Devices..." display - check that all your triggered devices are
+  * "Devices..." display - check that all your triggered devices are 
     available and the polarity, pulse width, delay (TDES), and control (TCTL)
     are properly set.
   * Contact saa if any problem.
 (7) If the timestamps of your records are not reasonable, contact saa.
 (8) Check that the polarity, pulse width, delay, and control of your devices
-    are being monitored and updated by your IOC's ChannelWatcher and are
+    are being monitored and updated by your IOC's ChannelWatcher and are 
     properly restored on reboot.
 (9) Check that the Channel Archiver is recording all your trigger delays and
     that there are no disconnected channels.
-
-
+    
+    
 VII - How to use event-R3-5-0 and later, for IOC Engineers
 ----------------------------------------------------
 
 Please, remove both macros TEC (Trigger Event Code Name) and ACTV (Activate Event Code Invariant Delay)
-from your trig.substitution file. (there is no more trigger event code name.
+from your trig.substitution file. (there is no more trigger event code name. 
 The forward/backward propagation and event code invariant delay is a default mode)
 
 IOC engineers need to put new macro SYS to describe the beam program in the
 trig.substitutions and evr.substitutions files
 Please, follow the following rule.
 
-SYS=SYS0: LCLS
+SYS=SYS0: LCLS 
 SYS=SYS1: FACET
 SYS=SYS2: LCLS II
 SYS=SYS6: NLCTA
-SYS=SYS7: ASTA
 
-Note)
+Note) 
 If you really want to disable the event code invariant delay,
 you can put ACTV macro and set it to ZERO.
 Then the feature will be disabled. The intrinsic delay (EVG delay)
@@ -525,18 +524,18 @@ IX - Using event module functions and global variables in your IOC application:
 	    evrModifier_ta modifier_a;
 	    epicsTimeStamp time_s;
 	    unsigned long  patternStatus; /* see evrPattern.h for values */
-	    int status = evrTimeGetFromPipeline(&time_s,
+	    int status = evrTimeGetFromPipeline(&time_s, 
 		<evrTimeCurrent, evrTimeNext1, evrTimeNext2, evrTimeActive>,
 		modifier_a, &patternStatus, 0,0,0);
 	... check status - status is non-zero when same/missing pulses ...
 	...   in the pipeline or bad timestamp.
 	... check patternStatus - status is non-zero when there is a timeout,
-	...   unsynchronized pulse ID, and other PATTERN error listed in
+	...   unsynchronized pulse ID, and other PATTERN error listed in 
 	...   evrPattern.h.
-	... use BEAMCODE, TIMESLOT macros defined in evrPattern.h ...
+	... use BEAMCODE, TIMESLOT macros defined in evrPattern.h ... 
 	...   to parse out beam code and time slot from modifier_a
 	...   TIMESLOT is zero if pattern is bad.
-	... use PULSEID macro defined in evrTime.h ...
+	... use PULSEID macro defined in evrTime.h ... 
 	...   to parse out pulse ID from time_s
 	...   PULSEID is set to PULSEID_INVALID when pattern is bad.
 	... do your 360hz logic requiring pattern here ...
@@ -571,9 +570,9 @@ IX - Using event module functions and global variables in your IOC application:
 
 (3) Two global variables providing the high resolution time of the fiducial
     are available for diagnostics purposes:
-	evrFiducialTime - high resolution time of the last fiducial
+	evrFiducialTime - high resolution time of the last fiducial 
 			  (360hz update)
-	evrActiveFiducialTime - high resolution time of the last
+	evrActiveFiducialTime - high resolution time of the last 
                           timeslot 1 or 4 fiducial (120hz update)
     These values are also provided in <ioc>:FIDUCIAL.A and B, respectively.
 
@@ -589,9 +588,9 @@ IX - Using event module functions and global variables in your IOC application:
 	    unsigned long  beamcode; /* 0 = any beam code */
 	    unsigned long  timeslot; /* 0 = any time slot */
 	... fill in inclusion and exclusion masks, beamcode, and timeslot ...
-	    int matches = evrPatternCheck(beamcode, timeslot,
-					  inclusion_a, exclusion_a,
-					  modifier_a);
+	    int matches = evrPatternCheck(beamcode, timeslot, 
+					  inclusion_a, exclusion_a, 
+					  modifier_a); 
 	... check matches - 0 = no match, 1 = match ...
 
 
@@ -639,7 +638,7 @@ XI - Consideration to use the event invariant delay
 ---------------------------------------------------
 
 We have made changes on the evrDevTrg.db. This database has new macros: TOUT and ACTV.
-We need to put those two macros into the section for the evrDevTrig.db
+We need to put those two macros into the section for the evrDevTrig.db  
 in the "<application>trig.subsititutions" file.
 
 The TOUT macro provides mapping between the output channel and the event invariant logic.
@@ -676,7 +675,7 @@ The event module supports two ways to use autosave.
 	makeAutosaveFiles()
 	# Set monitoring for autosave
 	create_monitor_set("info_positions.req", 5, "DEV=<<EVR_NAME>>")
-	create_monitor_set("info_settings.req", 30, "DEV=<<EVR_NAME>>")
+	create_monitor_set("info_settings.req", 30, "DEV=<<EVR_NAME>>") 
 
 
 
@@ -689,7 +688,7 @@ In the prvious version, the signal is proceeded by _MAIN_ thread with
 the registered signal handler. But, the _MAIN_ thread does not have RT priority,
 it drags the real-timer performance for the interrupt handling. As a result,
 it makes many issues on processing on the evrTask and the evrRecord.
-To avoid this issue, we added highest RT priority thread and the new thread handles
+To avoid this issue, we added highest RT priority thread and the new thread handles 
 the signal synchornousely. To use this new feature, we need to add the followings
 in the <application>Main.cpp file to block the signal for the _MAIN_ thread.
 
@@ -699,7 +698,7 @@ int main(int argc,char *argv[])
     sigset_t set;
 
     /*
-     * if it is possible, proceed the memory locking
+     * if it is possible, proceed the memory locking 
      * to avoid real-time peformance dragg do to swapping.
      */
     #if _POSIX_MEMLOCK > 0
@@ -772,7 +771,7 @@ void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd,
 XIV - General BSA template
 --------------------
 
-Exising BSA templates are depended on a specific system.
+Exising BSA templates are depended on a specific system. 
 There is demand to get a new BSA template which is not depend on a specific system,
 is also have more flexibility to adjust PV fields.
 So, we made a new general BSA template which named "bsaGENEdef.db."
@@ -805,7 +804,7 @@ RTEMS/VME
 XVI - Library and DBD files for EVR application
 -----------------------------------------
 
-RTEMS/VME&PMC
+RTEMS/VME&PMC 
 	Library		DBD
 	evrSupport	evrSupport.dbd
 	devMrfEr	devMrfEr.dbd
