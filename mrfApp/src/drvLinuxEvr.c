@@ -502,7 +502,7 @@ static int ErConfigure (
   return ERROR;
  }
 
- ret = snprintf(strDevice1, strlen(DEVNODE_NAME_BASE1) + 3, DEVNODE_NAME_BASE "%c3", Card + 'a');
+ ret = snprintf(strDevice1, strlen(DEVNODE_NAME_BASE1) + 3, DEVNODE_NAME_BASE1 "%c3", Card + 'a');
  if (ret < 0) {
   errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
   epicsMutexUnlock(ErConfigureLock);
