@@ -25,6 +25,7 @@
 =============================================================================*/
 
 #include <stdlib.h> 		/* for calloc             */
+#include <iocsh.h>
 #include <dbScan.h>             /* for post_event         */
 #include "drvSup.h" 		/* for DRVSUPFN           */
 #include "errlog.h"		/* for errlogPrintf       */
@@ -452,3 +453,13 @@ int evrTimeRegister(FIDUCIALFUNCTION fiducialFunc, void * fiducialArg)
   epicsMutexUnlock(evrRWMutex_ps);
   return 0;
 }
+
+
+static const iocshFuncDef evrInitializeDef = {"evrInitialize", 0, NULL};
+static void  evrInitializeCall(const iocshArgBuf *args) { evrInitialize(); }
+static void  drvEvrRegister(void)
+{
+    iocshRegister(&evrInitializeDef, evrInitializeCall);
+}
+epicsExportRegistrar(drvEvrRegister);
+ 

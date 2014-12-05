@@ -1,5 +1,10 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-1-4: 2014-12-4 K. Kim
+      * register evrInitialize() function into iocsh
+	M evrSupport/src/drvEvr.c
+	M evrSupport/src/drvEvr.dbd
+
 event-R4-1-3: 2014-06-20 K. Kim
       *Automatic configuration for EVG-200 and EVG-230
          EVG-230 (firmware 0x4xx) has different definition for clock confiugration register.
