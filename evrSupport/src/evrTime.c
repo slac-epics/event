@@ -65,6 +65,8 @@
 #include "epicsMutex.h"       /* epicsMutexId and protos   */
 #include "alarm.h"            /* INVALID_ALARM             */
 #include "dbScan.h"           /* for post_event            */
+#include <recGbl.h>           /* for recGblGetTimeStamp    */
+#include <errlog.h>           /* for errlogPrintf		   */
 #include <dbAccess.h>         /* for dbNameToAddr          */
 #include <genSubRecord.h>
 #include <stdlib.h>
@@ -521,29 +523,6 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
       return epicsTimeERROR;
   }
  
-  /*
-   * If we're here *slightly* early (eventCodeTime_as[eventCode].ts_idx == *idx), we'll wait.
-   * Otherwise, we report an error.
-   */
-  if (*idx == eventCodeTime_as[eventCode].ts_idx) {
-      epicsMutexUnlock(evrTimeRWMutex_ps);
-#define TO_LIM 4
-      for (i = 1; i < TO_LIM; i++) {
-          struct timespec req = {0, 1000000}; /* 1 ms */
-          nanosleep(&req, NULL);
-          if (*idx < eventCodeTime_as[eventCode].ts_idx)
-              break;
-      }
-      if (i == TO_LIM) {
-          if ( (fiddbg & 1) ) {
-              printf("\nevrTimeGetFIFO timeout %lld %lld!\n", *idx, eventCodeTime_as[eventCode].ts_idx);fflush(stdout);
-              if (!--fiddbgcnt)
-                fiddbg &= ~1;
-          }
-          status = 0x1ffff; /* We missed, so at least flag this as invalid! */
-      }
-      epicsMutexLock(evrTimeRWMutex_ps);
-  }
   *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[     *idx & MAX_TS_QUEUE_MASK ];
   epicsTime_ps->nsec |= status;
   status        = eventCodeTime_as[eventCode].fifostatus[   *idx & MAX_TS_QUEUE_MASK ];
@@ -585,7 +564,7 @@ static int evrTimeGet_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
 
 static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCode)
 {
-    return evrTimeGetSystem(epicsTime_ps, 0);
+    return evrTimeGetSystem(epicsTime_ps, evrTimeCurrent);
 }
 
 
@@ -1515,26 +1494,50 @@ int evrTimePatternPutEnd(int modulo720Flag)
 
 long evrTimeGetFiducial(struct genSubRecord *psub)
 {
-#if 0
-    // TODO: Try this to use TSEL as the timestamp link
-	// It's the normal EPICS way of doing this and works
-	// for CA as well as local db links.
-	recGblGetTimeStamp( psub );
-	return psub->time.nsec & 0x1ffff;
-#else
-    struct dbCommon *precord;
-    if (!psub->dpvt) {
-        struct dbAddr addr;
-        if (dbNameToAddr((char *)psub->a, &addr))
-            return 0x1ffff;
-        else
-            psub->dpvt = addr.precord;
-    }
-    precord = (struct dbCommon *)psub->dpvt;
-    if (psub->tse == epicsTimeEventDeviceTime)
-        psub->time = precord->time;
-    return precord->time.nsec & 0x1ffff;
+#if 1
+	// Include this code to plead for a valid TSEL link
+	// NOTE: We can remove this once we've transitioned
+	// all code that uses INPA instead of TSEL for the timestamp,
+	// as that will then allow using TSE or TSEL to get the timestamp.
+	static unsigned int		nErrMsg		= 0;
+	unsigned int			fValidTSEL	= 0;
+	struct link			*	plink		= &psub->tsel;
+	if ( plink->type != CONSTANT )
+	{
+		struct pv_link	*	ppv_link	= &plink->value.pv_link;
+		if ( ppv_link->pvlMask & pvlOptTSELisTime )
+			fValidTSEL	= 1;
+	}
+	if ( !fValidTSEL && nErrMsg < 100 )
+	{
+		nErrMsg++;
+		errlogPrintf( "evrTimeGetFiducial: PV %s needs TSEL link defined!\n", psub->name );
+	}
 #endif
+
+	// Update the timestamp from the TSEL link
+	recGblGetTimeStamp( psub );
+
+	if ( psub->a != NULL ) {
+		// Update the timestamp from the INPA link
+		struct link		*	plink	= &psub->inpa;
+		if ( plink->type == DB_LINK ) {
+			if (!psub->dpvt) {
+				struct dbAddr addr;
+				if ( dbNameToAddr((char *)psub->a, &addr) == 0 )
+					psub->dpvt = addr.precord;
+			}
+			if ( psub->dpvt != NULL )
+				psub->time = ((struct dbCommon *)psub->dpvt)->time;
+			}
+		else if ( plink->type == CA_LINK ) {
+			errlogPrintf( "evrTimeGetFiducial: PV %s Use TSEL link instead of INPA for CA_LINK!\n", psub->name );
+		}
+	}
+
+	// Extract the fiducial from the timestamp and make it our vlaue
+	psub->val = psub->time.nsec & 0x1ffff;
+	return psub->val;
 }
 
 extern void eventDebug(int arg1, int arg2)
