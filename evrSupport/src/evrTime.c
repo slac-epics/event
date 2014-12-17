@@ -503,7 +503,7 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
 
 int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsigned long long *idx, int incr)
 {
-  int status = 0, i;
+  int status = 0;
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps) || epicsMutexLock(evrTimeRWMutex_ps))
     return epicsTimeERROR;
@@ -1508,10 +1508,10 @@ long evrTimeGetFiducial(struct genSubRecord *psub)
 		if ( ppv_link->pvlMask & pvlOptTSELisTime )
 			fValidTSEL	= 1;
 	}
-	if ( !fValidTSEL && nErrMsg < 100 )
+	if ( !fValidTSEL && nErrMsg < 5 )
 	{
 		nErrMsg++;
-		errlogPrintf( "evrTimeGetFiducial: PV %s needs TSEL link defined!\n", psub->name );
+		errlogPrintf( "evrTimeGetFiducial: Please change %s to use TSEL to pv.TIME instead of INPA to pv.NAME\n", psub->name );
 	}
 #endif
 
