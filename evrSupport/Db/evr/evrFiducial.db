@@ -36,16 +36,13 @@ record( longin, "$(DEV):Fiducial")
 }
 
 # 360Hz fiducial PV
-# The .NAME field reference is a filler, since we only grab the timestamp
 record( genSub, "$(DEV):360HzFiducial")
 {
   field( DESC, "360Hz Fiducial ID" )
   field( SNAM, "evrTimeGetFiducial" )
-  field( INPA, "$(DEV):EventCode:1:Count.NAME CP" )
-  field( TSE,  "-2" )
-# TODO: Make evrTimeGetFiducial support the TSEL link
-# It'll replace both the last two lines w/ this
-# field( TSEL, "$(DEV):EventCode:1:Count" )
+# field( INPA, "$(DEV):EventCode:1:Count.NAME CP" )
+# field( TSE,  "-2" )
+  field( TSEL, "$(DEV):EventCode:1:Count.TIME" )
 }
 
 record(longSub, "$(DEV):MODIFIER5") {
