@@ -453,23 +453,23 @@ static long write_ao(aoRecord *pao)
 {
   long status = 0;
 
-  DBADDR *paddr = dbGetPdbAddrFromLink(&pao->dol);
   long options = DBR_STATUS | DBR_TIME;
   long nrequest = 0;
+
+  epicsEnum16      input_status, input_severity;
+  epicsTimeStamp   input_timestamp;
 
   struct {
 	DBRstatus
 	DBRtime
   } options_s;
 
-  /* Get the input's STAT and SEVR and timestamp (but don't get value) */
 
-  if (!paddr) status = -1;
-  else if (dbGetField(paddr, DBR_DOUBLE, &options_s, &options, &nrequest, 0)) {
-    status = -1;
-  } else {
-    status = bsaSecnAvg(&options_s.time, pao->val, options_s.status, options_s.severity, 0, pao->dpvt);
-  }
+
+  /* Get the input's STAT and SEVR and timestamp (but don't get value) */
+  status = dbGetAlarm(&pao->dol, &input_status, &input_severity);
+  if(!status) status = dbGetTimeStamp(&pao->dol, &input_timestamp);
+  if(!status) status = bsaSecnAvg(&input_timestamp, pao->val, input_status, input_severity, 0, pao->dpvt);
 
   if (status) recGblSetSevr(pao,WRITE_ALARM,INVALID_ALARM);
   return status;
