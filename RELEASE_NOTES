@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-1-5: 2014-12-19 K. Kim
+      * Chage to support epics R3.15
+
 event-R4-1-4: 2014-12-4 K. Kim
       * register evrInitialize() function into iocsh
 	M evrSupport/src/drvEvr.c
