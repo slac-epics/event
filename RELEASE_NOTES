@@ -1,7 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 event-R4-1-5: 2014-12-19 K. Kim
-      * Chage to support epics R3.15
+      * Change to support epics R3.15
+      * Fix autosave info field typo: 29-Dec-2014 (E. Williams) 
+        * can't use commas as a delimiter for autosave info fields; must use spaces
 
 event-R4-1-4: 2014-12-4 K. Kim
       * register evrInitialize() function into iocsh
