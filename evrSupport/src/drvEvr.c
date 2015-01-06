@@ -164,6 +164,8 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
   epicsUInt32  evrClockCounter;
   EventMessage eventMessage;
 
+  evrTimeCount((unsigned int)eventNum);
+
   if (eventNum == EVENT_FIDUCIAL) { 
     if (readyForFiducial) {
       readyForFiducial = 0;
@@ -183,7 +185,6 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 	  epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
   }
 
-  evrTimeCount((unsigned int)eventNum);
 }
 
 /*=============================================================================
