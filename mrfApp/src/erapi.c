@@ -1120,6 +1120,7 @@ int EvrGetSecondsCounter(volatile struct MrfErRegs *pEr)
 
 int EvrGetTimestampLatch(volatile struct MrfErRegs *pEr)
 {
+  pEr->Control |= be32_to_cpu(1 << C_EVR_CTRL_LATCH_TIMESTAMP);
   return be32_to_cpu(pEr->TimestampLatch);
 }
 
