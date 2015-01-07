@@ -1311,7 +1311,42 @@ int ErConfigure (
 \**************************************************************************************************/
 
 GLOBAL_RTN
-epicsStatus ErGetTicks (int Card, epicsUInt32 *Ticks)
+epicsStatus ErGetTicks(int Card, epicsUInt32 *Ticks)
+{
+    epicsUInt16               HiWord;    /* High-order word of the tick counter */
+    epicsUInt16               LoWord;    /* Low-order word of the tick counter  */
+    int                       Key;       /* Used to restore interrupt level after locking */
+    ErCardStruct              *pCard;    /* Pointer to card structure for this card */
+    volatile MrfErRegs        *pEr;      /* Pointer to Event Reciever register map */
+
+
+    if(NULL == (pCard = ErGetCardStruct(Card))) {
+        return ERROR;
+    }
+
+    pEr = (MrfErRegs *) pCard->pEr;
+
+    Key = epicsInterruptLock();
+
+    MRF_VME_REG16_WRITE(&pEr->Control, 
+                        (MRF_VME_REG16_READ(&pEr->Control) | EVR_CSR_LTS) );  /* latch the clock counter */
+
+    if(pCard->FormFactor == VME_EVR) {
+        LoWord = MRF_VME_REG16_READ(&pEr->TimeStampLo);
+        HiWord = MRF_VME_REG16_READ(&pEr->TimeStampHi);
+    } else {
+        LoWord = MRF_VME_REG16_READ(&pEr->TimeStampHi);
+        HiWord = MRF_VME_REG16_READ(&pEr->TimeStampLo);
+    }
+
+    *Ticks = (HiWord << 16) | LoWord;
+
+    epicsInterruptUnlock(Key);
+    return OK;
+}
+
+GLOBAL_RTN
+epicsStatus ErGetTicks_will_be_removed (int Card, epicsUInt32 *Ticks)
 {
    /***********************************************************************************************/
    /*  Local Variables                                                                            */
