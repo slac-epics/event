@@ -169,7 +169,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
     bsa_ps = &((bsaDevice_ts *)dev_ps)->bsa_as[idx];
     /* Check if the EDEF has initialized and wipe out old values if it has */
     if ((edefTimeInit_s.secPastEpoch != bsa_ps->timeInit.secPastEpoch) ||
-        (edefTimeInit_s.secPastEpoch != bsa_ps->timeInit.secPastEpoch)) {
+        (edefTimeInit_s.nsec != bsa_ps->timeInit.nsec)) {
       bsa_ps->timeInit = edefTimeInit_s;
       bsa_ps->avg    = 0.0;
       bsa_ps->var    = 0.0;
