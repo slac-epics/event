@@ -360,7 +360,6 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->res        = 0;
       bsa_ps->nochange = 0;
       bsa_ps->noread   = 0;
-      bsa_ps->readcnt  = 0;
     }
     if (bsa_ps->readFlag) {
       bsa_ps->readFlag = 0;
