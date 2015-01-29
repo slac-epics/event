@@ -12,7 +12,9 @@ event-R4-1-5: 2015-01-12  K. Kim
         * can't use commas as a delimiter for autosave info fields; must use spaces
 
       * Bug fix in BSA processing: 28-Jan-2015 K. Kim - retagging
-        Check if the EDEF has initialized and wipe out old values if it has.
+        -Check if the EDEF has initialized and wipe out old values if it has.
+        -Bug fix in read_bsa()
+        
 
 event-R4-1-4: 2014-12-4 K. Kim
       * register evrInitialize() function into iocsh
