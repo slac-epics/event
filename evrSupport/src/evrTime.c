@@ -122,9 +122,9 @@ static unsigned long pulseErrCount    = 0; /* # invalid pulses                  
 static unsigned long fiducialStatus   = EVR_TIME_INVALID;
 /* Each IOC will only process records on 2 of 6 time slots.  Default to 1 and 4.  */
 /* Other valid combination are 2 and 5 and 3 and 6.                               */
-static unsigned long firstTimeSlot    = 1;
-static unsigned long secondTimeSlot   = 4;
-static unsigned long activeTimeSlot   = 0; /* 1=time slot active on the current pulse*/
+static long firstTimeSlot    = 1;
+static long secondTimeSlot   = 4;
+static long activeTimeSlot   = 0; /* 1=time slot active on the current pulse*/
 static epicsTimeStamp mod720time;
 
 /*=============================================================================
@@ -363,10 +363,11 @@ static int evrTimeGetSystem_gtWrapper(epicsTimeStamp *epicsTime_ps, int eventCod
         
   Args: Type	            Name        Access	   Description
         ------------------- -----------	---------- ----------------------------
-        epicsInt32      firstTimeSlotIn Read       1st timeslot for this IOC (0,1,2,3)
+        epicsInt32      firstTimeSlotIn Read       1st timeslot for this IOC (-1,0,1,2,3)
                                                    (0 = don't use 1st timeslot)
-        epicsInt32     secondTimeSlotIn Read       2nd timeslot for this IOC (0,4,5,6)
+        epicsInt32     secondTimeSlotIn Read       2nd timeslot for this IOC (-1,0,4,5,6)
                                                    (0 = don't use 2nd timeslot)
+        remark) for 360Hz resolution timestamp, both firstTimeSlotIn and secondTimeSlotIn should be -1
 
   Side: EVR Time Timestamp table
   pulse pipeline n  , status - 0=OK; -1=invalid
@@ -398,6 +399,11 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
       firstTimeSlot = firstTimeSlotIn;
       secondTimeSlot = secondTimeSlotIn;
     }
+  }
+
+  if((firstTimeSlotIn == -1) && (secondTimeSlotIn == -1)) { /* for 360Hz resolution timestamp */
+    firstTimeSlot = firstTimeSlotIn;
+    secondTimeSlot = secondTimeSlotIn;
   }
   /* create read/write mutex around evr timestamp table array */
   if (!evrTimeRWMutex_ps) {
@@ -562,7 +568,8 @@ int evrTime(epicsUInt32 mpsModifier)
       }
     }
     if ((timeslot == 0) ||
-        (firstTimeSlot == timeslot) || (secondTimeSlot == timeslot)) {
+        (firstTimeSlot == timeslot) || (secondTimeSlot == timeslot) ||
+        ((firstTimeSlot == -1) && (secondTimeSlot == -1))) {
       evr_as[evrTimeActive] = *evr_ps;
       evrActiveFiducialTime = evrFiducialTime;
       activeTimeSlot = 1;

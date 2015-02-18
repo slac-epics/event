@@ -1,6 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-1-6: 2015-02-18 K. Kim
+      * consider for 360Hz resolution timestamp
+        allow to set  TS1ST=-1, TS2ND=-1 for 360Hz resolution timestamp
 
 event-R4-1-5: 2015-01-12  K. Kim
 
