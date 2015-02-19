@@ -401,7 +401,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
     }
   }
 
-  if((firstTimeSlotIn == -1) && (secondTimeSlotIn == -1)) { /* for 360Hz resolution timestamp */
+  if((firstTimeSlotIn == 0) && (secondTimeSlotIn == 0)) { /* for 360Hz resolution timestamp */
     firstTimeSlot = firstTimeSlotIn;
     secondTimeSlot = secondTimeSlotIn;
   }
@@ -569,7 +569,7 @@ int evrTime(epicsUInt32 mpsModifier)
     }
     if ((timeslot == 0) ||
         (firstTimeSlot == timeslot) || (secondTimeSlot == timeslot) ||
-        ((firstTimeSlot == -1) && (secondTimeSlot == -1))) {
+        ((firstTimeSlot == 0) && (secondTimeSlot == 0))) {
       evr_as[evrTimeActive] = *evr_ps;
       evrActiveFiducialTime = evrFiducialTime;
       activeTimeSlot = 1;
