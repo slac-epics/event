@@ -471,14 +471,14 @@ which are included near the end of this README
     Put correct active timeslots for the macors: TS1ST, and TS2ND for the evrPatternAll.db.
     The evrPatternAll.db is a common template for all of beam programs.
 
-    TS1ST = -1, 0, 1, 2, 3
-    TS2ND = -1, 0, 4, 5, 6
+    TS1ST = 0, 1, 2, 3
+    TS2ND = 0, 4, 5, 6
     Remark) 0: Don't use timeslot as an active timeslot
-           -1: for 360Hz resolution timestamp (all 6 timeslot will be active)
+            both 0's for the timeslots for 360Hz resolution timestamp (all 6 timeslot will be active)
 
     example) TS1ST=1, TS2ND=4: timeslot 4 and 1 will be active timeslots (for LCLS, 120Hz resolution timestamp)
 	     TS1ST=0, TS2ND=4: only timeslot 4 will be an active timeslot (60Hz resolution timestamp)
-             TS1ST=-1, TS2ND=-1: all 6 timeslots will be active (360Hz resolution timestamp)
+             TS1ST=0, TS2ND=0: all 6 timeslots will be active (360Hz resolution timestamp)
 
     
 
