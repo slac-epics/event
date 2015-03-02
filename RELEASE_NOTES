@@ -1,6 +1,14 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-1-6-BR-1_0: 2015-03-02 K. Kim
+        * BSA improvement (proty-type)
+        - add up queue mechanism between data receptor and downstream bsa processing
+        - add up new worker thread to proceed the downstream bsa processing in lower priority
+        - the new worker thread can be created multiple times and can do parallel processing,
+          the worker thread will detect number of CPU cores in the system, will create a proper number of threads automatically
+
+
 event-R4-1-6-BR: 2015-03-02 K. Kim
       * Branch out from event-R4-1-6 for BSA Improvement
 
