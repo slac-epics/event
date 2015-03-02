@@ -54,16 +54,19 @@
  
 =============================================================================*/
 
+#include <stdio.h>
 #include <string.h>        /* strcmp */
 #include <stdlib.h>        /* calloc */
 #include <math.h>          /* sqrt   */
-
+#include "recSup.h"
 #include "bsaRecord.h"        /* for struct bsaRecord      */
 #include "aoRecord.h"         /* for struct aoRecord       */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "epicsTime.h"        /* epicsTimeStamp */
 #include "epicsMutex.h"       /* epicsMutexId   */
+#include "epicsMessageQueue.h" /* epicsMessageQueue* */
+#include "epicsThread.h"
 #include "errlog.h"
 #include "dbAccess.h"         /* dbGetTimeStamp */
 #include "devSup.h"           /* for dset and DEVSUPFUN    */
@@ -75,8 +78,41 @@
 #include "evrTime.h"          /* evrTimeGetFromEdef        */
 #include "evrPattern.h"       /* EDEF_MAX                  */
 #include "bsa.h"              /* prototypes in this file   */
+#include "perfMeasure.h"
 
+#define BSA_QUEUE_SIZE        4096
 /* BSA information for one device, one EDEF */
+
+#if defined( __rtems__)
+static int getCPUs(void)
+{
+  return 1;
+}
+#elif defined(__linux__)
+#include <unistd.h>
+#include <sys/sysinfo.h>
+static int getCPUs(void)
+{
+    long ret;
+#ifdef _SC_NPROCESSORS_ONLN
+    ret = sysconf(_SC_NPROCESSORS_ONLN);
+    if (ret > 0)
+        return ret;
+#endif
+#ifdef _SC_NPROCESSORS_CONF
+    ret = sysconf(_SC_NPROCESSORS_CONF);
+    if (ret > 0)
+        return ret;
+#endif
+    return 1;
+}
+#else
+static int getCPUs(void)
+{
+    return 1;
+}
+#endif
+
 typedef struct {
 
   /* Results of Averaging */
@@ -95,9 +131,10 @@ typedef struct {
   int                 avgcnt;    /* count    so far   */
   epicsTimeStamp      timeData;  /* latest input time */
   epicsTimeStamp      timeInit;  /* init         time */
-  IOSCANPVT           ioscanpvt; /* to process records using above fields */
+  bsaRecord           *pbsa;     /* pointer for BSA record */
   epicsEnum16         stat;      /* max status so far */
   epicsEnum16         sevr;      /* max severity so far*/
+  perfParm_ts         *pPerf;
 
 } bsa_ts;
 
@@ -106,13 +143,80 @@ typedef struct {
   ELLNODE node;
   char    name[PVNAME_STRINGSZ];
   int     noAverage;
+  epicsMutexId lock;             /* lock for device */
+  perfParm_ts  *pPerf;
   bsa_ts  bsa_as[EDEF_MAX];
 
 } bsaDevice_ts;
 
 ELLLIST bsaDeviceList_s;
-static epicsMutexId bsaRWMutex_ps = 0; 
+static epicsMutexId bsaRWMutex_ps = 0;
+static epicsMessageQueueId bsaQ_id = 0;
 
+
+static int prepPerfMeasure(const char *secnName, bsaDevice_ts *dev_ps)
+{
+    char name[32];
+    int i;
+    bsa_ts *bsa_ps;
+
+    dev_ps->pPerf = makePerfMeasure(secnName, "BSA data receptor/upstream processing");
+
+    for(i=0; i<EDEF_MAX; i++) {
+        sprintf(name, "%s_%d", secnName, i+1);
+        bsa_ps = &(dev_ps->bsa_as[i]);
+        bsa_ps->pPerf=makePerfMeasure(name, "BSA downstream processing");
+    }
+
+    return 0;
+}
+
+
+static int bsaCallback(void *pArg)
+{
+    bsa_ts     bsa;
+    bsaRecord  *prec;
+    rset       *prset;
+
+    for(;;){
+        epicsMessageQueueReceive(bsaQ_id, &bsa, sizeof(bsa_ts));
+        prec = bsa.pbsa;
+        prset = (rset*) prec->rset;
+
+        startPerfMeasure(bsa.pPerf);
+        dbScanLock((dbCommon*)prec);
+            prec->dpvt = (void*) &bsa;
+            (*prset->process)(prec);
+        dbScanUnlock((dbCommon*)prec);
+        endPerfMeasure(bsa.pPerf);
+        
+    }
+
+    return 0;
+}
+
+static int makeBSACallbackThreads(void)
+{
+    char pname[32];
+    int i;
+    int nCores = getCPUs();
+
+    initPerfMeasure();
+
+    for(i=0; i<nCores; i++) {
+        sprintf(pname, "bsa_%d",i);
+        epicsThreadCreate(pname, 
+                          epicsThreadPriorityScanLow + 5, /* slightly higher than the medium priority callback */
+                          epicsThreadGetStackSize(epicsThreadStackMedium),
+                          (EPICSTHREADFUNC) bsaCallback, 
+                          (void*) pname);
+        
+
+    }
+
+    return 0;
+}
+
 /*=============================================================================
 
   Name: bsaSecnAvg
@@ -151,8 +255,11 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
   epicsEnum16     edefSevr;
   bsa_ts         *bsa_ps;
   
-  if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps) || (!dev_ps))
+  if ((!dev_ps) || (!((bsaDevice_ts*)dev_ps)->lock) || epicsMutexLock(((bsaDevice_ts*)dev_ps)->lock))
     return -1;
+
+  startPerfMeasure(((bsaDevice_ts *)dev_ps)->pPerf);
+
   /* Request BSA processing for matching EDEFs */
   noAverage = ((bsaDevice_ts *)dev_ps)->noAverage;
   for (idx = 0; idx < EDEF_MAX; idx++) {
@@ -242,14 +349,18 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       }
       bsa_ps->avgcnt = 0;
       bsa_ps->avg    = 0;
-      if (bsa_ps->ioscanpvt) {
-        if (bsa_ps->readFlag) bsa_ps->noread++;
-        else                  bsa_ps->readFlag = 1;
-        scanIoRequest(bsa_ps->ioscanpvt);
-      }
+      if (bsa_ps->readFlag) bsa_ps->noread++;
+      else                  bsa_ps->readFlag = 1;
+
+      epicsMessageQueueSend(bsaQ_id, bsa_ps, sizeof(bsa_ts));
+      if(bsa_ps->reset) bsa_ps->reset =0;  /* clear reset flag for next data */
+      if(bsa_ps->readFlag) bsa_ps->readFlag = 0; /* we are sure, the data will be read by BSA record due to the queue */
     }
   }
-  epicsMutexUnlock(bsaRWMutex_ps);
+
+  endPerfMeasure(((bsaDevice_ts*)dev_ps)->pPerf);
+  
+  epicsMutexUnlock(((bsaDevice_ts*)dev_ps)->lock);
   return status;
 }
 
@@ -275,6 +386,7 @@ int bsaSecnInit(char  *secnName,
                 int    noAverage,
                 void **dev_pps)
 {
+  bsa_ts *bsa_ps;
   bsaDevice_ts *dev_ps = 0;
   
   if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps))
@@ -289,6 +401,8 @@ int bsaSecnInit(char  *secnName,
     dev_ps = calloc(1,sizeof(bsaDevice_ts));
     if (dev_ps) {
       strcpy(dev_ps->name, secnName);
+      dev_ps->lock = epicsMutexCreate();
+      prepPerfMeasure(secnName, dev_ps);
       ellAdd(&bsaDeviceList_s,&dev_ps->node);
     }
   }
@@ -321,6 +435,9 @@ int bsaInit()
     bsaRWMutex_ps = epicsMutexCreate();
     if (bsaRWMutex_ps) {
       ellInit(&bsaDeviceList_s);
+      bsaQ_id = epicsMessageQueueCreate(BSA_QUEUE_SIZE, sizeof(bsa_ts));
+      if(!bsaQ_id) return -1;
+      makeBSACallbackThreads();
     } else {
       return -1;
     }
@@ -354,8 +471,7 @@ static long read_bsa(bsaRecord *pbsa)
   epicsEnum16 dstat = UDF_ALARM;      /* data status */
   epicsEnum16 dsevr = INVALID_ALARM;  /* data severity */
 
-  /* Lock and update */
-  if (bsa_ps && bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) {
+  if (bsa_ps) {
     if (pbsa->res) {
       pbsa->res        = 0;
       bsa_ps->nochange = 0;
@@ -378,7 +494,6 @@ static long read_bsa(bsaRecord *pbsa)
       bsa_ps->reset = 0;
       reset         = 1;
     }
-    epicsMutexUnlock(bsaRWMutex_ps);
   }
   /* Read alarm if there was nothing to read.
      Soft alarm if there were no valid inputs to the average.
@@ -418,6 +533,7 @@ static long init_record(dbCommon *prec, int noAverage, DBLINK *link)
 
 static long init_bsa_record(bsaRecord *pbsa)
 {
+  bsa_ts *bsa_ps;
   long status = init_record((dbCommon *)pbsa, pbsa->noav, &pbsa->inp);
   if (status) return status;
 
@@ -427,21 +543,11 @@ static long init_bsa_record(bsaRecord *pbsa)
     return S_db_badField;
   }
   pbsa->dpvt = &((bsaDevice_ts *)pbsa->dpvt)->bsa_as[pbsa->edef-1];
+  bsa_ps = (bsa_ts *) (pbsa->dpvt);
+  bsa_ps->pbsa = pbsa;
   return 0;
 }
 
-static long get_ioint_info(int cmd, bsaRecord *pbsa, IOSCANPVT *ppvt)
-{
-  bsa_ts *bsa_ps = (bsa_ts *)(pbsa->dpvt);
-
-  if (bsa_ps) {
-      if (bsa_ps->ioscanpvt == 0) scanIoInit(&bsa_ps->ioscanpvt);
-      *ppvt = bsa_ps->ioscanpvt;
-    } else {
-      *ppvt = 0;
-    }
-    return 0;
-}
 
 static long init_ao_record(aoRecord *pao)
 {
@@ -504,7 +610,7 @@ DSET devBsa =
   NULL,
   NULL,
   init_bsa_record,
-  get_ioint_info,
+  NULL,
   read_bsa,
   NULL
 };
