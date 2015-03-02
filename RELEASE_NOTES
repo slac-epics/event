@@ -1,6 +1,10 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-1-6-BR: 2015-03-02 K. Kim
+      * Branch out from event-R4-1-6 for BSA Improvement
+
+
 event-R4-1-6: 2015-02-18 K. Kim
       * consider for 360Hz resolution timestamp
         allow to set  TS1ST=0, TS2ND=0 for 360Hz resolution timestamp
