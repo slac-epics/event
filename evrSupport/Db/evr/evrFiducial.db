@@ -36,12 +36,10 @@ record( longin, "$(DEV):Fiducial")
 }
 
 # 360Hz fiducial PV
-record( genSub, "$(DEV):360HzFiducial")
+record( aSub, "$(DEV):360HzFiducial")
 {
   field( DESC, "360Hz Fiducial ID" )
   field( SNAM, "evrTimeGetFiducial" )
-# field( INPA, "$(DEV):EventCode:1:Count.NAME CP" )
-# field( TSE,  "-2" )
   field( TSEL, "$(DEV):EventCode:1:Count.TIME" )
 }
 

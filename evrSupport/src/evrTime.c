@@ -68,7 +68,7 @@
 #include <recGbl.h>           /* for recGblGetTimeStamp    */
 #include <errlog.h>           /* for errlogPrintf		   */
 #include <dbAccess.h>         /* for dbNameToAddr          */
-#include <genSubRecord.h>
+#include <aSubRecord.h>
 #include <stdlib.h>
 
 #include "mrfCommon.h"        /* MRF_NUM_EVENTS */    
@@ -118,6 +118,7 @@ typedef struct {
   int				  nFidQLateMax;
   double			  nFidQLateSmoo;
   int				  nFidQOnTime;
+  int				  nFidQCountGT1;
   int				  nTimeStampOK;
   int				  nTimeStampFailed;
   int                 fidq[MAX_TS_QUEUE];
@@ -139,13 +140,14 @@ typedef struct {
 
 #ifdef BSA_DEBUG
 int bsa_debug_mask = 0; /* BSA debugging mask */
+int bsa_debug_level = 0;
 #endif
 
 /* evr_aps easy access macros */
 #define EVR_APS_STATUS(i)       ( evr_aps[i]->timeStatus )
 #define EVR_APS_TIME(i)         ( evr_aps[i]->pattern_s.time )
 #define EVR_APS_NSEC(i)         ( evr_aps[i]->pattern_s.time.nsec )
-#define EVR_APS_PULSEID(i)      ( evr_aps[i]->pattern_s.time.nsec & 0x1FFFF )
+#define EVR_APS_PULSEID(i)      ( evr_aps[i]->pattern_s.time.nsec & LOWER_17_BIT_MASK )
 #define EVR_APS_SECPASTEPOCH(i) ( evr_aps[i]->pattern_s.time.secPastEpoch )
 
 /* Pattern and timestamp pipeline */
@@ -156,7 +158,7 @@ unsigned long evrActiveFiducialTime = 0;
 
 /* Event definition (BSA) patterns */
 static evrTimeEdef_ts      edef_as[EDEF_MAX][MAX_EDEF_TIME];
-static int                 edef_idx[EDEF_MAX];     /* The next write location! */
+static unsigned int        edef_idx[EDEF_MAX];     /* The next write location! */
 
 /* Event code timestamps */
 static evrTime_ts          eventCodeTime_as[MRF_NUM_EVENTS+1];
@@ -370,6 +372,7 @@ int evrTimeGetFromEdefTime(unsigned int     edefIdx,
                            int             *edefAvgDone_p,
                            epicsEnum16     *edefSevr_p)
 {
+  unsigned int first;
   int idx, i; 
   evrTimeEdef_ts *edef;
 
@@ -377,7 +380,8 @@ int evrTimeGetFromEdefTime(unsigned int     edefIdx,
   /* if the r/w mutex is valid, and we can lock with it, read requested time index */
   if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
 
-  idx = (edef_idx[edefIdx] - 1) & MAX_EDEF_TIME_MASK; /* Back one == last written! */
+  first = edef_idx[edefIdx] - 1;      /* Back one == last written! */
+  idx = first & MAX_EDEF_TIME_MASK;
   edef = &edef_as[edefIdx][idx];
 
   for (i = 0; i < MAX_EDEF_TIME - 2; i++) {
@@ -388,7 +392,7 @@ int evrTimeGetFromEdefTime(unsigned int     edefIdx,
           *edefSevr_p      = edef->sevr;
           epicsMutexUnlock(evrTimeRWMutex_ps);
 #ifdef BSA_DEBUG
-          if ((1 << edefIdx) & bsa_debug_mask)
+          if (((1 << edefIdx) & bsa_debug_mask) && bsa_debug_level >= 2)
               printf("%08x:%08x BSA%d, slot %d.\n", edefTime_ps->secPastEpoch, edefTime_ps->nsec, edefIdx, idx);
 #endif
           return epicsTimeOK;
@@ -397,7 +401,7 @@ int evrTimeGetFromEdefTime(unsigned int     edefIdx,
                   (edef->time.nsec < edefTime_ps->nsec))) {
           epicsMutexUnlock(evrTimeRWMutex_ps);
 #ifdef BSA_DEBUG
-          if ((1 << edefIdx) & bsa_debug_mask) {
+          if (((1 << edefIdx) & bsa_debug_mask) && bsa_debug_level >= 2) {
               int idx2 = (edef_idx[edefIdx] - 1) & MAX_EDEF_TIME_MASK; /* Back one == last written! */
               evrTimeEdef_ts *edef2 = &edef_as[edefIdx][idx2];
 
@@ -415,7 +419,7 @@ int evrTimeGetFromEdefTime(unsigned int     edefIdx,
   }
   epicsMutexUnlock(evrTimeRWMutex_ps);
 #ifdef BSA_DEBUG
-  if ((1 << edefIdx) & bsa_debug_mask)
+  if (((1 << edefIdx) & bsa_debug_mask) && bsa_debug_level >= 2)
       printf("%08x:%08x BSA%d not found.\n", edefTime_ps->secPastEpoch, edefTime_ps->nsec, edefIdx);
 #endif
   return epicsTimeERROR; /* No match! */
@@ -520,9 +524,16 @@ int evrTimeGetFifo (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode, unsig
   if (*idx + MAX_TS_QUEUE < eventCodeTime_as[eventCode].ts_idx ||
       *idx > eventCodeTime_as[eventCode].ts_idx) {
       epicsMutexUnlock(evrTimeRWMutex_ps);
+	  /* Invalid index */
       return epicsTimeERROR;
   }
  
+  if ( *idx == eventCodeTime_as[eventCode].ts_idx ) {
+	// FIFO is empty for this event code
+    epicsMutexUnlock(evrTimeRWMutex_ps);
+    return epicsTimeERROR;
+  }
+
   *epicsTime_ps = eventCodeTime_as[eventCode].fifotime[     *idx & MAX_TS_QUEUE_MASK ];
   epicsTime_ps->nsec |= status;
   status        = eventCodeTime_as[eventCode].fifostatus[   *idx & MAX_TS_QUEUE_MASK ];
@@ -667,6 +678,7 @@ int evrTimeInit(epicsInt32 firstTimeSlotIn, epicsInt32 secondTimeSlotIn)
 		  pevrTime->nFidQLateMax   = 0;
 		  pevrTime->nFidQLateSmoo   = 0;
           pevrTime->nFidQOnTime   = 0;
+          pevrTime->nFidQCountGT1   = 0;
 		  pevrTime->nTimeStampOK		= 0;
   		  pevrTime->nTimeStampFailed	= 0;
           pevrTime->fidR    = 0;
@@ -780,7 +792,7 @@ int evrTime(epicsUInt32 mpsModifier)
           if (evr_ps->pattern_s.edefInitMask & edefMask) {
             edef->timeInit = evr_ps->pattern_s.time;
 #ifdef BSA_DEBUG
-            if (bsa_debug_mask & edefMask)
+            if ((bsa_debug_mask & edefMask) && bsa_debug_level >= 2)
                 printf("%08x:%08x EDEF%d slot %d, initialized.\n",
                        edef->timeInit.secPastEpoch, edef->timeInit.nsec, idx, idx2);
 #endif            
@@ -800,7 +812,7 @@ int evrTime(epicsUInt32 mpsModifier)
               edef->sevr = INVALID_ALARM;
             }
 #ifdef BSA_DEBUG
-            if (bsa_debug_mask & edefMask)
+            if ((bsa_debug_mask & edefMask) && bsa_debug_level >= 2)
                 printf("%08x:%08x EDEF%d slot %d, done=%d.\n", edef->time.secPastEpoch, edef->time.nsec, idx, idx2, edef->avgdone);
 #endif            
         }
@@ -1171,7 +1183,7 @@ static long evrTimeEvent(longSubRecord *psub)
 
 /*
  * evrTimeEventProcessing handles updating the timestamps for
- * the specified event number.
+ * the specified event number in the event code timestamp FIFO.
  * This code used to be inline in evrTimeEvent(), but was
  * broken out into a separate routine so it could be called
  * in a more timely manner and possibly combined with evrTimeCount().
@@ -1202,6 +1214,7 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
     pevrTime    = &eventCodeTime_as[eventNum];
 
 #ifndef __rtems__
+	/* While fidq not drained */
     while (pevrTime->fidR != pevrTime->fidW) 
 #endif
     {
@@ -1238,6 +1251,8 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
         fidqFiducial = pevrTime->fidq[pevrTime->fidR];
         if (++pevrTime->fidR == MAX_TS_QUEUE)
             pevrTime->fidR = 0;
+    	if (pevrTime->fidR != pevrTime->fidW)
+          	pevrTime->nFidQCountGT1++;
 
         /* Grab the values from the current timestamp */
         curFiducial		= EVR_APS_PULSEID( evrTimeCurrent );
@@ -1273,14 +1288,14 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
                  * We're here a little early, and the other thread hasn't rotated
                  * the pattern buffers yet.  We can grab the next pattern anyway.
                  */
-                pLastGoodTS		= &pevrTime->time;
+                /* pLastGoodTS		= &pevrTime->time; */
                 newTimeStamp	= EVR_APS_TIME( evrTimeNext1 );
                 newTimeStatus	= epicsTimeOK;
                 pevrTime->nFidQEarly++;
             }
         else	if (	pLastGoodTS	  != NULL
-			||	(	curTimeStatus == epicsTimeOK
-				&&  curFiducial   != PULSEID_INVALID ) )
+					&&	curTimeStatus == epicsTimeOK
+					&&  curFiducial   != PULSEID_INVALID )
             {
                 /*
                  * fidq fiducial is valid, but doesn't match evrTimeCurrent or evrTimeNext1
@@ -1291,34 +1306,29 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
                 int			fidDiff;
                 int			lastGoodFiducial;
 
+				/* We see too many of these! */
                 pevrTime->nFidQLate++;
 
+#if 0 /* This is wrong! */
                 /* See if we have a new last good timestamp */
                 if  (   epicsTimeOK     == EVR_APS_STATUS(  evrTimeCurrent )
-                        &&  PULSEID_INVALID != EVR_APS_PULSEID( evrTimeCurrent ) )
+                    &&  PULSEID_INVALID != EVR_APS_PULSEID( evrTimeCurrent ) )
                     pLastGoodTS = &EVR_APS_TIME( evrTimeCurrent );
-
-                /* Grab the last good fiducial */
-                lastGoodFiducial = PULSEID(*pLastGoodTS);
-
-                fidDiff = FID_DIFF( fidqFiducial, lastGoodFiducial );
-#if 0
-                if ( delta != fidDiff ) {
-                    printf( "ERROR: fidq-fid %d - lastGoodFiducial %d = %d, not %d\n",
-                            fidqFiducial, lastGoodFiducial, fidDiff, delta );
-                    fflush(stdout);
-                }
 #endif
 
                 /* Update fidq stats */
 				/* TODO: This isn't quite right, as we may be using lastGoodFiducial
 				 * from an earlier interrupt and thus our fidDiff can be zero here.  */
+                fidDiff = FID_DIFF( fidqFiducial, curFiducial );
                 if( pevrTime->nFidQLateMin > fidDiff )
                     pevrTime->nFidQLateMin = fidDiff;
                 if( pevrTime->nFidQLateMax < fidDiff )
                     pevrTime->nFidQLateMax = fidDiff;
                 pevrTime->nFidQLateSmoo = pevrTime->nFidQLateSmoo * 0.9 + fidDiff * 0.1;
 
+                /* Grab the last good fiducial */
+                lastGoodFiducial = PULSEID(*pLastGoodTS);
+                fidDiff = FID_DIFF( fidqFiducial, lastGoodFiducial );
                 if (abs(fidDiff) > 750)
                     {
                         /*
@@ -1326,7 +1336,7 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
                          * This is hopeless, just give up.
                          */
                         newTimeStamp 	    =  EVR_APS_TIME( evrTimeNext1 );
-                        newTimeStamp.nsec	|= 0x1ffff;		/* Make sure it's invalid! */
+                        newTimeStamp.nsec	|= PULSEID_INVALID;	/* Make sure it's invalid! */
                         newTimeStatus		=  epicsTimeERROR;
                         pevrTime->nSetFidInvalid++;
                     }
@@ -1352,6 +1362,10 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
                             newTimeStamp.nsec += 0x10000;
                         newTimeStamp.nsec	&= 0xfffe0000;
 
+						/* I think this must be wrong */
+						/* edtPdvCamera::TimeStampImage is reporting duplicate */
+						/* timestamps each time nFidCorrected is incremented */
+
                         /* Insert the fiducial */
                         newTimeStamp.nsec	|= fidqFiducial;
                         newTimeStatus		= epicsTimeOK;
@@ -1365,7 +1379,7 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
                  * Just give up...
                  */
                 newTimeStamp      =  EVR_APS_TIME(evrTimeCurrent );
-                newTimeStamp.nsec |= 0x1ffff;  /* Make sure it's invalid! */
+                newTimeStamp.nsec |= PULSEID_INVALID;  /* Make sure it's invalid! */
                 newTimeStatus	  =  epicsTimeERROR;
                 pevrTime->nCurFidBad++;
             }
@@ -1478,65 +1492,46 @@ int evrTimePatternPutEnd(int modulo720Flag)
 
   Name: evrTimeGetFiducial
 
-  Abs:  Used in a genSub record to extract the fiducial from a record's timestamp.
+  Abs:  Used in a aSub record to extract the fiducial from a record's timestamp.
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
-        struct genSubRecord* psub       read/write The genSub record.
+        struct aSubRecord* psub       read/write The aSub record.
 
-  Rem:  INPA should be a DBLINK to the NAME field of the record with the desired
-        timestamp.  The name is extracted into psub->a as a string, from which we
-        then find the database record and store into psub->dpvt for quick access.
+  Rem:  TSEL should be a DBLINK to the TIME field of the record with the
+  		desired timestamp.
 
-  Ret:  Fiducial number, to be put into VAL field of genSub.
+  Ret:  Fiducial number, to be put into VAL field of aSub.
 
 ==============================================================================*/
 
-long evrTimeGetFiducial(struct genSubRecord *psub)
+long evrTimeGetFiducial( struct aSubRecord * psub )
 {
-#if 1
-	// Include this code to plead for a valid TSEL link
-	// NOTE: We can remove this once we've transitioned
-	// all code that uses INPA instead of TSEL for the timestamp,
-	// as that will then allow using TSE or TSEL to get the timestamp.
 	static unsigned int		nErrMsg		= 0;
 	unsigned int			fValidTSEL	= 0;
+	unsigned int			fiducial	= PULSEID_INVALID;
 	struct link			*	plink		= &psub->tsel;
 	if ( plink->type != CONSTANT )
 	{
 		struct pv_link	*	ppv_link	= &plink->value.pv_link;
 		if ( ppv_link->pvlMask & pvlOptTSELisTime )
+		{
 			fValidTSEL	= 1;
-	}
-	if ( !fValidTSEL && nErrMsg < 5 )
-	{
-		nErrMsg++;
-		errlogPrintf( "evrTimeGetFiducial: Please change %s to use TSEL to pv.TIME instead of INPA to pv.NAME\n", psub->name );
-	}
-#endif
 
-	// Update the timestamp from the TSEL link
-	recGblGetTimeStamp( psub );
+			// Update the timestamp from the TSEL link
+			recGblGetTimeStamp( psub );
 
-	if ( psub->a != NULL ) {
-		// Update the timestamp from the INPA link
-		struct link		*	plink	= &psub->inpa;
-		if ( plink->type == DB_LINK ) {
-			if (!psub->dpvt) {
-				struct dbAddr addr;
-				if ( dbNameToAddr((char *)psub->a, &addr) == 0 )
-					psub->dpvt = addr.precord;
-			}
-			if ( psub->dpvt != NULL )
-				psub->time = ((struct dbCommon *)psub->dpvt)->time;
-			}
-		else if ( plink->type == CA_LINK ) {
-			errlogPrintf( "evrTimeGetFiducial: PV %s Use TSEL link instead of INPA for CA_LINK!\n", psub->name );
+			// Extract the fiducial from the timestamp and make it our vlaue
+			fiducial = PULSEID(psub->time);
 		}
 	}
 
-	// Extract the fiducial from the timestamp and make it our vlaue
-	psub->val = psub->time.nsec & 0x1ffff;
+	if ( !fValidTSEL && nErrMsg < 5 )
+	{
+		nErrMsg++;
+		errlogPrintf( "evrTimeGetFiducial %s.TSEL does not specify a valid pv.TIME field\n", psub->name );
+	}
+	psub->val = fiducial;
 	return psub->val;
 }
 
@@ -1575,8 +1570,8 @@ extern void eventDebug(int arg1, int arg2)
 					pevrTime->fidR, pevrTime->fidq[pevrTime->fidR] );
         printf("    nFidQEarly = %d, nFidQLate = %d, nFidQOnTime = %d\n",
 					pevrTime->nFidQEarly, pevrTime->nFidQLate, pevrTime->nFidQOnTime );
-        printf("    nFidQBad = %d, nSetFidInvalid = %d\n",
-					pevrTime->nFidQBad, pevrTime->nSetFidInvalid );
+        printf("    nFidQBad = %d, FidQCountGT1 = %d, nSetFidInvalid = %d\n",
+					pevrTime->nFidQBad, pevrTime->nFidQCountGT1, pevrTime->nSetFidInvalid );
         printf(	"   nFidQLateMin = %d, nFidQLateMax = %d, nFidQLateSmoo = %f\n",
 					pevrTime->nFidQLateMin, pevrTime->nFidQLateMax, pevrTime->nFidQLateSmoo );
         printf("    nCurFidBad = %d, nFidCorrected = %d\n",
@@ -1605,6 +1600,7 @@ extern void eventDebug(int arg1, int arg2)
 				pevrTime->nFidQLateMax   = 0;
 				pevrTime->nFidQLateSmoo   = 0;
 				pevrTime->nFidQOnTime   = 0;
+				pevrTime->nFidQCountGT1   = 0;
 				pevrTime->nTimeStampOK		= 0;
 				pevrTime->nTimeStampFailed	= 0;
 				epicsMutexUnlock(evrTimeRWMutex_ps);
