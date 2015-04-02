@@ -35,10 +35,10 @@
 #	DG1D	- Extended Delay Trigger 1 Delay (0)
 #	DG2D	- Extended Delay Trigger 2 Delay (0)
 #	DG3D	- Extended Delay Trigger 3 Delay (0)
-#	DG0C	- Extended Delay Trigger 0 Scale factor (119)
-#	DG1C	- Extended Delay Trigger 1 Scale factor (119)
-#	DG2C	- Extended Delay Trigger 2 Scale factor (119)
-#	DG3C	- Extended Delay Trigger 3 Scale factor (119)
+#	DG0C	- Extended Delay Trigger 0 Scale factor (1)
+#	DG1C	- Extended Delay Trigger 1 Scale factor (1)
+#	DG2C	- Extended Delay Trigger 2 Scale factor (1)
+#	DG3C	- Extended Delay Trigger 3 Scale factor (1)
 #
 # On the VME version of the EVR we need to support all trigger outputs
 #
