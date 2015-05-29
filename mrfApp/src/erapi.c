@@ -44,13 +44,41 @@
 
 #include "erapi.h"
 
-void EvrIrqHandlerThreadCreate(void(*handler)(int));
+void EvrIrqHandlerThreadCreate(void (*handler)(int));
+void EvrIrqFdHandlerThreadCreate(int fd, void (*handler)(int));
 
 /*
 #define DEBUG 1
 */
 #define DEBUG_PRINTF printf
 unsigned int erapiDebug = 0;
+
+unsigned int evr_mcor = 0;
+
+inline u16 be16_to_cpu(u16 x) {
+    if (evr_mcor) {
+        return x;
+    }
+
+    if (__BYTE_ORDER == __LITTLE_ENDIAN) {
+        return bswap_16(x);
+    } else {
+        return x;
+    }
+}
+
+inline u32 be32_to_cpu(u32 x) {
+    if (evr_mcor) {
+        return x;
+    }
+
+    if (__BYTE_ORDER == __LITTLE_ENDIAN) {
+        return bswap_32(x);
+    } else {
+        return x;
+    }
+}
+
 
 #ifdef __linux__
 int EvrOpenWindow(struct MrfErRegs **pEr, char *device_name, int mem_window)
@@ -91,6 +119,12 @@ int EvrTgOpen(struct MrfErRegs **pEr, char *device_name)
   return EvrOpenWindow(pEr, device_name, EVR_CPCI300TG_MEM_WINDOW);
 }
 
+int EvrMcorOpen(struct MrfErRegs **pEr, char *device_name)
+{
+  evr_mcor = 1;
+  return EvrOpenWindow(pEr, device_name, EVR_MCOR_MEM_WINDOW);
+}
+
 #else
 int EvrOpen(struct MrfErRegs **pEg, char *device_name)
 {
@@ -114,6 +148,11 @@ int EvrClose(int fd)
 int EvrTgClose(int fd)
 {
   return EvrCloseWindow(fd, EVR_CPCI300TG_MEM_WINDOW);
+}
+
+int EvrMcorClose(int fd)
+{
+  return EvrCloseWindow(fd, EVR_MCOR_MEM_WINDOW);
 }
 
 #else
@@ -214,6 +253,10 @@ int EvrDumpMapRam(volatile struct MrfErRegs *pEr, int ram)
   int intev;
   int ptrig, pset, pclr;
 
+  if (evr_mcor) {
+    return 0;
+  }
+
   for (code = 0; code <= EVR_MAX_EVENT_CODE; code++)
     {
       intev = be32_to_cpu(pEr->MapRam[ram][code].IntEvent);
@@ -282,6 +325,10 @@ int EvrMapRamEnable(volatile struct MrfErRegs *pEr, int ram, int enable)
 int EvrSetPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig,
 		   int set, int clear)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -300,6 +347,10 @@ int EvrSetPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig,
 
 int EvrSetForwardEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -331,6 +382,10 @@ int EvrGetEventForwarding(volatile struct MrfErRegs *pEr)
 
 int EvrSetLedEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -347,6 +402,10 @@ int EvrSetLedEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable
 
 int EvrSetFIFOEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -363,6 +422,10 @@ int EvrSetFIFOEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enabl
 
 int EvrSetLatchEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -379,6 +442,10 @@ int EvrSetLatchEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enab
 
 int EvrSetLogEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -395,6 +462,10 @@ int EvrSetLogEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable
 
 int EvrSetLogStopEvent(volatile struct MrfErRegs *pEr, int ram, int code, int enable)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -542,6 +613,10 @@ int EvrDumpLog(volatile struct MrfErRegs *pEr)
 int EvrClearPulseMap(volatile struct MrfErRegs *pEr, int ram, int code, int trig,
 		     int set, int clear)
 {
+    if (evr_mcor) {
+        return -1;
+    }
+
   if (ram < 0 || ram >= EVR_MAPRAMS)
     return -1;
 
@@ -797,6 +872,11 @@ void EvrIrqUnassignHandler(int vector,
 			 void (*handler)(int))
 {
 }
+
+void EvrIrqFdAssignHandler(int fd, void (*handler)(int)) {
+    EvrIrqFdHandlerThreadCreate(fd, handler);
+    EvrIrqFdHandled(fd);
+}
 #endif
 
 #ifdef VXWORKS
@@ -838,9 +918,13 @@ int EvrClearIrqFlags(volatile struct MrfErRegs *pEr, int mask)
 }
 
 #ifdef __linux__
-void EvrIrqHandled(int fd)
-{
-  ioctl(fd, EV_IOCIRQEN);
+void EvrIrqHandled(int fd) {
+    ioctl(fd, EV_IOCIRQEN);
+}
+
+void EvrIrqFdHandled(int fd) {
+    uint32_t val = 1;
+    write(fd, &val, sizeof(val));
 }
 #endif
 

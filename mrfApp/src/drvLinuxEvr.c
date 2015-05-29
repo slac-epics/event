@@ -31,6 +31,8 @@
 
 #define DEVNODE_NAME_BASE  "/dev/er"
 #define DEVNODE_NAME_BASE1 "/dev/er3"
+#define DEVNODE_NAME_EEVR  "/dev/eevr"
+
 #ifdef EVENT_CLOCK_SPEED
     #define FR_SYNTH_WORD   EVENT_CLOCK_SPEED
 #else
@@ -176,46 +178,126 @@ static void BlockSIGIO(void)
 
     if(once_flag) return;  /* if it has been done, nothing to do it again */
 
-
     once_flag = 1;
     /* Blocking SIGIO signal for the _MAIN_ thread */
     sigemptyset(&set);
     sigaddset(&set, SIGIO);
     pthread_sigmask(SIG_BLOCK, &set, NULL);
-
 }
 
-
-char * FormFactorToString( int formFactor )
-{
- char * pString;
- switch ( formFactor )
- {
- default:  pString = "Invalid"; break;
- case PMC_EVR: pString = "PMC_EVR"; break;
- case CPCI_EVR: pString = "cPCI_EVR"; break;
- case VME_EVR: pString = "VME_EVR"; break;
- case PCIE_EVR: pString = "PCIE_EVR"; break;
- }
- return pString;
+static char *FormFactorToString(int formFactor) {
+    switch (formFactor) {
+    case CPCI_EVR:
+        return "cPCI_EVR";
+    case PMC_EVR:
+        return "PMC_EVR";
+    case VME_EVR:
+        return "VME_EVR";
+    case MCOR_EVR:
+        return "MCOR_EVR";
+    case PCIE_EVR:
+        return "PCIE_EVR";
+    default:
+        return "Invalid";
+    }
 }
 
-
-int ErGetFormFactor( volatile struct MrfErRegs * pEr )
-{
- int  formFactor;
- int  id = (be32_to_cpu(pEr->FPGAVersion)>>24) & 0x0F;
- switch ( id )
- {
- case 0x1: formFactor = PMC_EVR; break;
- case 0x0: formFactor = CPCI_EVR; break;
- case 0x2: formFactor = VME_EVR; break;
- case 0x7: formFactor = PCIE_EVR; break;
- default: formFactor = -1;  break;
- }
- return formFactor;
+static int ErGetFormFactor(volatile struct MrfErRegs *pEr) {
+    int id = (be32_to_cpu(pEr->FPGAVersion) >> 24) & 0x0F;
+    switch (id) {
+    case 0x0:
+        return CPCI_EVR;
+    case 0x1:
+        return PMC_EVR;
+    case 0x2:
+        return VME_EVR;
+    case 0xF:
+        return MCOR_EVR;
+    case 0x7:
+        return PCIE_EVR;
+    default:
+        return ERROR;
+    }
 }
 
+static int checkFormFactor(int formFactor) {
+    switch (formFactor) {
+    case CPCI_EVR:
+    case PMC_EVR:
+    case VME_EVR:
+    case MCOR_EVR:
+    case PCIE_EVR:
+        return 0;
+    default:
+        errlogPrintf("%s: Not supported form factor %d specified.\n", __func__, formFactor);
+        return ERROR;
+    }
+}
+
+static int checkCardNum(int cardNum, int formFactor) {
+    int maxCards = EVR_MAX_CARDS;
+    if (formFactor == MCOR_EVR) {
+        maxCards = 1;
+    }
+
+    if (cardNum >= maxCards) {
+        errlogPrintf("%s: Driver does not support %d cards (max is %d).\n", __func__, cardNum, maxCards);
+        return ERROR;
+    }
+    return 0;
+}
+
+static int openFD(int cardNum, int formFactor, struct MrfErRegs **pEr) {
+    int fdEvr;
+
+    if (formFactor == MCOR_EVR) {
+        fdEvr = EvrMcorOpen(pEr, DEVNODE_NAME_EEVR);
+        if (fdEvr < 0) {
+            errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+            return ERROR;
+        }
+    } else {
+        int ret;
+        char strDevice[strlen(DEVNODE_NAME_BASE) + 3];
+        char strDevice1[strlen(DEVNODE_NAME_BASE1) + 3];
+
+        /* Look for the EVR */
+        ret = snprintf(strDevice, strlen(DEVNODE_NAME_BASE) + 3, DEVNODE_NAME_BASE "%c3", cardNum + 'a');
+        if (ret < 0) {
+            errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
+            return ERROR;
+        }
+
+        ret = snprintf(strDevice1, strlen(DEVNODE_NAME_BASE1) + 3, DEVNODE_NAME_BASE1 "%c3", cardNum + 'a');
+        if (ret < 0) {
+            errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
+            return ERROR;
+        }
+
+        printf("Try EvrOpen, device = %s\n", strDevice);
+        fdEvr = EvrOpen(pEr, strDevice);
+        if (fdEvr < 0) {
+            errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+
+            printf("Try EvrOpen, device = %s\n", strDevice1);
+            fdEvr = EvrOpen(pEr, strDevice1);
+
+            if (fdEvr < 0) {
+                errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+                return ERROR;
+            }
+        }
+    }
+    return fdEvr;
+}
+
+static void closeFD(int fdEvr, int formFactor) {
+    if (formFactor == MCOR_EVR) {
+        EvrMcorClose(fdEvr);
+    } else {
+        EvrClose(fdEvr);
+    }
+}
 
 int find_free_pulsegen(struct LinuxErCardStruct *pLinuxErCard)
 {
@@ -342,88 +424,96 @@ epicsUInt16 ErEnableIrq_nolock (ErCardStruct *pCard, epicsUInt16 Mask)
 |*
 \**************************************************************************************************/
 int irqCount = 0;
-void ErIrqHandler(int signal)
-{
- struct ErCardStruct *pCard;
- struct MrfErRegs *pEr;
- int flags, i;
+void ErIrqHandler(int signal) {
+    struct ErCardStruct *pCard;
+    struct MrfErRegs *pEr;
+    int flags, i;
 
- epicsMutexLock(ErCardListLock);
- for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
-  pCard != NULL;
-  pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
-  epicsMutexLock(pCard->CardLock);
-  if(pCard->IrqLevel != 1) {
-   epicsMutexUnlock(pCard->CardLock);
-   continue;
-  }
-  pEr = pCard->pEr;
-  flags = EvrGetIrqFlags(pEr);
-  if(flags & ~EVR_IRQFLAG_FIFOFULL) EvrClearIrqFlags(pEr, (flags & ~EVR_IRQFLAG_FIFOFULL)); 
+    epicsMutexLock(ErCardListLock);
+    for (pCard = (ErCardStruct *) ellFirst(&ErCardList); pCard != NULL; pCard = (ErCardStruct *) ellNext(&pCard->Link)) {
+        epicsMutexLock(pCard->CardLock);
+        if (pCard->IrqLevel != 1) {
+            epicsMutexUnlock(pCard->CardLock);
+            continue;
+        }
+        pEr = pCard->pEr;
+        flags = EvrGetIrqFlags(pEr);
+        if (flags & ~EVR_IRQFLAG_FIFOFULL) {
+            EvrClearIrqFlags(pEr, (flags & ~EVR_IRQFLAG_FIFOFULL));
+        }
 
-  irqCount++;
+        irqCount++;
 
+        if (flags & EVR_IRQFLAG_EVENT) {
+            struct FIFOEvent fe;
+            for (i = 0; i < EVR_FIFO_EVENT_LIMIT; i++) {
+                if (EvrGetFIFOEvent(pEr, &fe) < 0) {
+                    break;
+                }
+                if (pCard->DevEventFunc != NULL) {
+                    (*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
+                }
+            }
+        }
 
-  if(flags & EVR_IRQFLAG_EVENT) {
-   struct FIFOEvent fe;
-   for(i=0; i < EVR_FIFO_EVENT_LIMIT; i++) {
-    if(EvrGetFIFOEvent(pEr, &fe) < 0)
-     break;
-    if(pCard->DevEventFunc != NULL)
-     (*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
-   }
-  }
+        if (flags & EVR_IRQFLAG_DATABUF) {
+            int databuf_sts = EvrGetDBufStatus(pEr);
+            if (databuf_sts & (1 << C_EVR_DATABUF_CHECKSUM)) {
+                if (pCard->DevErrorFunc != NULL) {
+                    (*pCard->DevErrorFunc)(pCard, ERROR_DBUF_CHECKSUM);
+                }
+            }
+            if (pCard->DevDBuffFunc != NULL) {
+                pCard->DBuffSize = (databuf_sts & ((1 << (C_EVR_DATABUF_SIZEHIGH + 1)) - 1));
+                for (i = 0; i < pCard->DBuffSize >> 2; i++) {
+                    pCard->DataBuffer[i] = be32_to_cpu(pEr->Databuf[i]);
+                }
+                EvrReceiveDBuf(pEr, 1); // That means we only re-enable it if someone cares (DevDBuffFunc set)
+                (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
+            }
+        }
 
+        if (flags & EVR_IRQFLAG_PULSE) {
+            if (pCard->DevEventFunc != NULL) {
+                (*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
+            }
+        }
+        if (flags & EVR_IRQFLAG_HEARTBEAT) {
+            if (pCard->DevErrorFunc != NULL) {
+                (*pCard->DevErrorFunc)(pCard, ERROR_HEART);
+            }
+        }
+        if (flags & EVR_IRQFLAG_FIFOFULL) {
+            /* Clear and re-enable the FIFO and if applicable report the error */
+            EvrClearFIFO(pEr);
+            EvrClearIrqFlags(pEr, EVR_IRQFLAG_FIFOFULL);
+            if (pCard->DevErrorFunc != NULL) {
+                (*pCard->DevErrorFunc)(pCard, ERROR_LOST);
+            }
+        }
+        if (flags & EVR_IRQFLAG_VIOLATION) {
+            pCard->RxvioCount++;
+            if (pCard->DevErrorFunc != NULL) {
+                (*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
+            }
+        }
 
-
-  if(flags & EVR_IRQFLAG_DATABUF) {
-   int databuf_sts = EvrGetDBufStatus(pEr);
-   if(databuf_sts & (1<<C_EVR_DATABUF_CHECKSUM))
-    if (pCard->DevErrorFunc != NULL)
-     (*pCard->DevErrorFunc)(pCard, ERROR_DBUF_CHECKSUM);
-   if (pCard->DevDBuffFunc != NULL) {
-    pCard->DBuffSize = (databuf_sts & ((1<<(C_EVR_DATABUF_SIZEHIGH+1))-1));
-    for (i=0;  i < pCard->DBuffSize>>2;  i++)
-     pCard->DataBuffer[i] = be32_to_cpu(pEr->Databuf[i]);
-    EvrReceiveDBuf(pEr, 1); /* That means we only re-enable it if
-          someone cares (DevDBuffFunc set) */
-    (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
-   }
-  }
-
-
-  if(flags & EVR_IRQFLAG_PULSE) {
-   if(pCard->DevEventFunc != NULL)
-    (*pCard->DevEventFunc)(pCard, EVENT_DELAYED_IRQ, 0);
-  }
-  if(flags & EVR_IRQFLAG_HEARTBEAT) {
-   if (pCard->DevErrorFunc != NULL)
-    (*pCard->DevErrorFunc)(pCard, ERROR_HEART);
-  }
-  if(flags & EVR_IRQFLAG_FIFOFULL) {
-   /* Clear and re-enable the FIFO and if applicable report the error */
-   EvrClearFIFO(pEr); EvrClearIrqFlags(pEr, EVR_IRQFLAG_FIFOFULL);
-   if (pCard->DevErrorFunc != NULL)
-    (*pCard->DevErrorFunc)(pCard, ERROR_LOST);
-  }
-  if(flags & EVR_IRQFLAG_VIOLATION) {
-   pCard->RxvioCount++;
-   if (pCard->DevErrorFunc != NULL)
-    (*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
-  }
-
-  if(flags) {
-   /* EvrClearIrqFlags(pEr, flags); */
-   EvrIrqHandled(pCard->Slot); 
-   epicsMutexUnlock(pCard->CardLock);
-   epicsMutexUnlock(ErCardListLock);
-   return;
-  }
-  epicsMutexUnlock(pCard->CardLock);
- }
- epicsMutexUnlock(ErCardListLock);
- errlogPrintf("%s: called but no interrupt found.\n", __func__);
- return;
+        if (flags) {
+            /* EvrClearIrqFlags(pEr, flags); */
+            if (pCard->FormFactor == MCOR_EVR) {
+                EvrIrqFdHandled(pCard->Slot);
+            } else {
+                EvrIrqHandled(pCard->Slot);
+            }
+            epicsMutexUnlock(pCard->CardLock);
+            epicsMutexUnlock(ErCardListLock);
+            return;
+        }
+        epicsMutexUnlock(pCard->CardLock);
+    }
+    epicsMutexUnlock(ErCardListLock);
+    errlogPrintf("%s: called but no interrupt found.\n", __func__);
+    return;
 }
  
 
@@ -451,173 +541,146 @@ void ErIrqHandler(int signal)
 \**************************************************************************************************/
 
 static int ErConfigure (
-    int Card,                               /* Logical card number for this Event Receiver card   */
-    epicsUInt32 CardAddress,                /* IGNORED: Starting address for this card's register map      */
-    epicsUInt32 IrqVector,                  /* if VME_EVR, Interrupt request vector, if PMC_EVR set to zero*/
-    epicsUInt32 IrqLevel,                   /* if VME_EVR, Interrupt request level. if PMC_EVR set to zero*/
-    int FormFactor)                         /* cPCI or PMC form factor                             */
+    int Card,                   /* Logical card number for this Event Receiver card             */
+    epicsUInt32 CardAddress,    /* IGNORED: Starting address for this card's register map       */
+    epicsUInt32 IrqVector,      /* if VME_EVR, Interrupt request vector, if PMC_EVR set to zero */
+    epicsUInt32 IrqLevel,       /* if VME_EVR, Interrupt request level. if PMC_EVR set to zero  */
+    int FormFactor)             /* cPCI or PMC form factor                                      */
 {
- int ret, fdEvr;
- int  actualFormFactor;
- char strDevice[strlen(DEVNODE_NAME_BASE) + 3];
- char strDevice1[strlen(DEVNODE_NAME_BASE1) + 3];
- struct LinuxErCardStruct *pLinuxErCard;
- struct ErCardStruct *pCard;
- struct MrfErRegs *pEr;
-    u32  FPGAVersion;
+    int ret;
+    int fdEvr;
+    int actualFormFactor;
+    struct LinuxErCardStruct *pLinuxErCard;
+    struct ErCardStruct *pCard;
+    struct MrfErRegs *pEr;
+    u32 FPGAVersion;
 
+    BlockSIGIO();
 
-  BlockSIGIO();
- 
- epicsMutexLock(ErCardListLock);
- /* If not already done, initialize the driver structures */
- if (!bErCardListInitDone) {
-  ellInit (&ErCardList);
-  bErCardListInitDone = epicsTrue;
- }
- epicsMutexUnlock(ErCardListLock);
- 
- /* check parameters */
- if (Card >= EVR_MAX_CARDS) {
-  errlogPrintf("%s: driver does not support %d cards (max is %d).\n", __func__, Card, EVR_MAX_CARDS);
-  return ERROR;
- }
- 
- epicsMutexLock(ErConfigureLock);
- for (pCard = (ErCardStruct *)ellFirst(&ErCardList);
-  pCard != NULL;
-  pCard = (ErCardStruct *)ellNext(&pCard->Link)) {
-  if (pCard->Cardno == Card) {
-   errlogPrintf ("%s: Card number %d has already been configured\n", __func__, Card);
-   epicsMutexUnlock(ErConfigureLock);
-   return ERROR;
-  }
- }
+    epicsMutexLock(ErCardListLock);
+    /* If not already done, initialize the driver structures */
+    if (!bErCardListInitDone) {
+        ellInit(&ErCardList);
+        bErCardListInitDone = epicsTrue;
+    }
+    epicsMutexUnlock(ErCardListLock);
 
- /* Look for the EVR */
- ret = snprintf(strDevice, strlen(DEVNODE_NAME_BASE) + 3, DEVNODE_NAME_BASE "%c3", Card + 'a');
- if (ret < 0) {
-  errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
-  epicsMutexUnlock(ErConfigureLock);
-  return ERROR;
- }
+    /* check parameters */
+    ret = checkFormFactor(FormFactor);
+    if (ret == ERROR) {
+        return ret;
+    }
+    ret = checkCardNum(Card, FormFactor);
+    if (ret == ERROR) {
+        return ret;
+    }
 
- ret = snprintf(strDevice1, strlen(DEVNODE_NAME_BASE1) + 3, DEVNODE_NAME_BASE1 "%c3", Card + 'a');
- if (ret < 0) {
-  errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
-  epicsMutexUnlock(ErConfigureLock);
-  return ERROR;
- }
+    epicsMutexLock(ErConfigureLock);
+    for (pCard = (ErCardStruct *) ellFirst(&ErCardList); pCard != NULL; pCard = (ErCardStruct *) ellNext(&pCard->Link)) {
+        if (pCard->Cardno == Card) {
+            errlogPrintf("%s: Card number %d has already been configured\n", __func__, Card);
+            epicsMutexUnlock(ErConfigureLock);
+            return ERROR;
+        }
+    }
 
- printf("Try EvrOpen, device = %s\n", strDevice);
- fdEvr = EvrOpen(&pEr, strDevice);
- if (fdEvr < 0) {
-  errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+    fdEvr = openFD(Card, FormFactor, &pEr);
+    if (fdEvr == ERROR) {
+        epicsMutexUnlock(ErConfigureLock);
+        return fdEvr;
+    }
 
-  printf("Try EvrOpen, device = %s\n", strDevice1);
-  fdEvr = EvrOpen(&pEr, strDevice1);
+    /* Check the firmware version */
+    FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
+    printf("EVR Found with Firmware Revision 0x%04X\n", FPGAVersion);
+    switch (FPGAVersion) {
+    case PMC_EVR_FIRMWARE_REV_LINUX1:
+    case PMC_EVR_FIRMWARE_REV_LINUX2:
+    case PMC_EVR_FIRMWARE_REV_LINUX3:
+    case PMC_EVR_FIRMWARE_REV_LINUX4:
+    case PCIE_EVR_FIRMWARE_REV_LINUX1:
+    case PCIE_EEVR_FIRMWARE_REV_LINUX1:
+        break;
+    case PMC_EVR_FIRMWARE_REV_VME1:
+        fprintf( stderr, "\nErConfigure ERROR: This PMC EVR has firmware for a linux based system\n"
+                "and cannot be used under RTEMS!\n");
+        closeFD(fdEvr, FormFactor);
+        epicsMutexUnlock(ErConfigureLock);
+        return ERROR;
+    default:
+        printf("ErConfigure: WARNING: Unknown firmware revision on PMC EVR!\n");
+        break;
+    }
 
-  if(fdEvr < 0) {
-    errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+    /* Check the hardware signature for an EVR */
+    if ((FPGAVersion >> 28) != 0x1) {
+        errlogPrintf("%s: invalid hardware signature: 0x%08x.\n", __func__, FPGAVersion);
+        closeFD(fdEvr, FormFactor);
+        epicsMutexUnlock(ErConfigureLock);
+        return ERROR;
+    }
+
+    actualFormFactor = ErGetFormFactor(pEr);
+    if (FormFactor != actualFormFactor) {
+        printf("Configured for %s form factor, but has %s form factor.\n", FormFactorToString(FormFactor), FormFactorToString(actualFormFactor));
+        errlogPrintf("%s: wrong form factor %d, signature is 0x%08x.\n", __func__, FormFactor, FPGAVersion);
+        closeFD(fdEvr, FormFactor);
+        epicsMutexUnlock(ErConfigureLock);
+        return ERROR;
+    }
+    printf("Found a %s\n", FormFactorToString(FormFactor));
+
+    /* Fill in the minimum of the driver structure for driver data structures management */
+    pLinuxErCard = (struct LinuxErCardStruct *) malloc(sizeof(struct LinuxErCardStruct));
+    if (pLinuxErCard == NULL) {
+        errlogPrintf("%s@%d(malloc): failed.\n", __func__, __LINE__);
+        closeFD(fdEvr, FormFactor);
+        epicsMutexUnlock(ErConfigureLock);
+        return ERROR;
+    }
+    memset(pLinuxErCard, 0, sizeof(struct LinuxErCardStruct));
+    pCard = &pLinuxErCard->ErCard;
+    pCard->Cardno = Card;
+    pCard->CardLock = epicsMutexCreate();
+    if (pCard->CardLock == 0) {
+        errlogPrintf("%s@%d(epicsMutexCreate): failed.\n", __func__, __LINE__);
+        free(pCard);
+        closeFD(fdEvr, FormFactor);
+        epicsMutexUnlock(ErConfigureLock);
+        return ERROR;
+    }
+    ellAdd(&ErCardList, &pCard->Link);
+    /* Now that the card is registered there is no chance that configure will go through
+     again if called with the same card number: we can release the mutex */
     epicsMutexUnlock(ErConfigureLock);
-    return ERROR;
-  }
- }
 
- /* Check the firmware version */
- FPGAVersion = be32_to_cpu(pEr->FPGAVersion);
- printf( "EVR Found with Firmware Revision 0x%04X\n", FPGAVersion );
- switch ( FPGAVersion )
- {
- default:
-     printf( "ErConfigure: WARNING: Unknown firmware revision on PMC EVR!\n" );
-     break;
- case PMC_EVR_FIRMWARE_REV_LINUX1:
- case PMC_EVR_FIRMWARE_REV_LINUX2:
- case PMC_EVR_FIRMWARE_REV_LINUX3:
- case PMC_EVR_FIRMWARE_REV_LINUX4:
- case PCIE_EVR_FIRMWARE_REV_LINUX1:
-     break;
- case PMC_EVR_FIRMWARE_REV_VME1:
-     fprintf ( stderr,
-     "\nErConfigure ERROR: This PMC EVR has firmware for a linux based system\n"
-     "and cannot be used under RTEMS!\n" );
-     EvrClose(fdEvr);
-     epicsMutexUnlock(ErCardListLock);
-     return ERROR;
- }
+    /* Finish filling the driver structure and configuring the hardware,
+     if this fails we cannot release the linked list link, instead we
+     we set Cardno to an invalid value */
+    epicsMutexLock(pCard->CardLock);
+    pCard->pEr = (void *) pEr;
+    pCard->Slot = fdEvr; /* we steal this irrelevant field */
+    pCard->FormFactor = FormFactor;
+    /* Set the clock divider. For now it is a fixed value */
+    EvrSetFracDiv(pEr, FR_SYNTH_WORD);
+    ErEnableIrq_nolock(pCard, EVR_IRQ_OFF);
+    if (FormFactor == MCOR_EVR) {
+        EvrIrqFdAssignHandler(fdEvr, ErIrqHandler);
+    } else {
+        EvrIrqAssignHandler(pEr, fdEvr, ErIrqHandler);
+    }
+    pCard->IrqLevel = 1; /* Tell the interrupt handler this interrupt is enabled */
+    epicsMutexUnlock(pCard->CardLock);
+    ErResetAll(pCard);
 
-	/* Check the hardware signature for an EVR */
-	if(( FPGAVersion >>28) != 0x1) {
-		errlogPrintf("%s: invalid hardware signature: 0x%08x.\n", __func__, FPGAVersion );
-		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
-		return ERROR;
-	}
-
-	ret = 0;
-	actualFormFactor = ErGetFormFactor( pEr );
-	if ( FormFactor == actualFormFactor )
-	{
-		printf( "Found a %s %s\n",
-				FormFactorToString( FormFactor ), strDevice );
-	}
-	else
-	{
-		printf( "Configured for %s form factor, but %s has %s form factor.\n",
-				FormFactorToString( FormFactor ), strDevice,
-				FormFactorToString( actualFormFactor ) );
-		errlogPrintf("%s: wrong form factor %d, signature is 0x%08x.\n", __func__, FormFactor, be32_to_cpu(pEr->FPGAVersion));
-		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
-		return ERROR;
-	}
-	
-	/* Fill in the minimum of the driver structure for driver data structures management*/
-	pLinuxErCard = (struct LinuxErCardStruct *)malloc(sizeof(struct LinuxErCardStruct));
-	if (pLinuxErCard == NULL) {
-		errlogPrintf("%s@%d(malloc): failed.\n", __func__, __LINE__);
-		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
-		return ERROR;
-	}
-	memset(pLinuxErCard, 0, sizeof(struct LinuxErCardStruct));
-	pCard = &pLinuxErCard->ErCard;
-	pCard->Cardno = Card;
-	pCard->CardLock = epicsMutexCreate();
-	if (pCard->CardLock == 0) {
-		errlogPrintf("%s@%d(epicsMutexCreate): failed.\n", __func__, __LINE__);
-		free(pCard);
-		EvrClose(fdEvr);
-		epicsMutexUnlock(ErCardListLock);
-		return ERROR;
-	}
-	ellAdd (&ErCardList, &pCard->Link); 
-	/* Now that the card is registered there is no chance that configure will go through
-		again if called with the same card number: we can release the mutex */
-	epicsMutexUnlock(ErConfigureLock);
-
-	/* Finish filling the driver structure and configuring the hardware,
-		if this fails we cannot release the linked list link, instead we
-		we set Cardno to an invalid value */
-	epicsMutexLock(pCard->CardLock);
-	pCard->pEr = (void *)pEr;
-	pCard->Slot = fdEvr;	/* we steal this irrelevant field */
-	/* Set the clock divider. For now it is a fixed value */
-	EvrSetFracDiv(pEr, FR_SYNTH_WORD);
-	ErEnableIrq_nolock(pCard, EVR_IRQ_OFF);
-	EvrIrqAssignHandler(pEr, fdEvr, ErIrqHandler);
-	pCard->IrqLevel = 1;	/* Tell the interrupt handler this interrupt is enabled */
-	pCard->FormFactor = FormFactor;
-	epicsMutexUnlock(pCard->CardLock);
-	ErResetAll(pCard);
-
-	/* Backwards compatibility: old firmware had optical signal always
-	 * looped back to the TX so we enable that here...
-	 */
-	pEr->Control |= be32_to_cpu( (1<<C_EVR_CTRL_RXLOOPBACK) );
-	if(FPGAVersion == PCIE_EVR_FIRMWARE_REV_LINUX1) EvrOutputEnable(pEr, 1);
-	return OK;
+    /* Backwards compatibility: old firmware had optical signal always
+     * looped back to the TX so we enable that here...
+     */
+    pEr->Control |= be32_to_cpu((1 << C_EVR_CTRL_RXLOOPBACK));
+    if (FPGAVersion == PCIE_EVR_FIRMWARE_REV_LINUX1) {
+        EvrOutputEnable(pEr, 1);
+    }
+    return OK;
 }
 
 /**************************************************************************************************/
@@ -1164,9 +1227,11 @@ void ErResetAll(ErCardStruct *pCard)
 	}
 	EvrReceiveDBuf(pEr, 0);
 	EvrSetDBufMode(pEr, 0);
-	for(i = 0; i < EVR_MAPRAMS; i++)
-		for(j = 0; j < sizeof(pEr->MapRam[0])/sizeof(u32); j++)
-			((u32 *)pEr->MapRam[0])[j] = 0;
+	if (pCard->FormFactor != MCOR_EVR) {
+	    for(i = 0; i < EVR_MAPRAMS; i++)
+	        for(j = 0; j < sizeof(pEr->MapRam[0])/sizeof(u32); j++)
+	            ((u32 *)pEr->MapRam[0])[j] = 0;
+	}
 	EvrClearFIFO(pEr);
 	EvrClearIrqFlags(pEr, EVR_IRQFLAG_DATABUF | EVR_IRQFLAG_PULSE | EVR_IRQFLAG_EVENT
 				| EVR_IRQFLAG_HEARTBEAT | EVR_IRQFLAG_FIFOFULL | EVR_IRQFLAG_VIOLATION);
@@ -1728,10 +1793,12 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 				}
 			}
 		}
-		pEr->MapRam[RamNumber-1][code].IntEvent = be32_to_cpu(ramloc.IntEvent);
-		pEr->MapRam[RamNumber-1][code].PulseSet = be32_to_cpu(ramloc.PulseSet);
-		pEr->MapRam[RamNumber-1][code].PulseClear = be32_to_cpu(ramloc.PulseClear);
-		pEr->MapRam[RamNumber-1][code].PulseTrigger = be32_to_cpu(ramloc.PulseTrigger);
+        if (pCard->FormFactor != MCOR_EVR) {
+            pEr->MapRam[RamNumber - 1][code].IntEvent = be32_to_cpu(ramloc.IntEvent);
+            pEr->MapRam[RamNumber - 1][code].PulseSet = be32_to_cpu(ramloc.PulseSet);
+            pEr->MapRam[RamNumber - 1][code].PulseClear = be32_to_cpu(ramloc.PulseClear);
+            pEr->MapRam[RamNumber - 1][code].PulseTrigger = be32_to_cpu(ramloc.PulseTrigger);
+        }
 	}
 	epicsMutexUnlock(pCard->CardLock);
 }

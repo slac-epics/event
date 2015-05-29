@@ -14,6 +14,7 @@
 
 #define EVR_CPCI230_MEM_WINDOW      0x00008000
 #define EVR_CPCI300TG_MEM_WINDOW    0x00040000
+#define EVR_MCOR_MEM_WINDOW         0x00004000
 
 #ifndef u16
 #define u16 uint16_t
@@ -22,21 +23,9 @@
 #define u32 uint32_t
 #endif
 
-#ifndef be16_to_cpu
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#define be16_to_cpu(x) bswap_16(x)
-#else
-#define be16_to_cpu(x) ((u16)(x))
-#endif
-#endif
-
-#ifndef be32_to_cpu
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-#define be32_to_cpu(x) bswap_32(x)
-#else
-#define be32_to_cpu(x) ((u32)(x))
-#endif
-#endif
+/* Byte swapping functions */
+inline u16 be16_to_cpu(u16 x);
+inline u32 be32_to_cpu(u32 x);
 
 #define EVR_MAX_FPOUT_MAP   16
 #define EVR_MAX_CMLOUT_MAP  16
@@ -309,9 +298,11 @@ struct MrfErRegs {
 /* Function prototypes */
 int EvrOpen(struct MrfErRegs **pEr, char *device_name);
 int EvrTgOpen(struct MrfErRegs **pEr, char *device_name);
+int EvrMcorOpen(struct MrfErRegs **pEr, char *device_name);
 int EvrOpenWindow(struct MrfErRegs **pEr, char *device_name, int mem_window);
 int EvrClose(int fd);
 int EvrTgClose(int fd);
+int EvrMcorClose(int fd);
 int EvrCloseWindow(int fd, int mem_window);
 int EvrEnable(volatile struct MrfErRegs *pEr, int state);
 int EvrGetEnable(volatile struct MrfErRegs *pEr);
@@ -364,11 +355,13 @@ int EvrGetTBOutMap(volatile struct MrfErRegs *pEr, int output);
 void EvrDumpTBOutMap(volatile struct MrfErRegs *pEr, int outputs);
 void EvrIrqAssignHandler(volatile struct MrfErRegs *pEr, int fd, void (*handler)(int));
 void EvrIrqUnassignHandler(int vector, void (*handler)(int));
+void EvrIrqFdAssignHandler(int fd, void (*handler)(int));
 int EvrIrqEnable(volatile struct MrfErRegs *pEr, int mask);
 int EvrGetIrqEnable(volatile struct MrfErRegs *pEr);
 int EvrGetIrqFlags(volatile struct MrfErRegs *pEr);
 int EvrClearIrqFlags(volatile struct MrfErRegs *pEr, int mask);
 void EvrIrqHandled(int fd);
+void EvrIrqFdHandled(int fd);
 int EvrSetPulseIrqMap(volatile struct MrfErRegs *pEr, int map);
 void EvrClearDiagCounters(volatile struct MrfErRegs *pEr);
 int EvrEnableDiagCounters(volatile struct MrfErRegs *pEr, int enable);

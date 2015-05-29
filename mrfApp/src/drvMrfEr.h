@@ -85,6 +85,11 @@
  #define       PMC_EVR_FIRMWARE_REV_LINUX4     0x11000007
  #define       PCIE_EVR_FIRMWARE_REV_LINUX1    0x17000005
 
+/*
+ * These firmware is used by MCOR's embedded EVR.
+ */
+ #define       PCIE_EEVR_FIRMWARE_REV_LINUX1   0x1F000001
+
 
 /**************************************************************************************************/
 /*  Configuration Constants                                                                       */
@@ -291,11 +296,12 @@ typedef void (*EVENT_FUNC) (void);
 typedef void (*ERROR_FUNC) (void);
 typedef void (*DBUFF_FUNC) (void);
 
-#define VME_EVR (0)
-#define PMC_EVR (1)
-#define EMBEDDED_EVR (2)
-#define CPCI_EVR (3)
-#define PCIE_EVR (4)
+#define VME_EVR         (0)
+#define PMC_EVR         (1)
+#define EMBEDDED_EVR    (2)
+#define CPCI_EVR        (3)
+#define PCIE_EVR        (4)
+#define MCOR_EVR        (5)
 
 /*---------------------
  * Event Receiver Card Structure
