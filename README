@@ -183,6 +183,7 @@ dbLoadRecords("db/VME-TTB-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV0
     Embedded: ErConfigure(<instance>,    0    ,<vector>,<level>,2)
 
     PCI-E:    ErConfigure(<instance>,    0    ,    0   ,   0   ,4)
+    EMCOR:    ErConfigure(<instance>,    0    ,    0   ,   0   ,5)
 
     where instance = EVR instance, starting from 0, incrementing by 1
                      for each subsequent card.  Only 1 EVR instance
@@ -202,6 +203,7 @@ dbLoadRecords("db/VME-TTB-trig.db", "LOCA=B34,UNIT=EV05,SYS=SYS0,IOC=IOC:B34:EV0
        or 2	   = Embedded
 
        or 4        = PCI-E
+       or 5        = EMCOR
 
     and starting slot = first VME slot to start looking for EVRs.
 			Set to 0 if their is only one CPU in the crate.
