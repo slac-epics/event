@@ -31,7 +31,6 @@
 
 #define DEVNODE_NAME_BASE  "/dev/er"
 #define DEVNODE_NAME_BASE1 "/dev/er3"
-#define DEVNODE_NAME_EEVR  "/dev/eevr"
 
 #ifdef EVENT_CLOCK_SPEED
     #define FR_SYNTH_WORD   EVENT_CLOCK_SPEED
@@ -217,85 +216,6 @@ static int ErGetFormFactor(volatile struct MrfErRegs *pEr) {
         return PCIE_EVR;
     default:
         return ERROR;
-    }
-}
-
-static int checkFormFactor(int formFactor) {
-    switch (formFactor) {
-    case CPCI_EVR:
-    case PMC_EVR:
-    case VME_EVR:
-    case MCOR_EVR:
-    case PCIE_EVR:
-        return 0;
-    default:
-        errlogPrintf("%s: Not supported form factor %d specified.\n", __func__, formFactor);
-        return ERROR;
-    }
-}
-
-static int checkCardNum(int cardNum, int formFactor) {
-    int maxCards = EVR_MAX_CARDS;
-    if (formFactor == MCOR_EVR) {
-        maxCards = 1;
-    }
-
-    if (cardNum >= maxCards) {
-        errlogPrintf("%s: Driver does not support %d cards (max is %d).\n", __func__, cardNum, maxCards);
-        return ERROR;
-    }
-    return 0;
-}
-
-static int openFD(int cardNum, int formFactor, struct MrfErRegs **pEr) {
-    int fdEvr;
-
-    if (formFactor == MCOR_EVR) {
-        fdEvr = EvrMcorOpen(pEr, DEVNODE_NAME_EEVR);
-        if (fdEvr < 0) {
-            errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
-            return ERROR;
-        }
-    } else {
-        int ret;
-        char strDevice[strlen(DEVNODE_NAME_BASE) + 3];
-        char strDevice1[strlen(DEVNODE_NAME_BASE1) + 3];
-
-        /* Look for the EVR */
-        ret = snprintf(strDevice, strlen(DEVNODE_NAME_BASE) + 3, DEVNODE_NAME_BASE "%c3", cardNum + 'a');
-        if (ret < 0) {
-            errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
-            return ERROR;
-        }
-
-        ret = snprintf(strDevice1, strlen(DEVNODE_NAME_BASE1) + 3, DEVNODE_NAME_BASE1 "%c3", cardNum + 'a');
-        if (ret < 0) {
-            errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
-            return ERROR;
-        }
-
-        printf("Try EvrOpen, device = %s\n", strDevice);
-        fdEvr = EvrOpen(pEr, strDevice);
-        if (fdEvr < 0) {
-            errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
-
-            printf("Try EvrOpen, device = %s\n", strDevice1);
-            fdEvr = EvrOpen(pEr, strDevice1);
-
-            if (fdEvr < 0) {
-                errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
-                return ERROR;
-            }
-        }
-    }
-    return fdEvr;
-}
-
-static void closeFD(int fdEvr, int formFactor) {
-    if (formFactor == MCOR_EVR) {
-        EvrMcorClose(fdEvr);
-    } else {
-        EvrClose(fdEvr);
     }
 }
 
@@ -550,6 +470,8 @@ static int ErConfigure (
     int ret;
     int fdEvr;
     int actualFormFactor;
+    char strDevice[strlen(DEVNODE_NAME_BASE) + 3];
+    char strDevice1[strlen(DEVNODE_NAME_BASE1) + 3];
     struct LinuxErCardStruct *pLinuxErCard;
     struct ErCardStruct *pCard;
     struct MrfErRegs *pEr;
@@ -565,16 +487,6 @@ static int ErConfigure (
     }
     epicsMutexUnlock(ErCardListLock);
 
-    /* check parameters */
-    ret = checkFormFactor(FormFactor);
-    if (ret == ERROR) {
-        return ret;
-    }
-    ret = checkCardNum(Card, FormFactor);
-    if (ret == ERROR) {
-        return ret;
-    }
-
     epicsMutexLock(ErConfigureLock);
     for (pCard = (ErCardStruct *) ellFirst(&ErCardList); pCard != NULL; pCard = (ErCardStruct *) ellNext(&pCard->Link)) {
         if (pCard->Cardno == Card) {
@@ -584,10 +496,39 @@ static int ErConfigure (
         }
     }
 
-    fdEvr = openFD(Card, FormFactor, &pEr);
-    if (fdEvr == ERROR) {
+    // this hack should be removed when EMCOR firmware is byte-swapped
+    if (FormFactor == MCOR_EVR) {
+        EvrMcor();
+    }
+
+    /* Look for the EVR */
+    ret = snprintf(strDevice, strlen(DEVNODE_NAME_BASE) + 3, DEVNODE_NAME_BASE "%c3", Card + 'a');
+    if (ret < 0) {
+        errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
         epicsMutexUnlock(ErConfigureLock);
-        return fdEvr;
+        return ERROR;
+    }
+
+    ret = snprintf(strDevice1, strlen(DEVNODE_NAME_BASE1) + 3, DEVNODE_NAME_BASE1 "%c3", Card + 'a');
+    if (ret < 0) {
+        errlogPrintf("%s@%d(snprintf): %s.\n", __func__, __LINE__, strerror(-ret));
+        epicsMutexUnlock(ErConfigureLock);
+        return ERROR;
+    }
+
+    printf("Try EvrOpen, device = %s\n", strDevice);
+    fdEvr = EvrOpen(&pEr, strDevice);
+    if (fdEvr < 0) {
+        errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+
+        printf("Try EvrOpen, device = %s\n", strDevice1);
+        fdEvr = EvrOpen(&pEr, strDevice1);
+
+        if (fdEvr < 0) {
+            errlogPrintf("%s@%d(EvrOpen): %s.\n", __func__, __LINE__, strerror(errno));
+            epicsMutexUnlock(ErConfigureLock);
+            return ERROR;
+        }
     }
 
     /* Check the firmware version */
@@ -604,7 +545,7 @@ static int ErConfigure (
     case PMC_EVR_FIRMWARE_REV_VME1:
         fprintf( stderr, "\nErConfigure ERROR: This PMC EVR has firmware for a linux based system\n"
                 "and cannot be used under RTEMS!\n");
-        closeFD(fdEvr, FormFactor);
+        EvrClose(fdEvr);
         epicsMutexUnlock(ErConfigureLock);
         return ERROR;
     default:
@@ -615,7 +556,7 @@ static int ErConfigure (
     /* Check the hardware signature for an EVR */
     if ((FPGAVersion >> 28) != 0x1) {
         errlogPrintf("%s: invalid hardware signature: 0x%08x.\n", __func__, FPGAVersion);
-        closeFD(fdEvr, FormFactor);
+        EvrClose(fdEvr);
         epicsMutexUnlock(ErConfigureLock);
         return ERROR;
     }
@@ -624,7 +565,7 @@ static int ErConfigure (
     if (FormFactor != actualFormFactor) {
         printf("Configured for %s form factor, but has %s form factor.\n", FormFactorToString(FormFactor), FormFactorToString(actualFormFactor));
         errlogPrintf("%s: wrong form factor %d, signature is 0x%08x.\n", __func__, FormFactor, FPGAVersion);
-        closeFD(fdEvr, FormFactor);
+        EvrClose(fdEvr);
         epicsMutexUnlock(ErConfigureLock);
         return ERROR;
     }
@@ -634,7 +575,7 @@ static int ErConfigure (
     pLinuxErCard = (struct LinuxErCardStruct *) malloc(sizeof(struct LinuxErCardStruct));
     if (pLinuxErCard == NULL) {
         errlogPrintf("%s@%d(malloc): failed.\n", __func__, __LINE__);
-        closeFD(fdEvr, FormFactor);
+        EvrClose(fdEvr);
         epicsMutexUnlock(ErConfigureLock);
         return ERROR;
     }
@@ -645,7 +586,7 @@ static int ErConfigure (
     if (pCard->CardLock == 0) {
         errlogPrintf("%s@%d(epicsMutexCreate): failed.\n", __func__, __LINE__);
         free(pCard);
-        closeFD(fdEvr, FormFactor);
+        EvrClose(fdEvr);
         epicsMutexUnlock(ErConfigureLock);
         return ERROR;
     }
@@ -1227,11 +1168,9 @@ void ErResetAll(ErCardStruct *pCard)
 	}
 	EvrReceiveDBuf(pEr, 0);
 	EvrSetDBufMode(pEr, 0);
-	if (pCard->FormFactor != MCOR_EVR) {
-	    for(i = 0; i < EVR_MAPRAMS; i++)
-	        for(j = 0; j < sizeof(pEr->MapRam[0])/sizeof(u32); j++)
-	            ((u32 *)pEr->MapRam[0])[j] = 0;
-	}
+	for(i = 0; i < EVR_MAPRAMS; i++)
+		for(j = 0; j < sizeof(pEr->MapRam[0])/sizeof(u32); j++)
+			((u32 *)pEr->MapRam[0])[j] = 0;
 	EvrClearFIFO(pEr);
 	EvrClearIrqFlags(pEr, EVR_IRQFLAG_DATABUF | EVR_IRQFLAG_PULSE | EVR_IRQFLAG_EVENT
 				| EVR_IRQFLAG_HEARTBEAT | EVR_IRQFLAG_FIFOFULL | EVR_IRQFLAG_VIOLATION);
@@ -1793,12 +1732,11 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 				}
 			}
 		}
-        if (pCard->FormFactor != MCOR_EVR) {
-            pEr->MapRam[RamNumber - 1][code].IntEvent = be32_to_cpu(ramloc.IntEvent);
-            pEr->MapRam[RamNumber - 1][code].PulseSet = be32_to_cpu(ramloc.PulseSet);
-            pEr->MapRam[RamNumber - 1][code].PulseClear = be32_to_cpu(ramloc.PulseClear);
-            pEr->MapRam[RamNumber - 1][code].PulseTrigger = be32_to_cpu(ramloc.PulseTrigger);
-        }
+		// XXX: TEST
+//		pEr->MapRam[RamNumber-1][code].IntEvent = be32_to_cpu(ramloc.IntEvent);
+//		pEr->MapRam[RamNumber-1][code].PulseSet = be32_to_cpu(ramloc.PulseSet);
+//		pEr->MapRam[RamNumber-1][code].PulseClear = be32_to_cpu(ramloc.PulseClear);
+//		pEr->MapRam[RamNumber-1][code].PulseTrigger = be32_to_cpu(ramloc.PulseTrigger);
 	}
 	epicsMutexUnlock(pCard->CardLock);
 }

@@ -14,7 +14,6 @@
 
 #define EVR_CPCI230_MEM_WINDOW      0x00008000
 #define EVR_CPCI300TG_MEM_WINDOW    0x00040000
-#define EVR_MCOR_MEM_WINDOW         0x00004000
 
 #ifndef u16
 #define u16 uint16_t
@@ -296,13 +295,12 @@ struct MrfErRegs {
 #define EV_IOCIRQDIS _IO(EV_IOC_MAGIC, 2)
 
 /* Function prototypes */
+void EvrMcor();
 int EvrOpen(struct MrfErRegs **pEr, char *device_name);
 int EvrTgOpen(struct MrfErRegs **pEr, char *device_name);
-int EvrMcorOpen(struct MrfErRegs **pEr, char *device_name);
 int EvrOpenWindow(struct MrfErRegs **pEr, char *device_name, int mem_window);
 int EvrClose(int fd);
 int EvrTgClose(int fd);
-int EvrMcorClose(int fd);
 int EvrCloseWindow(int fd, int mem_window);
 int EvrEnable(volatile struct MrfErRegs *pEr, int state);
 int EvrGetEnable(volatile struct MrfErRegs *pEr);

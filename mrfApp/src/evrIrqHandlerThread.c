@@ -2,9 +2,6 @@
 #include <unistd.h>
 #include <epicsThread.h>
 #include <errlog.h>
-#include <poll.h>
-#include <errno.h>
-#include <string.h>
 
 static int evrIrqHandlerThread(void *handler)
 {
@@ -30,8 +27,6 @@ void EvrIrqHandlerThreadCreate(void (*handler) (int))
                           (EPICSTHREADFUNC)evrIrqHandlerThread,handler);
 }
 
-#define TIMEOUT_MSEC 200
-
 static struct EvrIrqFdStruct {
     int fd;
     void *handler;
@@ -39,26 +34,17 @@ static struct EvrIrqFdStruct {
 
 static int evrIrqFdHandlerThread(void *eiFdStruct) {
     struct EvrIrqFdStruct *eiFdS = eiFdStruct;
-    int val, retP, retR;
-    struct pollfd fds[1];
-    fds[0].fd = eiFdS->fd;
-    fds[0].events = POLLIN;
+    int val, retR;
     void (*irqHandler)(int) = eiFdS->handler;
 
     while (1) {
-        retP = poll(fds, 1, TIMEOUT_MSEC);
-        if (retP > 0) {
-            retR = read(eiFdS->fd, &val, 4);
-            if (retR != 4) {
-                errlogPrintf("Read failed, return value: %d\n", retR);
-                return -1;
-            }
-            if (irqHandler) {
-                irqHandler(val);
-            }
-        } else if (retP < 0) {
-            errlogPrintf("Poll failed: %s\n", strerror(errno));
+        retR = read(eiFdS->fd, &val, 4);
+        if (retR != 4) {
+            errlogPrintf("Read failed, return value: %d\n", retR);
             return -1;
+        }
+        if (irqHandler) {
+            irqHandler(val);
         }
     }
     return 0;

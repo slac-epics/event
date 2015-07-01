@@ -88,7 +88,7 @@
 /*
  * These firmware is used by MCOR's embedded EVR.
  */
- #define       PCIE_EEVR_FIRMWARE_REV_LINUX1   0x1F000001
+ #define       PCIE_EEVR_FIRMWARE_REV_LINUX1   0x1F000003
 
 
 /**************************************************************************************************/
