@@ -1,6 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-1-6-BR-R3-16-0:  2015-07-16 K.Kim
+      * Branch out from R4-1-6 to support epics Base-R3-16
+
 event-R4-1-6: 2015-02-18 K. Kim
       * consider for 360Hz resolution timestamp
         allow to set  TS1ST=0, TS2ND=0 for 360Hz resolution timestamp
