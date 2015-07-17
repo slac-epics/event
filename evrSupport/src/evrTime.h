@@ -30,6 +30,10 @@ extern "C" {
 
 #include    "epicsTime.h"          /* epicsTimeStamp       */
 #include    "registryFunction.h"   /* REGISTRYFUNCTION     */
+
+#ifndef     epicsTimeERROR
+#define     epicsTimeERROR   -1
+#endif
   
 /* Masks used to decode pulse ID from the nsec part of the timestamp   */
 #define UPPER_15_BIT_MASK       (0xFFFE0000)    /* (2^32)-1 - (2^17)-1 */
