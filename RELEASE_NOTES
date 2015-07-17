@@ -1,5 +1,7 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-1-6-BR-R3-16-0_1_0:  2015-07-16 K. Kim
+      * Support epics base-R3-16-0, change macros for new epicsTime.h
 
 event-R4-1-6-BR-R3-16-0:  2015-07-16 K.Kim
       * Branch out from R4-1-6 to support epics Base-R3-16
