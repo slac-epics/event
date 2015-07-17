@@ -1,6 +1,11 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-1-6-BR-2_0: 2015-07-16 K. Kim
+        * Support base R3-16-0, to fit new epicsTime.h in R3-16-0
+        * R3-16-0 revmoves global lock set for the record processing,
+        * it should give more preformance for the multi-core / parallel callback thread
+
 event-R4-1-6-BR-1_0: 2015-03-02 K. Kim
         * BSA improvement (proty-type)
         - add up queue mechanism between data receptor and downstream bsa processing
