@@ -496,11 +496,6 @@ static int ErConfigure (
         }
     }
 
-    // this hack should be removed when EMCOR firmware is byte-swapped
-    if (FormFactor == MCOR_EVR) {
-        EvrMcor();
-    }
-
     /* Look for the EVR */
     ret = snprintf(strDevice, strlen(DEVNODE_NAME_BASE) + 3, DEVNODE_NAME_BASE "%c3", Card + 'a');
     if (ret < 0) {
@@ -1732,11 +1727,10 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 				}
 			}
 		}
-		// XXX: TEST
-//		pEr->MapRam[RamNumber-1][code].IntEvent = be32_to_cpu(ramloc.IntEvent);
-//		pEr->MapRam[RamNumber-1][code].PulseSet = be32_to_cpu(ramloc.PulseSet);
-//		pEr->MapRam[RamNumber-1][code].PulseClear = be32_to_cpu(ramloc.PulseClear);
-//		pEr->MapRam[RamNumber-1][code].PulseTrigger = be32_to_cpu(ramloc.PulseTrigger);
+		pEr->MapRam[RamNumber-1][code].IntEvent = be32_to_cpu(ramloc.IntEvent);
+		pEr->MapRam[RamNumber-1][code].PulseSet = be32_to_cpu(ramloc.PulseSet);
+		pEr->MapRam[RamNumber-1][code].PulseClear = be32_to_cpu(ramloc.PulseClear);
+		pEr->MapRam[RamNumber-1][code].PulseTrigger = be32_to_cpu(ramloc.PulseTrigger);
 	}
 	epicsMutexUnlock(pCard->CardLock);
 }

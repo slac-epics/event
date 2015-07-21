@@ -23,8 +23,21 @@
 #endif
 
 /* Byte swapping functions */
-inline u16 be16_to_cpu(u16 x);
-inline u32 be32_to_cpu(u32 x);
+#ifndef be16_to_cpu
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define be16_to_cpu(x) bswap_16(x)
+#else
+#define be16_to_cpu(x) ((u16)(x))
+#endif
+#endif
+
+#ifndef be32_to_cpu
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+#define be32_to_cpu(x) bswap_32(x)
+#else
+#define be32_to_cpu(x) ((u32)(x))
+#endif
+#endif
 
 #define EVR_MAX_FPOUT_MAP   16
 #define EVR_MAX_CMLOUT_MAP  16
@@ -295,7 +308,6 @@ struct MrfErRegs {
 #define EV_IOCIRQDIS _IO(EV_IOC_MAGIC, 2)
 
 /* Function prototypes */
-void EvrMcor();
 int EvrOpen(struct MrfErRegs **pEr, char *device_name);
 int EvrTgOpen(struct MrfErRegs **pEr, char *device_name);
 int EvrOpenWindow(struct MrfErRegs **pEr, char *device_name, int mem_window);

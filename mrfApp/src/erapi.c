@@ -53,36 +53,6 @@ void EvrIrqFdHandlerThreadCreate(int fd, void (*handler)(int));
 #define DEBUG_PRINTF printf
 unsigned int erapiDebug = 0;
 
-unsigned int evr_mcor = 0;
-
-inline u16 be16_to_cpu(u16 x) {
-    if (evr_mcor) {
-        return x;
-    }
-
-    if (__BYTE_ORDER == __LITTLE_ENDIAN) {
-        return bswap_16(x);
-    } else {
-        return x;
-    }
-}
-
-inline u32 be32_to_cpu(u32 x) {
-    if (evr_mcor) {
-        return x;
-    }
-
-    if (__BYTE_ORDER == __LITTLE_ENDIAN) {
-        return bswap_32(x);
-    } else {
-        return x;
-    }
-}
-
-void EvrMcor() {
-    evr_mcor = 1;
-}
-
 #ifdef __linux__
 int EvrOpenWindow(struct MrfErRegs **pEr, char *device_name, int mem_window)
 {
