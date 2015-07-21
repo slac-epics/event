@@ -100,6 +100,7 @@ record(er, "$(DEV):CTRL")
 
   field(PRES, "1")
   field(FLNK, "$(EVRFLNK=$(EVR):Triggers)")
+  info( autosaveFields, "DESC DG0C DG0D DG0E DG0P DG0W DG1C DG1D DG1E DG1P DG1W DG2C DG2D DG2E DG2P DG2W ENAB" )
 }
 
 record(bi, "$(DEV):LINK")
@@ -144,6 +145,7 @@ record(stringout, "$(DEV):FP0L")
   field(DESC, "$(FP0L=<unassigned>)")
   field(PINI, "YES")
   field(VAL,  "$(FP0L=<unassigned>)")
+  info( autosaveFields, "DESC VAL" )
 }
 
 record(stringout, "$(DEV):FP1L")
@@ -151,6 +153,7 @@ record(stringout, "$(DEV):FP1L")
   field(DESC, "$(FP1L=<unassigned>)")
   field(PINI, "YES")
   field(VAL,  "$(FP1L=<unassigned>)")
+  info( autosaveFields, "DESC VAL" )
 }
 
 record(stringout, "$(DEV):FP2L")
@@ -158,6 +161,7 @@ record(stringout, "$(DEV):FP2L")
   field(DESC, "$(FP2L=<unassigned>)")
   field(PINI, "YES")
   field(VAL,  "$(FP2L=<unassigned>)")
+  info( autosaveFields, "DESC VAL" )
 }
 
 record(stringout, "$(DEV):FP3L")
@@ -165,6 +169,7 @@ record(stringout, "$(DEV):FP3L")
   field(DESC, "$(FP3L=<unassigned>)")
   field(PINI, "YES")
   field(VAL,  "$(FP3L=<unassigned>)")
+  info( autosaveFields, "DESC VAL" )
 }
 
 record(ai, "$(DEV):LINKERRCNT")
