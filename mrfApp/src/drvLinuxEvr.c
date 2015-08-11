@@ -43,6 +43,11 @@
 /*                              Private types                                                     */
 /*                                                                                                */
 
+
+int          int_showme = 0;
+int          event_showme = 0;
+int          dbufst_showme =0;
+
 #define TOTAL_EVR_PULSES 10
 enum outputs_mapping_id
 {
@@ -358,6 +363,9 @@ void ErIrqHandler(int signal) {
         }
         pEr = pCard->pEr;
         flags = EvrGetIrqFlags(pEr);
+
+        if(int_showme>0) { int_showme--; printf("IrqFlag: %8.8x\n", flags); }
+
         if (flags & ~EVR_IRQFLAG_FIFOFULL) {
             EvrClearIrqFlags(pEr, (flags & ~EVR_IRQFLAG_FIFOFULL));
         }
@@ -370,6 +378,7 @@ void ErIrqHandler(int signal) {
                 if (EvrGetFIFOEvent(pEr, &fe) < 0) {
                     break;
                 }
+                if(event_showme>0) { event_showme--; printf("FIFOEvent: %d\n", fe.EventCode); }
                 if (pCard->DevEventFunc != NULL) {
                     (*pCard->DevEventFunc)(pCard, fe.EventCode, fe.TimestampLow);
                 }
@@ -378,6 +387,7 @@ void ErIrqHandler(int signal) {
 
         if (flags & EVR_IRQFLAG_DATABUF) {
             int databuf_sts = EvrGetDBufStatus(pEr);
+            if(dbufst_showme>0) { dbufst_showme--; printf("DBUF status: %8.8x\n", databuf_sts); }
             if (databuf_sts & (1 << C_EVR_DATABUF_CHECKSUM)) {
                 if (pCard->DevErrorFunc != NULL) {
                     (*pCard->DevErrorFunc)(pCard, ERROR_DBUF_CHECKSUM);
@@ -385,9 +395,12 @@ void ErIrqHandler(int signal) {
             }
             if (pCard->DevDBuffFunc != NULL) {
                 pCard->DBuffSize = (databuf_sts & ((1 << (C_EVR_DATABUF_SIZEHIGH + 1)) - 1));
+                if(dbufst_showme>0) printf("DBUF size:  %d bytes,  %d u32\n", pCard->DBuffSize, pCard->DBuffSize>>2); 
                 for (i = 0; i < pCard->DBuffSize >> 2; i++) {
                     pCard->DataBuffer[i] = be32_to_cpu(pEr->Databuf[i]);
                 }
+                if(dbufst_showme>0) printf("DBUF header (type/version): %8.8x\n", pCard->DataBuffer[0]);
+
                 EvrReceiveDBuf(pEr, 1); // That means we only re-enable it if someone cares (DevDBuffFunc set)
                 (*pCard->DevDBuffFunc)(pCard, pCard->DBuffSize, pCard->DataBuffer);
             }
@@ -994,6 +1007,7 @@ epicsStatus ErGetTicks(int Card, epicsUInt32 *Ticks)
 	pEr = (struct MrfErRegs *)pCard->pEr;
 	/* epicsMutexLock(pCard->CardLock); */
         *Ticks = (epicsUInt32)EvrGetTimestampLatch(pEr);
+	//*Ticks = (epicsUInt32)EvrGetTimestampCounter(pEr);
 	/* epicsMutexUnlock(pCard->CardLock); */
 	return OK;
 }
@@ -1801,6 +1815,10 @@ epicsStatus ErDrvReport (int level)
 		EvrDumpPulses(		pEr, 10 );
 		EvrDumpFPOutMap(	pEr, 3 );
 		EvrDumpTBOutMap(	pEr, 3 );
+                printf("        MapRam 1\n");
+                EvrDumpMapRam(pEr, 0);
+                printf("        MapRam 2\n");
+                EvrDumpMapRam(pEr,1);
 	}
 	if(!NumCards)
 		printf ("  No Event Receiver cards were configured\n");
@@ -1931,3 +1949,6 @@ LOCAL void drvMrfErRegister()
  iocshRegister( &ErDrvReportDef, ErDrvReportCall );
 }
 epicsExportRegistrar(drvMrfErRegister);
+epicsExportAddress(int, int_showme);
+epicsExportAddress(int, event_showme);
+epicsExportAddress(int, dbufst_showme);
