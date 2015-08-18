@@ -1,6 +1,10 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-2-0: 2015-08-18 K. Kim
+      * Include Tomo's EMCOR EVR support
+      * add up debugging feature for interrupt, mapping ram, event FIFO and data buffer handling
+
 event-R4-1-6: 2015-02-18 K. Kim
       * consider for 360Hz resolution timestamp
         allow to set  TS1ST=0, TS2ND=0 for 360Hz resolution timestamp
