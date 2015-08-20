@@ -1,4 +1,4 @@
-Instructions for EVR users                    Last Updated 6/3/2014
+Instructions for EVR users                    Last Updated 08/20/2015
 --------------------------------
 These instructions are for EVENT module event-R3-5-0 branch or later.
 The basic steps when configuring a new IOC are in parts I through IV.
@@ -21,6 +21,7 @@ XIII - Consideration for the Linux PMC EVR
 XIV  - General BSA template
 XV   - Library and DBD files for EVG applicaton
 XVI  - Library and DBD files for EVR application
+XVII - Interrupt handling modes
 
 
 If you are still using an older EVENT module please use the README for that specific
@@ -829,4 +830,35 @@ LINUX/PMC&PCI
 	evrSupport	evrSupport.dbd
 	devMrfEr	devMrfEr.dbd
 	drvMrf
+
+XVII - Interrupt handling modes
+-----------------------------------------
+
+This module supports two modes of interrupt handling on the Linux OS:
+- Interrupts are received with the system signal.
+- Interrupts are read from the device file descriptor.
+
+The implementation is chosen based on the form factor of the used device, since it 
+depends on how the specific device driver works.
+Currently only EMCOR EVR is using the mode without the signals.
+
+Differences/similarities:
+1) In the ErConfigure() function the interrupt handling mode is chosen based on the form factor.
+One of the following functions gets called: EvrIrqAssignHandler(), EvrIrqFdAssignHandler().
+First one enables signal IRQ mode while the second one enables file descriptor read IRQ mode.
+Both require at least 2 parameters: file descriptor and pointer to the IRQ handler function
+to be called when the event is received.
+2) EvrIrqAssignHandler() function calls EvrIrqHandlerThreadCreate() function,
+which creates a thread in the background that waits for the signal.
+When it receives the signal, it calls registered IRQ handler callback.
+3) EvrIrqFdAssignHandler() function calls EvrIrqFdHandlerThreadCreate() function,
+which creates a thread in the background that does blocking read on the device file descriptor.
+When the read returns, registered IRQ handler callback is invoked.
+4) There is only one IRQ callback function defined: ErIrqHandler().
+It is used for both interrupt handling modes. The function handles the interrupt regardless
+of where it originated from. After the IRQ is handled, the interrupts need to be enabled back.
+This is done by calling one of the following functions, based on the form factor:
+EvrIrqHandled(), EvrIrqFdHandled(). Both require device file descriptor as a parameter.
+5) EvrIrqHandled() function enables interrupts by performing special IOCTL call to the kernel driver.
+6) EvrIrqFdHandled() function enables interrupts by writing value of 1 to the file descriptor.
 
