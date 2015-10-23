@@ -1092,7 +1092,7 @@ int ErConfigure (
 		  EpicsPciDWord	subId;
 		  epicsUInt32	subIdEvr200	= ( PCI_DEVICE_ID_MRF_PMCEVR200 << 16 ) | VendorId;
 		  epicsUInt32	subIdEvr230	= ( PCI_DEVICE_ID_MRF_PMCEVR230 << 16 ) | VendorId;
-		  int		unit = 0;
+		  int		unit = Card;
 		  do {
 			if (epicsPciFindDevice(PCI_VENDOR_ID_PLX, PCI_DEVICE_ID_PLX_9030, unit, &pciBusNo, &pciDevNo, &pciFuncNo) == ERROR) {
 			/* no more plx chips */
