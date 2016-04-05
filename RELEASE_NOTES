@@ -1,6 +1,10 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-2-1: 2016-04-04 K. Kim
+      * To avoid undefine symbol for "int_showme, dbuf_showme and event_showme" in RTEMS
+        define dummy variable for RTMES. These variables has been introduce for special debugging for linux/linuxRT 
+
 event-R4-2-0: 2015-08-18 K. Kim
       * Include Tomo's EMCOR EVR support
       * add up debugging feature for interrupt, mapping ram, event FIFO and data buffer handling
