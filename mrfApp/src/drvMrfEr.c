@@ -119,6 +119,18 @@
 #ifdef DEBUG_PRINT
 int drvMrfErFlag = DP_ERROR;            /* Interest level can be set from the command shell       */
 #endif
+
+
+/**
+ * Debugging variable for linux/linuxRT
+ * to avoid undefined symbol in rtems
+ * define variables as dummy
+ */
+int          int_showme = 0;
+int          event_showme = 0;
+int          dbufst_showme =0;
+
+
 
 /**************************************************************************************************/
 /*                            Event Receiver Hardware Definitions                                 */
@@ -4258,3 +4270,15 @@ LOCAL void drvMrfErRegister() {
     iocshRegister(&ERDef           , ERCall          );
 }
 epicsExportRegistrar(drvMrfErRegister);
+
+
+/**
+ * Debugging variable for linux/linuxRT
+ * to avoid undefined symbol in rtems
+ * define variables as dummy
+ **/
+
+epicsExportAddress(int, int_showme);
+epicsExportAddress(int, event_showme);
+epicsExportAddress(int, dbufst_showme);
+
