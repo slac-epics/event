@@ -871,6 +871,9 @@ int EvrGetIrqFlags(volatile struct MrfErRegs *pEr)
 int EvrClearIrqFlags(volatile struct MrfErRegs *pEr, int mask)
 {
   pEr->IrqFlag = be32_to_cpu(mask);
+  /* Add a clearing of the interrupt register to support SLAC G2 PCIe cards -
+     MRF and SLAC G1 should be immune to this */
+  pEr->IrqFlag = be32_to_cpu(0);
   return be32_to_cpu(pEr->IrqFlag);
 }
 

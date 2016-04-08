@@ -344,6 +344,7 @@ void ErIrqHandler(int signal)
 			continue;
 		}
 		pEr = pCard->pEr;
+		/* Read and cache interrupt flags - handle all of them in one pass of the ISR */
 		flags = EvrGetIrqFlags(pEr);
 		/*
 		 * Acknowledge immediately!
