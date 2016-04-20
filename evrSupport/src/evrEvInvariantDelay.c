@@ -68,9 +68,9 @@ static long aSubEvOffsetInit(aSubRecord *prec)
  *   Input/Output list 
  *   -----------------
  *
- * INPA: Input for event number: event number selector (long type)
- * INPB: Activate/Deactivate event invariant delay (long type)
- * INPC: Input for EVG delay - lookup PV (long type waveform)
+ * INPA: Input for event number: event number selector (32bit long type)
+ * INPB: Activate/Deactivate event invariant delay (32bit long type)
+ * INPC: Input for EVG delay - lookup PV (32bit long type waveform)
  * INPD: Input for previous delay (just in case, if EVNT:SYSx:1:DELAY array is not available, invalid severity)
 
  * OUTA: Output for delay
@@ -78,18 +78,17 @@ static long aSubEvOffsetInit(aSubRecord *prec)
  */
 static long aSubEvOffset(aSubRecord *prec)
 {
-    long eventNumber   = *(long*)(prec->a);
-    long activeFlag    = *(long*)(prec->b);
-    long *pdelayArray  =  (long*)(prec->c);
-    long defaultDelay  = *(long*)(prec->d);
-    long *poutputDelay =  (long*)(prec->vala);
-    epicsEnum16 sevr;
+    epicsInt32		eventNumber   	= *(epicsInt32*)(prec->a);
+    epicsUInt32		activeFlag    	= *(epicsUInt32*)(prec->b);
+    epicsUInt32	*	pdelayArray		=  (epicsUInt32*)(prec->c);
+    epicsUInt32		defaultDelay  	= *(epicsUInt32*)(prec->d);
+    epicsUInt32	*	poutputDelay 	=  (epicsUInt32*)(prec->vala);
+    epicsEnum16		sevr;
 
     if(dbGetSevr(&prec->inpc, &sevr)) {
         printf("%s: CA connection serverity check error\n", prec->name);
         return 0;
     }
-
 
     if(sevr                          ||     /* record is not initialized */
        !activeFlag                   ||     /* deactivate */
