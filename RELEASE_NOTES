@@ -4,7 +4,10 @@ Release Notes for the event package
 event-R4-2-2: 2016-05-17 C. Bianchini
       * Add Pulse ID compress record in BSA. (This includes changes in bsaEdefAvg.d)
       * Add NAN values when the data are not available for a specific pulse ID
+      * Add a check for a signal from the EVG to say "The aquisition is done". This feature will start working only when the 	    EVG module new release will be pushed.
       * move the square calculation for rms in a lower priority function
+      * evrFixed 64vs32 bit errors in aSubEvOffset that broke invariant timing lookup on 64 bit hosts 
+        (for evrEvInvariantDelay.c, this changes has been made by Bruce Hill)
 
 event-R4-2-1: 2016-04-04 K. Kim
       * To avoid undefine symbol for "int_showme, dbuf_showme and event_showme" in RTEMS
