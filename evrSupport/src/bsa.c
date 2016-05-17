@@ -58,6 +58,7 @@
 #include <stdlib.h>        /* calloc */
 #include <math.h>          /* sqrt   */
 
+#include "epicsMath.h"        /* for NAN value in case of miss data */
 #include "bsaRecord.h"        /* for struct bsaRecord      */
 #include "aoRecord.h"         /* for struct aoRecord       */
 #include "registryFunction.h" /* for epicsExport           */
@@ -75,6 +76,9 @@
 #include "evrTime.h"          /* evrTimeGetFromEdef        */
 #include "evrPattern.h"       /* EDEF_MAX                  */
 #include "bsa.h"              /* prototypes in this file   */
+
+/* This is the missing counter limit */
+#define  EVR_MAX_MISS  (100000000)    /* 1 billion */
 
 /* BSA information for one device, one EDEF */
 typedef struct {
@@ -87,6 +91,7 @@ typedef struct {
   epicsTimeStamp      time;      /* time of average   */
   unsigned long       nochange;  /* Same time stamp counter */
   unsigned long       noread;    /* Data not read counter   */
+  unsigned long       missing;   /* Data miss         */
   int                 readFlag;  /* Data read flag    */
   int                 reset;     /* Reset waveforms   */
   /* Intermediate Values */
@@ -115,62 +120,41 @@ static epicsMutexId bsaRWMutex_ps = 0;
 
 /*=============================================================================
 
-  Name: bsaSecnAvg
+  Name: bsaProcessor
 
-  Abs:  Beam Synchronous Acquisition Processing
-        Computes BSA device running average and RMS values for all EDEFs
-        Computes running maximum status and severity
-
+  Abs:  Beam Synchronous Acquisition Processor (Averaging and Update)
+ 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
-        epicsTimeStamp *    secnTime_ps Read       Data timestamp
+        epicsTimieStamp *   secnTime_ps Read       Data timestamp
         double              secnVal     Read       Data value
         epicsEnum16         secnStat    Read       Data status
         epicsEnum16         secnSevr    Read       Data severity
-	int                 noAveraging 
-        void *              dev_ps      Read/Write BSA Device Structure
+	int                 noAverage   Read       No Averaging for this device
+        epicsTimeStamp *    edefTimeInit_ps Read   EDEF init   timestamp
+        int                 edefAvgDone Read       EDEF average-done flag
+        epicsEnum16         edefSevr    Read       EDEF severity
+        bsa_ts *            bsa_ps      Read/Write BSA Structure for this device
 
   Rem:  
       
-  Ret:  0 = OK, -1 = Mutex problem or bad status from evrTimeGetFromEdef.
+  Ret:  0 = OK, -1 = Mutex problem (Not defined).
 
 ==============================================================================*/
-
-int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
-               double          secnVal,
-               epicsEnum16     secnStat,
-               epicsEnum16     secnSevr,
-               int             noAveraging,
-               void           *dev_ps)
+static int bsaProcessor(epicsTimeStamp *secnTime_ps,
+			double		secnVal,
+			epicsEnum16	secnStat,
+			epicsEnum16     secnSevr,
+			int             noAverage,
+			epicsTimeStamp *edefTimeInit_ps, 
+			int		edefAvgDone,
+			epicsEnum16     edefSevr,
+			bsa_ts         *bsa_ps)	
 {
-  epicsTimeStamp  edefTimeInit_s, edefTime_s;
-  int             edefAvgDone;
-  int             noAverage;
-  int             idx;
-  int             status = 0;
-  epicsEnum16     edefSevr;
-  bsa_ts         *bsa_ps;
-  
-  if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps) || (!dev_ps))
-    return -1;
-  /* Request BSA processing for matching EDEFs */
-  noAverage = ((bsaDevice_ts *)dev_ps)->noAverage;
-  for (idx = 0; idx < EDEF_MAX; idx++) {
-    /* Get EDEF information. */
-    if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s,
-                           &edefAvgDone, &edefSevr)) {
-      status = -1;
-      continue;
-    }
-    /* EDEF timestamp must match the data timestamp. */
-    if ((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
-        (secnTime_ps->nsec         != edefTime_s.nsec)) continue;
-    
-    bsa_ps = &((bsaDevice_ts *)dev_ps)->bsa_as[idx];
     /* Check if the EDEF has initialized and wipe out old values if it has */
-    if ((edefTimeInit_s.secPastEpoch != bsa_ps->timeInit.secPastEpoch) ||
-        (edefTimeInit_s.nsec != bsa_ps->timeInit.nsec)) {
-      bsa_ps->timeInit = edefTimeInit_s;
+    if ((edefTimeInit_ps->secPastEpoch != bsa_ps->timeInit.secPastEpoch) ||
+        (edefTimeInit_ps->nsec         != bsa_ps->timeInit.nsec)) {
+      bsa_ps->timeInit = *edefTimeInit_ps;
       bsa_ps->avg    = 0.0;
       bsa_ps->var    = 0.0;
       bsa_ps->avgcnt = 0;
@@ -222,10 +206,10 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
 	  diff        /= (double)avgcnt_1;
 	  bsa_ps->var  = ((double)avgcnt_2*(bsa_ps->var/(double)avgcnt_1)) +
                          ((double)bsa_ps->avgcnt*diff*diff);
-	    if (secnSevr > bsa_ps->sevr) {
-                bsa_ps->sevr = secnSevr;
-                bsa_ps->stat = secnStat;
-            }
+	  if (secnSevr > bsa_ps->sevr) {
+	    bsa_ps->sevr = secnSevr;
+	    bsa_ps->stat = secnStat;
+	  }
 	}
       } /* if good, include in averaging */
     }
@@ -238,7 +222,6 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
         bsa_ps->rms = 0.0;
       } else {
         bsa_ps->rms = bsa_ps->var/(double)bsa_ps->avgcnt;
-        bsa_ps->rms = sqrt(bsa_ps->rms);
       }
       bsa_ps->avgcnt = 0;
       bsa_ps->avg    = 0;
@@ -248,10 +231,148 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
         scanIoRequest(bsa_ps->ioscanpvt);
       }
     }
+    return 0;
+}/*end of bsaProcessor*/
+
+/*=============================================================================
+
+  Name: bsaSecnAvg
+
+  Abs:  Beam Synchronous Acquisition Processing
+        Computes BSA device running average and RMS values for all EDEFs
+        Computes running maximum status and severity
+
+  Args: Type                Name        Access     Description
+        ------------------- ----------- ---------- ----------------------------
+        epicsTimeStamp *    secnTime_ps Read       Data timestamp
+        double              secnVal     Read       Data value
+        epicsEnum16         secnStat    Read       Data status
+        epicsEnum16         secnSevr    Read       Data severity
+	int                 noAveraging 
+        void *              dev_ps      Read/Write BSA Device Structure
+
+  Rem:  
+      
+  Ret:  0 = OK, -1 = Mutex problem or bad status from evrTimeGetFromEdef.
+
+==============================================================================*/
+
+int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
+               double          secnVal,
+               epicsEnum16     secnStat,
+               epicsEnum16     secnSevr,
+               int             noAveraging,
+               void           *dev_ps)
+{
+  epicsTimeStamp  edefTimeInit_s, edefTime_s;
+  int             edefAvgDone;
+  int             idx;
+  int             status = 0;
+  epicsEnum16     edefSevr;
+  
+  if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps) || (!dev_ps))
+    return -1;
+  for (idx = 0; idx < EDEF_MAX; idx++) {
+    /* Get EDEF information. */
+    if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s,
+                           &edefAvgDone, &edefSevr)) {
+      status = -1;
+      continue;
+    }
+    /* EDEF timestamp must match the data timestamp. */
+    if ((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
+        (secnTime_ps->nsec         != edefTime_s.nsec)) continue;
+    
+    /* Process the acquisition for the passed device. This routine gets called when the device time 
+       is matching with the EDEF time.*/
+    bsaProcessor(secnTime_ps, secnVal, secnStat, secnSevr,
+		 ((bsaDevice_ts *)dev_ps)->noAverage,
+		 &edefTimeInit_s, edefAvgDone, edefSevr,
+		 &((bsaDevice_ts *)dev_ps)->bsa_as[idx]);
   }
   epicsMutexUnlock(bsaRWMutex_ps);
   return status;
 }
+
+/*=============================================================================
+
+  Name: bsaChecker
+
+  Abs:  Beam Synchronous Acquisition Checker.  It is called by the 360hz fiducial
+        task right before moving the pipeline. It fills in any missing data for 
+	any EDEF requesting new data and data for the previous acquisition
+	is not yet received.
+ 
+  Args: None.
+
+  Rem:  
+      
+  Ret:  0 = OK, -1 = Mutex problem .
+
+==============================================================================*/
+int bsaChecker()
+{
+  epicsTimeStamp edefTimeInit_s;
+  epicsTimeStamp edefTime_s;
+  epicsUInt32    edefMinorMask;
+  epicsUInt32    edefMajorMask;
+  epicsUInt32    edefAllDone;
+  int            edefAvgDone;
+  epicsEnum16    edefSevr;
+  int            status = 0;
+  int            idx;
+  evrModifier_ta modifierNext1_a;
+  unsigned long  edefMask;
+  bsaDevice_ts  *dev_ps;
+  bsa_ts        *bsa_ps;	
+
+  /* Get the pattern for this pulse and check if any EDEF is active or finished. 
+     Note that the pipeline has not yet been moved so we get the next
+     pulse */
+  status = evrTimeGetFromPipeline(0, evrTimeNext1, modifierNext1_a, 0, 0, &edefMinorMask, &edefMajorMask);
+  /* No room in the existing pattern for another mask so put the bits in the
+   * high unused 10 bits of the severity masks (KLUGE!). */
+  edefAllDone  = (edefMinorMask >> 20) & 0x003FF;
+  edefAllDone |= (edefMinorMask >> 10) & 0xFFC00;
+  if ((modifierNext1_a[MOD5_IDX] & MOD5_EDEF_MASK) || edefAllDone) {
+    for (idx = 0; idx < EDEF_MAX; idx++) {
+      edefMask = 1 << idx;
+      /* If EDEF active on the next pulse? Or finished? */
+      if ((modifierNext1_a[MOD5_IDX] & edefMask) ||
+	  (edefAllDone & edefMask)) {
+	/* Get EDEF information for the last acquistion. */
+	if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s, &edefAvgDone, &edefSevr)) {
+	  status = -1;
+	  continue;
+	}
+	/* Now go through all devices and check if they haven't provided data
+	   for the last acquisition. */
+	if ((!bsaRWMutex_ps) && epicsMutexLock(bsaRWMutex_ps))
+	  return -1;
+	dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
+	while (dev_ps) {
+	  /* Fill in invalid data if the last time the device was processed is not the same as 
+	     the last requested acquisition */
+	  bsa_ps = &dev_ps->bsa_as[idx];
+	  if ((bsa_ps->timeData.secPastEpoch != edefTime_s.secPastEpoch) ||
+	      (bsa_ps->timeData.nsec         != edefTime_s.nsec)) {
+	    bsaProcessor(&edefTime_s, 0.0, TIMEOUT_ALARM, INVALID_ALARM, dev_ps->noAverage,
+			 &edefTimeInit_s, edefAvgDone, edefSevr, bsa_ps);
+            /* Update diagnostics counter for missing data. When it reaches the limit, then it gets reset. */
+	    if (bsa_ps->missing < EVR_MAX_MISS ) {
+	      bsa_ps->missing++;
+	    } else {
+	      bsa_ps->missing = 0;
+	    }
+	  }
+	  dev_ps = (bsaDevice_ts *)ellNext(&dev_ps->node);
+	}
+	epicsMutexUnlock(bsaRWMutex_ps);
+      }/* end of EDEF active on next pulse */ 
+    }/* end of EDEF loop */
+  }/* end of any EDEF active on next pulse */
+  return status;
+}/*end bsaChecker*/
 
 /*=============================================================================
 
@@ -360,16 +481,21 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->res        = 0;
       bsa_ps->nochange = 0;
       bsa_ps->noread   = 0;
+      bsa_ps->missing  = 0;
     }
     if (bsa_ps->readFlag) {
       bsa_ps->readFlag = 0;
       noread           = 0;
       pbsa->val  = bsa_ps->val;
+      if (bsa_ps->cnt > 1) bsa_ps->rms = sqrt(bsa_ps->rms);
+      else if (bsa_ps->cnt <= 0) pbsa->val = epicsNAN;
       pbsa->rms  = bsa_ps->rms;
       pbsa->cnt  = bsa_ps->cnt;
       pbsa->time = bsa_ps->time;
+      pbsa->pid  = PULSEID(bsa_ps->time);
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
+      pbsa->miss = bsa_ps->missing;
       pbsa->rcnt = bsa_ps->readcnt;
       dstat      = bsa_ps->stat;
       dsevr      = bsa_ps->sevr;
@@ -384,13 +510,11 @@ static long read_bsa(bsaRecord *pbsa)
      Soft alarm if there were no valid inputs to the average.
      Else set stat/sevr to max values */ 
   if (noread) {
-    pbsa->val  = 0.0;
+    pbsa->val  = epicsNAN;
     pbsa->rms  = 0.0;
     pbsa->cnt  = 0;
     epicsTimeGetEvent(&pbsa->time, 0);
     recGblSetSevr(pbsa,READ_ALARM,INVALID_ALARM);
-  } else if (pbsa->cnt == 0) {
-    recGblSetSevr(pbsa,SOFT_ALARM,INVALID_ALARM);
   } else recGblSetSevr(pbsa,dstat,dsevr);
 
   /* Reset compress records if requested */
@@ -398,6 +522,7 @@ static long read_bsa(bsaRecord *pbsa)
     dbPutLink(&pbsa->vres, DBR_SHORT, &reset, 1);
     dbPutLink(&pbsa->rres, DBR_SHORT, &reset, 1);
     dbPutLink(&pbsa->cres, DBR_SHORT, &reset, 1);
+    dbPutLink(&pbsa->pres, DBR_SHORT, &reset, 1);
   }
   return 0;
 }

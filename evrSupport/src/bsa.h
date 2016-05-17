@@ -38,7 +38,9 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
                epicsEnum16     secnSevr,
                int             noAveraging,
                void           *dev_ps);
-  
+ 
+int bsaChecker(void);
+ 
 int bsaSecnInit(char          *secnName,
                 int            noAverage,
                 void         **dev_pps);

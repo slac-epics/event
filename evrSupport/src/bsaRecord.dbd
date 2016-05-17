@@ -25,6 +25,19 @@ recordtype(bsa) {
 		prompt("# values read")
 		special(SPC_NOMOD)
 	}
+	field(MISS,DBF_ULONG) {
+                prompt("# missing values")
+        	special(SPC_NOMOD)
+	}
+        field(PID,DBF_LONG) {
+                prompt("Pulse ID")
+                special(SPC_NOMOD)
+        }
+        field(PLST,DBF_LONG) {
+                prompt("Last Pulse ID")
+                special(SPC_NOMOD)
+                interest(3)
+        }
         field(INP,DBF_INLINK) {
                 prompt("Input Specification")
                 promptgroup(GUI_INPUTS)
@@ -113,6 +126,11 @@ recordtype(bsa) {
 		special(SPC_NOMOD)
 		interest(3)
 	}
+        field(LMIS,DBF_ULONG) {
+                prompt("last # missing values")
+                special(SPC_NOMOD)
+                interest(3)
+        }
         field(VRES,DBF_OUTLINK) {
                 prompt("VAL History Reset")
                 promptgroup(GUI_OUTPUT)
@@ -125,6 +143,11 @@ recordtype(bsa) {
         }
         field(CRES,DBF_OUTLINK) {
                 prompt("CNT History Reset")
+                promptgroup(GUI_OUTPUT)
+                interest(1)
+        }
+        field(PRES,DBF_OUTLINK) {
+                prompt("PID History Reset")
                 promptgroup(GUI_OUTPUT)
                 interest(1)
         }

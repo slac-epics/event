@@ -66,6 +66,7 @@
 #include "evrMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
 #include "evrPattern.h"        
+#include "bsa.h"              /* bsaChecker */    
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -502,6 +503,9 @@ int evrTime(epicsUInt32 mpsModifier)
     msgRolloverCount++;
     msgCount = 0;
   }
+
+  bsaChecker();
+
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     fiducialStatus = EVR_TIME_OK;
     /* Advance the evr pattern in the pipeline.  Update MPS

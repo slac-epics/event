@@ -36,6 +36,7 @@
 #include "bsaRecord.h"
 #undef  GEN_SIZE_OFFSET
 #include "epicsExport.h"
+#include "epicsMath.h"
 
 /* Create RSET - Record Support Entry Table*/
 #define report NULL
@@ -183,8 +184,11 @@ static void monitor(struct bsaRecord *pbsa)
         /* get previous stat and sevr  and new stat and sevr*/
         save_monitor_mask = recGblResetAlarms(pbsa);
         /* check for value change */
-        delta = pbsa->mlst - pbsa->val;
-        if(delta<0.0) delta = -delta;
+	if (isnan(pbsa->val) || isnan(pbsa->mlst)) delta = pbsa->mdel + 1;
+        else {
+	  delta = pbsa->mlst - pbsa->val;
+	  if(delta<0.0) delta = -delta;
+	}
         if (delta > pbsa->mdel) {
                 /* post events for value change */
                 save_monitor_mask |= DBE_VALUE;
@@ -223,6 +227,16 @@ static void monitor(struct bsaRecord *pbsa)
         }
         /* send out monitors connected to the cnt field */
         if (monitor_mask) db_post_events(pbsa,&pbsa->cnt,monitor_mask);
+	/* check for PID archive change */
+        monitor_mask = save_monitor_mask;
+        if (pbsa->pid != pbsa->plst) {
+                /* post events on value field for archive change */
+                monitor_mask |= DBE_VALUE|DBE_LOG;
+                /* update last archive value monitored */
+                pbsa->plst = pbsa->pid;
+        }
+        /* send out monitors connected to the pid field */
+        if (monitor_mask) db_post_events(pbsa,&pbsa->pid,monitor_mask);
         /* Do diagnostics now */
         monitor_mask = save_monitor_mask;
         if (pbsa->noch != pbsa->lnoc) {
@@ -236,6 +250,10 @@ static void monitor(struct bsaRecord *pbsa)
         if (pbsa->rcnt != pbsa->lrct) {
                 db_post_events(pbsa,&pbsa->rcnt,monitor_mask|DBE_VALUE|DBE_LOG);
                 pbsa->lrct = pbsa->rcnt;
+        }
+	if (pbsa->miss != pbsa->lmis) {
+                db_post_events(pbsa,&pbsa->miss,monitor_mask|DBE_VALUE|DBE_LOG);
+                pbsa->lmis = pbsa->miss;
         }
         return;
 }
