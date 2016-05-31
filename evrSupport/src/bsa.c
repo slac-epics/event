@@ -333,7 +333,7 @@ int bsaChecker()
   /* No room in the existing pattern for another mask so put the bits in the
    * high unused 10 bits of the severity masks (KLUGE!). */
   edefAllDone  = (edefMinorMask >> 20) & 0x003FF;
-  edefAllDone |= (edefMinorMask >> 10) & 0xFFC00;
+  edefAllDone |= (edefMajorMask >> 10) & 0xFFC00;
   if ((modifierNext1_a[MOD5_IDX] & MOD5_EDEF_MASK) || edefAllDone) {
     for (idx = 0; idx < EDEF_MAX; idx++) {
       edefMask = 1 << idx;
