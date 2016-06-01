@@ -121,3 +121,13 @@ record(stringin, "$(EVR):LINKERRRSTTOD") {
   field(DTYP, "Soft Timestamp")
   field(INP, "@%m/%d/%y %H:%M:%S")
 }
+record(sy87739, "$(EVR):REFPLL") {
+  field(DESC, "EVR Reference PLL Control")
+  field(DTYP, "MRF Event Receiver")
+  field(OUT,  "#C$(C) S0 @")
+  field(EGU,  "Hz")
+  field(DRVL, "118900000")
+  field(LOPR, "118900000")
+  field(DRVH, "119100000")
+  field(HOPR, "119100000")
+}

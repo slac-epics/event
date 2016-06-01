@@ -1,0 +1,167 @@
+recordtype(sy87739) {
+	include "dbCommon.dbd" 
+
+	field(VAL,DBF_LONG) {
+		prompt("Current EGU Value")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LVAL, DBF_LONG) {
+		prompt("Last EGU Value")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+	field(OUT,DBF_INLINK) {
+		prompt("Output Specification")
+		promptgroup(GUI_INPUTS)
+		special(SPC_NOMOD)
+		interest(1)
+	}
+	field(PREC,DBF_SHORT) {
+		prompt("Display Precision")
+		promptgroup(GUI_DISPLAY)
+		interest(1)
+	}
+	field(EGU,DBF_STRING) {
+		prompt("Engineering Units")
+		promptgroup(GUI_DISPLAY)
+		interest(1)
+		size(16)
+	}
+
+	field(FREF, DBF_LONG) {
+		prompt("Reference Frequency")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+	field(P, DBF_LONG) {
+		prompt("P Divider")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LP, DBF_LONG) {
+		prompt("Last P Divider")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+	field(QP, DBF_LONG) {
+		prompt("QP Divider Setting")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LQP, DBF_LONG) {
+		prompt("Last QP Divider Setting")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+	field(QPM1, DBF_LONG) {
+		prompt("QPM1 Divider Setting")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LQPM, DBF_LONG) {
+		prompt("Last QPM1 Divider Setting")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+	field(M, DBF_LONG) {
+		prompt("M Divider")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LM, DBF_LONG) {
+		prompt("Last M Divider")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+	field(N, DBF_LONG) {
+		prompt("N Divider")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LN, DBF_LONG) {
+		prompt("Last N Divider")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+	field(PP, DBF_LONG) {
+		prompt("Post-Divider")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LPP, DBF_LONG) {
+		prompt("Last Post-Divider")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+    field(DRVH,DBF_LONG) {
+        prompt("Drive High Limit")
+        promptgroup(GUI_OUTPUT)
+        pp(TRUE)
+        interest(1)
+    }
+    field(DRVL,DBF_LONG) {
+        prompt("Drive Low Limit")
+        promptgroup(GUI_OUTPUT)
+        pp(TRUE)
+        interest(1)
+    }
+    field(HOPR,DBF_LONG) {
+        prompt("High Operating Range")
+        promptgroup(GUI_DISPLAY)
+        interest(1)
+    }
+    field(LOPR,DBF_LONG) {
+        prompt("Low Operating Range")
+        promptgroup(GUI_DISPLAY)
+        interest(1)
+    }
+
+	field(CWD, DBF_LONG) {
+		prompt("Control Word")
+		asl(ASL0)
+		pp(TRUE)
+	}
+
+	field(LCWD, DBF_LONG) {
+		prompt("Last Control Word")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+
+    field(ADEL,DBF_LONG) {
+        prompt("Archive Deadband")
+        promptgroup(GUI_DISPLAY)
+        interest(1)
+    }
+    field(MDEL,DBF_LONG) {
+        prompt("Monitor Deadband")
+        promptgroup(GUI_DISPLAY)
+        interest(1)
+    }
+    field(ALST,DBF_LONG) {
+        prompt("Last Value Archived")
+        special(SPC_NOMOD)
+        interest(3)
+    }
+    field(MLST,DBF_LONG) {
+        prompt("Last Val Monitored")
+        special(SPC_NOMOD)
+        interest(3)
+    }
+}

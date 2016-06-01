@@ -46,6 +46,7 @@ CUSTOM_RECORDS += egRecord
 CUSTOM_RECORDS += egeventRecord
 CUSTOM_RECORDS += erRecord
 CUSTOM_RECORDS += ereventRecord
+CUSTOM_RECORDS += sy87739Record
 
 DBDINC += $(CUSTOM_RECORDS)
 
@@ -74,6 +75,10 @@ ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
 LIBRARY_IOC_Linux += devMrfEg
 devMrfEg_OBJS_Linux += drvLinuxEvg
 endif
+
+PROD_IOC_Linux += sy87739_tool
+sy87739_tool_OBJS += sy87739_tool
+sy87739_tool_OBJS += sy87739
 
 devMrfEg_OBJS_RTEMS += drvMrfEg
 devMrfEg_OBJS_vxWorks += drvMrfEg
@@ -110,6 +115,9 @@ devMrfEr_OBJS_RTEMS += evrEEPROMFixup
 endif
 devMrfEr_OBJS += erRecord
 devMrfEr_OBJS += ereventRecord
+devMrfEr_OBJS += sy87739Record
+devMrfEr_OBJS += sy87739
+devMrfEr_OBJS += devSy87739Er
 
 devMrfErLib_OBJS += $(devMrfEr_OBJS)
 devMrfErLib_SRCS += devMrfErLib_registerRecordDeviceDriver.cpp
