@@ -192,7 +192,8 @@ SearchMode      mode = CLOSEST;
 
 		sy87739CtlWrd2Parms( &parms, ctrl );
 
-		sy87739DumpParms( stdout, &parms );
+		if ( 0 == sy87739CheckParms( stderr, &parms ) )
+			sy87739DumpParms( stdout, &parms );
 	}
 
 	if ( fnam ) {

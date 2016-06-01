@@ -209,7 +209,11 @@ static long process(void *precord)
 			/* Control word changed */
 			prec->cwd &= 0x1fffc7ff;
 			sy87739CtlWrd2Parms( &newParms, prec->cwd );
-			newF = sy87739Parms2Freq( &newParms, prec->fref );
+			if ( 0 == sy87739CheckParms( 0, &newParms ) ) {
+				newF = sy87739Parms2Freq( &newParms, prec->fref );
+			} else {
+				newF = 0;
+			}
 			if ( 0 == newF || freqOOR( prec, newF) ) {
 				prec->cwd = prec->lcwd;
 			} else {
