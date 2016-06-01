@@ -73,10 +73,11 @@ enum outputs_mapping_id
 };
 
 #define TOTAL_FP_CHANNELS 8
-#define TOTAL_TB_CHANNELS 32
+#define TOTAL_TB_CHANNELS 10 /* PMC EVR */
 #define TOTAL_UO_CHANNELS 16
 
 #define NUM_TRIGGER_EVENTS 0
+
 enum transition_board_channel
 {
  DELAYED_PULSE_0 = 0,
@@ -254,7 +255,7 @@ int update_fp_map(struct LinuxErCardStruct *pLinuxErCard, enum transition_board_
  
  /* just in case someone would call this API with a value
     that is valid for FP but has no meaning as a TB output */
- if(channel >= 32)
+ if(channel >= TOTAL_TB_CHANNELS)
   return 0;
  for(fp = 0; fp < TOTAL_FP_CHANNELS; fp++) {
   if(pLinuxErCard->fp_channel[fp] == channel) {
@@ -342,6 +343,10 @@ epicsUInt16 ErEnableIrq_nolock (ErCardStruct *pCard, epicsUInt16 Mask)
 |*
 \**************************************************************************************************/
 int irqCount = 0;
+
+volatile unsigned taxiIrqCount = 0;
+volatile unsigned linkIrqCount = 0;
+
 void ErIrqHandler(int signal)
 {
  struct ErCardStruct *pCard;
@@ -375,6 +380,9 @@ void ErIrqHandler(int signal)
   }
 
 
+  if(flags & EVR_IRQFLAG_LINKCHG) {
+    linkIrqCount++;
+  }
 
   if(flags & EVR_IRQFLAG_DATABUF) {
    int databuf_sts = EvrGetDBufStatus(pEr);
@@ -408,6 +416,7 @@ void ErIrqHandler(int signal)
   }
   if(flags & EVR_IRQFLAG_VIOLATION) {
    pCard->RxvioCount++;
+   taxiIrqCount++;
    if (pCard->DevErrorFunc != NULL)
     (*pCard->DevErrorFunc)(pCard, ERROR_TAXI);
   }
@@ -607,6 +616,7 @@ static int ErConfigure (
 	EvrSetFracDiv(pEr, FR_SYNTH_WORD);
 	ErEnableIrq_nolock(pCard, EVR_IRQ_OFF);
 	EvrIrqAssignHandler(pEr, fdEvr, ErIrqHandler);
+	ErEnableIrq_nolock(pCard, EVR_IRQFLAG_LINKCHG);
 	pCard->IrqLevel = 1;	/* Tell the interrupt handler this interrupt is enabled */
 	pCard->FormFactor = FormFactor;
 	epicsMutexUnlock(pCard->CardLock);
@@ -1169,7 +1179,7 @@ void ErResetAll(ErCardStruct *pCard)
 			((u32 *)pEr->MapRam[0])[j] = 0;
 	EvrClearFIFO(pEr);
 	EvrClearIrqFlags(pEr, EVR_IRQFLAG_DATABUF | EVR_IRQFLAG_PULSE | EVR_IRQFLAG_EVENT
-				| EVR_IRQFLAG_HEARTBEAT | EVR_IRQFLAG_FIFOFULL | EVR_IRQFLAG_VIOLATION);
+				| EVR_IRQFLAG_HEARTBEAT | EVR_IRQFLAG_FIFOFULL | EVR_IRQFLAG_VIOLATION | EVR_IRQFLAG_LINKCHG);
 	epicsMutexUnlock(pCard->CardLock);
 	return;
 }
@@ -1211,6 +1221,13 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 
 	if( Channel < 0 || Channel >= EVR_NUM_DG ) {
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
+		return;
+	}
+
+    if ( ( Channel + DELAYED_PULSE_0 >= TOTAL_TB_CHANNELS ) ) {
+		if ( ErDebug >= 1 )
+			printf( "%s: EVR %d-%d requested channel (%i) beyond available TB channels (%i)\n",
+			        __func__, pCard->Cardno, pCard->Slot, Channel, TOTAL_TB_CHANNELS );
 		return;
 	}
 
@@ -1387,6 +1404,13 @@ void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 				( Enable ? "Enable" : "Disable" ),
 				Channel );
 
+    if ( ( Channel + OTP_DBUS_0 >= TOTAL_TB_CHANNELS ) ) {
+		if ( ErDebug >= 1 )
+			printf( "%s: EVR %d-%d requested channel (%i) beyond available TB channels (%i)\n",
+			        __func__, pCard->Cardno, pCard->Slot, Channel, TOTAL_TB_CHANNELS );
+		return;
+	}
+
 	if(Enable) {
 		epicsMutexLock(pCard->CardLock);
 		EvrSetOutMap(pEr, OTP_DBUS_0 + Channel, DBUS_0 + Channel);
@@ -1430,7 +1454,14 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
 		return;
 	}
-	
+
+    if ( ( Channel + OTL_0 >= TOTAL_TB_CHANNELS ) ) {
+		if ( ErDebug >= 1 )
+			printf( "%s: EVR %d-%d requested channel (%i) beyond available TB channels (%i)\n",
+			        __func__, pCard->Cardno, pCard->Slot, Channel, TOTAL_TB_CHANNELS );
+		return;
+	}
+		
 	epicsMutexLock(pCard->CardLock);
 	map = pLinuxErCard->tb_channel[OTL_0 + Channel];
 	if(Enable) {
@@ -1497,6 +1528,14 @@ void ErSetOtp(
 		errlogPrintf("%s: invalid parameter: Channel = %d.\n", __func__, Channel);
 		return;
 	}
+
+    if ( ( Channel + OTP_DBUS_0 >= TOTAL_TB_CHANNELS ) ) {
+		if ( ErDebug >= 1 )
+			printf( "%s: EVR %d-%d requested channel (%i) beyond available TB channels (%i)\n",
+			        __func__, pCard->Cardno, pCard->Slot, Channel, TOTAL_TB_CHANNELS );
+		return;
+	}
+
 	epicsMutexLock(pCard->CardLock);
 
 	/* save parameters */
@@ -1560,12 +1599,13 @@ void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 		return;
 	}
 
-    if ( Channel >= NUM_TRIGGER_EVENTS ) {
+    if ( Channel >= NUM_TRIGGER_EVENTS || ( Channel + TRIGGER_EVENT_0 >= TOTAL_TB_CHANNELS ) ) {
 		if ( ErDebug >= 1 )
-			printf( "%s: EVR %d-%d requested channel %i >= configured trigger events (%i)\n",
-			        __func__, pCard->Cardno, pCard->Slot, Channel, NUM_TRIGGER_EVENTS );
+			printf( "%s: EVR %d-%d requested channel %i >= configured trigger events (%i) or beyond available TB channels (%i)\n",
+			        __func__, pCard->Cardno, pCard->Slot, Channel, NUM_TRIGGER_EVENTS, TOTAL_TB_CHANNELS );
 		return;
 	}
+
 
 	epicsMutexLock(pCard->CardLock);
 	map = pLinuxErCard->tb_channel[TRIGGER_EVENT_0 + Channel];
@@ -1709,23 +1749,11 @@ void ErProgramRam(ErCardStruct *pCard, epicsUInt16 *RamBuf, int RamNumber)
 		if(RamBuf[code] & (1<<14))
 			ramloc.IntEvent |= 1<<C_EVR_MAP_LATCH_TIMESTAMP;
 		for(map=0; map < 14; map++) {
-			if(RamBuf[code] & (1<<map)) {
+			if ( (RamBuf[code] & (1<<map)) && map < TOTAL_TB_CHANNELS ) {
 				enum outputs_mapping_id func;
-				func = pLinuxErCard->tb_channel[OTL_0+(map>>1)];
-				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9)) {
-					if(map & 1)
-						ramloc.PulseSet |= 1<<(func-PULSE_GENERATOR_0);
-					else
-						ramloc.PulseClear |= 1<<(func-PULSE_GENERATOR_0);
-				}
-				func = pLinuxErCard->tb_channel[OTP_DBUS_0+map];
+				func = pLinuxErCard->tb_channel[map];
 				if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9))
 					ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
-				if(map < EVR_NUM_DG) {
-					func = pLinuxErCard->tb_channel[DELAYED_PULSE_0+map];
-					if((func>=PULSE_GENERATOR_0) && (func <= PULSE_GENERATOR_9))
-						ramloc.PulseTrigger |= 1<<(func-PULSE_GENERATOR_0);
-				}
 			}
 		}
 		pEr->MapRam[RamNumber-1][code].IntEvent = be32_to_cpu(ramloc.IntEvent);
