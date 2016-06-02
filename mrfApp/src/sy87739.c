@@ -268,9 +268,18 @@ goto continue_here;
 
 				Sy87739Num qpsum = s_p->qpm1 + s_p->qp;
 
-				/* omit variants where qpm1 and (qpm1+qp) have a common factor */
-				if ( 0 != qpsumLegal( qpsum ) || (s_p->qpm1 > 0 && gcf( qpsum, s_p->qpm1 ) > 1) )
+				if ( 0 != qpsumLegal( qpsum ) )
 					continue;
+
+				if ( s_p->qpm1 > 0 ) {
+					/* omit variants where qpm1 and (qpm1+qp) have a common factor */
+				    if ( gcf( qpsum, s_p->qpm1 ) > 1)
+						continue;
+				} else {
+					/* if qp-1 is zero then use only qp == 1 */
+					if ( s_p->qp > 1 )
+						continue;
+				}
 
 				parms.qpm1 = s_p->qpm1;
 
