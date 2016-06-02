@@ -130,4 +130,6 @@ record(sy87739, "$(EVR):REFPLL") {
   field(LOPR, "118900000")
   field(DRVH, "119100000")
   field(HOPR, "119100000")
+  field(PINI, "YES")
+  info(autosaveFields, "CWD")
 }
