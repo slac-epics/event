@@ -337,6 +337,7 @@ static int evrPatternProcInit(longSubRecord *psub)
     M - TimeStamp (sec)
     N - TimeStamp (nsec)
     O - TimeStamp status (0=OK, 1=not OK)
+    P - EDEFALLDONE (evr)
     VAL = Error flag:
              OK
              Invalid Waveform
@@ -365,6 +366,10 @@ static long evrPatternProc(longSubRecord *psub)
   psub->l = PULSEID(currentTime);
   if (status) psub->o = 1;
   else        psub->o = 0;
+  /* No room in the existing pattern for another mask so put the bits in the
+   * high unused 10 bits of the severity masks (KLUGE!). */
+  psub->p  = (psub->a >> 20) & 0x003FF;
+  psub->p |= (psub->b >> 10) & 0xFFC00;
   if (psub->val) return -1;
   return 0;
 }
