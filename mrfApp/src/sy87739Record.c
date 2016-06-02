@@ -110,14 +110,24 @@ static long init_record(void *precord,int pass)
 {
     sy87739Record	*prec = (sy87739Record *)precord;
     sy87739dset	   *pdset = (sy87739dset *)(prec->dset);
+	Sy87739CtlWrd   orig;
     long	status;
 	Sy87739ParmsRec parms;
 
     if (pass==0) return(0);
 
+	orig = prec->cwd;
+
     if( pdset && pdset->init_record ) {
 		if((status=(*pdset->init_record)(prec))) return(status);
     }
+
+	/* If a CWD value is specified in the database then
+	 * override a possible HW readback
+	 */
+
+	if ( orig )
+		prec->cwd = orig;
 
 	prec->fref = 24000000;
 
@@ -224,6 +234,9 @@ static long process(void *precord)
 		prec->lval = prec->val;
 	}
 
+	/* check for alarms */
+	checkAlarms(prec);
+
 	if ( prec->nsev < INVALID_ALARM ) {
 
 		if( (pdset==NULL) || (pdset->write_sy87739==NULL) ) {
@@ -244,8 +257,6 @@ static long process(void *precord)
 	prec->pact = TRUE;
 
 	recGblGetTimeStamp(prec);
-	/* check for alarms */
-	checkAlarms(prec);
 	/* check event list */
 	monitor(prec);
 	/* process the forward scan link record */
@@ -307,10 +318,33 @@ static long get_alarm_double(DBADDR *paddr,struct dbr_alDouble *pad)
 
 static void checkAlarms(sy87739Record *prec)
 {
+Sy87739ParmsRec parms;
+Sy87739Freq     f;
+
 	if(prec->udf == TRUE ){
 		recGblSetSevr(prec,UDF_ALARM,INVALID_ALARM);
 		return;
 	}
+
+	sy87739CtlWrd2Parms( &parms, prec->cwd );
+
+	if ( sy87739CheckParms( NULL, &parms ) ) {
+		recGblSetSevr(prec,UDF_ALARM,INVALID_ALARM);
+		return;
+	}
+
+	if ( 0 == (f = sy87739Parms2Freq( &parms, prec->fref )) ) {
+		recGblSetSevr(prec,UDF_ALARM,INVALID_ALARM);
+		return;
+	}
+
+	if ( prec->drvh > prec->drvl ) {
+		if ( f > prec->drvh )
+			recGblSetSevr(prec, HIHI_ALARM, MAJOR_ALARM);
+		else if ( f < prec->drvl )
+			recGblSetSevr(prec, LOLO_ALARM, MAJOR_ALARM);
+	}
+	
 	return;
 }
 
