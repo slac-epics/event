@@ -203,9 +203,9 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
           int avgcnt_2 = bsa_ps->avgcnt-2;
 	  double diff  = secnVal - bsa_ps->avg;
 	  bsa_ps->avg += diff/(double)bsa_ps->avgcnt;
-	  diff        /= (double)avgcnt_1;
+	  /* diff        /= (double)avgcnt_1; */
 	  bsa_ps->var  = ((double)avgcnt_2*(bsa_ps->var/(double)avgcnt_1)) +
-                         ((double)bsa_ps->avgcnt*diff*diff);
+                         ((diff*diff)/(double)bsa_ps->avgcnt);
 	  if (secnSevr > bsa_ps->sevr) {
 	    bsa_ps->sevr = secnSevr;
 	    bsa_ps->stat = secnStat;
@@ -221,7 +221,7 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
       if (bsa_ps->avgcnt <= 1) {
         bsa_ps->rms = 0.0;
       } else {
-        bsa_ps->rms = bsa_ps->var/(double)bsa_ps->avgcnt;
+        bsa_ps->rms = bsa_ps->var;
       }
       bsa_ps->avgcnt = 0;
       bsa_ps->avg    = 0;
@@ -472,6 +472,7 @@ static long read_bsa(bsaRecord *pbsa)
   bsa_ts *bsa_ps = (bsa_ts *)pbsa->dpvt;
   short reset    = 0;
   int   noread   = 1;
+  int   dosqrt   = 0; /* Flag =1 then apply the sqrt to calculate the variance */
   epicsEnum16 dstat = UDF_ALARM;      /* data status */
   epicsEnum16 dsevr = INVALID_ALARM;  /* data severity */
 
@@ -487,7 +488,7 @@ static long read_bsa(bsaRecord *pbsa)
       bsa_ps->readFlag = 0;
       noread           = 0;
       pbsa->val  = bsa_ps->val;
-      if (bsa_ps->cnt > 1) bsa_ps->rms = sqrt(bsa_ps->rms);
+      if (bsa_ps->cnt > 1) dosqrt   = 1;
       else if (bsa_ps->cnt <= 0) pbsa->val = epicsNAN;
       pbsa->rms  = bsa_ps->rms;
       pbsa->cnt  = bsa_ps->cnt;
@@ -505,6 +506,7 @@ static long read_bsa(bsaRecord *pbsa)
       reset         = 1;
     }
     epicsMutexUnlock(bsaRWMutex_ps);
+    if (dosqrt == 1) pbsa->rms = sqrt(pbsa->rms);
   }
   /* Read alarm if there was nothing to read.
      Soft alarm if there were no valid inputs to the average.

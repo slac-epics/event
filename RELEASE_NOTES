@@ -1,6 +1,10 @@
 Release Notes for the event package
 -----------------------------------
 
+event-R4-2-3: 2016-05-17 C. Bianchini
+      * Bug Fix for EDEF after 10 to receive the bit from the EVG to notify when the acquisition is done.
+      * Changed the RMS calculation as required after meeting with physicists and the photon side
+
 event-R4-2-2: 2016-05-17 C. Bianchini
       * Add Pulse ID compress record in BSA. (This includes changes in bsaEdefAvg.d)
       * Add NAN values when the data are not available for a specific pulse ID
