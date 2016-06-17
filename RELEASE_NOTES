@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-2-5: 2016-06-17 C. Bianchini
+      * Change the flag the miss data as SOFT_INVALID (15) and to keep the status of the data from the Engineer application.
+event-R4-2-4: 2016-06-17 C. Bianchini
+      * Change the EVG version used for the event module.
 
 event-R4-2-3: 2016-05-17 C. Bianchini
       * Bug Fix for EDEF after 10 to receive the bit from the EVG to notify when the acquisition is done.

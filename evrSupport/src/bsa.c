@@ -220,6 +220,10 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
       bsa_ps->time = bsa_ps->timeData;
       if (bsa_ps->avgcnt <= 1) {
         bsa_ps->rms = 0.0;
+	if (bsa_ps->avgcnt <= 0) {
+          bsa_ps->stat   = secnStat;
+          bsa_ps->sevr   = secnSevr;
+	}
       } else {
         bsa_ps->rms = bsa_ps->var;
       }
@@ -356,8 +360,8 @@ int bsaChecker()
 	  bsa_ps = &dev_ps->bsa_as[idx];
 	  if ((bsa_ps->timeData.secPastEpoch != edefTime_s.secPastEpoch) ||
 	      (bsa_ps->timeData.nsec         != edefTime_s.nsec)) {
-	    bsaProcessor(&edefTime_s, 0.0, TIMEOUT_ALARM, INVALID_ALARM, dev_ps->noAverage,
-			 &edefTimeInit_s, edefAvgDone, edefSevr, bsa_ps);
+	    bsaProcessor(&edefTime_s, 0.0, SOFT_ALARM, INVALID_ALARM, dev_ps->noAverage,
+                     &edefTimeInit_s, edefAvgDone, edefSevr, bsa_ps);
             /* Update diagnostics counter for missing data. When it reaches the limit, then it gets reset. */
 	    if (bsa_ps->missing < EVR_MAX_MISS ) {
 	      bsa_ps->missing++;
