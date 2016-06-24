@@ -276,7 +276,7 @@ epicsStatus ErProcess (erRecord  *pRec)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    if (ErDebug)
+    if ( ErDebug >= 4 )
         printf ("devMrfEr: ErProcess (%s) entered\n", pRec->name);
 
    /*---------------------
@@ -1090,6 +1090,14 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     int        Card = pCard->Cardno;            /* Card number of the offending board             */
     erRecord  *pRec = (erRecord *)pCard->pRec;  /* Address of this board's ER record              */
 
+   /* Note: Formatted msgs via pCard->intMsg are ifdef'd out below as we're
+	* in an interrupt context and it's unsafe to reuse intMsg while ptrs to
+	* it are possibly being processed.
+	* This causes crashes on RTEMS as it posts these ptrs to an rtems message
+	* queue that gets processed later by epicsInterruptContextDaemon().
+	* Under linux, it just prints "errlogPrintf called from interrupt level".
+	*/
+
    /*---------------------
     * Decide how to handle the error based on the specified error code
     */
@@ -1101,11 +1109,8 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     case ERROR_TAXI:
         pRec->rxve = 0;
         pRec->taxi = pCard->RxvioCount;
-        if(ErDebug) {
-            epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                           "ER Card %d Receiver Link (Taxi) Error.  Error repetition %d...\n",
-                           Card, pCard->RxvioCount);
-            epicsInterruptContextMessage (pCard->intMsg);
+        if ( ErDebug >  5 ) {
+            epicsInterruptContextMessage( "EVR Receiver Link (Taxi) Error.\n" );
         }/*end if debug flag is set*/
         break;
 
@@ -1113,10 +1118,8 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Lost Heartbeat Error
     */
     case ERROR_HEART:
-        if(ErDebug) {
-            epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                           "ER Card %d Lost Heartbeat\n", Card);
-            epicsInterruptContextMessage (pCard->intMsg);
+        if ( ErDebug >  5 ) {
+            epicsInterruptContextMessage( "EVR Lost Heartbeat!\n" );
         }/*end if debug flag is set*/
         break;
 
@@ -1124,10 +1127,8 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * FIFO Overflow Error
     */
     case ERROR_LOST:
-        if(ErDebug) {
-            epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                           "ER Card %d Event FIFO Overflow\n", Card);
-            epicsInterruptContextMessage (pCard->intMsg);
+        if ( ErDebug >  5 ) {
+            epicsInterruptContextMessage( "EVR Event FIFO Overflow!\n" );
         }/*end if debug flag is set*/
         break;
 
@@ -1135,10 +1136,8 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Data Stream Checksum Error
     */
     case ERROR_DBUF_CHECKSUM:
-        if(ErDebug) {
-            epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                           "ER Card %d Data Stream Checksum Error\n", Card);
-            epicsInterruptContextMessage (pCard->intMsg);
+        if ( ErDebug >  4 ) {
+            epicsInterruptContextMessage( "EVR Data Stream Checksum Error!\n" );
         }/*end if debug flag is set*/
         break;
 
@@ -1146,10 +1145,8 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     * Invalid Error Code
     */
     default:
-        if(ErDebug) {
-          epicsSnprintf (pCard->intMsg, EVR_INT_MSG_LEN,
-                         "ER Card %d Invalid Error Code = %d.\n", Card, ErrorNum);
-          epicsInterruptContextMessage (pCard->intMsg);
+        if ( ErDebug >  3 ) {
+            epicsInterruptContextMessage( "EVR Invalid Error Code!\n" );
         }
         return;
 
