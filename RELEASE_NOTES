@@ -2,6 +2,7 @@ Release Notes for the event package
 -----------------------------------
 event-R4-2-4: 2016-06-23 B. Hill
 	* Bug fix for RTEMS crash when EVR driver is generating errors while ErDebug is non-zero
+ 	* MISCUTILS_MODULE_VERSION=miscUtils-R2-2-3
 	* Added functions to provide the last fiducial and cpu tsc from ISR level:
 		int evrGetLastFiducial();
 		unsigned long long  evrTimeGetFiducialTsc();
