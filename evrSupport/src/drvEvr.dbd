@@ -1,3 +1,5 @@
 # EVR Data Stream Driver Support
 driver(drvEvr)
 registrar(drvEvrRegister)
+function(evrGetLastFiducial);
+function(evrGetFiducialTsc);

@@ -40,6 +40,7 @@
 #include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
 #include "devMrfEr.h"		/* for ErRegisterEventHandler    */
 
+#include "HiResTimeStub.h"
 #ifdef __rtems__
 #define EVR_TIMEOUT     (0.06)  /* Timeout in sec waiting for 360hz input. */
 #else
@@ -60,6 +61,8 @@ static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
 static int readyForFiducial = 1;        /* evrTask ready for new fiducial */
 static int evrInitialized = 0;          /* evrInitialize performed        */
+int lastfid = -1;                       /* Last fiducial seen             */
+unsigned long long evrFiducialTsc = 0L;
 
 /* Fiducial User Function List */
 typedef struct {
@@ -75,6 +78,7 @@ typedef struct {
 
 ELLLIST evrFiducialFuncList_s;
 static epicsMutexId evrRWMutex_ps = 0; 
+
 
 /*=============================================================================
 
@@ -118,6 +122,36 @@ static int evrReport( int interest )
   }
   return interest;
 }
+
+
+/*=============================================================================
+
+  Name:	evrGetFiducialTsc
+
+  Abs:	Provides access to the 64 bit cpu TimeStampCounter from the
+  		last fiducial event
+
+=============================================================================*/
+unsigned long long evrGetFiducialTsc()
+{
+	return evrFiducialTsc;
+}
+/* Add to registry so function can be called w/o adding EVENT module dependency */
+epicsRegisterFunction(evrGetFiducialTsc);
+
+/*=============================================================================
+  Name: evrGetLastFiducial()
+
+  Abs: A simple routine to return the fiducial id for the most
+  	   recently received EVENT_FIDUCIAL.
+=============================================================================*/
+int evrGetLastFiducial( )
+{
+	return lastfid;
+}
+/* Add to registry so function can be called w/o adding EVENT module dependency */
+epicsRegisterFunction(evrGetLastFiducial);
+
 
 /*=============================================================================
  
@@ -166,7 +200,9 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 
   evrTimeCount((unsigned int)eventNum);
 
-  if (eventNum == EVENT_FIDUCIAL) { 
+  if (eventNum == EVENT_FIDUCIAL) {
+  	evrFiducialTsc = GetHiResTicks();
+    lastfid = timeNum;
     if (readyForFiducial) {
       readyForFiducial = 0;
       ErGetTicks(0, &evrClockCounter);
@@ -182,9 +218,9 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 	   */
 
 	  eventMessage.eventNum  = eventNum;
-	  epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+	  epicsMessageQueueSend( eventTaskQueue, &eventMessage, sizeof(eventMessage) );
   }
-
+ 
 }
 
 /*=============================================================================
