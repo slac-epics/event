@@ -1090,7 +1090,7 @@ void ErDevErrorFunc (ErCardStruct *pCard, int ErrorNum)
     int        Card = pCard->Cardno;            /* Card number of the offending board             */
     erRecord  *pRec = (erRecord *)pCard->pRec;  /* Address of this board's ER record              */
 
-   /* Note: Formatted msgs via pCard->intMsg are ifdef'd out below as we're
+   /* Note: Formatted msgs via pCard->intMsg are removed below as we're
 	* in an interrupt context and it's unsafe to reuse intMsg while ptrs to
 	* it are possibly being processed.
 	* This causes crashes on RTEMS as it posts these ptrs to an rtems message
