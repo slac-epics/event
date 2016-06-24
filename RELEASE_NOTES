@@ -1,5 +1,11 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-2-4: 2016-06-23 B. Hill
+	* Bug fix for RTEMS crash when EVR driver is generating errors while ErDebug is non-zero
+	* Added functions to provide the last fiducial and cpu tsc from ISR level:
+		int evrGetLastFiducial();
+		unsigned long long  evrTimeGetFiducialTsc();
+
 event-R4-2-3: 2016-06-17 C. Bianchini
       * Bug Fix for EDEF after 10 to receive the bit from the EVG to notify when the acquisition is done.
       * Changed the RMS calculation as required after meeting with physicists and the photon side
