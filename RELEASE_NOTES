@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-2-5: 2016-06-27 C. Bianchini
+        * Debug for sametime stamp data in diagnostics.
+
 event-R4-2-4: 2016-06-23 B. Hill
 	* Bug fix for RTEMS crash when EVR driver is generating errors while ErDebug is non-zero
  	* MISCUTILS_MODULE_VERSION=miscUtils-R2-2-3

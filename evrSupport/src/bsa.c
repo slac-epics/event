@@ -149,7 +149,8 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
 			epicsTimeStamp *edefTimeInit_ps, 
 			int		edefAvgDone,
 			epicsEnum16     edefSevr,
-			bsa_ts         *bsa_ps)	
+			bsa_ts         *bsa_ps,
+			char 	       *deviceName)	
 {
     /* Check if the EDEF has initialized and wipe out old values if it has */
     if ((edefTimeInit_ps->secPastEpoch != bsa_ps->timeInit.secPastEpoch) ||
@@ -166,6 +167,10 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
     /* Ignore data that hasn't changed since last time */
     if ((secnTime_ps->secPastEpoch == bsa_ps->timeData.secPastEpoch) &&
         (secnTime_ps->nsec         == bsa_ps->timeData.nsec)) {
+	printf("The device %s's time is: %d %d and bsa time is: %d %d ",
+		 deviceName,
+		 secnTime_ps->secPastEpoch,secnTime_ps->nsec, 
+		 bsa_ps->timeData.secPastEpoch, bsa_ps->timeData.nsec);
       bsa_ps->nochange++;
     } else {
       bsa_ps->timeData = *secnTime_ps;
@@ -292,7 +297,8 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
     bsaProcessor(secnTime_ps, secnVal, secnStat, secnSevr,
 		 ((bsaDevice_ts *)dev_ps)->noAverage,
 		 &edefTimeInit_s, edefAvgDone, edefSevr,
-		 &((bsaDevice_ts *)dev_ps)->bsa_as[idx]);
+		 &((bsaDevice_ts *)dev_ps)->bsa_as[idx] ,
+		 ((bsaDevice_ts *)dev_ps)->name);
   }
   epicsMutexUnlock(bsaRWMutex_ps);
   return status;
@@ -361,7 +367,7 @@ int bsaChecker()
 	  if ((bsa_ps->timeData.secPastEpoch != edefTime_s.secPastEpoch) ||
 	      (bsa_ps->timeData.nsec         != edefTime_s.nsec)) {
 	    bsaProcessor(&edefTime_s, 0.0, SOFT_ALARM, INVALID_ALARM, dev_ps->noAverage,
-                     &edefTimeInit_s, edefAvgDone, edefSevr, bsa_ps);
+                     &edefTimeInit_s, edefAvgDone, edefSevr, bsa_ps, dev_ps->name);
             /* Update diagnostics counter for missing data. When it reaches the limit, then it gets reset. */
 	    if (bsa_ps->missing < EVR_MAX_MISS ) {
 	      bsa_ps->missing++;
