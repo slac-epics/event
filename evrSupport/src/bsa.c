@@ -289,8 +289,9 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       continue;
     }
     /* EDEF timestamp must match the data timestamp. */
-    if ((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
-        (secnTime_ps->nsec         != edefTime_s.nsec)) continue;
+    if (((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
+        (secnTime_ps->nsec         != edefTime_s.nsec)) ||
+	((secnTime_ps->secPastEpoch == 0) && (secnTime_ps->nsec  == 0)))  continue;
     
     /* Process the acquisition for the passed device. This routine gets called when the device time 
        is matching with the EDEF time.*/
