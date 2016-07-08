@@ -29,15 +29,6 @@ recordtype(bsa) {
                 prompt("# missing values")
         	special(SPC_NOMOD)
 	}
-        field(PID,DBF_LONG) {
-                prompt("Pulse ID")
-                special(SPC_NOMOD)
-        }
-        field(PLST,DBF_LONG) {
-                prompt("Last Pulse ID")
-                special(SPC_NOMOD)
-                interest(3)
-        }
         field(INP,DBF_INLINK) {
                 prompt("Input Specification")
                 promptgroup(GUI_INPUTS)

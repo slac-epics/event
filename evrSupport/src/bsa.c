@@ -167,10 +167,6 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
     /* Ignore data that hasn't changed since last time */
     if ((secnTime_ps->secPastEpoch == bsa_ps->timeData.secPastEpoch) &&
         (secnTime_ps->nsec         == bsa_ps->timeData.nsec)) {
-	printf("The device %s's time is: %d %d and bsa time is: %d %d ",
-		 deviceName,
-		 secnTime_ps->secPastEpoch,secnTime_ps->nsec, 
-		 bsa_ps->timeData.secPastEpoch, bsa_ps->timeData.nsec);
       bsa_ps->nochange++;
     } else {
       bsa_ps->timeData = *secnTime_ps;
@@ -504,7 +500,6 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->rms  = bsa_ps->rms;
       pbsa->cnt  = bsa_ps->cnt;
       pbsa->time = bsa_ps->time;
-      pbsa->pid  = PULSEID(bsa_ps->time);
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
       pbsa->miss = bsa_ps->missing;
@@ -535,7 +530,6 @@ static long read_bsa(bsaRecord *pbsa)
     dbPutLink(&pbsa->vres, DBR_SHORT, &reset, 1);
     dbPutLink(&pbsa->rres, DBR_SHORT, &reset, 1);
     dbPutLink(&pbsa->cres, DBR_SHORT, &reset, 1);
-    dbPutLink(&pbsa->pres, DBR_SHORT, &reset, 1);
   }
   return 0;
 }

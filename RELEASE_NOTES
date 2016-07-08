@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-2-6: 2016-07-08 C. Bianchini
+        * Debug version fo the event module without the Pulse ID compress record in BSA. 
+
 event-R4-2-5: 2016-06-27 C. Bianchini
         * Debug for sametime stamp data in diagnostics.
 
