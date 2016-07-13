@@ -92,6 +92,14 @@ int evrTimePutPulseID     (epicsTimeStamp  *epicsTime_ps,
 int evrGetLastFiducial( );
 unsigned long long evrGetFiducialTsc();
 
+/* Routines to send BSA request to evrEventTask */
+int evrBsaMessage(epicsTimeStamp *edefTimeInit_ps,
+                  epicsTimeStamp *edefTime_ps,
+                  epicsUInt32    edefAllDone,
+                  int            edefAvgDone,
+                  epicsEnum16    edefSevr,
+                  int            edefIdx);
+
 /* Routines used only by event module and Mpg application */
 #ifdef INCevrMessageH
 int evrTimeInit           (epicsInt32   firstTimeSlotIn,

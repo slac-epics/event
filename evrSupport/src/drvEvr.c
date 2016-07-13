@@ -6,7 +6,9 @@
         evrSend        - Send EVR data to Message Queue
         evrEvent       - Process Event Codes
         evrTask        - High Priority task to process 360Hz Fiducial and Data
-        evrRecord      - High Priority task to process 360Hz Records
+        evrEventTask   - High Priority task to process 360Hz Events and BSA Data
+        evrBsaMessage  - Add Message to evrEventTask Queue to Check BSA Data
+	evrRecord      - High Priority task to process 360Hz Records
         evrTimeRegister- Register User Routine called by evrTask 
 
   Abs:  Driver data and event support for EVR Receiver module or EVR simulator.   
@@ -55,7 +57,7 @@ struct drvet drvEvr = {
 };
 epicsExportAddress(drvet, drvEvr);
 
-static epicsMessageQueueId  eventTaskQueue;
+static epicsMessageQueueId  eventTaskQueue = 0;
 static ErCardStruct    *pCard             = NULL;  /* EVR card pointer    */
 static epicsEventId     evrTaskEventSem   = NULL;  /* evr task semaphore  */
 static epicsEventId     evrRecordEventSem = NULL;  /* evr record task sem */
@@ -72,14 +74,30 @@ typedef struct {
 
 } evrFiducialFunc_ts;
 
-typedef struct {
-  epicsInt16 eventNum;
-} EventMessage;
-
 ELLLIST evrFiducialFuncList_s;
 static epicsMutexId evrRWMutex_ps = 0; 
 
-
+typedef enum {
+  evrIoEventId=0, evrIoBsaId=1
+} evrIoId_te;
+
+typedef struct {
+  epicsTimeStamp edefTimeInit_s;
+  epicsTimeStamp edefTime_s;
+  epicsUInt32    edefAllDone;
+  int            edefAvgDone;
+  epicsEnum16    edefSevr;
+  int            edefIdx;
+} evrIoBsaChecker_ts;
+
+typedef struct {
+  evrIoId_te function;
+  union {
+    epicsInt16 eventNum;
+    evrIoBsaChecker_ts bsaChecker_s;
+  } io_u;
+} evrIoMessage_ts;
+
 /*=============================================================================
 
   Name: evrReport
@@ -195,8 +213,8 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 =============================================================================*/
 void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
-  epicsUInt32  evrClockCounter;
-  EventMessage eventMessage;
+  epicsUInt32      evrClockCounter;
+  evrIoMessage_ts  eventMessage;
 
   evrTimeCount((unsigned int)eventNum);
 
@@ -216,8 +234,8 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 	  /*---------------------
 	   * Schedule processing for any event-driven records
 	   */
-
-	  eventMessage.eventNum  = eventNum;
+	  eventMessage.function       = evrIoEventId;
+	  eventMessage.io_u.eventNum  = eventNum;
 	  epicsMessageQueueSend( eventTaskQueue, &eventMessage, sizeof(eventMessage) );
   }
  
@@ -238,7 +256,7 @@ static int evrTask()
   epicsEventWaitStatus status;
   epicsUInt32          mpsModifier;
   int                  messagePending;
-  EventMessage         eventMessage;
+  evrIoMessage_ts      eventMessage;
 
   if (evrTimeInit(0,0)) {
     errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
@@ -249,8 +267,9 @@ static int evrTask()
     errlogPrintf("evrTask: could not find an EVR module\n");
     return -1;
   }
-
-  eventMessage.eventNum  = EVENT_FIDUCIAL;
+  
+  eventMessage.function       = evrIoEventId;
+  eventMessage.io_u.eventNum  = EVENT_FIDUCIAL;
 
   for (;;)
   {
@@ -327,22 +346,70 @@ static int evrRecord()
 
 static int evrEventTask(void)
 {
-	EventMessage eventMessage;
+    evrIoMessage_ts eventMessage;
 
     for(;;) {   
       epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
-      evrTimeEventProcessing(eventMessage.eventNum);
-      post_event(eventMessage.eventNum);
-      /* pCard cannot be NULL since the only entities which send messages are
+      if (eventMessage.function == evrIoEventId) {
+	evrTimeEventProcessing(eventMessage.io_u.eventNum);
+        post_event(eventMessage.io_u.eventNum);
+        /* pCard cannot be NULL since the only entities which send messages are
 	   *  - the evrTask which bails out if pCard is NULL
 	   *  - the evrEvent handler which is not installed if pCard is NULL
 	   */
-      if ( eventMessage.eventNum >= 0 && eventMessage.eventNum < sizeof(pCard->IoScanPvt)/sizeof(pCard->IoScanPvt[0]) ) {
-		scanIoRequest( pCard->IoScanPvt[eventMessage.eventNum] );
-	  }
+        if ((eventMessage.io_u.eventNum >= 0 ) && 
+	   (eventMessage.io_u.eventNum < sizeof(pCard->IoScanPvt)/sizeof(pCard->IoScanPvt[0])) ) {
+	  	scanIoRequest( pCard->IoScanPvt[eventMessage.io_u.eventNum] );
+	    }
+    }else {
+        bsaCheckerDevices(&eventMessage.io_u.bsaChecker_s.edefTimeInit_s,
+                          &eventMessage.io_u.bsaChecker_s.edefTime_s,
+                          eventMessage.io_u.bsaChecker_s.edefAllDone,
+                          eventMessage.io_u.bsaChecker_s.edefAvgDone,
+                          eventMessage.io_u.bsaChecker_s.edefSevr,
+                          eventMessage.io_u.bsaChecker_s.edefIdx);
+      }
     }
 
     return 0;
+}
+/*=============================================================================
+ *                                                          
+ *     Name: evrBsaMessage
+ *
+ *     Abs:  evrBsaMessage initialization.
+ *                                                                
+ *     Rem:  Add Message to evrEventTask Queue to Check BSA Data.
+ *                                                                              
+=============================================================================*/
+int evrBsaMessage(epicsTimeStamp *edefTimeInit_ps,
+                  epicsTimeStamp *edefTime_ps,
+                  epicsUInt32    edefAllDone,
+                  int            edefAvgDone,
+                  epicsEnum16    edefSevr,
+                  int            edefIdx)
+{
+  if (eventTaskQueue == 0) {
+    bsaCheckerDevices(edefTimeInit_ps,
+		      edefTime_ps,
+		      edefAllDone,
+		      edefAvgDone,
+                      edefSevr,
+		      edefIdx);
+    return 0;
+  } else {
+    evrIoMessage_ts eventMessage;
+
+    eventMessage.function            = evrIoBsaId;
+    eventMessage.io_u.bsaChecker_s.edefTimeInit_s = *edefTimeInit_ps;
+    eventMessage.io_u.bsaChecker_s.edefTime_s     = *edefTime_ps;
+    eventMessage.io_u.bsaChecker_s.edefAllDone    = edefAllDone;
+    eventMessage.io_u.bsaChecker_s.edefAvgDone    = edefAvgDone;
+    eventMessage.io_u.bsaChecker_s.edefSevr       = edefSevr;
+    eventMessage.io_u.bsaChecker_s.edefIdx        = edefIdx;
+    /* If queue is full, then forget about checking BSA for this pulse. */
+    return (epicsMessageQueueTrySend(eventTaskQueue, &eventMessage, sizeof(eventMessage)));
+  }
 }
 /*=============================================================================
                                                          
@@ -404,7 +471,7 @@ int evrInitialize()
 
   pCard = ErGetCardStruct(0);
 
-  eventTaskQueue = epicsMessageQueueCreate(256, sizeof(EventMessage));
+  eventTaskQueue = epicsMessageQueueCreate(MRF_NUM_EVENTS*2, sizeof(evrIoMessage_ts));
   
   /* Create the processing tasks */
   if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh+1,
