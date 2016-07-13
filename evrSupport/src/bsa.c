@@ -117,6 +117,7 @@ typedef struct {
 
 ELLLIST bsaDeviceList_s;
 static epicsMutexId bsaRWMutex_ps = 0; 
+int QueueFullCounter = 0;
 
 /*=============================================================================
 
@@ -149,8 +150,7 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
 			epicsTimeStamp *edefTimeInit_ps, 
 			int		edefAvgDone,
 			epicsEnum16     edefSevr,
-			bsa_ts         *bsa_ps,
-			char 	       *deviceName)	
+			bsa_ts         *bsa_ps)
 {
     /* Check if the EDEF has initialized and wipe out old values if it has */
     if ((edefTimeInit_ps->secPastEpoch != bsa_ps->timeInit.secPastEpoch) ||
@@ -284,9 +284,12 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       status = -1;
       continue;
     }
-    /* EDEF timestamp must match the data timestamp. */
+    /* EDEF timestamp must match the data timestamp. 
+     * And check that for the first acquisition the time is set to 0.
+     * Otherwise if those time variables are not ready, 
+     * you see increasing the diagnostic variable for same timestamp. */
     if (((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
-        (secnTime_ps->nsec         != edefTime_s.nsec)) ||
+         (secnTime_ps->nsec         != edefTime_s.nsec)) ||
 	((secnTime_ps->secPastEpoch == 0) && (secnTime_ps->nsec  == 0)))  continue;
     
     /* Process the acquisition for the passed device. This routine gets called when the device time 
@@ -294,8 +297,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
     bsaProcessor(secnTime_ps, secnVal, secnStat, secnSevr,
 		 ((bsaDevice_ts *)dev_ps)->noAverage,
 		 &edefTimeInit_s, edefAvgDone, edefSevr,
-		 &((bsaDevice_ts *)dev_ps)->bsa_as[idx] ,
-		 ((bsaDevice_ts *)dev_ps)->name);
+		 &((bsaDevice_ts *)dev_ps)->bsa_as[idx]);
   }
   epicsMutexUnlock(bsaRWMutex_ps);
   return status;
@@ -306,8 +308,9 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
   Name: bsaChecker
 
   Abs:  Beam Synchronous Acquisition Checker.  It is called by the 360hz fiducial
-        task right before moving the pipeline. It fills in any missing data for 
-	any EDEF requesting new data and data for the previous acquisition
+        task right before moving the pipeline. It gives information to bsaCheckerDevices 
+	that is called by evrEventTask at sligthly lower priority to fill in any missing 
+        data for any EDEF requesting new data and data for the previous acquisition 
 	is not yet received.
  
   Args: None.
@@ -330,8 +333,6 @@ int bsaChecker()
   int            idx;
   evrModifier_ta modifierNext1_a;
   unsigned long  edefMask;
-  bsaDevice_ts  *dev_ps;
-  bsa_ts        *bsa_ps;	
 
   /* Get the pattern for this pulse and check if any EDEF is active or finished. 
      Note that the pipeline has not yet been moved so we get the next
@@ -352,35 +353,72 @@ int bsaChecker()
 	  status = -1;
 	  continue;
 	}
-	/* Now go through all devices and check if they haven't provided data
-	   for the last acquisition. */
-	if ((!bsaRWMutex_ps) && epicsMutexLock(bsaRWMutex_ps))
-	  return -1;
-	dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
-	while (dev_ps) {
-	  /* Fill in invalid data if the last time the device was processed is not the same as 
-	     the last requested acquisition */
-	  bsa_ps = &dev_ps->bsa_as[idx];
-	  if ((bsa_ps->timeData.secPastEpoch != edefTime_s.secPastEpoch) ||
-	      (bsa_ps->timeData.nsec         != edefTime_s.nsec)) {
-	    bsaProcessor(&edefTime_s, 0.0, SOFT_ALARM, INVALID_ALARM, dev_ps->noAverage,
-                     &edefTimeInit_s, edefAvgDone, edefSevr, bsa_ps, dev_ps->name);
-            /* Update diagnostics counter for missing data. When it reaches the limit, then it gets reset. */
-	    if (bsa_ps->missing < EVR_MAX_MISS ) {
-	      bsa_ps->missing++;
-	    } else {
-	      bsa_ps->missing = 0;
-	    }
-	  }
-	  dev_ps = (bsaDevice_ts *)ellNext(&dev_ps->node);
-	}
-	epicsMutexUnlock(bsaRWMutex_ps);
+	/* Get EDEF information regarding the queue called in bsaChecker, it returns -1 if the queue is full. */
+        status = evrBsaMessage(&edefTimeInit_s,
+                               &edefTime_s,
+                               edefAllDone, edefAvgDone, edefSevr, idx);
+	if (status == -1) QueueFullCounter++;
       }/* end of EDEF active on next pulse */ 
     }/* end of EDEF loop */
   }/* end of any EDEF active on next pulse */
   return status;
 }/*end bsaChecker*/
-
+/*============================================================================
+ *
+ *   Name: bsaCheckerDevices
+ *
+ *     Abs:  Beam Synchronous Acquisition Checker.  It is called by the evrEventTask.
+ *           It fills in any missing data for any EDEF requesting new data 
+ *           and data for the previous acquisition is not yet received.
+ *                              
+ *     Args: Type                Name             Access     Description
+ *         ------------------- -----------       ---------- ----------------------------
+ *         epicsTimeStamp *    edefTimeInit_ps    Read       Data timestamp
+ *         epicsTimeStamp *    edefTime_ps        Read       Data timestamp
+ *         epicsUInt32         edefAllDone        Read	     EDEF flag acquisition 
+ *         int                 edefAvgDone	  Read       EDEF flag average done
+ *         epicsEnum16         edefSevr           Read       EDEF severity
+ *	   int		       edefIdx		  Read       EDEF index
+ *     Rem:  
+ *                                      
+ *     Ret:  0 = OK, -1 = Mutex problem .
+ *
+==============================================================================*/
+int bsaCheckerDevices(epicsTimeStamp *edefTimeInit_ps,
+                      epicsTimeStamp *edefTime_ps,
+                      epicsUInt32    edefAllDone,
+                      int            edefAvgDone,
+                      epicsEnum16    edefSevr,
+		      int 	     edefIdx)
+{
+  bsaDevice_ts  *dev_ps;
+  bsa_ts        *bsa_ps;
+  /* Now go through all devices and check if they haven't provided data
+   *      for the last acquisition. */
+  if ((!bsaRWMutex_ps) && epicsMutexLock(bsaRWMutex_ps))
+    return -1;
+  dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
+  while (dev_ps) {
+    /* Fill in invalid data if the last time the device was processed is not the same as 
+     *        the last requested acquisition */
+    bsa_ps = &dev_ps->bsa_as[edefIdx];
+    if ((bsa_ps->timeData.secPastEpoch != edefTime_ps->secPastEpoch) ||
+        (bsa_ps->timeData.nsec         != edefTime_ps->nsec)) {
+      bsaProcessor(edefTime_ps, 0.0, SOFT_ALARM, INVALID_ALARM, dev_ps->noAverage,
+                   edefTimeInit_ps, edefAvgDone, edefSevr, bsa_ps);
+      /* Update diagnostics counter for missing data. When it reaches the limit, then it gets reset. */
+      if (bsa_ps->missing < EVR_MAX_MISS ) {
+        bsa_ps->missing++;
+      } else {
+        bsa_ps->missing = 0;
+      }
+    }
+    dev_ps = (bsaDevice_ts *)ellNext(&dev_ps->node);
+  }
+  epicsMutexUnlock(bsaRWMutex_ps);
+  return 0;
+}
+
 /*=============================================================================
 
   Name: bsaSecnInit
@@ -500,6 +538,7 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->rms  = bsa_ps->rms;
       pbsa->cnt  = bsa_ps->cnt;
       pbsa->time = bsa_ps->time;
+      pbsa->pid  = PULSEID(bsa_ps->time);
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
       pbsa->miss = bsa_ps->missing;
@@ -530,6 +569,7 @@ static long read_bsa(bsaRecord *pbsa)
     dbPutLink(&pbsa->vres, DBR_SHORT, &reset, 1);
     dbPutLink(&pbsa->rres, DBR_SHORT, &reset, 1);
     dbPutLink(&pbsa->cres, DBR_SHORT, &reset, 1);
+    dbPutLink(&pbsa->pres, DBR_SHORT, &reset, 1);
   }
   return 0;
 }
