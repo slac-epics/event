@@ -65,6 +65,13 @@ typedef epicsUInt32 evrModifier_ta[MAX_EVR_MODIFIER];
 #define EVENT_MODULO36_MIN      201      /* Min modulo 36 event code    */
 #define EVENT_MODULO36_MAX      236      /* Max modulo 36 event code    */
 #define MODULO36_MAX            36       /* # modulo 36 event codes     */
+
+/* For overloaded IOC, do not insert NaNs, while missing data, if this flag is = 0.*/
+#define INSERT_NAN 1
+#define NO_INSERT_NAN 0
+int
+getNaN_flag(void);
+
   
 typedef void (*FIDUCIALFUNCTION)(void *arg);
 

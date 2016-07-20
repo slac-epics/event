@@ -109,6 +109,8 @@ unsigned long evrActiveFiducialTime = 0;
 
 /* Event definition (BSA) patterns */
 static evrTimeEdef_ts      edef_as[EDEF_MAX];
+/* For overloaded IOC, do not insert NaNs, while missing data, if this flag is = 0.*/
+static volatile int NaNflag = INSERT_NAN;
 
 /* Event code timestamps */
 static evrTime_ts          eventCodeTime_as[MRF_NUM_EVENTS+1];
@@ -504,8 +506,9 @@ int evrTime(epicsUInt32 mpsModifier)
     msgCount = 0;
   }
 
-  bsaChecker();
-
+  if (INSERT_NAN==NaNflag){
+    bsaChecker();
+    }
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
     fiducialStatus = EVR_TIME_OK;
     /* Advance the evr pattern in the pipeline.  Update MPS
@@ -952,6 +955,22 @@ int evrTimePatternPutEnd(int modulo720Flag)
   }
   return epicsTimeERROR;
 }
+
+/*Set Method for the NaNflag used by the ioc */
+void setNaN_flag(int flag){
+        if ((flag==0) || (flag==1)){
+                NaNflag=flag;
+        }
+        else{ /*The expectation is that is called only once at startup */
+                printf("setNaN_flag: illegal value %i for NAN flag. Value must be 0 or 1.",flag);
+        }
+}
+/*Get Method for the NaNflag used by the ioc */
+int getNaN_flag(void){
+        return   NaNflag;
+}
+
+
 
 epicsRegisterFunction(evrTimeProcInit);
 epicsRegisterFunction(evrTimeProc);

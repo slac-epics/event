@@ -4,6 +4,9 @@ event-R4-2-5: 2016-07-13 C. Bianchini and S. Allison
 	* Move record processing requests of BSA nan values from evrTask
 	  to evrEventTask so the scanIoRequests done at lower priority.
 	* Ignore records with timestamp of 0/0.
+	* evrTime.h and evrTime.c adding a NaNflag with relative get and set functions 
+	  this flag will be useful to do not call bsaChecker in case of overloaded IOCs by using the set
+	  method in the st.cmd. (Example: Llrf6 for ioc-in20-rf03)
 
 event-R4-2-4: 2016-06-23 B. Hill
 	* Bug fix for RTEMS crash when EVR driver is generating errors while ErDebug is non-zero
