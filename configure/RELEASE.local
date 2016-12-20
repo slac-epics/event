@@ -31,7 +31,7 @@ endif
 # Don't set your version to anything such as "test" that
 # could match a directory name.
 # ==========================================================
-MISCUTILS_MODULE_VERSION	= miscUtils-R2-2-3
+MISCUTILS_MODULE_VERSION	= R2.2.4
 
 
 # ==========================================================
