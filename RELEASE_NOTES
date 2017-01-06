@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+event-R4-2-6 2017-01-06 C. Bianchini
+	*Add SYS7 option to facility independent database files for ASTA.
+	file changed: evrSupport/Db/ioc/EvrPci.substitutions, evrSupport/Db/ioc/EvrPmc.substitutions, evrSupport/Db/ioc/Pattern.substitutions . 
+
 R4.2.6: 2016-12-20 B. Hill
 	* Updated to build using new git workflow
 

@@ -11,6 +11,7 @@
 #       SYS0 for LCLS
 #       SYS1 for FACET
 #       SYS2 for LCLS II
+#	SYS7 for ASTA
 #
 #   Optional:
 #	LINK4	Set to "" if the IOC is not slc-aware.  
@@ -50,8 +51,8 @@ file evrPatternAll.db
   pattern { DEVICE , LINK4     , LINK5    ,  LINK6 ,     TREF              , TS1ST       , TS2ND          }
 # Experimental approach, selects time slots based on SYS
 	  { '$(IOC)' ,  '$(LINK4=)', '$(LINK5=)','$(LINK6=)', '$(TREF=1.03E06)', 
-	  "\$(TS1ST=\$(\$(SYS=0)_TS1ST)\,SYS0_TS1ST=1\,SYS1_TS1ST=2\,SYS2_TS1ST=2)",
-	  "\$(TS2ND=\$(\$(SYS=0)_TS2ND)\,SYS0_TS2ND=4\,SYS1_TS2ND=5\,SYS2_TS2ND=5)"   }
+	  "\$(TS1ST=\$(\$(SYS=0)_TS1ST)\,SYS0_TS1ST=1\,SYS1_TS1ST=2\,SYS2_TS1ST=2\,SYS7_TS1ST=1)",
+	  "\$(TS2ND=\$(\$(SYS=0)_TS2ND)\,SYS0_TS2ND=4\,SYS1_TS2ND=5\,SYS2_TS2ND=5\,SYS7_TS2ND=4)"   }
 # Comment the previous line and uncomment the next line in order to use 
 # event records to generate simulated data
 #	  { '$(IOC)' , ""               , '$(IOC)':FIDP ,  ""   , 1.03E06 ,   1  ,   4   }
