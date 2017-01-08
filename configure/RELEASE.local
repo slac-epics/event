@@ -13,6 +13,9 @@ endif
 endif
 
 # Check for undefined EPICS_MODULES
+ifdef MODULES_SITE_TOP
+EPICS_MODULES=$(MODULES_SITE_TOP)
+endif
 ifndef EPICS_MODULES
 ifneq ($(wildcard "$(TOP)/../../RELEASE_SITE"),)
 $(info RELEASE_SITE Read: $(TOP)/../../RELEASE_SITE)
