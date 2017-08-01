@@ -113,6 +113,14 @@ file fiducialTimestamp.db
     }
 }
 
+# EVR PATTERNDIAG - Diagnostic pv's for data buffer pattern stats
+file evrPatternProc.db
+{
+    {
+        DEV=$(EVR)
+	}
+}
+
 #
 # Creates records to support the event sequencer
 # event codes for the LCLS accelerator and PCDS experiments
