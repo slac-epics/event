@@ -525,6 +525,7 @@ static long read_bsa(bsaRecord *pbsa)
   if (bsa_ps && bsaRWMutex_ps && (!epicsMutexLock(bsaRWMutex_ps))) {
     if (pbsa->res) {
       pbsa->res        = 0;
+      pbsa->nord       = 0;
       bsa_ps->nochange = 0;
       bsa_ps->noread   = 0;
       bsa_ps->missing  = 0;
@@ -532,13 +533,14 @@ static long read_bsa(bsaRecord *pbsa)
     if (bsa_ps->readFlag) {
       bsa_ps->readFlag = 0;
       noread           = 0;
-      pbsa->val  = bsa_ps->val;
+      pbsa->val[0] = bsa_ps->val;
       if (bsa_ps->cnt > 1) dosqrt   = 1;
-      else if (bsa_ps->cnt <= 0) pbsa->val = epicsNAN;
-      pbsa->rms  = bsa_ps->rms;
-      pbsa->cnt  = bsa_ps->cnt;
+      else if (bsa_ps->cnt <= 0) pbsa->val[0] = epicsNAN;
+      pbsa->rms[0]  = bsa_ps->rms;
+      pbsa->cnt[0]  = bsa_ps->cnt;
       pbsa->time = bsa_ps->time;
-      pbsa->pid  = PULSEID(bsa_ps->time);
+      pbsa->nord = 1;
+      pbsa->pid[0]  = PULSEID(bsa_ps->time);
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
       pbsa->miss = bsa_ps->missing;
@@ -551,15 +553,15 @@ static long read_bsa(bsaRecord *pbsa)
       reset         = 1;
     }
     epicsMutexUnlock(bsaRWMutex_ps);
-    if (dosqrt == 1) pbsa->rms = sqrt(pbsa->rms);
+    if (dosqrt == 1) pbsa->rms[0] = sqrt(pbsa->rms[0]);
   }
   /* Read alarm if there was nothing to read.
      Soft alarm if there were no valid inputs to the average.
      Else set stat/sevr to max values */ 
   if (noread) {
-    pbsa->val  = epicsNAN;
-    pbsa->rms  = 0.0;
-    pbsa->cnt  = 0;
+    pbsa->val[0]  = epicsNAN;
+    pbsa->rms[0]  = 0.0;
+    pbsa->cnt[0]  = 0;
     epicsTimeGetEvent(&pbsa->time, 0);
     recGblSetSevr(pbsa,READ_ALARM,INVALID_ALARM);
   } else recGblSetSevr(pbsa,dstat,dsevr);

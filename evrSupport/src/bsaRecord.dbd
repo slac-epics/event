@@ -5,21 +5,33 @@
 #     Operator of Los Alamos National Laboratory.
 # EPICS BASE Versions 3.13.7
 # and higher are distributed subject to a Software License Agreement found
-# in file LICENSE that is included with this distribution. 
+# in file LICENSE that is included with this distribution.
 #*************************************************************************
 recordtype(bsa) {
-	include "dbCommon.dbd" 
-	field(VAL,DBF_DOUBLE) {
+	include "dbCommon.dbd"
+	field(VAL,DBF_NOACCESS) {
 		prompt("Value")
-		special(SPC_NOMOD)
+		special(SPC_DBADDR)
+		extra("double * val")
+		#=type double
+		#=read YES
+		#=write NO
 	}
-	field(RMS,DBF_DOUBLE) {
+	field(RMS,DBF_NOACCESS) {
 		prompt("RMS")
-		special(SPC_NOMOD)
+		special(SPC_DBADDR)
+		extra("double * rms")
+		#=type double
+		#=read YES
+		#=write NO
 	}
-	field(CNT,DBF_LONG) {
+	field(CNT,DBF_NOACCESS) {
 		prompt("Count")
-		special(SPC_NOMOD)
+		special(SPC_DBADDR)
+		extra("long * cnt")
+		#=type double
+		#=read YES
+		#=write NO
 	}
 	field(RCNT,DBF_ULONG) {
 		prompt("# values read")
@@ -29,10 +41,14 @@ recordtype(bsa) {
                 prompt("# missing values")
         	special(SPC_NOMOD)
 	}
-        field(PID,DBF_LONG) {
-                prompt("Pulse ID")
-                special(SPC_NOMOD)
-        }
+	field(PID,DBF_NOACCESS) {
+		prompt("Pulse IDs")
+		special(SPC_DBADDR)
+		extra("long * pid")
+		#=type double
+		#=read YES
+		#=write NO
+	}
         field(PLST,DBF_LONG) {
                 prompt("Last Pulse ID")
                 special(SPC_NOMOD)
@@ -151,4 +167,12 @@ recordtype(bsa) {
                 promptgroup(GUI_OUTPUT)
                 interest(1)
         }
+	field(NELM, DBF_LONG) {
+		prompt("Max. Length of Val/Rms etc. Arrays")
+		special(SPC_NOMOD)
+	}
+	field(NORD, DBF_LONG) {
+		prompt("Act. Length of Val/Rms etc. Arrays")
+		special(SPC_NOMOD)
+	}
 }
