@@ -395,7 +395,7 @@ int bsaCheckerDevices(epicsTimeStamp *edefTimeInit_ps,
   bsa_ts        *bsa_ps;
   /* Now go through all devices and check if they haven't provided data
    *      for the last acquisition. */
-  if ((!bsaRWMutex_ps) && epicsMutexLock(bsaRWMutex_ps))
+  if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps))
     return -1;
   dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
   while (dev_ps) {
