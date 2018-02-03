@@ -626,17 +626,17 @@ static long write_ao(aoRecord *pao)
 {
   long status = 0;
 
-  long options = DBR_STATUS | DBR_TIME;
-  long nrequest = 0;
 
   epicsEnum16      input_status, input_severity;
   epicsTimeStamp   input_timestamp;
 
+/*
+  long options = DBR_STATUS | DBR_TIME;
   struct {
 	DBRstatus
 	DBRtime
   } options_s;
-
+*/
 
 
   /* Get the input's STAT and SEVR and timestamp (but don't get value) */
