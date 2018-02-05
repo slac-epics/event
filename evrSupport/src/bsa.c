@@ -205,8 +205,8 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
 	  double diff  = secnVal - bsa_ps->avg;
 	  bsa_ps->avg += diff/(double)bsa_ps->avgcnt;
 	  /* diff        /= (double)avgcnt_1; */
-	  bsa_ps->var  = ((double)avgcnt_2*(bsa_ps->var/(double)avgcnt_1)) +
-                         ((diff*diff)/(double)bsa_ps->avgcnt);
+      double diff1 = secnVal - bsa_ps->avg;
+      bsa_ps->var += diff*diff1;
 	  if (secnSevr > bsa_ps->sevr) {
 	    bsa_ps->sevr = secnSevr;
 	    bsa_ps->stat = secnStat;
@@ -226,7 +226,7 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
           bsa_ps->sevr   = secnSevr;
 	}
       } else {
-        bsa_ps->rms = bsa_ps->var;
+        bsa_ps->rms = bsa_ps->var/bsa_ps->avgcnt;
       }
       bsa_ps->avgcnt = 0;
       bsa_ps->avg    = 0;
