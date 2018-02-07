@@ -71,6 +71,8 @@
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
 
+#undef   BSA_DEBUG 1
+
 /* Pattern and timestamp table */
 typedef struct {
   evrMessagePattern_ts   pattern_s;
@@ -302,6 +304,10 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   /* Hack event code to get pre-bundled general-time behavior */
   if ( (unsigned int)epicsTimeEventBestTime == eventCode )
 	eventCode = 0;
+
+#ifdef BSA_DEBUG
+printf("evrTimeGet for %d\n", eventCode);
+#endif
   
   if ((eventCode > MRF_NUM_EVENTS) || (!evrTimeRWMutex_ps)) {
     return epicsTimeERROR;
@@ -310,6 +316,9 @@ int evrTimeGet (epicsTimeStamp  *epicsTime_ps, unsigned int eventCode)
   if (epicsMutexLock(evrTimeRWMutex_ps)) return epicsTimeERROR;
   *epicsTime_ps = eventCodeTime_as[eventCode].time;
   status = eventCodeTime_as[eventCode].status;
+#ifdef BSA_DEBUG
+printf("evrTimeGet for %d ret PID %d, status %d\n", eventCode, eventCodeTime_as[eventCode].time.nsec & 0x1ffff, status);
+#endif
   epicsMutexUnlock(evrTimeRWMutex_ps);
   
   return status; 
@@ -521,6 +530,11 @@ int evrTime(epicsUInt32 mpsModifier)
     evr_aps[evrTimeNext3] = evr_ps;
     evr_aps[evrTimeNext3]->timeStatus = epicsTimeERROR;
     evr_ps = evr_aps[evrTimeCurrent];
+#ifdef BSA_DEBUG
+printf("Pipeline [0]: %d\n", evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff);
+printf("Pipeline [1]: %d\n", evr_aps[evrTimeNext1]->pattern_s.time.nsec & 0x1ffff);
+printf("Pipeline [2]: %d\n", evr_aps[evrTimeNext2]->pattern_s.time.nsec & 0x1ffff);
+#endif
     /* Update the EDEF array for any initialized or active EDEF -
        this array is used later by BSA processing */
     if (evr_aps[evrTimeNext2]->pattern_s.edefInitMask ||
@@ -533,6 +547,9 @@ int evrTime(epicsUInt32 mpsModifier)
         }
         /* EDEF active? - set time and flags used by BSA processing later */
         if (evr_ps->pattern_s.modifier_a[MOD5_IDX] & edefMask) {
+#ifdef BSA_DEBUG
+printf("Setting EDEF (%d) time PId %d \n", idx, evr_ps->pattern_s.time.nsec & 0x1ffff);
+#endif
           edef_as[idx].time = evr_ps->pattern_s.time;
           if    (evr_ps->pattern_s.edefAvgDoneMask & edefMask)
             edef_as[idx].avgdone = 1;
@@ -587,15 +604,24 @@ int evrTime(epicsUInt32 mpsModifier)
     /* Same pulses means the EVG is not sending timestamps and this forces   
        record timestamps to revert to system time */
     if ((pulseidNext2==pulseidNext1) && (pulseidNext2==pulseid)) {
+#ifdef BSA_DEBUG
+printf("********* PID MISMATCH ************************************ (PID n %d, n+1 %d, n+2 %d)\n", pulseid, pulseidNext1, pulseidNext2);
+#endif
       for (idx=0;idx<evrTimeNext3;idx++)
         evr_aps[idx]->timeStatus = epicsTimeERROR;
       eventCodeTime_as[0].status = epicsTimeERROR;
       eventCodeTime_as[EVENT_FIDUCIAL].status = epicsTimeERROR;
     } else {
       if (activeTimeSlot) {
+#ifdef BSA_DEBUG
+printf("Storing active pid %d\n", evr_ps->pattern_s.time.nsec & 0x1ffff);
+#endif
         eventCodeTime_as[0].time   = evr_ps->pattern_s.time;
         eventCodeTime_as[0].status = evr_ps->timeStatus;
       }
+#ifdef BSA_DEBUG
+printf("Storing fiducial pid %d\n", evr_ps->pattern_s.time.nsec & 0x1ffff);
+#endif
       eventCodeTime_as[EVENT_FIDUCIAL].time   = evr_ps->pattern_s.time;
       eventCodeTime_as[EVENT_FIDUCIAL].status = evr_ps->timeStatus;
     }
@@ -859,6 +885,9 @@ static long evrTimeEvent(longSubRecord *psub)
   if ((psub->a <= 0) || (psub->a > MRF_NUM_EVENTS))
     return epicsTimeERROR;
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
+#ifdef BSA_DEBUG
+printf("Setting event time (SUB) for %d PID %d\n", psub->a, evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff);
+#endif
     eventCodeTime_as[psub->a].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
     eventCodeTime_as[psub->a].status = evr_aps[evrTimeCurrent]->timeStatus;
     epicsMutexUnlock(evrTimeRWMutex_ps);
@@ -873,6 +902,9 @@ long evrTimeEventProcessing(epicsInt16 eventNum)
 {
 
   if (evrTimeRWMutex_ps && (!epicsMutexLock(evrTimeRWMutex_ps))) {
+#ifdef BSA_DEBUG
+printf("Setting event time for %d PID %d\n", eventNum, evr_aps[evrTimeCurrent]->pattern_s.time.nsec & 0x1ffff);
+#endif
     eventCodeTime_as[eventNum].time   = evr_aps[evrTimeCurrent]->pattern_s.time;
     eventCodeTime_as[eventNum].status = evr_aps[evrTimeCurrent]->timeStatus;
     epicsMutexUnlock(evrTimeRWMutex_ps);

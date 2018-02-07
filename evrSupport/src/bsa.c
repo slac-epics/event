@@ -163,15 +163,24 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
       if (bsa_ps->readFlag) bsa_ps->noread++;
       bsa_ps->readFlag = 0;
       bsa_ps->reset    = 1;
+#ifdef BSA_DEBUG
+printf("BSAAVG: NOREAD\n");
+#endif
     }
     /* Ignore data that hasn't changed since last time */
     if ((secnTime_ps->secPastEpoch == bsa_ps->timeData.secPastEpoch) &&
         (secnTime_ps->nsec         == bsa_ps->timeData.nsec)) {
       bsa_ps->nochange++;
+#ifdef BSA_DEBUG
+printf("BSAAVG: NOCHANGE\n");
+#endif
     } else {
       bsa_ps->timeData = *secnTime_ps;
       bsa_ps->readcnt++;
     
+#ifdef BSA_DEBUG
+printf("secnSevr %d, edefSevr %d\n", secnSevr, edefSevr);
+#endif
       /* Include this value in the average if it's OK with the EDEF */
       if (secnSevr < edefSevr) {
 	bsa_ps->avgcnt++;
@@ -205,6 +214,9 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
       double diff1 = secnVal - bsa_ps->avg;
       bsa_ps->var += diff*diff1;
 	  if (secnSevr > bsa_ps->sevr) {
+#ifdef BSA_DEBUG
+printf("BSAAVG: setting secnSevr %d\n", secnSevr);
+#endif
 	    bsa_ps->sevr = secnSevr;
 	    bsa_ps->stat = secnStat;
 	  }
@@ -213,6 +225,9 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
     }
     /* Finish up calcs when the average is done and force record processing */
     if (edefAvgDone) { /* values when avg is done */
+#ifdef BSA_DEBUG
+printf("BSAAVG: done, secnSevr %d (%d avg count)\n", secnSevr, bsa_ps->avgcnt);
+#endif
       bsa_ps->val  = bsa_ps->avg;
       bsa_ps->cnt  = bsa_ps->avgcnt;
       bsa_ps->time = bsa_ps->timeData;
@@ -285,12 +300,18 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
      * And check that for the first acquisition the time is set to 0.
      * Otherwise if those time variables are not ready, 
      * you see increasing the diagnostic variable for same timestamp. */
+#ifdef BSA_DEBUG
+printf("EDEF PID %d, SECN PID %d\n", edefTime_s.nsec&0x1ffff, secnTime_ps->nsec & 0x1ffff);
+#endif
     if (((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
          (secnTime_ps->nsec         != edefTime_s.nsec)) ||
 	((secnTime_ps->secPastEpoch == 0) && (secnTime_ps->nsec  == 0)))  continue;
     
     /* Process the acquisition for the passed device. This routine gets called when the device time 
        is matching with the EDEF time.*/
+#ifdef BSA_DEBUG
+printf("calling bsaProcessor secnSevr %d\n", secnSevr);
+#endif
     bsaProcessor(secnTime_ps, secnVal, secnStat, secnSevr,
 		 ((bsaDevice_ts *)dev_ps)->noAverage,
 		 &edefTimeInit_s, edefAvgDone, edefSevr,
@@ -396,6 +417,7 @@ int bsaCheckerDevices(epicsTimeStamp *edefTimeInit_ps,
     return -1;
   dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
   while (dev_ps) {
+printf("BSA CHECKER\n");
     /* Fill in invalid data if the last time the device was processed is not the same as 
      *        the last requested acquisition */
     bsa_ps = &dev_ps->bsa_as[edefIdx];
@@ -639,6 +661,9 @@ static long write_ao(aoRecord *pao)
   /* Get the input's STAT and SEVR and timestamp (but don't get value) */
   status = dbGetAlarm(&pao->dol, &input_status, &input_severity);
   if(!status) status = dbGetTimeStamp(&pao->dol, &input_timestamp);
+#ifdef BSA_DEBUG
+printf("Calling bsaSecnAvg %d; PID %d\n", input_severity, input_timestamp.nsec & 0x1ffff);
+#endif
   if(!status) status = bsaSecnAvg(&input_timestamp, pao->val, input_status, input_severity, 0, pao->dpvt);
 
   if (status) recGblSetSevr(pao,WRITE_ALARM,INVALID_ALARM);

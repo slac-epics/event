@@ -61,6 +61,8 @@
 
 #define  MAX_PATTERN_DELTA_TIME  10 /* sec */
 
+#undef   BSA_DEBUG
+
 static unsigned long msgCount         = 0; /* # waveforms processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
 static unsigned long patternErrCount  = TIMESLOT_DIFF;
@@ -134,17 +136,29 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
   prevTime = pattern_ps->time;
   evrMessageStatus = evrMessageRead(EVR_MESSAGE_PATTERN,
                                     (evrMessage_tu *)pattern_ps);
+#ifdef BSA_DEBUG
+printf("evrMessageRead(st %d) PID %d\n", evrMessageStatus, pattern_ps->time.nsec & 0x1ffff);
+#endif
   if (timeout || evrMessageStatus ||
       (pattern_ps->header_s.type    != EVR_MESSAGE_PATTERN) ||
       (pattern_ps->header_s.version != EVR_MESSAGE_PATTERN_VERSION)) {
     if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
     if (timeout) {
+#ifdef BSA_DEBUG
+printf("PATTERN_TIMEOUT\n");
+#endif
       *patternStatus_p = PATTERN_TIMEOUT;
       patternErrCount  = TIMESLOT_DIFF;
       timeoutCount++;
     } else if (evrMessageStatus == evrMessageDataNotAvail) {
+#ifdef BSA_DEBUG
+printf("PATTERN_NO_DATA\n");
+#endif
       *patternStatus_p = PATTERN_NO_DATA;
     } else {
+#ifdef BSA_DEBUG
+printf("PATTERN_INVALID_WF\n");
+#endif
       *patternStatus_p = PATTERN_INVALID_WF;
       invalidErrCount++;
     }
@@ -163,6 +177,10 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
         if (ntpStatus) {
           patternErrCount = 0;
         } else {
+#ifdef BSA_DEBUG
+printf("PATTERN_INVALID_TIMESTAMP (DIFF %lu -- max %lu)\n", deltaTime, evrDeltaTimeMax);
+printf("Pattern %lu, current %lu\n", pattern_ps->time.secPastEpoch, currentTime.secPastEpoch);
+#endif
           if (patternErrCount < TIMESLOT_DIFF) patternErrCount++;
           *patternStatus_p = PATTERN_INVALID_TIMESTAMP;
         }
@@ -173,6 +191,9 @@ int evrPattern(int timeout, epicsUInt32 *mpsModifier_p)
   /* If there is an error with the incoming pattern, set
      everything to invalid values. */
   if (patternErrCount) {
+#ifdef BSA_DEBUG
+printf("********* PATTERN ERROR **********************************************\n");
+#endif
     for (idx = 0; idx < EVR_MODIFIER_MAX; idx++)
       pattern_ps->modifier_a[idx] = 0;
     pattern_ps->modifier_a[MOD1_IDX] = MPG_IPLING;

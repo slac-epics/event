@@ -352,6 +352,9 @@ static int evrEventTask(void)
       epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
       if (eventMessage.function == evrIoEventId) {
 	evrTimeEventProcessing(eventMessage.io_u.eventNum);
+#ifdef BSA_DEBUG
+printf("posting event %d\n", eventMessage.io_u.eventNum);
+#endif
         post_event(eventMessage.io_u.eventNum);
         /* pCard cannot be NULL since the only entities which send messages are
 	   *  - the evrTask which bails out if pCard is NULL
