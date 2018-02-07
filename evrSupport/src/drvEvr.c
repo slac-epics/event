@@ -38,7 +38,6 @@
 #include "evrMessage.h"		/* for evrMessageCreate   */
 #include "evrTime.h"		/* for evrTimeCount       */
 #include "evrPattern.h"		/* for evrPattern         */
-#include "bsa.h"		/* for bsaInit            */
 #include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
 #include "devMrfEr.h"		/* for ErRegisterEventHandler    */
 
@@ -444,9 +443,6 @@ int evrInitialize()
   }
 
 
-  /* Initialize BSA */
-  if (bsaInit()) return -1;
-  
   /* Create space for the pattern + diagnostics */
   if (evrMessageCreate(EVR_MESSAGE_PATTERN_NAME,
                        sizeof(evrMessagePattern_ts)) !=

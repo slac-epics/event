@@ -500,13 +500,15 @@ int bsaSecnInit(char  *secnName,
 
 ==============================================================================*/
 
-int bsaInit()
+static int bsaInit(int pass)
 {
-  if (!bsaRWMutex_ps) {
-    bsaRWMutex_ps = epicsMutexMustCreate();
-    ellInit(&bsaDeviceList_s);
-    RegisterBsaTimingCallback(0, bsaChecker);
-  }
+	if ( 0 == pass ) {
+		if (!bsaRWMutex_ps) {
+			bsaRWMutex_ps = epicsMutexMustCreate();
+			ellInit(&bsaDeviceList_s);
+			RegisterBsaTimingCallback(0, bsaChecker);
+		}
+	}
   return 0;
 }
 
@@ -710,13 +712,13 @@ DSET devBsa =
 {
   6,
   NULL,
-  NULL,
+  bsaInit,
   init_bsa_record,
   get_ioint_info,
   read_bsa,
   NULL
 };
 
-epicsExportAddress(dset,devAoBsa);
 epicsExportAddress(dset,devBsa);
+epicsExportAddress(dset,devAoBsa);
 
