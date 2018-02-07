@@ -200,11 +200,8 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
 	  bsa_ps->sevr   = secnSevr;
 	} 
 	else {
-	  int avgcnt_1 = bsa_ps->avgcnt-1;
-          int avgcnt_2 = bsa_ps->avgcnt-2;
 	  double diff  = secnVal - bsa_ps->avg;
 	  bsa_ps->avg += diff/(double)bsa_ps->avgcnt;
-	  /* diff        /= (double)avgcnt_1; */
       double diff1 = secnVal - bsa_ps->avg;
       bsa_ps->var += diff*diff1;
 	  if (secnSevr > bsa_ps->sevr) {
