@@ -62,6 +62,15 @@ extern __inline__ t_HiResTime GetHiResTicks()
 	read_tsc( tscVal );
 	return tscVal;
 }
+#elif ! defined(NO_DEFAULT_POSIX_HIRES_TICKS)
+#include <time.h>
+extern __inline__ t_HiResTime GetHiResTicks()
+{
+struct timespec ts;
+	clock_gettime( CLOCK_MONOTONIC, &ts );
+	return (unsigned long long)ts.tv_sec*1000000000ULL
+	      +(unsigned long long)ts.tv_nsec;
+}
 #endif	/*	read_tsc	*/
 
 #ifdef	__cplusplus
