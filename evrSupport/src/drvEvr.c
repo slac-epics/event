@@ -258,8 +258,8 @@ static int evrTask()
   int                  messagePending;
   evrIoMessage_ts      eventMessage;
 
-  if (evrTimeInit(0,0)) {
-    errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
+  if (evrTimeSetSlots(0,0)) {
+    errlogPrintf("evrTask: Exit due to bad status from evrTimeSetSlots\n");
     return -1;
   }
 
@@ -437,6 +437,12 @@ int evrInitialize()
 #if defined(_X86_) || defined(_X86_64_)
   Get_evrTicksPerUsec_for_X86(); 
 #endif
+
+  if ( evrTimeInit() ) {
+    errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
+    return -1;
+  }
+
 
   /* Initialize BSA */
   if (bsaInit()) return -1;

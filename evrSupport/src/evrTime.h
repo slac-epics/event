@@ -24,6 +24,8 @@
 #ifndef INCevrTimeH
 #define INCevrTimeH 
 
+#include "bsaCallbackApi.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -109,8 +111,9 @@ int evrBsaMessage(epicsTimeStamp *edefTimeInit_ps,
 
 /* Routines used only by event module and Mpg application */
 #ifdef INCevrMessageH
-int evrTimeInit           (epicsInt32   firstTimeSlotIn,
+int evrTimeSetSlots       (epicsInt32   firstTimeSlotIn,
                            epicsInt32   secondTimeSlotIn);
+int evrTimeInit           ();
 int evrTime               (epicsUInt32  mpsModifier);
 long evrTimeEventProcessing(epicsInt16 eventNum);
 int evrTimeCount          (unsigned int eventCode);

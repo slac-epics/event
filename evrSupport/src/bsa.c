@@ -77,6 +77,8 @@
 #include "evrPattern.h"       /* EDEF_MAX                  */
 #include "bsa.h"              /* prototypes in this file   */
 
+#include "bsaCallbackApi.h"
+
 /* This is the missing counter limit */
 #define  EVR_MAX_MISS  (100000000)    /* 1 billion */
 
@@ -117,7 +119,12 @@ typedef struct {
 
 ELLLIST bsaDeviceList_s;
 static epicsMutexId bsaRWMutex_ps = 0; 
+
 int QueueFullCounter = 0;
+
+/* For overloaded IOC, do not insert NaNs, while missing data, if this flag is = 0.*/
+static volatile int NaNflag = INSERT_NAN;
+
 
 /*=============================================================================
 
@@ -338,49 +345,42 @@ printf("calling bsaProcessor secnSevr %d\n", secnSevr);
   Ret:  0 = OK, -1 = Mutex problem .
 
 ==============================================================================*/
-int bsaChecker()
+void bsaChecker(void *uarg, const BsaTimingData *pBsaData)
 {
-  epicsTimeStamp edefTimeInit_s;
-  epicsTimeStamp edefTime_s;
-  epicsUInt32    edefMinorMask;
-  epicsUInt32    edefMajorMask;
-  epicsUInt32    edefAllDone;
-  int            edefAvgDone;
-  epicsEnum16    edefSevr;
-  int            status = 0;
-  int            idx;
-  evrModifier_ta modifierNext1_a;
-  unsigned long  edefMask;
+epicsTimeStamp edefTimeInit_s;
+epicsTimeStamp edefTime_s;
+epicsUInt32    edefAllDone;
+int            edefAvgDone;
+epicsEnum16    edefSevr;
+int            status = 0;
+int            idx;
+unsigned long  edefMask;
 
-  /* Get the pattern for this pulse and check if any EDEF is active or finished. 
-     Note that the pipeline has not yet been moved so we get the next
-     pulse */
-  status = evrTimeGetFromPipeline(0, evrTimeNext1, modifierNext1_a, 0, 0, &edefMinorMask, &edefMajorMask);
-  /* No room in the existing pattern for another mask so put the bits in the
-   * high unused 10 bits of the severity masks (KLUGE!). */
-  edefAllDone  = (edefMinorMask >> 20) & 0x003FF;
-  edefAllDone |= (edefMajorMask >> 10) & 0xFFC00;
-  if ((modifierNext1_a[MOD5_IDX] & MOD5_EDEF_MASK) || edefAllDone) {
-    for (idx = 0; idx < EDEF_MAX; idx++) {
-      edefMask = 1 << idx;
-      /* If EDEF active on the next pulse? Or finished? */
-      if ((modifierNext1_a[MOD5_IDX] & edefMask) ||
-	  (edefAllDone & edefMask)) {
-	/* Get EDEF information for the last acquistion. */
-	if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s, &edefAvgDone, &edefSevr)) {
-	  status = -1;
-	  continue;
+	if ( INSERT_NAN != NaNflag ) {
+		return;
 	}
-	/* Get EDEF information regarding the queue called in bsaChecker, it returns -1 if the queue is full. */
-        status = evrBsaMessage(&edefTimeInit_s,
-                               &edefTime_s,
-                               edefAllDone, edefAvgDone, edefSevr, idx);
-	if (status == -1) QueueFullCounter++;
-      }/* end of EDEF active on next pulse */ 
-    }/* end of EDEF loop */
-  }/* end of any EDEF active on next pulse */
-  return status;
+
+	edefAllDone  = pBsaData->edefAllDoneMask;
+
+	if ( pBsaData->edefActiveMask  || edefAllDone ) {
+		for ( idx = 0, edefMask = 1; idx < EDEF_MAX; idx++, edefMask <<= 1 ) {
+			/* If EDEF active on the next pulse? Or finished? */
+			if ( (pBsaData->edefActiveMask | edefAllDone) & edefMask ) {
+				/* Get EDEF information for the last acquistion. */
+				if (evrTimeGetFromEdef(idx, &edefTime_s, &edefTimeInit_s, &edefAvgDone, &edefSevr)) {
+					status = -1;
+					continue;
+				}
+				/* Get EDEF information regarding the queue called in bsaChecker, it returns -1 if the queue is full. */
+				status = evrBsaMessage(&edefTimeInit_s,
+						&edefTime_s,
+						edefAllDone, edefAvgDone, edefSevr, idx);
+				if (status == -1) QueueFullCounter++;
+			}/* end of EDEF active on next pulse */ 
+		}/* end of EDEF loop */
+	}/* end of any EDEF active on next pulse */
 }/*end bsaChecker*/
+
 /*============================================================================
  *
  *   Name: bsaCheckerDevices
@@ -503,12 +503,9 @@ int bsaSecnInit(char  *secnName,
 int bsaInit()
 {
   if (!bsaRWMutex_ps) {
-    bsaRWMutex_ps = epicsMutexCreate();
-    if (bsaRWMutex_ps) {
-      ellInit(&bsaDeviceList_s);
-    } else {
-      return -1;
-    }
+    bsaRWMutex_ps = epicsMutexMustCreate();
+    ellInit(&bsaDeviceList_s);
+    RegisterBsaTimingCallback(0, bsaChecker);
   }
   return 0;
 }
@@ -670,6 +667,21 @@ printf("Calling bsaSecnAvg %d; PID %d\n", input_severity, input_timestamp.nsec &
   return status;
 
 }
+
+/*Set Method for the NaNflag used by the ioc */
+void setNaN_flag(int flag){
+        if ((flag==0) || (flag==1)){
+                NaNflag=flag;
+        }
+        else{ /*The expectation is that is called only once at startup */
+                printf("setNaN_flag: illegal value %i for NAN flag. Value must be 0 or 1.",flag);
+        }
+}
+/*Get Method for the NaNflag used by the ioc */
+int getNaN_flag(void){
+        return   NaNflag;
+}
+
 
 /* Create the device support entry tables */
 typedef struct

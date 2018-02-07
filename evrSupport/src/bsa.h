@@ -26,6 +26,8 @@
 #ifndef INCbsaH
 #define INCbsaH 
 
+#include "bsaCallbackApi.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,7 +41,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
                int             noAveraging,
                void           *dev_ps);
  
-int bsaChecker(void);
+void bsaChecker(void *, const BsaTimingData *);
 
 int bsaCheckerDevices(epicsTimeStamp *edefTimeInit_ps,
                       epicsTimeStamp *edefTime_ps,
