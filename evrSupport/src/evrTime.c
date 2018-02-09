@@ -529,6 +529,8 @@ int evrTime(epicsUInt32 mpsModifier)
 
   if ( (cb = timingCallback) ) {
 
+	cbArg = timingCallbackParm;
+
 	evr_ps = evr_aps[evrTimeNext1];
 
 	bsaData.pulseId         = PULSEID( evr_ps->pattern_s.time );
