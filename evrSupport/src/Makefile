@@ -21,7 +21,6 @@ SRC_DIRS += $(TOP)/mrfApp/src
 INC+=evrTime.h
 INC+=evrPattern.h
 INC+=evrMessage.h
-INC+=bsa.h
 
 DBDINC += longSubRecord
 DBDINC += bsaRecord
@@ -36,19 +35,35 @@ DBD += bsa.dbd
 DBD += drvEvr.dbd
 
 LIBRARY_IOC = evrSupport
+ifneq ($(BSA_CORE),)
+LIBRARY_IOC += evrSupportLegacy
+endif
 
-evrSupport_SRCS += evrEvInvariantDelay.c
-evrSupport_SRCS += evrEvDesc.c
-evrSupport_SRCS += evrPattern.c
-evrSupport_SRCS += evrModifier5.c
-evrSupport_SRCS += evrTime.c
-evrSupport_SRCS += evrMessage.c
-evrSupport_SRCS += bsa.c
-evrSupport_SRCS += longSubRecord.c
-evrSupport_SRCS += bsaRecord.c
-evrSupport_SRCS += drvEvr.c
-#evrSupport_LIBS += generalTime
-evrSupport_LIBS += $(EPICS_BASE_IOC_LIBS)
+EVR_SUP_COM_SRCS += evrEvInvariantDelay.c
+EVR_SUP_COM_SRCS += evrEvDesc.c
+EVR_SUP_COM_SRCS += evrPattern.c
+EVR_SUP_COM_SRCS += evrModifier5.c
+EVR_SUP_COM_SRCS += evrTime.c
+EVR_SUP_COM_SRCS += evrMessage.c
+EVR_SUP_COM_SRCS += longSubRecord.c
+EVR_SUP_COM_SRCS += bsaRecord.c
+EVR_SUP_COM_SRCS += drvEvr.c
+
+evrSupport_SRCS       += $(EVR_SUP_COM_SRCS)
+
+ifneq ($(BSA_CORE),)
+evrSupportLegacy_SRCS += $(EVR_SUP_COM_SRCS)
+evrSupportLegacy_SRCS += bsa.c
+evrSupportLegacy_LIBS += $(EPICS_BASE_IOC_LIBS)
+evrSupport_SRCS       += devBsaCore.c
+evrSupport_SRCS       += devAoBsaCore.c
+else
+evrSupport_SRCS       += bsa.c
+endif
+
+
+#evrSupportLegacy_LIBS += generalTime
+evrSupport_LIBS       += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
 
