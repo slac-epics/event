@@ -7,7 +7,6 @@
         evrEvent       - Process Event Codes
         evrTask        - High Priority task to process 360Hz Fiducial and Data
         evrEventTask   - High Priority task to process 360Hz Events and BSA Data
-        evrBsaMessage  - Add Message to evrEventTask Queue to Check BSA Data
 	evrRecord      - High Priority task to process 360Hz Records
         evrTimeRegister- Register User Routine called by evrTask 
 
@@ -40,6 +39,9 @@
 #include "evrPattern.h"		/* for evrPattern         */
 #include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
 #include "devMrfEr.h"		/* for ErRegisterEventHandler    */
+#include "drvEvr.h"
+
+#include <stdint.h>
 
 #include "HiResTimeStub.h"
 #ifdef __rtems__
@@ -76,26 +78,12 @@ typedef struct {
 ELLLIST evrFiducialFuncList_s;
 static epicsMutexId evrRWMutex_ps = 0; 
 
-typedef enum {
-  evrIoEventId=0, evrIoBsaId=1
-} evrIoId_te;
-
 typedef struct {
-  epicsTimeStamp edefTimeInit_s;
-  epicsTimeStamp edefTime_s;
-  epicsUInt32    edefAllDone;
-  int            edefAvgDone;
-  epicsEnum16    edefSevr;
-  int            edefIdx;
-} evrIoBsaChecker_ts;
-
-typedef struct {
-  evrIoId_te function;
-  union {
-    epicsInt16 eventNum;
-    evrIoBsaChecker_ts bsaChecker_s;
-  } io_u;
+  EventTaskWorker worker;
+  void           *work;
 } evrIoMessage_ts;
+
+static void evrIoEventWork(void *arg);
 
 /*=============================================================================
 
@@ -213,7 +201,6 @@ void evrSend(void *pCard, epicsInt16 messageSize, void *message)
 void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
 {
   epicsUInt32      evrClockCounter;
-  evrIoMessage_ts  eventMessage;
 
   evrTimeCount((unsigned int)eventNum);
 
@@ -230,14 +217,12 @@ void evrEvent(int cardNo, epicsInt16 eventNum, epicsUInt32 timeNum)
       evrMessageNoDataError(EVR_MESSAGE_FIDUCIAL);
     }
   } else {
+      uintptr_t arg = (uintptr_t)eventNum;
 	  /*---------------------
 	   * Schedule processing for any event-driven records
 	   */
-	  eventMessage.function       = evrIoEventId;
-	  eventMessage.io_u.eventNum  = eventNum;
-	  epicsMessageQueueSend( eventTaskQueue, &eventMessage, sizeof(eventMessage) );
+      eventTaskSendWork(evrIoEventWork, (void*)arg);
   }
- 
 }
 
 /*=============================================================================
@@ -255,7 +240,6 @@ static int evrTask()
   epicsEventWaitStatus status;
   epicsUInt32          mpsModifier;
   int                  messagePending;
-  evrIoMessage_ts      eventMessage;
 
   if (evrTimeSetSlots(0,0)) {
     errlogPrintf("evrTask: Exit due to bad status from evrTimeSetSlots\n");
@@ -267,9 +251,6 @@ static int evrTask()
     return -1;
   }
   
-  eventMessage.function       = evrIoEventId;
-  eventMessage.io_u.eventNum  = EVENT_FIDUCIAL;
-
   for (;;)
   {
     readyForFiducial = 1;
@@ -291,7 +272,8 @@ static int evrTask()
       }   
       evrMessageEnd(EVR_MESSAGE_FIDUCIAL);
 
-      epicsMessageQueueSend(eventTaskQueue, &eventMessage, sizeof(eventMessage));
+      uintptr_t arg = (uintptr_t) EVENT_FIDUCIAL;
+      eventTaskSendWork(evrIoEventWork, (void*)arg);
       messagePending = epicsMessageQueuePending(eventTaskQueue);
       evrMessageQ(EVR_MESSAGE_FIDUCIAL, messagePending);
 
@@ -343,76 +325,58 @@ static int evrRecord()
 }
 
 
+int
+eventTaskSendWork(EventTaskWorker worker, void *work)
+{
+evrIoMessage_ts eventMessage;
+
+	eventMessage.worker = worker;
+	eventMessage.work   = work;
+	return epicsMessageQueueSend( eventTaskQueue, &eventMessage, sizeof(eventMessage) );
+}
+
+int
+eventTaskTrySendWork(EventTaskWorker worker, void *work)
+{
+evrIoMessage_ts eventMessage;
+
+	eventMessage.worker = worker;
+	eventMessage.work   = work;
+	return epicsMessageQueueSend( eventTaskQueue, &eventMessage, sizeof(eventMessage) );
+}
+
+static void evrIoEventWork(void *arg)
+{
+uintptr_t  uarg     = (uintptr_t)arg; /* silence compiler warning */
+epicsInt16 eventNum = (epicsInt16)uarg;
+
+	evrTimeEventProcessing(eventNum);
+#ifdef BSA_DEBUG
+	printf("posting event %d\n", eventNum);
+#endif
+	post_event(eventNum);
+	/* pCard cannot be NULL since the only entities which send messages are
+	 *  - the evrTask which bails out if pCard is NULL
+	 *  - the evrEvent handler which is not installed if pCard is NULL
+	 */
+	if ((eventNum >= 0 ) && 
+			(eventNum < sizeof(pCard->IoScanPvt)/sizeof(pCard->IoScanPvt[0])) ) {
+		scanIoRequest( pCard->IoScanPvt[eventNum] );
+	}
+}
+
 static int evrEventTask(void)
 {
     evrIoMessage_ts eventMessage;
 
     for(;;) {   
       epicsMessageQueueReceive(eventTaskQueue, &eventMessage, sizeof(eventMessage));
-      if (eventMessage.function == evrIoEventId) {
-	evrTimeEventProcessing(eventMessage.io_u.eventNum);
-#ifdef BSA_DEBUG
-printf("posting event %d\n", eventMessage.io_u.eventNum);
-#endif
-        post_event(eventMessage.io_u.eventNum);
-        /* pCard cannot be NULL since the only entities which send messages are
-	   *  - the evrTask which bails out if pCard is NULL
-	   *  - the evrEvent handler which is not installed if pCard is NULL
-	   */
-        if ((eventMessage.io_u.eventNum >= 0 ) && 
-	   (eventMessage.io_u.eventNum < sizeof(pCard->IoScanPvt)/sizeof(pCard->IoScanPvt[0])) ) {
-	  	scanIoRequest( pCard->IoScanPvt[eventMessage.io_u.eventNum] );
-	    }
-    }else {
-        bsaCheckerDevices(&eventMessage.io_u.bsaChecker_s.edefTimeInit_s,
-                          &eventMessage.io_u.bsaChecker_s.edefTime_s,
-                          eventMessage.io_u.bsaChecker_s.edefAllDone,
-                          eventMessage.io_u.bsaChecker_s.edefAvgDone,
-                          eventMessage.io_u.bsaChecker_s.edefSevr,
-                          eventMessage.io_u.bsaChecker_s.edefIdx);
-      }
-    }
+      eventMessage.worker(eventMessage.work);
+	}
 
     return 0;
 }
-/*=============================================================================
- *                                                          
- *     Name: evrBsaMessage
- *
- *     Abs:  evrBsaMessage initialization.
- *                                                                
- *     Rem:  Add Message to evrEventTask Queue to Check BSA Data.
- *                                                                              
-=============================================================================*/
-int evrBsaMessage(epicsTimeStamp *edefTimeInit_ps,
-                  epicsTimeStamp *edefTime_ps,
-                  epicsUInt32    edefAllDone,
-                  int            edefAvgDone,
-                  epicsEnum16    edefSevr,
-                  int            edefIdx)
-{
-  if (eventTaskQueue == 0) {
-    bsaCheckerDevices(edefTimeInit_ps,
-		      edefTime_ps,
-		      edefAllDone,
-		      edefAvgDone,
-                      edefSevr,
-		      edefIdx);
-    return 0;
-  } else {
-    evrIoMessage_ts eventMessage;
 
-    eventMessage.function            = evrIoBsaId;
-    eventMessage.io_u.bsaChecker_s.edefTimeInit_s = *edefTimeInit_ps;
-    eventMessage.io_u.bsaChecker_s.edefTime_s     = *edefTime_ps;
-    eventMessage.io_u.bsaChecker_s.edefAllDone    = edefAllDone;
-    eventMessage.io_u.bsaChecker_s.edefAvgDone    = edefAvgDone;
-    eventMessage.io_u.bsaChecker_s.edefSevr       = edefSevr;
-    eventMessage.io_u.bsaChecker_s.edefIdx        = edefIdx;
-    /* If queue is full, then forget about checking BSA for this pulse. */
-    return (epicsMessageQueueTrySend(eventTaskQueue, &eventMessage, sizeof(eventMessage)));
-  }
-}
 /*=============================================================================
                                                          
   Name: evrInitialize
@@ -432,16 +396,24 @@ int evrInitialize()
   }
   evrInitialized = -1;
 
+  eventTaskQueue = epicsMessageQueueCreate(MRF_NUM_EVENTS*2, sizeof(evrIoMessage_ts));
+  if ( ! eventTaskQueue ) {
+    errlogPrintf("evrInitialize: unable to create message queue\n");
+    return -1;
+  }
+
+  /* Create the fiducial function mutex and initialize link list*/
+  evrRWMutex_ps  = epicsMutexMustCreate();
+
+  /* Create the semaphores used by the ISR to wake up the evr tasks */
+  evrTaskEventSem   = epicsEventMustCreate(epicsEventEmpty);
+  evrRecordEventSem = epicsEventMustCreate(epicsEventEmpty);
+
+  ellInit(&evrFiducialFuncList_s);
 
 #if defined(_X86_) || defined(_X86_64_)
   Get_evrTicksPerUsec_for_X86(); 
 #endif
-
-  if ( evrTimeInit() ) {
-    errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
-    return -1;
-  }
-
 
   /* Create space for the pattern + diagnostics */
   if (evrMessageCreate(EVR_MESSAGE_PATTERN_NAME,
@@ -451,33 +423,14 @@ int evrInitialize()
   /* Create space for the fiducial + diagnostics */
   if (evrMessageCreate(EVR_MESSAGE_FIDUCIAL_NAME, 0) !=
       EVR_MESSAGE_FIDUCIAL) return -1;
+
+  if ( evrTimeInit() ) {
+    errlogPrintf("evrTask: Exit due to bad status from evrTimeInit\n");
+    return -1;
+  }
   
-  /* Create the semaphores used by the ISR to wake up the evr tasks */
-  evrTaskEventSem = epicsEventMustCreate(epicsEventEmpty);
-  if (!evrTaskEventSem) {
-    errlogPrintf("evrInitialize: unable to create the EVR task semaphore\n");
-    return -1;
-  }
-
-  evrRecordEventSem = epicsEventMustCreate(epicsEventEmpty);
-  if (!evrRecordEventSem) {
-    errlogPrintf("evrInitialize: unable to create the EVR record task semaphore\n");
-    return -1;
-  }
-
-  /* Create the fiducial function mutex and initialize link list*/
-  evrRWMutex_ps = epicsMutexCreate();
-  if (!evrRWMutex_ps) {
-    errlogPrintf("evrInitialize: unable to create the EVR fiducial function mutex\n");
-    return -1;
-  }
-  ellInit(&evrFiducialFuncList_s);
-
-
   pCard = ErGetCardStruct(0);
 
-  eventTaskQueue = epicsMessageQueueCreate(MRF_NUM_EVENTS*2, sizeof(evrIoMessage_ts));
-  
   /* Create the processing tasks */
   if (!epicsThreadCreate("evrTask", epicsThreadPriorityHigh+1,
                          epicsThreadGetStackSize(epicsThreadStackMedium),

@@ -1,26 +1,26 @@
 /*=============================================================================
- 
+
   Name: bsa.c
 
   Abs: This device support for beam synchronous acquisition records via
        EVG/EVR EDEFS
-           bsaSecnAvg        - BSA Processing 
+           bsaSecnAvg        - BSA Processing
            bsaSecnInit       - BSA Processing Initialization
            read_bsa          - BSA Record Value Update
            init_bsa_record   - Init BSA Record Device Support
            get_ioint_info    - Get IO Intr pointer
            init_ao_record    - Init AO Record Device Support
-           write_ao          - Update Data for BSA Record 
+           write_ao          - Update Data for BSA Record
 
-  Auth:  
-  Rev:  
+  Auth:
+  Rev:
 
   ---------------------------------------------------------------------------*/
 
 #include "copyright_SLAC.h"	/* SLAC copyright comments */
- 
+
 /*-----------------------------------------------------------------------------
- 
+
   Mod:  12 Feb 2010     S. Hoobler (sonya)
 
 	To set SEVR/STAT on BSA PVs:
@@ -31,18 +31,18 @@
 	  Routine bsaSecnAvg:
 	    (1) Add epicsEnum16 secnStat to the argument list.
 	    (2) In the code that initializes the average under "if
-	    ((bsa_ps->avgcnt == 1) || noAverage)", set sevr and stat 
+	    ((bsa_ps->avgcnt == 1) || noAverage)", set sevr and stat
 	    of the bsa_ts structure to the input secnStat and secnSevr.
-	    (3) In the code that calculates running avg, add logic to 
+	    (3) In the code that calculates running avg, add logic to
             compute running max of stat and sev
 
 	  Routine read_bsa:
 	    (1) Add local variables dstat and dsevr to copy stat and sevr from bsa_ts.
-	    (2) In the logic that calls recGblSetSevr, add an "else" that calls 
-                recGblSetSevr with the local variables. 
+	    (2) In the logic that calls recGblSetSevr, add an "else" that calls
+                recGblSetSevr with the local variables.
 
 	 Routine write_ao:
-	    (1) Replace dbGetTimeStamp with dbGetField in order to get stat, sevr, 
+	    (1) Replace dbGetTimeStamp with dbGetField in order to get stat, sevr,
 	    and time of input record.
 	    (2) In bsaSecnAvg call, replace pao->nsev with severity of input record
 	    and add stat of input record.
@@ -51,7 +51,7 @@
 	  (1) In the section that describes calling BSA routines directly
 	  (II-2), update the API description to include the new argument.
 
- 
+
 =============================================================================*/
 
 #include <string.h>        /* strcmp */
@@ -76,6 +76,7 @@
 #include "evrTime.h"          /* evrTimeGetFromEdef        */
 #include "evrPattern.h"       /* EDEF_MAX                  */
 #include "bsa.h"              /* prototypes in this file   */
+#include "drvEvr.h"
 
 #include "bsaCallbackApi.h"
 
@@ -117,8 +118,30 @@ typedef struct {
 
 } bsaDevice_ts;
 
+typedef struct {
+  epicsTimeStamp edefTimeInit_s;
+  epicsTimeStamp edefTime_s;
+  epicsUInt32    edefAllDone;
+  int            edefAvgDone;
+  epicsEnum16    edefSevr;
+  int            edefIdx;
+} BsaChecker_ts;
+
+union BsaChecker_tu;
+
+typedef union BsaChecker_tu {
+  BsaChecker_ts        s;
+  union BsaChecker_tu *n;
+} BsaChecker_tu;
+
+static BsaChecker_tu *bsaCheckerAlloc();
+static void           bsaCheckerFree(BsaChecker_tu*);
+
 ELLLIST bsaDeviceList_s;
-static epicsMutexId bsaRWMutex_ps = 0; 
+static epicsMutexId bsaRWMutex_ps = 0;
+static epicsMutexId bsaFLMutex_ps = 0;
+
+static BsaChecker_tu *bsaCheckerFL = 0;
 
 int QueueFullCounter = 0;
 
@@ -131,7 +154,7 @@ static volatile int NaNflag = INSERT_NAN;
   Name: bsaProcessor
 
   Abs:  Beam Synchronous Acquisition Processor (Averaging and Update)
- 
+
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
         epicsTimieStamp *   secnTime_ps Read       Data timestamp
@@ -144,8 +167,8 @@ static volatile int NaNflag = INSERT_NAN;
         epicsEnum16         edefSevr    Read       EDEF severity
         bsa_ts *            bsa_ps      Read/Write BSA Structure for this device
 
-  Rem:  
-      
+  Rem:
+
   Ret:  0 = OK, -1 = Mutex problem (Not defined).
 
 ==============================================================================*/
@@ -154,7 +177,7 @@ static int bsaProcessor(epicsTimeStamp *secnTime_ps,
 			epicsEnum16	secnStat,
 			epicsEnum16     secnSevr,
 			int             noAverage,
-			epicsTimeStamp *edefTimeInit_ps, 
+			epicsTimeStamp *edefTimeInit_ps,
 			int		edefAvgDone,
 			epicsEnum16     edefSevr,
 			bsa_ts         *bsa_ps)
@@ -184,7 +207,7 @@ printf("BSAAVG: NOCHANGE\n");
     } else {
       bsa_ps->timeData = *secnTime_ps;
       bsa_ps->readcnt++;
-    
+
 #ifdef BSA_DEBUG
 printf("secnSevr %d, edefSevr %d\n", secnSevr, edefSevr);
 #endif
@@ -194,11 +217,11 @@ printf("secnSevr %d, edefSevr %d\n", secnSevr, edefSevr);
 
 	/* now start the averaging */
 	/* first time thru for new cycle; reset previous avg, variance */
-	
+
 	/* compute running avg and variance                      */
 	/*        This is translated from REF_RMX_BPM:CUM.F86.   */
 	/*                                                       */
-	/*        CUM computes VAR as the sample variance:       */ 
+	/*        CUM computes VAR as the sample variance:       */
 	/*          VAR = (SUMSQ - SUM*SUM/N)/(N-1)              */
 	/*          where SUM = sum of the N values, and         */
 	/*           SUMSQ = sum of the squares of the N values. */
@@ -207,14 +230,14 @@ printf("secnSevr %d, edefSevr %d\n", secnSevr, edefSevr);
 	/*        possible loss of significance.                 */
 	/*                                                       */
 	/*  Compute running maximum status and severity          */
-                                                       
+
 	if ((bsa_ps->avgcnt == 1) || noAverage) {
           bsa_ps->avgcnt = 1;
 	  bsa_ps->avg    = secnVal;
           bsa_ps->var    = 0.0;
 	  bsa_ps->stat   = secnStat;
 	  bsa_ps->sevr   = secnSevr;
-	} 
+	}
 	else {
 	  double diff  = secnVal - bsa_ps->avg;
 	  bsa_ps->avg += diff/(double)bsa_ps->avgcnt;
@@ -272,11 +295,11 @@ printf("BSAAVG: done, secnSevr %d (%d avg count)\n", secnSevr, bsa_ps->avgcnt);
         double              secnVal     Read       Data value
         epicsEnum16         secnStat    Read       Data status
         epicsEnum16         secnSevr    Read       Data severity
-	int                 noAveraging 
+	int                 noAveraging
         void *              dev_ps      Read/Write BSA Device Structure
 
-  Rem:  
-      
+  Rem:
+
   Ret:  0 = OK, -1 = Mutex problem or bad status from evrTimeGetFromEdef.
 
 ==============================================================================*/
@@ -293,7 +316,7 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
   int             idx;
   int             status = 0;
   epicsEnum16     edefSevr;
-  
+
   if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps) || (!dev_ps))
     return -1;
   for (idx = 0; idx < EDEF_MAX; idx++) {
@@ -303,9 +326,9 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
       status = -1;
       continue;
     }
-    /* EDEF timestamp must match the data timestamp. 
+    /* EDEF timestamp must match the data timestamp.
      * And check that for the first acquisition the time is set to 0.
-     * Otherwise if those time variables are not ready, 
+     * Otherwise if those time variables are not ready,
      * you see increasing the diagnostic variable for same timestamp. */
 #ifdef BSA_DEBUG
 printf("EDEF PID %d, SECN PID %d\n", edefTime_s.nsec&0x1ffff, secnTime_ps->nsec & 0x1ffff);
@@ -313,8 +336,8 @@ printf("EDEF PID %d, SECN PID %d\n", edefTime_s.nsec&0x1ffff, secnTime_ps->nsec 
     if (((secnTime_ps->secPastEpoch != edefTime_s.secPastEpoch) ||
          (secnTime_ps->nsec         != edefTime_s.nsec)) ||
 	((secnTime_ps->secPastEpoch == 0) && (secnTime_ps->nsec  == 0)))  continue;
-    
-    /* Process the acquisition for the passed device. This routine gets called when the device time 
+
+    /* Process the acquisition for the passed device. This routine gets called when the device time
        is matching with the EDEF time.*/
 #ifdef BSA_DEBUG
 printf("calling bsaProcessor secnSevr %d\n", secnSevr);
@@ -330,21 +353,123 @@ printf("calling bsaProcessor secnSevr %d\n", secnSevr);
 
 /*=============================================================================
 
+  Name: bsaCheckerAlloc/bsaCheckerFree
+
+  Abs:  maintain free list of BsaChecker_tu unions. These care submitted
+        as 'work jobs' to the eventTask.
+
+  Args: alloc: None. free: pointer previously obtained by alloc
+
+  Rem:
+
+  Ret:  memory (alloc), void (free)
+
+==============================================================================*/
+
+static BsaChecker_tu *
+bsaCheckerAlloc()
+{
+BsaChecker_tu *rval;
+epicsMutexMustLock( bsaFLMutex_ps );
+	if ( (rval = bsaCheckerFL) ) {
+		bsaCheckerFL = rval->n;
+	}
+epicsMutexUnlock( bsaFLMutex_ps );
+	if ( ! rval ) {
+		rval = malloc( sizeof( *rval ) );
+	}
+	return rval;
+}
+
+static void
+bsaCheckerFree(BsaChecker_tu *p)
+{
+epicsMutexMustLock( bsaFLMutex_ps );
+	p->n         = bsaCheckerFL;
+	bsaCheckerFL = p;
+epicsMutexUnlock( bsaFLMutex_ps );
+}
+
+
+/*=============================================================================
+
+  Name: bsaCheckerWorker
+
+  Abs:  Wrapper for bsaCheckerDevices to be executed by eventTask.
+
+  Args: BsaChecker_tu * -- pointer to argument struct/union
+
+  Rem:
+
+  Ret:  VOID
+
+==============================================================================*/
+
+
+static void
+bsaCheckerWorker(void *arg)
+{
+BsaChecker_tu *checkArg = (BsaChecker_tu*)arg;
+
+	bsaCheckerDevices(
+	    &checkArg->s.edefTimeInit_s,
+	    &checkArg->s.edefTime_s,
+	    checkArg->s.edefAllDone,
+	    checkArg->s.edefAvgDone,
+	    checkArg->s.edefSevr,
+	    checkArg->s.edefIdx);
+
+	bsaCheckerFree( checkArg );
+}
+
+
+/*=============================================================================
+ *
+ *     Name: evrBsaMessage
+ *
+ *     Abs:  evrBsaMessage initialization.
+ *
+ *     Rem:  Add Message to evrEventTask Queue to Check BSA Data.
+ *
+=============================================================================*/
+static int evrBsaMessage(epicsTimeStamp *edefTimeInit_ps,
+                  epicsTimeStamp *edefTime_ps,
+                  epicsUInt32    edefAllDone,
+                  int            edefAvgDone,
+                  epicsEnum16    edefSevr,
+                  int            edefIdx)
+{
+BsaChecker_tu *checkArg = bsaCheckerAlloc();
+
+    checkArg->s.edefTimeInit_s = *edefTimeInit_ps;
+    checkArg->s.edefTime_s     = *edefTime_ps;
+    checkArg->s.edefAllDone    = edefAllDone;
+    checkArg->s.edefAvgDone    = edefAvgDone;
+    checkArg->s.edefSevr       = edefSevr;
+    checkArg->s.edefIdx        = edefIdx;
+    /* If queue is full, then forget about checking BSA for this pulse. */
+    return eventTaskTrySendWork( bsaCheckerWorker, (void*) checkArg );
+}
+
+
+/*=============================================================================
+
   Name: bsaChecker
 
   Abs:  Beam Synchronous Acquisition Checker.  It is called by the 360hz fiducial
-        task right before moving the pipeline. It gives information to bsaCheckerDevices 
-	that is called by evrEventTask at sligthly lower priority to fill in any missing 
-        data for any EDEF requesting new data and data for the previous acquisition 
+        task right before moving the pipeline. It gives information to bsaCheckerDevices
+	that is called by evrEventTask at sligthly lower priority to fill in any missing
+        data for any EDEF requesting new data and data for the previous acquisition
 	is not yet received.
- 
+
   Args: None.
 
-  Rem:  
-      
+  Rem:
+
   Ret:  0 = OK, -1 = Mutex problem .
 
 ==============================================================================*/
+
 void bsaChecker(void *uarg, const BsaTimingData *pBsaData)
 {
 epicsTimeStamp edefTimeInit_s;
@@ -376,29 +501,30 @@ unsigned long  edefMask;
 						&edefTime_s,
 						edefAllDone, edefAvgDone, edefSevr, idx);
 				if (status == -1) QueueFullCounter++;
-			}/* end of EDEF active on next pulse */ 
+			}/* end of EDEF active on next pulse */
 		}/* end of EDEF loop */
 	}/* end of any EDEF active on next pulse */
 }/*end bsaChecker*/
 
+
 /*============================================================================
  *
  *   Name: bsaCheckerDevices
  *
  *     Abs:  Beam Synchronous Acquisition Checker.  It is called by the evrEventTask.
- *           It fills in any missing data for any EDEF requesting new data 
+ *           It fills in any missing data for any EDEF requesting new data
  *           and data for the previous acquisition is not yet received.
- *                              
+ *
  *     Args: Type                Name             Access     Description
  *         ------------------- -----------       ---------- ----------------------------
  *         epicsTimeStamp *    edefTimeInit_ps    Read       Data timestamp
  *         epicsTimeStamp *    edefTime_ps        Read       Data timestamp
- *         epicsUInt32         edefAllDone        Read	     EDEF flag acquisition 
+ *         epicsUInt32         edefAllDone        Read	     EDEF flag acquisition
  *         int                 edefAvgDone	  Read       EDEF flag average done
  *         epicsEnum16         edefSevr           Read       EDEF severity
  *	   int		       edefIdx		  Read       EDEF index
- *     Rem:  
- *                                      
+ *     Rem:
+ *
  *     Ret:  0 = OK, -1 = Mutex problem .
  *
 ==============================================================================*/
@@ -417,8 +543,7 @@ int bsaCheckerDevices(epicsTimeStamp *edefTimeInit_ps,
     return -1;
   dev_ps = (bsaDevice_ts *)ellFirst(&bsaDeviceList_s);
   while (dev_ps) {
-printf("BSA CHECKER\n");
-    /* Fill in invalid data if the last time the device was processed is not the same as 
+    /* Fill in invalid data if the last time the device was processed is not the same as
      *        the last requested acquisition */
     bsa_ps = &dev_ps->bsa_as[edefIdx];
     if ((bsa_ps->timeData.secPastEpoch != edefTime_ps->secPastEpoch) ||
@@ -438,6 +563,7 @@ printf("BSA CHECKER\n");
   return 0;
 }
 
+
 /*=============================================================================
 
   Name: bsaSecnInit
@@ -449,9 +575,9 @@ printf("BSA CHECKER\n");
         char *              secnName    Read       BSA Device Name
         int                 noAverage   Read       Skip averaging (EVG IOC only)
         void **             dev_pps     Write      BSA Device Structure Pointer
-        
-  Rem:  
-      
+
+  Rem:
+
   Ret:  0 = OK, -1 = Mutex lock or memory allocation error
 
 ==============================================================================*/
@@ -461,7 +587,7 @@ int bsaSecnInit(char  *secnName,
                 void **dev_pps)
 {
   bsaDevice_ts *dev_ps = 0;
-  
+
   if ((!bsaRWMutex_ps) || epicsMutexLock(bsaRWMutex_ps))
     return -1;
   /* Check if device name is already registered. */
@@ -493,10 +619,10 @@ int bsaSecnInit(char  *secnName,
   Abs:  Beam Synchronous Acquisition Processing Global Initialization
 
   Args: None.
-        
-  Rem:  
-      
-  Ret:  0 = OK, -1 = Mutex creation error
+
+  Rem:  Always succeeds (or raises fatal error)
+
+  Ret:  0
 
 ==============================================================================*/
 
@@ -505,8 +631,9 @@ static int bsaInit(int pass)
 	if ( 0 == pass ) {
 		if (!bsaRWMutex_ps) {
 			bsaRWMutex_ps = epicsMutexMustCreate();
+			bsaFLMutex_ps = epicsMutexMustCreate();
 			ellInit(&bsaDeviceList_s);
-			RegisterBsaTimingCallback(0, bsaChecker);
+			RegisterBsaTimingCallback(bsaChecker, 0);
 		}
 	}
   return 0;
@@ -518,14 +645,14 @@ static int bsaInit(int pass)
 
   Abs:  Beam Synchronous Acquisition Record Update
         Updates average and RMS values of Secondary
-        for PRIM:LOCA:UNIT:$SECN$MDID.VAL 
+        for PRIM:LOCA:UNIT:$SECN$MDID.VAL
 
   Args: Type                Name        Access     Description
         ------------------- ----------- ---------- ----------------------------
         bsaRecord *         pbsa        Read/Write BSA Record
 
-  Rem:  
-      
+  Rem:
+
   Ret:  0 = OK
 
 ==============================================================================*/
@@ -575,7 +702,7 @@ static long read_bsa(bsaRecord *pbsa)
   }
   /* Read alarm if there was nothing to read.
      Soft alarm if there were no valid inputs to the average.
-     Else set stat/sevr to max values */ 
+     Else set stat/sevr to max values */
   if (noread) {
     pbsa->val[0]  = epicsNAN;
     pbsa->rms[0]  = 0.0;
@@ -600,7 +727,7 @@ static long init_record(dbCommon *prec, int noAverage, DBLINK *link)
     errlogPrintf("init_record (%s): INP is not INST_IO\n", prec->name);
     return S_db_badField;
   }
-  bsaSecnInit(link->value.instio.string, noAverage, &prec->dpvt);    
+  bsaSecnInit(link->value.instio.string, noAverage, &prec->dpvt);
   if (!prec->dpvt) {
     errlogPrintf("init_record (%s): cannot allocate DPVT\n", prec->name);
     return S_dev_noMemory;
@@ -712,7 +839,7 @@ DSET devBsa =
 {
   6,
   NULL,
-  bsaInit,
+  (DEVSUPFUN)bsaInit,
   init_bsa_record,
   get_ioint_info,
   read_bsa,
@@ -721,4 +848,3 @@ DSET devBsa =
 
 epicsExportAddress(dset,devBsa);
 epicsExportAddress(dset,devAoBsa);
-
