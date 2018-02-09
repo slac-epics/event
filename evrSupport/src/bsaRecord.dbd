@@ -28,7 +28,7 @@ recordtype(bsa) {
 	field(CNT,DBF_NOACCESS) {
 		prompt("Count")
 		special(SPC_DBADDR)
-		extra("long * cnt")
+		extra("epicsUInt32 * cnt")
 		#=type double
 		#=read YES
 		#=write NO
@@ -44,7 +44,7 @@ recordtype(bsa) {
 	field(PID,DBF_NOACCESS) {
 		prompt("Pulse IDs")
 		special(SPC_DBADDR)
-		extra("long * pid")
+		extra("epicsUInt32 * pid")
 		#=type double
 		#=read YES
 		#=write NO
