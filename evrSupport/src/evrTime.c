@@ -544,7 +544,8 @@ int evrTime(epicsUInt32 mpsModifier)
 	allDoneMask             = (minorMask >> 20) & 0x003ff;
 	allDoneMask            |= (majorMask >> 10) & 0xffc00;
 	bsaData.edefAllDoneMask = allDoneMask;
-	bsaData.edefUpdateMask  = bsaData.edefAvgDoneMask; 
+	/* BsaCore buffers multiple results and posts to compress when NELM or timeout is reached */
+	bsaData.edefUpdateMask  = 0;
 	bsaData.edefMinorMask   = minorMask & MOD5_EDEF_MASK;
 	bsaData.edefMajorMask   = majorMask & MOD5_EDEF_MASK;
 
