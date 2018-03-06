@@ -745,7 +745,8 @@ static long init_bsa_record(bsaRecord *pbsa)
                  pbsa->name, pbsa->edef);
     return S_db_badField;
   }
-  pbsa->dpvt = &((bsaDevice_ts *)pbsa->dpvt)->bsa_as[pbsa->edef-1];
+  pbsa->dpvt    = &((bsaDevice_ts *)pbsa->dpvt)->bsa_as[pbsa->edef-1];
+  pbsa->pidu[0] = 0;
   return 0;
 }
 

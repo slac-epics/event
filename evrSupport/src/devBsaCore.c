@@ -130,7 +130,8 @@ short reset = pvt->reset ? 1 : 0;
 			prec->val[i] = result->avg;
 			prec->rms[i] = result->rms;
 		}
-		prec->pid[i]     = result->pulseId;
+		prec->pid [i]    = result->pulseId;
+		prec->pidu[i]    = (result->pulseId >> 32);
 		prec->miss      += result->missed;
 		prec->rcnt      += result->count;
 		if ( result->sevr > maxSevr ) {

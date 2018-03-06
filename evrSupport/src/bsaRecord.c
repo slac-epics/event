@@ -101,10 +101,11 @@ static long init_record(struct bsaRecord *pbsa, int pass)
 		if ( pbsa->nelm == 0 ) {
 			pbsa->nelm = 1;
 		}
-		pbsa->val = malloc( sizeof(*pbsa->val) * pbsa->nelm );
-		pbsa->rms = malloc( sizeof(*pbsa->rms) * pbsa->nelm );
-		pbsa->cnt = malloc( sizeof(*pbsa->cnt) * pbsa->nelm );
-		pbsa->pid = malloc( sizeof(*pbsa->pid) * pbsa->nelm );
+		pbsa->val  = malloc( sizeof(*pbsa->val ) * pbsa->nelm );
+		pbsa->rms  = malloc( sizeof(*pbsa->rms ) * pbsa->nelm );
+		pbsa->cnt  = malloc( sizeof(*pbsa->cnt ) * pbsa->nelm );
+		pbsa->pid  = malloc( sizeof(*pbsa->pid ) * pbsa->nelm );
+		pbsa->pidu = malloc( sizeof(*pbsa->pidu) * pbsa->nelm );
 		return(0);
 	}
 
@@ -145,11 +146,13 @@ static long cvt_dbaddr(DBADDR *paddr)
 	paddr->no_elements = pbsa->nelm;
 	if ( paddr->pfield == &pbsa->val ) {
 		paddr->field_type = DBF_DOUBLE;
-	} else if ( paddr->pfield == &pbsa->rms ) {
+	} else if ( paddr->pfield == &pbsa->rms  ) {
 		paddr->field_type = DBF_DOUBLE;
-	} else if ( paddr->pfield == &pbsa->pid ) {
+	} else if ( paddr->pfield == &pbsa->pid  ) {
 		paddr->field_type = DBF_LONG;
-	} else if ( paddr->pfield == &pbsa->cnt ) {
+	} else if ( paddr->pfield == &pbsa->pidu ) {
+		paddr->field_type = DBF_LONG;
+	} else if ( paddr->pfield == &pbsa->cnt  ) {
 		paddr->field_type = DBF_LONG;
 	} else {
 		cantProceed("Invalid field in bsaRecord::cvt_dbaddr");
@@ -166,11 +169,13 @@ struct bsaRecord *pbsa = (struct bsaRecord *)paddr->precord;
 
 	if ( paddr->pfield == &pbsa->val ) {
 		paddr->pfield = pbsa->val;
-	} else if ( paddr->pfield == &pbsa->rms ) {
+	} else if ( paddr->pfield == &pbsa->rms  ) {
 		paddr->pfield = pbsa->rms;
-	} else if ( paddr->pfield == &pbsa->pid ) {
+	} else if ( paddr->pfield == &pbsa->pid  ) {
 		paddr->pfield = pbsa->pid;
-	} else if ( paddr->pfield == &pbsa->cnt ) {
+	} else if ( paddr->pfield == &pbsa->pidu ) {
+		paddr->pfield = pbsa->pidu;
+	} else if ( paddr->pfield == &pbsa->cnt  ) {
 		paddr->pfield = pbsa->cnt;
 	} else {
 		cantProceed("Invalid field in bsaRecord::cvt_dbaddr");
@@ -297,9 +302,18 @@ static void monitor(struct bsaRecord *pbsa)
 				/* update last archive value monitored */
 				pbsa->plst = pbsa->pid[i];
 			}
+			/* send out monitors connected to the pid field */
+			if (monitor_mask) db_post_events(pbsa,&pbsa->pid,monitor_mask);
+
+			if (pbsa->pidu[i] != pbsa->ulst) {
+				/* post events on value field for archive change */
+				monitor_mask |= DBE_VALUE|DBE_LOG;
+				/* update last archive value monitored */
+				pbsa->ulst = pbsa->pidu[i];
+			}
+			/* send out monitors connected to the pidu field */
+			if (monitor_mask) db_post_events(pbsa,&pbsa->pidu,monitor_mask);
 		}
-        /* send out monitors connected to the pid field */
-        if (monitor_mask) db_post_events(pbsa,&pbsa->pid,monitor_mask);
         /* Do diagnostics now */
         monitor_mask = save_monitor_mask;
         if (pbsa->noch != pbsa->lnoc) {
