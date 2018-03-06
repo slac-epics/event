@@ -37,6 +37,7 @@ DBD += drvEvr.dbd
 LIBRARY_IOC = evrSupport
 ifneq ($(BSA_CORE),)
 LIBRARY_IOC += evrSupportLegacy
+LIBRARY_IOC += eventBsaSupport
 endif
 
 EVR_SUP_COM_SRCS += evrEvInvariantDelay.c
@@ -49,6 +50,7 @@ EVR_SUP_COM_SRCS += longSubRecord.c
 EVR_SUP_COM_SRCS += bsaRecord.c
 EVR_SUP_COM_SRCS += drvEvr.c
 
+
 evrSupport_SRCS       += $(EVR_SUP_COM_SRCS)
 
 ifneq ($(BSA_CORE),)
@@ -57,6 +59,11 @@ evrSupportLegacy_SRCS += bsa.c
 evrSupportLegacy_LIBS += $(EPICS_BASE_IOC_LIBS)
 evrSupport_SRCS       += devBsaCore.c
 evrSupport_SRCS       += devAoBsaCore.c
+
+eventBsaSupport_SRCS  += bsaRecord.c
+eventBsaSupport_SRCS  += devBsaCore.c
+eventBsaSupport_SRCS  += devAoBsaCore.c
+eventBsaSupport_LIBS  += $(EPICS_BASE_IOC_LIBS)
 else
 evrSupport_SRCS       += bsa.c
 endif
