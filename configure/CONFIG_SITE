@@ -30,6 +30,11 @@ CROSS_COMPILER_TARGET_ARCHS = $(filter-out vxworks% vxWorks%,$(ALL_ARCHS))
 # If you don't want to install into $(TOP) then
 # define INSTALL_LOCATION here
 #INSTALL_LOCATION=<fullpathname>
+#
+HAVE_BSA_CORE_RTEMS=NO
+HAVE_BSA_CORE_Linux=YES
+
+HAVE_BSA_CORE=$(HAVE_BSA_CORE_$(OS_CLASS))
 
 EVR_DRIVER_SUPPORT_LINUX=YES
 

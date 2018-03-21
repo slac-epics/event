@@ -35,7 +35,7 @@ DBD += bsa.dbd
 DBD += drvEvr.dbd
 
 LIBRARY_IOC = evrSupport
-ifeq ($(BSA_CORE),YES)
+ifeq ($(HAVE_BSA_CORE),YES)
 LIBRARY_IOC += evrSupportLegacy
 LIBRARY_IOC += eventBsaSupport
 endif
@@ -53,7 +53,7 @@ EVR_SUP_COM_SRCS += drvEvr.c
 
 evrSupport_SRCS       += $(EVR_SUP_COM_SRCS)
 
-ifeq ($(BSA_CORE),YES)
+ifeq ($(HAVE_BSA_CORE),YES)
 evrSupportLegacy_SRCS += $(EVR_SUP_COM_SRCS)
 evrSupportLegacy_SRCS += bsa.c
 evrSupportLegacy_LIBS += $(EPICS_BASE_IOC_LIBS)
