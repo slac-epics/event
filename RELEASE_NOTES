@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+R4.3.2-BR-new_bsa_core: 2018-04-17 C.Bianchini
+        *Changed NELM from 50 to 1.
+         file changed: evrSupport/Db/bsa/bsaEdefAvg.db
+
 R4.2.9: 2017-06-06  H. Slepicka
     Bumped MiscUtils version to R2.2.5
 
