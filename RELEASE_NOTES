@@ -10,6 +10,7 @@ R4.3.3  2018-04-18   K. Kim
           if it is defined with some value (50 or 100), 
           the BSA record push multiple samples to compress record. 
           It will reduce processing rate of compress record and will bring better performance.
+        * Add document for BsaCore integration
 
 R4.3.2-BR-new_bsa_core: 2018-04-17 C.Bianchini
         *Changed NELM from 50 to 1.
