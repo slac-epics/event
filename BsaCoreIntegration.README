@@ -1,0 +1,121 @@
+Integration with BsaCore
+------------------------
+
+To implement BSA functions in ioc,
+we need to integrate BsaCore and DataSink into the ioc.
+
+
+1. Integration BsaCore into the ioc
+
+The configure/RELEASE file should have setting for BSACORE.
+
+BSACORE_MODULE_VERSION=R1.3.1
+BSACORE=$(EPICS_MODULES)/BsaCore/$(BSACORE_MODULE_VERSION)
+
+
+The <application>App/src/Makefile shoud have setting for BsaCore DBD and library.
+
+<application>_DBD +=  bsaCore.dbd
+<application>_LIBS += BsaCore
+
+
+2. Integration BsaSinker (PV interface)
+
+Till implemented the Bsa Sinker (PV interface) in event module. 
+We need to include the event module as the followings:
+
+In configure/RELEASE file, we need to set EVENT module as the followings:
+
+EVENT_MODULE_VERSION=R4.3.3
+EVENT=$(EPICS_MODULES)/event/$(EVENT_MODULE_VERSION)
+
+
+In <application>App/src/Makefile, we need to include bsa.dbd and eventBsaSupport library as the followings:
+
+<application>_DBD += bsa.dbd
+<application>_LIBS += eventBsaSupport
+
+
+Note, if you have a linker error which is related with undefined symbol, you can switch the order of library names.
+Please, switch the order of <>_LIBS definition and try again.
+
+3. Integration with BSA PV
+
+The event module provide bsa PV interface.
+We need to install the database template in the ioc. 
+
+DB_INSTALLS += $(EVENT)/db/bsaATTREdef.db
+
+
+The new BSA PV interface is most similar with previous version.
+Please, follow up Chapter (11) in REAME_BSA file.
+
+
+Note) bsaATTREdef.db has new macro SINK_SIZE to adjust maximum number of samples to push into compress record (bsa history buffer).
+If SINK_LINK is not defined, default value 1 will be applied in the database template, the compress record will be processed 
+for every data sample. If SINK_LINK has some value, the BSA record will waits to push samples to compress record 
+until sample count reaches the value. It will reduce the processing rate of compress record and will bring more peformance.
+The fllowings are an example of subsitutition file for bsaAttrEdef.db with the macro SINK_SIZE.
+
+file bsaATTREdef.db
+{
+pattern { D , ATTR , LOC  , UN , SLCLNK , EG , HO , LO , PR , AD , MD , I , LNK , SINK_SIZE }
+        { TORO:DMP1:399 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:399:TMIT , "",  60 }
+        { TORO:DMP1:685 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:685:TMIT , "",  60 }
+        { TORO:DMP1:399 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:399:CHRG , "",  60 }
+        { TORO:DMP1:685 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:685:CHRG , "",  60 }
+
+}
+
+
+
+
+4. Misc.
+
+Afterh the integration, there is few ways to test it.
+You can see all of the BSA Channel (BSA PV) with dbior command 
+as the followings:
+
+example 1)
+
+epics> dbior
+Driver: drvBsaCore
+BSA Core:
+BSA Channel[0] (TPR:SYS2:0:EV40PID) Dump
+  EDEF in use mask 0xfffff
+  Counters:
+     # items dropped because of 'pattern too new': 0
+     # items dropped because of 'pattern too old': 0
+     # items dropped because of 'pattern not fnd': 0
+     # timeout ticks                             : 11
+     # results flushed by timeouts               : 43
+     # timeouts with no progress                 : 0
+BSA Channel[1] (TPR:SYS2:0:EV41PID) Dump
+  EDEF in use mask 0xfffff
+  Counters:
+     # items dropped because of 'pattern too new': 0
+     # items dropped because of 'pattern too old': 0
+     # items dropped because of 'pattern not fnd': 0
+     # timeout ticks                             : 11
+     # results flushed by timeouts               : 43
+     # timeouts with no progress                 : 0
+Device Support: devAoBsa
+Device support for BSA Core legacy (record-based) data source
+
+
+
+example 2)
+
+epics> dbior tprPatternAsynDriver 10
+Driver: tprPatternAsynDriver
+        port name:       pattern
+        core path:       mmio/AmcCarrierEmpty/AmcCarrierCore
+        stream path:     tstream
+        driver location: 0x1ce0be0
+        api location:    0x1460a90
+Total 1 bsa callback functions(s) are registered
+Registered bsa function 0x4a2b10, argument 0x143dc10
+Total 0 fiducial function(s) are registered
+
+
+
