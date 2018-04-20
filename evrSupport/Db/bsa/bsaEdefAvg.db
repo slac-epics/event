@@ -10,7 +10,7 @@ record(bsa, "$(DEV):$(SECN)$(MDID)") {
   field(PRIO, "HIGH")
   field(INP, "@$(DEV):$(SECN)")
   field(EDEF, "$(MD)")
-  field(NELM, "1")
+  field(NELM, "20")
   field(EGU, "$(EGU)")
   field(HOPR, "$(HOPR)")
   field(LOPR, "$(LOPR)")
