@@ -268,7 +268,7 @@ printf("BSAAVG: done, secnSevr %d (%d avg count)\n", secnSevr, bsa_ps->avgcnt);
           bsa_ps->sevr   = secnSevr;
 	}
       } else {
-        bsa_ps->rms = bsa_ps->var/bsa_ps->avgcnt;
+        bsa_ps->rms = bsa_ps->var/(bsa_ps->avgcnt - 1);
       }
       bsa_ps->avgcnt = 0;
       bsa_ps->avg    = 0;
