@@ -1,5 +1,7 @@
 Release Notes for the event package
 -----------------------------------
+R4.3.5  2018-04-24   T. Straumann
+    *use BsaCore R1.3.3
 R4.3.4  2018-04-20   C. Bianchini
 	*bug fix: evrSupport/src/bsa.c to divide by n-1 instead of n.
 

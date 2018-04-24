@@ -21,7 +21,7 @@
 # ==========================================================
 MISCUTILS_MODULE_VERSION	= R2.2.5
 TIMING_API_MODULE_VERSION   = R0.6
-BSACORE_MODULE_VERSION      = R1.3.1
+BSACORE_MODULE_VERSION      = R1.3.3
 
 
 # ==========================================================
