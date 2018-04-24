@@ -20,7 +20,7 @@
 # could match a directory name.
 # ==========================================================
 MISCUTILS_MODULE_VERSION	= R2.2.5
-TIMING_API_MODULE_VERSION   = R0.6
+TIMINGAPI_MODULE_VERSION    = R0.6
 BSACORE_MODULE_VERSION      = R1.3.3
 
 
@@ -31,7 +31,7 @@ BSACORE_MODULE_VERSION      = R1.3.3
 # FOO = /Full/Path/To/Development/Version 
 # ==========================================================
 MISCUTILS	= $(EPICS_MODULES)/miscUtils/$(MISCUTILS_MODULE_VERSION)
-TIMING_API  = $(EPICS_MODULES)/timingApi/$(TIMING_API_MODULE_VERSION)
+TIMINGAPI   = $(EPICS_MODULES)/timingApi/$(TIMINGAPI_MODULE_VERSION)
 BSACORE     = $(EPICS_MODULES)/BsaCore/$(BSACORE_MODULE_VERSION)
 
 # Set EPICS_BASE last so it appears last in the DB, DBD, INCLUDE, and LIB search paths
