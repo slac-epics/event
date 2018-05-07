@@ -322,6 +322,8 @@ int bsaSecnAvg(epicsTimeStamp *secnTime_ps,
 ==============================================================================*/
 int bsaChecker()
 {
+  static epicsUInt32 retarded_edefAllDone[3] = {0,0,0};
+  int retard_index;
   epicsTimeStamp edefTimeInit_s;
   epicsTimeStamp edefTime_s;
   epicsUInt32    edefMinorMask;
@@ -334,6 +336,9 @@ int bsaChecker()
   evrModifier_ta modifierNext1_a;
   unsigned long  edefMask;
 
+  /* evolve retarded edefAlldone mask */
+  for(retard_index =0; retard_index <2; retard_index++) retarded_edefAllDone[retard_index+1] = retarded_edefAllDone[retard_index];
+
   /* Get the pattern for this pulse and check if any EDEF is active or finished. 
      Note that the pipeline has not yet been moved so we get the next
      pulse */
@@ -342,6 +347,11 @@ int bsaChecker()
    * high unused 10 bits of the severity masks (KLUGE!). */
   edefAllDone  = (edefMinorMask >> 20) & 0x003FF;
   edefAllDone |= (edefMajorMask >> 10) & 0xFFC00;
+
+  retarded_edefAllDone[0] = edefAllDone;  /* queueing up all done mask to retarded pipe */
+  edefAllDone |= retarded_edefAllDone[2]; /* bit wise or with 2 fiducial retarded */
+
+
   if ((modifierNext1_a[MOD5_IDX] & MOD5_EDEF_MASK) || edefAllDone) {
     for (idx = 0; idx < EDEF_MAX; idx++) {
       edefMask = 1 << idx;
