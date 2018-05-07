@@ -1,5 +1,17 @@
 Release Notes for the event package
 -----------------------------------
+
+R4.3.5-BR-1_0   2018-05-07 Kukhee Kim
+        * Make a new branch event-R4.3.6-BR-1_0
+        * Branch out from R4.3.5
+        * old EVG sends out edefAllDone mask at 1 fiducial after the last BSA sampling.
+          It makses an extra NaN at very end of BSA sampling in BsaCore.
+          We fixed the delayed edefAllDone in EVG (mps-R3-5-3), but it makes a side effect in exising BSA event module.
+          The event module could not evaluate very last BSA sampling, if the edefAllDone mask occurs on time fiducial.
+          So, we fixed the behavior, new event module evaluates the very last BSA sample 2 fiducail after.
+          It works well for both old EVG and new EVG.
+
+
 R4.3.5  2018-04-24   T. Straumann
     *use BsaCore R1.3.3
 R4.3.4  2018-04-20   C. Bianchini
