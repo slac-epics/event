@@ -517,6 +517,10 @@ int evrTime(epicsUInt32 mpsModifier)
   BsaTimingCallback  cb;
   void              *cbArg;
 
+  static epicsUInt32 retarded_edefAllDone[3] = {0,0,0};
+  int    retarded_index;
+
+
   /* Keep a count of fiducials and reset before overflow */
   if (msgCount < EVR_MAX_INT) {
     msgCount++;
@@ -528,6 +532,11 @@ int evrTime(epicsUInt32 mpsModifier)
   epicsMutexMustLock(evrTimeRWMutex_ps);
 
   if ( (cb = timingCallback) ) {
+
+        /*evolve retarded edefAllDone mask */
+        for(retarded_index = 0; retarded_index < 2; retarded_index++) {
+            retarded_edefAllDone[retarded_index+1] = retarded_edefAllDone[retarded_index];
+        }
 
 	cbArg = timingCallbackParm;
 
@@ -543,6 +552,9 @@ int evrTime(epicsUInt32 mpsModifier)
 	bsaData.edefAvgDoneMask = evr_ps->pattern_s.edefAvgDoneMask;
 	allDoneMask             = (minorMask >> 20) & 0x003ff;
 	allDoneMask            |= (majorMask >> 10) & 0xffc00;
+
+        retarded_edefAllDone[0] = allDoneMask;   /* queueing up all done mask to retar pipe */
+        allDoneMask |= retarded_edefAllDone[2];  /* bit wise or operation with 2 fiducial retarded */
 	bsaData.edefAllDoneMask = allDoneMask;
 	/* BsaCore buffers multiple results and posts to compress when NELM or timeout is reached */
 	bsaData.edefUpdateMask  = 0;
