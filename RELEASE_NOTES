@@ -1,5 +1,15 @@
 Release Notes for the event package
 -----------------------------------
+
+event-R4-2-5-BR-1_0   2018-05-07  Kukhee Kim
+        * Branch out from event-R4-2-5
+        * old EVG sends out edefAllDone mask at 1 fiducial after the last BSA sampling.
+          It makses an extra NaN at very end of BSA sampling in BsaCore.
+          We fixed the delayed edefAllDone in EVG (mps-R3-5-3), but it makes a side effect in exising BSA event module.
+          The event module could not evaluate very last BSA sampling, if the edefAllDone mask occurs on time fiducial.
+          So, we fixed the behavior, new event module evaluates the very last BSA sample 2 fiducail after.
+          It works well for both old EVG and new EVG. 
+
 event-R4-2-5: 2016-07-13 C. Bianchini and S. Allison
 	* Move record processing requests of BSA nan values from evrTask
 	  to evrEventTask so the scanIoRequests done at lower priority.
