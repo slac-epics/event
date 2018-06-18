@@ -23,6 +23,7 @@
 #include <alarm.h>
 #include <recGbl.h>
 #include <dbScan.h>
+#include <envDefs.h>
 
 static void onInit(BsaChannel, const epicsTimeStamp *, void *);
 static void onResult(BsaChannel, BsaResult, unsigned, void *);
@@ -40,12 +41,20 @@ typedef struct BsaDpvt {
 	int       reset;
 } BsaDpvt;
 
+static ENV_PARAM doRegisterCb = {
+	name:  "EVENT_REGISTER_BSA_CALLBACK",
+	pdflt: "1"
+};
+
 static long init(int pass)
 {
+long v;
 	if ( 0 == pass ) {
-		if ( BSA_TimingCallbackRegister( RegisterBsaTimingCallback ) ) {
-			errlogPrintf("BSA: unable to register timing callback!\n");
-			return -1;
+		if ( envGetLongConfigParam(&doRegisterCb, &v) || v ) {
+			if ( BSA_TimingCallbackRegister( RegisterBsaTimingCallback ) ) {
+				errlogPrintf("BSA: unable to register timing callback!\n");
+				return -1;
+			}
 		}
 	}
 	return 0;
