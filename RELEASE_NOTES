@@ -1,6 +1,8 @@
 Release Notes for the event package
 -----------------------------------
 
+R4.3.7  2018-06-28    K. Kim for Till Struamann
+
         * devBsaCore: defer activation of BSA sink until
           iocInit is in the initHookAfterIocRunning state.
 
