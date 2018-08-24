@@ -9,7 +9,7 @@ we need to integrate BsaCore and DataSink into the ioc.
 
 The configure/RELEASE file should have setting for BSACORE.
 
-BSACORE_MODULE_VERSION=R1.3.1
+BSACORE_MODULE_VERSION=R1.4.1
 BSACORE=$(EPICS_MODULES)/BsaCore/$(BSACORE_MODULE_VERSION)
 
 
@@ -26,7 +26,7 @@ We need to include the event module as the followings:
 
 In configure/RELEASE file, we need to set EVENT module as the followings:
 
-EVENT_MODULE_VERSION=R4.3.3
+EVENT_MODULE_VERSION=R4.3.8
 EVENT=$(EPICS_MODULES)/event/$(EVENT_MODULE_VERSION)
 
 
@@ -48,24 +48,36 @@ DB_INSTALLS += $(EVENT)/db/bsaATTREdef.db
 
 
 The new BSA PV interface is most similar with previous version.
-Please, follow up Chapter (11) in REAME_BSA file.
+Please,check up Chapter (11) in REAME_BSA file.
 
 
 Note) bsaATTREdef.db has new macro SINK_SIZE to adjust maximum number of samples to push into compress record (bsa history buffer).
-If SINK_LINK is not defined, default value 1 will be applied in the database template, the compress record will be processed 
-for every data sample. If SINK_LINK has some value, the BSA record will waits to push samples to compress record 
-until sample count reaches the value. It will reduce the processing rate of compress record and will bring more peformance.
-The fllowings are an example of subsitutition file for bsaAttrEdef.db with the macro SINK_SIZE.
+If SINK_SIZE is not defined, default value 10 will be applied in the database template.
+It will reduce the processing rate of compress record and will bring the performance improvement.
+
+file bsaATTREdef.db
+{
+pattern { D , ATTR , LOC  , UN , SLCLNK , EG , HO , LO , PR , AD , MD , I , LNK }
+        { TORO:DMP1:399 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:399:TMIT , "" }
+        { TORO:DMP1:685 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:685:TMIT , "" }
+        { TORO:DMP1:399 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:399:CHRG , "" }
+        { TORO:DMP1:685 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:685:CHRG , "" }
+
+}
+
+
+If we want to get the old behavior, we need to set SINK_SIZE =1 explicitly as the followings:
 
 file bsaATTREdef.db
 {
 pattern { D , ATTR , LOC  , UN , SLCLNK , EG , HO , LO , PR , AD , MD , I , LNK , SINK_SIZE }
-        { TORO:DMP1:399 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:399:TMIT , "",  60 }
-        { TORO:DMP1:685 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:685:TMIT , "",  60 }
-        { TORO:DMP1:399 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:399:CHRG , "",  60 }
-        { TORO:DMP1:685 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:685:CHRG , "",  60 }
+        { TORO:DMP1:399 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:399:TMIT , "",  1 }
+        { TORO:DMP1:685 , TMIT , DMP1 , BC01 , ""  , Nel ,   5 , 0 , 5e+07 , -1 , 0 , TORO:DMP1:685:TMIT , "",  1 }
+        { TORO:DMP1:399 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:399:CHRG , "",  1 }
+        { TORO:DMP1:685 , CHRG , DMP1 , BC01 , ""  , pC  , 400 , 0 , 2     , -1 , 0 , TORO:DMP1:685:CHRG , "",  1 }
 
 }
+
 
 
 
@@ -116,6 +128,4 @@ Driver: tprPatternAsynDriver
 Total 1 bsa callback functions(s) are registered
 Registered bsa function 0x4a2b10, argument 0x143dc10
 Total 0 fiducial function(s) are registered
-
-
 
