@@ -30,6 +30,7 @@ BSA Test Scenarios
  
 
 2. test case 0 (120Hz source, 120Hz acquisition with average 3 samples)
+
    - set up 120Hz BSA acquisition with average 3
    . check up IRQ is enabled for event 40
    . reserve a BSA dataslot,             caput IOC:IN20:EV01:EDEFNAME "myTest"
@@ -38,6 +39,7 @@ BSA Test Scenarios
    . put 2800 to number of measurement   caput EDEF:SYS0:<N>:MEASCNT "2800"
    . start acquisition                   caput EDEF:SYS0:<N>:CTRL    "ON"
    . wait until the CTRL PV turns to OFF
+
    - verify the acquisition
    . check up NUSE field in the history buffer     caget <IOC_NAME>:0:PULSEIDHST<N>.NUSE
      it should be 2800
@@ -61,6 +63,7 @@ BSA Test Scenarios
       
       
 3. test case 1 (60Hz source, 120Hz acquisition with no average)
+
    - set up 120Hz BSA acquisition with no average
    . check up IRQ is enabled for event 41
    . reserve a BSA dataslot,             caput IOC:IN20:EV01:EDEFNAME "myTest"
@@ -69,6 +72,7 @@ BSA Test Scenarios
    . put 2800 to number of measurement   caput EDEF:SYS0:<N>:MEASCNT "2800"
    . start acquisition                   caput EDEF:SYS0:<N>:CTRL    "ON"
    . wait until the CTRL PV turns to OFF
+
    - verify the acquisition
    . check up NUSE field in the history buffer     caget <IOC_NAME>:1:PULSEIDHST<N>.NUSE
      it should be 2800
