@@ -15,6 +15,7 @@ include $(TOP)/configure/CONFIG
 DB += bsaEdefAvg.db
 DB += bsaEdefFanouts.db
 # Device Simulation
+DB += bsaPulseId.db
 DB += bsaTestInput.db
 DB += bsaProcTestAll.db
 # Device edef records
