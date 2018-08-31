@@ -1,0 +1,82 @@
+------------------
+BSA Test Scenarios
+------------------
+
+1. Prepare application
+- install "bsaPulseId.db" into application
+  add the following line into $(TOP)/<application>App/Db/Makefile
+
+  DB_INSTALL += $(EVENT)/db/bsaPulseId.db    # database template for bsa data source (pulsed id)
+  DB_INSTALL += $(EVENT)/db/Bsa.db           # database template for bsa/compress/AO reco
+  
+- prepare database for two test cases
+  put the following lines into st.cmd
+  
+  # database for test case 0 #
+  dbLoadRecords("db/bsaPulseId.db", "IOC=<IOC_NAME>,SCAN=Event,EVNT=40,N=0")
+  dbLoadRecords("db/Bsa.db", "DEVICE=<IOC_NAME>:0,ATRB=PULSEID") 
+
+  # database for test case 1 #
+  
+  dbLoadRecords("db/bsaPulseId.db", "IOC=<IOC_NAME>,SCAN=Event,EVNT=41,N=1")
+  dbLoadRecords("db/Bsa.db", "DEVICE=<IOC_NAME>:1,ATRB=PULSEID")
+  
+  remark) the <IOC_NAME> should be same with IOC macro in db/Pattern.db.
+           if we have loaded up the Pattern.db with IOC=IOC:34:EV02 as the followings, 
+           
+           dbLoadRecords("db/Pattern.db","IOC=IOC:B34:EV02,SYS=SYS0")
+  
+           the <IOC_NAME> should be IOC:B34:EV02 
+ 
+
+2. test case 0 (120Hz source, 120Hz acquisition with average 3 samples)
+   - set up 120Hz BSA acquisition with average 3
+   . check up IRQ is enabled for event 40
+   . reserve a BSA dataslot,             caput IOC:IN20:EV01:EDEFNAME "myTest"
+   . set up EDEF masks, put 0x0 for all of the masks, put 0x36 to exclusion mask for modifier 2
+   . put 3 to number of average          caput EDEF:SYS0:<N>:AVGCNT  "3"
+   . put 2800 to number of measurement   caput EDEF:SYS0:<N>:MEASCNT "2800"
+   . start acquisition                   caput EDEF:SYS0:<N>:CTRL    "ON"
+   . wait until the CTRL PV turns to OFF
+   - verify the acquisition
+   . check up NUSE field in the history buffer     caget <IOC_NAME>:0:PULSEIDHST<N>.NUSE
+     it should be 2800
+     
+   . check up the history buffer                   caget <IOC_NAME>:0:PULSEIDHST<N>
+   . check up the pulse id history buffer          caget <IOC_NAME>:0:PULSEIDPIDHST<N>
+   
+     the history buffer should have a series of incremental number, interval 9, no nan
+     the pid history buffer should have a series of incremental number, the number should be history buffer + 3.
+     
+     the following are a typical example:
+      [khkim@lcls-dev3 ioc-b34-ev02]$ caget -# 10 IOC:B34:EV02:0:PULSEIDHST8
+      IOC:B34:EV02:0:PULSEIDHST8 10 3441 3450 3459 3468 3477 3486 3495 3504 3513 3522
+      [khkim@lcls-dev3 ioc-b34-ev02]$ caget -# 10 IOC:B34:EV02:0:PULSEIDPIDHST8
+      IOC:B34:EV02:0:PULSEIDPIDHST8 10 3444 3453 3462 3471 3480 3489 3498 3507 3516 3525
+      
+   . check up RMS history buffer                    caget <IOC_NAME>:0:PLUSEIDRMSHST<N>
+     the RMS should show always 3
+   . check up CNT history buffer                    caget <IOC_NAME>:0:PULSEIDCNTHST<N>
+     the CNT should show always 3
+      
+      
+3. test case 1 (60Hz source, 120Hz acquisition with no average)
+   - set up 120Hz BSA acquisition with no average
+   . check up IRQ is enabled for event 41
+   . reserve a BSA dataslot,             caput IOC:IN20:EV01:EDEFNAME "myTest"
+   . set up EDEF masks, put 0x0 for all of the masks, put 0x36 to exclusion mask for modifier 2
+   . put 1 to number of average          caput EDEF:SYS0:<N>:AVGCNT  "1"
+   . put 2800 to number of measurement   caput EDEF:SYS0:<N>:MEASCNT "2800"
+   . start acquisition                   caput EDEF:SYS0:<N>:CTRL    "ON"
+   . wait until the CTRL PV turns to OFF
+   - verify the acquisition
+   . check up NUSE field in the history buffer     caget <IOC_NAME>:1:PULSEIDHST<N>.NUSE
+     it should be 2800
+     
+   . check up the history buffer                   caget <IOC_NAME>:1:PULSEIDHST<N>
+     it should show pattern as data nan data nan data nan
+   . chekc up the CNT history buffer               caget <IOC_NAME>:1:PULSEIDCNTHST<N>
+     it should show pattern as 1 0 1 0 1 0 1 0
+         
+
+                
