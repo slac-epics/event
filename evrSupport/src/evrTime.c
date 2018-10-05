@@ -76,6 +76,7 @@
 #include "evrTime.h"       
 #include "evrPattern.h"        
 #include <time.h>
+#include "epicsVersion.h"
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -1478,7 +1479,14 @@ int evrTimePatternPutEnd(int modulo720Flag)
 {
   /* Post the modulo-720 sync event if the pattern has that bit set */
   if (modulo720Flag) {
-    post_event(EVENT_MODULO720);
+#if EPICS_VERSION < 3 || (EPICS_VERSION == 3 && EPICS_REVISION < 15)
+	post_event(EVENT_MODULO720);
+#else
+	static EVENTPVT modulo720evt = NULL;
+	if (!modulo720evt)
+		modulo720evt = eventNameToHandle(EVENT_MODULO720_STR);
+	postEvent(modulo720evt);
+#endif
     epicsTimeGetCurrent(&mod720time);
   }
   if (evrTimeRWMutex_ps) {

@@ -467,6 +467,14 @@ static long init_ao_record(aoRecord *pao)
   return (init_record((dbCommon *)pao, 0, &pao->out));
 }
 
+#ifndef dbGetPdbAddrFromLink
+/* Brought in ugly macro from 3.14 till we can nuke this bsacompressRecord entirely */
+#define dbGetPdbAddrFromLink(PLNK) \
+    ( ( (PLNK)->type != DB_LINK ) \
+	? 0 \
+	: ( ( (struct dbAddr *)( (PLNK)->value.pv_link.pvt) ) ) )
+#endif /* dbGetPdbAddrFromLink */
+
 static long write_ao(aoRecord *pao)
 {
   long status = 0;

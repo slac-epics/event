@@ -91,6 +91,7 @@
 #include <iocsh.h>              /* EPICS iocsh support library                                    */
 
 #include <mrfVme64x.h>          /* VME-64X CR/CSR routines and definitions (with MRF extensions)  */
+#include "basicIoOps.h"         /* for out_le16, in_le16 */
 #include <drvMrfEg.h>           /* MRF Event Receiver driver support layer interface              */
 #include <egRecord.h>           /* For driver to load seq rams, we need to know the mode          */
 #include <egeventRecord.h>      /* In order to do sth with egeventRecord */
@@ -218,7 +219,7 @@ LOCAL IOSCANPVT evg_ioscanpvt;  /* single interrupt source for all evg recs */
 #endif
 
 LOCAL ELLLIST        EgCardList;                  /* Linked list of EG card structures      */
-LOCAL epicsBoolean   EgCardListInit = epicsFalse; /* Init flag for EG card structure list   */
+LOCAL int   EgCardListInit = epicsFalse; /* Init flag for EG card structure list   */
 
 static epicsEventId     EgRamTaskEventSem;
 static int              ConfigureLock = 0;

@@ -1,8 +1,3 @@
-include "menuScan.dbd"
-include "menuYesNo.dbd"
-include "menuAlarmStat.dbd"
-include "menuAlarmSevr.dbd"
-include "menuPriority.dbd"
 menu(egMOD1) {
 	choice(egMOD1_Off,"Off")
 	choice(egMOD1_Normal,"Normal")

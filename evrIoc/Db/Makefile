@@ -37,7 +37,6 @@ DB += mpsEvrPattern.db
 
 # Event Code Sequence Test
 DB += ecsTest.db
-DB_INSTALLS += $(TOP)/../db/eventCodeSequenceAll.db
 
 # BSA Test Stands
 DB += bsaXL01.db

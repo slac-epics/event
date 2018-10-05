@@ -104,6 +104,8 @@ int EvrCloseWindow(int fd, int mem_window)
   int result;
 
   result = munmap(0, mem_window);
+  if ( result < 0 )
+    perror( "EvrCloseWindow: munmap error." );
   return close(fd);
 }
 

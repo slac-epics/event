@@ -578,9 +578,8 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
    /*---------------------
     * Local variables
     */
-    epicsBoolean   DebugFlag;			/* True if debug output prints are enabled        */
-    epicsBoolean   LoadMask = epicsFalse;       /* True if need to load a new output mask         */
-    epicsBoolean   LoadRam  = epicsFalse;       /* True if need ro re-load the Event Map RAM      */
+    int   DebugFlag;			/* True if debug output prints are enabled        */
+    int   LoadRam  = epicsFalse;       /* True if need ro re-load the Event Map RAM      */
     epicsUInt16    Mask = 0;                    /* New output mask for this event                 */
     ErCardStruct  *pCard;                       /* Pointer to Event Receiver card structure       */
 	unsigned short monitor_mask = 0;
@@ -653,7 +652,6 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
 			}/*end if previous event number was valid*/
 
             pRec->lenm	= pRec->enm;
-            LoadMask	= epicsTrue;
         }/*end if event number has changed*/
 
        /*---------------------
@@ -673,7 +671,6 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
 			}/*end if we should write new output mask for this event*/
 
             pRec->lout = Mask;
-            LoadMask = epicsTrue;
         }/*end if output mask has changed*/
 
     }/*end if record is enabled*/
@@ -1157,7 +1154,7 @@ epicsStatus ErEpicsStringoutWrite (stringoutRecord  *pRec)
     /*---------------------
      * Get the event number (signal)
      */
-    Event = pRec->evnt;
+    Event = pRec->tse;
  
     /*---------------------
      * Get the card structure.
@@ -1323,7 +1320,7 @@ epicsStatus ErEpicsStringinRead (stringinRecord  *pRec)
     /*---------------------
      * Get the event number (signal)
      */
-    Event = pRec->evnt;
+    Event = pRec->tse;
  
     /*---------------------
      * Get the card structure.
@@ -1363,7 +1360,7 @@ epicsStatus ErEpicsStringinRead (stringinRecord  *pRec)
 
 	if ( pRec->tpro )
 		printf( "ErEpicsStringinRead: %s updated to %s for EC %d\n",
-				pRec->name, pRec->val, pRec->evnt );
+				pRec->name, pRec->val, Event );
     return (0);
 
 }/*end ErEpicsStringinRead()*/

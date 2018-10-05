@@ -55,10 +55,10 @@ DB += evrTrigCtrl.db
 
 # Sample substitution files for each
 # of our common EVR boards
-DB_INSTALLS += evrPmc230.substitutions
-DB_INSTALLS += evrVme230.substitutions
-DB_INSTALLS += evrVme230RF.substitutions
-DB_INSTALLS += evrSLAC.substitutions
+DB += evrPmc230.substitutions
+DB += evrVme230.substitutions
+DB += evrVme230RF.substitutions
+DB += evrSLAC.substitutions
 
 include $(TOP)/configure/RULES
 #----------------------------------------

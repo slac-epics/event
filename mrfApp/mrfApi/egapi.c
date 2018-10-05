@@ -90,6 +90,8 @@ int EvgClose(int fd)
   int result;
 
   result = munmap(0, EVG_MEM_WINDOW);
+  if ( result < 0 )
+    perror( "EvgClose: munmap error." );
   return close(fd);
 }
 #else
