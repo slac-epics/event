@@ -1,14 +1,21 @@
 Release Notes for the event package
 -----------------------------------
-event-R4-0-0:
-      * remove tag event-R3-5-0 and force tag it to event-R4-0-0
+R4.0.0-3.0.0:	2018-10-05 Bruce Hill
+	Fixed numerous build errors and warnings and R3.15.5 compatibility
+	Updated to new git workflow and latest modules
+	Added trigger specific eventctrl records to trigger eventctrl grid screens
+	Added evrPatternProc.db for PATTERNDIAG
+	Updated EvrClearIrqFlags to add interrupt flag register clearing operation in order to support SLAC G2 PCIe EVR cards. MRF and SLAC G1 are immune.
+
+event-R4-0-0:	2013-11-14 Kukhee Kim
+	  * remove tag event-R3-5-0 and force tag it to event-R4-0-0
 
 event-R3-5-0:
-      * Removing Beam Program Dependency from Event Module
-        - do not require SITE_FACILITY information in the RELEASE_SITE file
-        - readout the list of event name and EVG delay (intrinsic delay) 
-          from waveform PVs in the PNET soft IOC
-      * Remove event name from PV (no more TEC macro in the trig.substitution file)
+	  * Removing Beam Program Dependency from Event Module
+		- do not require SITE_FACILITY information in the RELEASE_SITE file
+		- readout the list of event name and EVG delay (intrinsic delay) 
+		  from waveform PVs in the PNET soft IOC
+	  * Remove event name from PV (no more TEC macro in the trig.substitution file)
         - Please, read README file for more detailed information
       * Remove ACTV macro for the trig.subsitution file
         - the forward/backward propagation & event invariant delay (fixed delay) are default one
