@@ -53,6 +53,11 @@
 #ifndef DRV_MRF_EVR_H
 #define DRV_MRF_EVR_H
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**************************************************************************************************/
 /*  Other Header Files Required by This File                                                      */
 /**************************************************************************************************/
@@ -334,5 +339,10 @@ struct ErCardStruct {
     char            intMsg     [EVR_INT_MSG_LEN];    /* Buffer for interrupt debug messages       */
     char            FormFactor;              /* "VME_EVR" or "PMC_EVR" */
 };/*ErCardStruct*/
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
