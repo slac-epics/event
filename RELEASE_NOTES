@@ -2,6 +2,7 @@ Release Notes for the event package
 -----------------------------------
 R4.3.10  2018-11-02   K. Kim
         * build against BsaCore R1.5.1
+        * make all of tempaltes have SINK_SIZE=10 as default
 
 R4.3.9  2018-10-16    K. Kim
         * build against BsaCore R1.5.0
