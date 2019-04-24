@@ -90,20 +90,26 @@ extern "C" {
 #define MPS_PERM_MASK           (0xFFF00000)  /* MPS Permit bits       */
 #define MPS_VALID               (0x00000001)  /* MPS Valid data        */
 
-#define MPS_DEST_POCKCELL_MASK  (0x00000002)  /* MPSDestinationPockelsCell             */
-#define MPS_DEST_MECHSHUT_MASK  (0x00000004)  /* MPSDestinationMechanicalShutter       */
-#define MPS_DEST_LHTRSHUT_MASK  (0x00000008)  /* MPSDestinationLaserHeaterShutter      */
-#define MPS_DEST_GUNSPECT_MASK  (0x00000010)  /* MPSDestinationGunSpectrometer         */
-#define MPS_DEST_YAGB1211_MASK  (0x00000020)  /* MPSDestinationYagBl211                */
-#define MPS_DEST_SABDUMP_MASK   (0x00000040)  /* MPSDestinationStraightAheadBeamDump   */
-#define MPS_DEST_TD11_MASK      (0x00000080)  /* MPSDestinationTd11                    */
-#define MPS_DEST_D2_MASK        (0x00000100)  /* MPSDestinationD2                      */
-#define MPS_DEST_52S12_MASK     (0x00000200)  /* MPSDestination52Sl2                   */
-#define MPS_DEST_BYKIKDMP_MASK  (0x00000400)  /* MPSDestinationBykikDump               */
-#define MPS_DEST_TDUND_MASK     (0x00000800)  /* MPSDestinationTdUnd                   */
-#define MPS_DEST_MAINDMP_MASK   (0x00001000)  /* MPSDestinationMainDump                */
-#define MPS_DEST_PHOTSHUT_MASK  (0x00002000)  /* MPSDestinationPhotonShutter           */
-#define MPS_DEST_EXPERIMT_MASK  (0x00004000)  /* MPSDestinationExperiment              */
+/* Masks defined for CLTS timing MPS communication */
+#define RATE_MPS_HXR_119HZ    (0x00000002)  /* RATE_MPS_HXR_119HZ    */
+#define RATE_MPS_HXR_110HZ    (0x00000004)  /* RATE_MPS_HXR_110HZ    */
+#define RATE_MPS_HXR_90HZ     (0x00000008)  /* RATE_MPS_HXR_90HZ      */
+#define RATE_MPS_HXR_60HZ     (0x00000010)  /* RATE_MPS_HXR_60HZ      */
+#define RATE_MPS_HXR_30HZ     (0x00000020)  /* RATE_MPS_HXR_30HZ      */
+#define RATE_MPS_HXR_10HZ     (0x00000040)  /* RATE_MPS_HXR_10HZ      */
+#define RATE_MPS_HXR_05HZ     (0x00000080)  /* RATE_MPS_HXR_05HZ      */
+#define RATE_MPS_HXR_01HZ     (0x00000100)  /* RATE_MPS_HXR_01HZ      */
+#define RATE_MPS_SXR_119HZ   (0x00000200)  /* RATE_ MPS_SXR_119HZ    */
+#define RATE_MPS_SXR_110HZ   (0x00000400)  /* RATE_ MPS_SXR_110HZ    */
+#define RATE_MPS_SXR_90HZ    (0x00000800)  /* RATE_ MPS_SXR_90HZ     */
+#define RATE_MPS_SXR_60HZ    (0x00001000)  /* RATE_ MPS_SXR_60HZ     */
+#define RATE_MPS_SXR_30HZ    (0x00002000)  /* RATE_ MPS_SXR_30HZ     */
+#define RATE_MPS_SXR_10HZ    (0x00004000)  /* RATE_ MPS_SXR_10HZ     */
+
+#define RATE_MPS_SXR_05HZ  (0x00010000)  /* RATE_ MPS_SXR_05HZ  BITP 176 */
+#define RATE_MPS_SXR_01HZ  (0x00020000)  /* RATE_ MPS_SXR_01HZ  BITP 177*/
+#define MPS_DEST_HXR_MASK   (0x00040000)  /* MPS Destination information to timing HXR  BITP 178 */
+#define MPS_DEST_SXR_MASK   (0x00080000)  /* MPS Destination information to timing SXR  BITP 179 */
 
 #define MPS_PERM_POCKCELL_MASK  (0x00100000)  /* MPSMitigationDevicePockelsCell        */
 #define MPS_PERM_MECHSHUT_MASK  (0x00200000)  /* MPSMitigationDeviceMechanicalShutter  */
