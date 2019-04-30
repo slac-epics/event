@@ -1,5 +1,11 @@
 Release Notes for the event package
 -----------------------------------
+#Branching from master branch. CLTS requires changes to the 32 bit version of the event module to allow 
+setup of new modifier bits used for MPS-Timing communication
+event-R4-2-5-CLTS: 4/30/2019 C. Bianchini
+	* Added and repurpose modifier bit masks for CLTS timing MPS communication
+	    evrSupport/src/evrPattern.h
+
 event-R4-2-5: 2016-07-13 C. Bianchini and S. Allison
 	* Move record processing requests of BSA nan values from evrTask
 	  to evrEventTask so the scanIoRequests done at lower priority.
