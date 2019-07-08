@@ -42,8 +42,8 @@ extern "C" {
 /* Bits in modifier 2                                                  */
 #define MOD2_IDX                1  
 #define EVG_BURST               (0x00000040)  /*Single-shot/burst pulse*/
-#define KICKER_LI25             (0x10000000)  /* BXKIK trigger         */
-#define KICKER_LTU              (0x20000000)  /* BYKIK trigger         */
+#define BYKIKS                  (0x10000000)  /* BYKIKS trigger         */
+#define BYKIK                   (0x20000000)  /* BYKIK trigger         */
 #define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
 /* Mask used to decode timeslot 1 to 6 from modifier2   */
 #define TIMESLOT_MASK           (0x0000003F)  /* timeslot   mask       */
@@ -117,7 +117,7 @@ extern "C" {
 #define MPS_PERM_POCKCELL_MASK  (0x00100000)  /* MPSMitigationDevicePockelsCell        */
 #define MPS_PERM_MECHSHUT_MASK  (0x00200000)  /* MPSMitigationDeviceMechanicalShutter  */
 #define MPS_PERM_BYKIK_MASK     (0x00400000)  /* MPSMitigationDeviceBykik              */
-#define MPS_PERM_BYKIK_MASK     (0x00000002)  /* MPSMitigationDeviceBykiks	       */	
+#define MPS_PERM_BYKIKS_MASK     (0x00000002)  /* MPSMitigationDeviceBykiks	       */	
 #define MPS_PERM_LHTRSHUT_MASK  (0x00800000)  /* MPSMitigationDeviceLaserHeaterShutter */
 
 /* VAL values set by pattern subroutines */
