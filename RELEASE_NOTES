@@ -1,9 +1,7 @@
 Release Notes for the event package
 -----------------------------------
 R4.4.0	 2019-04-24   C. Bianchini
-	* Re-purposed MOD6 modifier bits initially used destination bits from MPS, 
-	  the code is now decommissioned in MPS and they will be used for CLTS timing-MPS communication, 
-	  additional 4 modifier bits are also defined. 
+	* Added and repurpose modifier bit masks for CLTS timing MPS communication and burst modes  
 	  evrSupport/src/evrPattern.h
 
 R4.3.10  2018-11-02   K. Kim
