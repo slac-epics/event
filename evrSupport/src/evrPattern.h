@@ -42,7 +42,9 @@ extern "C" {
 /* Bits in modifier 2                                                  */
 #define MOD2_IDX                1  
 #define EVG_BURST               (0x00000040)  /*Single-shot/burst pulse*/
-#define BYKIKS                  (0x10000000)  /* BYKIKS trigger         */
+#define EVG_HXR_BURST		(0x00000100)  /* BYKIK HXR Burst pulse */
+#define EVG_SXR_BURST		(0x00000200)  /* BYKIKS SXR Burst pulse*/
+#define BYKIKS                  (0x10000000)  /* BYKIKS trigger        */
 #define BYKIK                   (0x20000000)  /* BYKIK trigger         */
 #define TCAV3_PERM              (0x40000000)  /* TCAV3                 */
 /* Mask used to decode timeslot 1 to 6 from modifier2   */
