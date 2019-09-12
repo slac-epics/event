@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+R4.4.1   2019-09-11   K. Kim
+        * build with BsaCore-R1.5.2
+
 R4.4.0	 2019-04-24   C. Bianchini
 	* Added and repurpose modifier bit masks for CLTS timing MPS communication and burst modes  
 	  evrSupport/src/evrPattern.h
