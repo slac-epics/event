@@ -1,5 +1,18 @@
 Release Notes for the event package
 -----------------------------------
+R4.5.0  12/06/2019 C. Bianchini
+        * Changed system EDEFs: bsaATTREdef.substitutions and bsaProcTestAll.substitutions
+              {  $(DEVICE)  ,11,   11, $(LOC)    }
+              {  $(DEVICE)  ,12,   1H, $(LOC)    }
+              {  $(DEVICE)  ,13,   TH, $(LOC)    }
+              {  $(DEVICE)  ,14,   BR, $(LOC)    }
+              {  $(DEVICE)  ,15,   CUS1H, $(LOC)    }
+              {  $(DEVICE)  ,16,   CUSTH, $(LOC)    }
+              {  $(DEVICE)  ,17,   CUSBR, $(LOC)    }
+              {  $(DEVICE)  ,18,   CUH1H, $(LOC)    }
+              {  $(DEVICE)  ,19,   CUHTH, $(LOC)    }
+              {  $(DEVICE)  ,20,   CUHBR,
+
 R4.4.1   2019-09-11   K. Kim
         * build with BsaCore-R1.5.2
 
