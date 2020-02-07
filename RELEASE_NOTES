@@ -1,5 +1,13 @@
 Release Notes for the event package
 -----------------------------------
+R4.5.1  02/06/2020 K. Kim
+        * resotre back SINK_SIZE macro and put default: on demand SINK_SIZE=10, system SINK_SIZE=1
+        * remove PIDHST from the bsa history buffer to reduce CPU load
+
+---------
+brach out to R4.5.0-br_remove_bsa   02/06/2020 K. Kim
+---------
+
 R4.5.0  12/06/2019 C. Bianchini
         * Changed system EDEFs: bsaATTREdef.substitutions and bsaProcTestAll.substitutions
               {  $(DEVICE)  ,11,   11, $(LOC)    }
