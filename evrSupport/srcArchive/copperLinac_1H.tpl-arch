@@ -16,6 +16,6 @@
 #==============================================================
 #
 
-$(D)$(ATTR)1H          1              scan
-$(D)$(ATTR)CUS1H       1              scan
-$(D)$(ATTR)CUH1H       1              scan
+$(D):$(ATTR)1H          1              scan
+$(D):$(ATTR)CUS1H       1              scan
+$(D):$(ATTR)CUH1H       1              scan
