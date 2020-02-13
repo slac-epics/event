@@ -154,6 +154,7 @@ pattern { D , ATTR , LOC  , UN , SLCLNK , EG , HO , LO , PR , AD , MD , I , LNK 
 (11.3) Add FLNK to prim:loca:unit:EF<your-bsa-signal-name> from your BSA PV. Example: TORO:DMP1:399:TMIT.FLNK = TORO:DMP1:399:EFTMIT
 (11.4) Add a database to your application's Db/Makefile named similar to the file created in step 2, but with the ".db" extension.  Example: DB += IOC-DMP1-BC01bsa.db
 (11.5) Load you database in your IOC with dbLoadRecords.  Example: dbLoadRecords("db/IOC-DMP1-BC01bsa.db")
+(11.6) Load in your MakeFile copperLinac_1H.tpl-arch to archive 1H SYS EDEF.
 
 
 (12) BsaCore integration
