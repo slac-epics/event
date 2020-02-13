@@ -227,16 +227,6 @@ static void monitor(struct bsaRecord *pbsa)
         }
         /* send out monitors connected to the cnt field */
         if (monitor_mask) db_post_events(pbsa,&pbsa->cnt,monitor_mask);
-	/* check for PID archive change */
-        monitor_mask = save_monitor_mask;
-        if (pbsa->pid != pbsa->plst) {
-                /* post events on value field for archive change */
-                monitor_mask |= DBE_VALUE|DBE_LOG;
-                /* update last archive value monitored */
-                pbsa->plst = pbsa->pid;
-        }
-        /* send out monitors connected to the pid field */
-        if (monitor_mask) db_post_events(pbsa,&pbsa->pid,monitor_mask);
         /* Do diagnostics now */
         monitor_mask = save_monitor_mask;
         if (pbsa->noch != pbsa->lnoc) {

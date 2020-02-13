@@ -538,7 +538,6 @@ static long read_bsa(bsaRecord *pbsa)
       pbsa->rms  = bsa_ps->rms;
       pbsa->cnt  = bsa_ps->cnt;
       pbsa->time = bsa_ps->time;
-      pbsa->pid  = PULSEID(bsa_ps->time);
       pbsa->noch = bsa_ps->nochange;
       pbsa->nore = bsa_ps->noread;
       pbsa->miss = bsa_ps->missing;
