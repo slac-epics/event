@@ -48,7 +48,7 @@
 #ifndef DRV_MRF_EG_H 
 #define DRV_MRF_EG_H
 
-
+#include <stdbool.h>
 #include <epicsEvent.h>         /* epicsEvent sem */
 #include <epicsTypes.h>         /* EPICS Architecture-independent type definitions                */
 #include <epicsMutex.h>         /* EPICS Mutex support library                   */

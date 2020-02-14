@@ -67,7 +67,7 @@
 /**************************************************************************************************/
 /*  Imported Header Files                                                                         */
 /**************************************************************************************************/
-
+#include <stdbool.h>
 #include <epicsStdlib.h>        /* EPICS Standard C library support routines                      */
 #include <epicsStdio.h>         /* EPICS Standard C I/O support routines                          */
 #include <epicsStdioRedirect.h>
@@ -555,9 +555,9 @@ epicsStatus ErEventProcess (ereventRecord  *pRec)
    /*---------------------
     * Local variables
     */
-    epicsBoolean   DebugFlag;			/* True if debug output prints are enabled        */
-    epicsBoolean   LoadMask = epicsFalse;       /* True if need to load a new output mask         */
-    epicsBoolean   LoadRam  = epicsFalse;       /* True if need ro re-load the Event Map RAM      */
+    bool   DebugFlag;			/* True if debug output prints are enabled        */
+    bool   LoadMask = epicsFalse;       /* True if need to load a new output mask         */
+    bool   LoadRam  = epicsFalse;       /* True if need ro re-load the Event Map RAM      */
     epicsUInt16    Mask = 0;                    /* New output mask for this event                 */
     ErCardStruct  *pCard;                       /* Pointer to Event Receiver card structure       */
   

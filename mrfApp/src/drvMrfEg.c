@@ -222,7 +222,7 @@ LOCAL IOSCANPVT evg_ioscanpvt;  /* single interrupt source for all evg recs */
 #endif
 
 LOCAL ELLLIST        EgCardList;                  /* Linked list of EG card structures      */
-LOCAL epicsBoolean   EgCardListInit = epicsFalse; /* Init flag for EG card structure list   */
+LOCAL bool   EgCardListInit = epicsFalse; /* Init flag for EG card structure list   */
 
 static epicsEventId     EgRamTaskEventSem;
 static int              ConfigureLock = 0;

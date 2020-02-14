@@ -621,15 +621,15 @@ epicsExportAddress (drvet, drvMrf200Er);
 /**************************************************************************************************/
 
 LOCAL ELLLIST        ErCardList;                        /* Linked list of ER card structures      */
-LOCAL epicsBoolean   ErCardListInit = epicsFalse;       /* Init flag for ER card structure list   */
+LOCAL bool   ErCardListInit = epicsFalse;       /* Init flag for ER card structure list   */
 
 
 /**************************************************************************************************/
 /*  Other Common Variables                                                                        */
 /**************************************************************************************************/
 
-LOCAL epicsBoolean   ConfigureLock  = epicsFalse;       /* Enable/disable ER card configuration   */
-LOCAL epicsBoolean   DevInitLock    = epicsFalse;       /* Enable/disable final device init.      */
+LOCAL bool   ConfigureLock  = epicsFalse;       /* Enable/disable ER card configuration   */
+LOCAL bool   DevInitLock    = epicsFalse;       /* Enable/disable final device init.      */
 LOCAL int            ErVMECount     = 0;                /* Total # VME EVRs */
 LOCAL int            ErPMCCount     = 0;                /* Total # PMC EVRs */
 
@@ -1447,7 +1447,7 @@ epicsStatus ErGetTicks_will_be_removed (int Card, epicsUInt32 *Ticks)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* IMPLICIT OUTPUTS:
-|*      ConfigureLock = (epicsBoolean) Set to TRUE, to disable any further calls to the
+|*      ConfigureLock = (bool) Set to TRUE, to disable any further calls to the
 |*                      "ErConfigure" routine.
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -1508,7 +1508,7 @@ epicsStatus ErDrvInit (void)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* IMPLICIT OUTPUTS:
-|*      DevInitLock     = (epicsBoolean) Set to TRUE, to disable any further calls to the
+|*      DevInitLock     = (bool) Set to TRUE, to disable any further calls to the
 |*                                       "ErFinishDrvInit" routine.
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -2054,13 +2054,13 @@ epicsUInt16 ErEnableIrq (ErCardStruct *pCard, epicsUInt16 Mask)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable the Data Buffer Ready interrupt.
+|*      Enable    = (bool)   If true, enable the Data Buffer Ready interrupt.
 |*                                   If false, disable the Data Buffer Ready interrupt.
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErDBuffIrq (ErCardStruct *pCard, epicsBoolean Enable)
+void ErDBuffIrq (ErCardStruct *pCard, bool Enable)
 {
    /*---------------------
     * Local variables
@@ -2115,13 +2115,13 @@ void ErDBuffIrq (ErCardStruct *pCard, epicsBoolean Enable)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable the Receive Link Violation interrupt.
+|*      Enable    = (bool)   If true, enable the Receive Link Violation interrupt.
 |*                                   If false, disable the Receive Link Violation interrupt.
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErTaxiIrq (ErCardStruct *pCard, epicsBoolean Enable)
+void ErTaxiIrq (ErCardStruct *pCard, bool Enable)
 {
    /*---------------------
     * Local variables
@@ -2174,13 +2174,13 @@ void ErTaxiIrq (ErCardStruct *pCard, epicsBoolean Enable)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable the event FIFO interrupt.
+|*      Enable    = (bool)   If true, enable the event FIFO interrupt.
 |*                                   If false, disable the event FIFO interrupt.
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErEventIrq (ErCardStruct *pCard, epicsBoolean Enable)
+void ErEventIrq (ErCardStruct *pCard, bool Enable)
 {
    /*---------------------
     * Local variables
@@ -2249,13 +2249,13 @@ void ErEventIrq (ErCardStruct *pCard, epicsBoolean Enable)
 |* 
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      status    = (epicsBoolean)   True if a framing error was present.
+|*      status    = (bool)   True if a framing error was present.
 |*                                   False if a framing error was not present.
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-epicsBoolean ErCheckTaxi (ErCardStruct *pCard)
+bool ErCheckTaxi (ErCardStruct *pCard)
 {
    /*---------------------
     * Local variables
@@ -2305,13 +2305,13 @@ epicsBoolean ErCheckTaxi (ErCardStruct *pCard)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable data stream transmission
+|*      Enable    = (bool)   If true, enable data stream transmission
 |*                                   If false, disable data stream transmission
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErEnableDBuff (ErCardStruct *pCard, epicsBoolean Enable)
+void ErEnableDBuff (ErCardStruct *pCard, bool Enable)
 {
    /*---------------------
     * Local variables
@@ -2618,13 +2618,13 @@ epicsUInt32 ErGetSecondsSR (ErCardStruct *pCard)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      enabled   = (epicsBoolean)   True if the specified Event Map RAM is enabled.
+|*      enabled   = (bool)   True if the specified Event Map RAM is enabled.
 |*                                   False if the specified Event Map RAM is not enabled.
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-epicsBoolean ErGetRamStatus (ErCardStruct *pCard, int RamNumber)
+bool ErGetRamStatus (ErCardStruct *pCard, int RamNumber)
 {
 
    /*---------------------
@@ -2681,13 +2681,13 @@ epicsBoolean ErGetRamStatus (ErCardStruct *pCard, int RamNumber)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      state  = (epicsBoolean )  True if the card is enabled.
+|*      state  = (bool )  True if the card is enabled.
 |*                                False if the card is disabled.
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-epicsBoolean ErMasterEnableGet (ErCardStruct *pCard)
+bool ErMasterEnableGet (ErCardStruct *pCard)
 {
     volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
     return ((MRF_VME_REG16_READ(&pEr->Control) & EVR_CSR_EVREN) != 0);
@@ -2708,13 +2708,13 @@ epicsBoolean ErMasterEnableGet (ErCardStruct *pCard)
 |* INPUT PARAMETERS:
 |*      pCard   = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*
-|*      Enable  = (epicsBoolean ) True if we are to enable the card.
+|*      Enable  = (bool ) True if we are to enable the card.
 |*                                False if we are to disable the card.
 |*
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErMasterEnableSet (ErCardStruct *pCard, epicsBoolean Enable)
+void ErMasterEnableSet (ErCardStruct *pCard, bool Enable)
 {
     volatile MrfErRegs           *pEr = (MrfErRegs *)pCard->pEr;
 
@@ -3091,12 +3091,12 @@ void ErResetAll (ErCardStruct *pCard)
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel   = (int)            The DG channel (0-3) that we wish to set.
-|*      Enable    = (epicsBoolean)   True if we are to enable the selected DG channel.
+|*      Enable    = (bool)   True if we are to enable the selected DG channel.
 |*                                   False if we are to disable the selected DG channel
 |*      Delay     = (epicsUInt32)    Desired delay for the DG channel.
 |*      Width     = (epicsUInt32)    Desired width for the DG channel.
 |*      Prescaler = (epicsUInt16)    Prescaler countdown applied to delay and width.
-|*      Polarity  = (epicsBoolean)   0 for normal polarity (high true)
+|*      Polarity  = (bool)   0 for normal polarity (high true)
 |*                                   1 for reverse polarity (low true)
 |* 
 |*-------------------------------------------------------------------------------------------------
@@ -3114,11 +3114,11 @@ void  ErSetDg (
 
     ErCardStruct                 *pCard,          /* Pointer to Event Receiver card structure     */
     int                           Channel,        /* Channel number of the OTP channel to set     */
-    epicsBoolean                  Enable,         /* Enable/Disable flag                          */
+    bool                  Enable,         /* Enable/Disable flag                          */
     epicsUInt32                   Delay,          /* Desired delay                                */
     epicsUInt32                   Width,          /* Desired width                                */
     epicsUInt16                   Prescaler,      /* Prescaler for width and delay counters       */
-    epicsBoolean                  Pol)            /* Desired polarity                             */
+    bool                  Pol)            /* Desired polarity                             */
 {
    /***********************************************************************************************/
    /*  Local Variable Declarations                                                                */
@@ -3192,7 +3192,7 @@ void  ErSetDg (
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*
-|*      Enable    = (epicsBoolean)   True if we are to enable the delayed interrupt.
+|*      Enable    = (bool)   True if we are to enable the delayed interrupt.
 |*                                   False if we are to disable the delayed interrupt.
 |*
 |*      Delay     = (epicsUInt16)    Desired delay for the delayed interrupt.
@@ -3206,7 +3206,7 @@ void  ErSetDg (
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErSetDirq (ErCardStruct *pCard, epicsBoolean Enable, epicsUInt16 Delay, epicsUInt16 Prescaler)
+void ErSetDirq (ErCardStruct *pCard, bool Enable, epicsUInt16 Delay, epicsUInt16 Prescaler)
 {
    /*---------------------
     * Get the address of the hardware registers
@@ -3332,7 +3332,7 @@ epicsStatus ErSetFPMap (ErCardStruct *pCard, int Port, epicsUInt16 Map)
 |*      pCard   = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel = (int)           The distributed bus channel (0-7) that should be enabled or
 |*                                disabled.
-|*      Enable  = (epicsBoolean ) True if we are to enable the selected bus channel.
+|*      Enable  = (bool ) True if we are to enable the selected bus channel.
 |*                                False if we are to disable the selected bus channel.
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -3342,7 +3342,7 @@ epicsStatus ErSetFPMap (ErCardStruct *pCard, int Port, epicsUInt16 Map)
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErSetOtb (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
+void ErSetOtb (ErCardStruct *pCard, int Channel, bool Enable)
 {
     epicsUInt16                   mask;         /* Mask to enable/disable the requested bus chan  */
     volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
@@ -3384,7 +3384,7 @@ void ErSetOtb (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 |*      pCard   = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel = (int)           The level output channel (0-6) that should be enabled or
 |*                                disabled.
-|*      Enable  = (epicsBoolean ) True if we are to enable the selected level output channel
+|*      Enable  = (bool ) True if we are to enable the selected level output channel
 |*                                False if we are to disable the selected level output channel.
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -3394,7 +3394,7 @@ void ErSetOtb (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErSetOtl (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
+void ErSetOtl (ErCardStruct *pCard, int Channel, bool Enable)
 {
     epicsUInt16                   mask;         /* Mask to enable/disable the requested OTL chan  */
     volatile MrfErRegs           *pEr;          /* Pointer to Event Receiver register map         */
@@ -3438,11 +3438,11 @@ void ErSetOtl (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 |* INPUT PARAMETERS:
 |*      pCard    = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel  = (int)            The OTP channel (0-13) that we want to set.
-|*      Enable   = (epicsBoolean)   True if we are to enable the selected OTP channel.
+|*      Enable   = (bool)   True if we are to enable the selected OTP channel.
 |*                                  False if we are to disable the selected OTP channel
 |*      Delay    = (epicsUInt32)    Desired delay for the OTP channel.
 |*      Width    = (epicsUInt16)    Desired width for the OTP channel.
-|*      Polarity = (epicsBoolean)   0 for normal polarity (high true)
+|*      Polarity = (bool)   0 for normal polarity (high true)
 |*                                  1 for reverse polarity (low true)
 |* 
 |*-------------------------------------------------------------------------------------------------
@@ -3460,10 +3460,10 @@ void ErSetOtp (
 
     ErCardStruct                  *pCard,       /* Pointer to Event Receiver card structure       */
     int                            Channel,     /* Channel number of the OTP channel to set       */
-    epicsBoolean                   Enable,      /* Enable/Disable flag                            */
+    bool                   Enable,      /* Enable/Disable flag                            */
     epicsUInt32                    Delay,       /* Desired delay                                  */
     epicsUInt32                    Width,       /* Desired width                                  */
-    epicsBoolean                   Pol)         /* Desired polarity                               */
+    bool                   Pol)         /* Desired polarity                               */
 {
    /***********************************************************************************************/
    /*  Local Variable Declarations                                                                */
@@ -3546,7 +3546,7 @@ void ErSetOtp (
 |*      pCard   = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel = (int)           The trigger event channel (0-6) that should be enabled or
 |*                                disabled.
-|*      Enable  = (epicsBoolean ) True if we are to enable the selected trigger event channel.
+|*      Enable  = (bool ) True if we are to enable the selected trigger event channel.
 |*                                False if we are to disable the selected trigger event channel.
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -3556,7 +3556,7 @@ void ErSetOtp (
 \**************************************************************************************************/
 
 GLOBAL_RTN
-void ErSetTrg (ErCardStruct *pCard, int Channel, epicsBoolean Enable)
+void ErSetTrg (ErCardStruct *pCard, int Channel, bool Enable)
 {
    /*---------------------
     * Local variables

@@ -9,6 +9,7 @@
  * Released under the GPLv2 licence <http://www.gnu.org/licenses/gpl-2.0.html>
  */
 
+#include <stdbool.h>
 #define  EVR_DRIVER_SUPPORT_MODULE   /* Indicates we are in the driver support module environment */
 #include <signal.h>
 #include "drvMrfEr.h"
@@ -132,11 +133,11 @@ enum transition_board_channel
 
 struct PulseInfo
 {
- epicsBoolean DBusEnable; /* Set if the DBus is used instead of Pulse */
- epicsBoolean Enable;  /* Should a pulse generator be used */
+ bool DBusEnable; /* Set if the DBus is used instead of Pulse */
+ bool Enable;  /* Should a pulse generator be used */
  epicsUInt32  Delay;  /* Desired delay */
  epicsUInt32  Width;  /* Desired width */
- epicsBoolean Pol;  /* Desired polarity */
+ bool Pol;  /* Desired polarity */
 };
 
 struct LinuxErCardStruct
@@ -167,7 +168,7 @@ struct LinuxErCardStruct
 /*                                                                                                */
 
 static ELLLIST ErCardList;                        /* Linked list of ER card structures */
-static epicsBoolean bErCardListInitDone = epicsFalse;
+static bool bErCardListInitDone = epicsFalse;
 static epicsMutexId ErCardListLock;
 static epicsMutexId ErConfigureLock;
 
@@ -644,14 +645,14 @@ static int ErConfigure (
 |* 
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      status    = (epicsBoolean)   True if a framing error was present.
+|*      status    = (bool)   True if a framing error was present.
 |*                                   False if a framing error was not present.
 |*
 \**************************************************************************************************/
-epicsBoolean ErCheckTaxi(ErCardStruct *pCard)
+bool ErCheckTaxi(ErCardStruct *pCard)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
-	epicsBoolean ret = epicsFalse;
+	bool ret = epicsFalse;
 	
 	epicsMutexLock(pCard->CardLock);
 	if (EvrGetViolation(pEr, 1))
@@ -727,11 +728,11 @@ epicsUInt16 ErEnableIrq (ErCardStruct *pCard, epicsUInt16 Mask)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable data stream transmission
+|*      Enable    = (bool)   If true, enable data stream transmission
 |*                                   If false, disable data stream transmission
 |*
 \**************************************************************************************************/
-void ErEnableDBuff(ErCardStruct *pCard, epicsBoolean Enable)
+void ErEnableDBuff(ErCardStruct *pCard, bool Enable)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	
@@ -791,11 +792,11 @@ epicsStatus ErFinishDrvInit(int AfterRecordInit)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable the Data Buffer Ready interrupt.
+|*      Enable    = (bool)   If true, enable the Data Buffer Ready interrupt.
 |*                                   If false, disable the Data Buffer Ready interrupt.
 |*
 \**************************************************************************************************/
-void ErDBuffIrq(ErCardStruct *pCard, epicsBoolean Enable)
+void ErDBuffIrq(ErCardStruct *pCard, bool Enable)
 {
 	int mask;
 	
@@ -821,11 +822,11 @@ void ErDBuffIrq(ErCardStruct *pCard, epicsBoolean Enable)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable the event FIFO interrupt.
+|*      Enable    = (bool)   If true, enable the event FIFO interrupt.
 |*                                   If false, disable the event FIFO interrupt.
 |*
 \**************************************************************************************************/
-void ErEventIrq(ErCardStruct *pCard, epicsBoolean Enable)
+void ErEventIrq(ErCardStruct *pCard, bool Enable)
 {
 	int mask;
 	
@@ -953,11 +954,11 @@ epicsUInt32 ErGetSecondsSR (ErCardStruct *pCard)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      enabled   = (epicsBoolean)   True if the specified Event Map RAM is enabled.
+|*      enabled   = (bool)   True if the specified Event Map RAM is enabled.
 |*                                   False if the specified Event Map RAM is not enabled.
 |*
 \**************************************************************************************************/
-epicsBoolean ErGetRamStatus(ErCardStruct *pCard, int RamNumber)
+bool ErGetRamStatus(ErCardStruct *pCard, int RamNumber)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	epicsUInt32 ctrl;
@@ -1020,14 +1021,14 @@ epicsStatus ErGetTicks(int Card, epicsUInt32 *Ticks)
 |*
 |*-------------------------------------------------------------------------------------------------
 |* RETURNS:
-|*      state  = (epicsBoolean )  True if the card is enabled.
+|*      state  = (bool )  True if the card is enabled.
 |*                                False if the card is disabled.
 |*
 \**************************************************************************************************/
-epicsBoolean ErMasterEnableGet(ErCardStruct *pCard)
+bool ErMasterEnableGet(ErCardStruct *pCard)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
-	epicsBoolean ret;
+	bool ret;
 	
 	epicsMutexLock(pCard->CardLock);
 	if (EvrGetEnable(pEr)) ret = epicsTrue;
@@ -1042,11 +1043,11 @@ epicsBoolean ErMasterEnableGet(ErCardStruct *pCard)
 |* INPUT PARAMETERS:
 |*      pCard   = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*
-|*      Enable  = (epicsBoolean ) True if we are to enable the card.
+|*      Enable  = (bool ) True if we are to enable the card.
 |*                                False if we are to disable the card.
 |*
 \**************************************************************************************************/
-void ErMasterEnableSet(ErCardStruct *pCard, epicsBoolean Enable)
+void ErMasterEnableSet(ErCardStruct *pCard, bool Enable)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	
@@ -1193,12 +1194,12 @@ void ErResetAll(ErCardStruct *pCard)
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel   = (int)            The DG channel (0-3) that we wish to set.
-|*      Enable    = (epicsBoolean)   True if we are to enable the selected DG channel.
+|*      Enable    = (bool)   True if we are to enable the selected DG channel.
 |*                                   False if we are to disable the selected DG channel
 |*      Delay     = (epicsUInt32)    Desired delay for the DG channel.
 |*      Width     = (epicsUInt32)    Desired width for the DG channel.
 |*      Prescaler = (epicsUInt16)    Prescaler countdown applied to delay and width.
-|*      Polarity  = (epicsBoolean)   0 for normal polarity (high true)
+|*      Polarity  = (bool)   0 for normal polarity (high true)
 |*                                   1 for reverse polarity (low true)
 |* 
 |*-------------------------------------------------------------------------------------------------
@@ -1206,9 +1207,9 @@ void ErResetAll(ErCardStruct *pCard)
 |* o This routine expects to be called with the Event Receiver card structure locked.
 |*
 \**************************************************************************************************/
-void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable, 
+void ErSetDg(ErCardStruct *pCard, int Channel, bool Enable, 
 			epicsUInt32 Delay, epicsUInt32 Width, 
-			epicsUInt16 Prescaler, epicsBoolean Pol)
+			epicsUInt16 Prescaler, bool Pol)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
@@ -1273,7 +1274,7 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*
-|*      Enable    = (epicsBoolean)   True if we are to enable the delayed interrupt.
+|*      Enable    = (bool)   True if we are to enable the delayed interrupt.
 |*                                   False if we are to disable the delayed interrupt.
 |*
 |*      Delay     = (epicsUInt16)    Desired delay for the delayed interrupt.
@@ -1285,7 +1286,7 @@ void ErSetDg(ErCardStruct *pCard, int Channel, epicsBoolean Enable,
 |* o This routine expects to be called with the Event Receiver card structure locked.
 |*
 \**************************************************************************************************/
-void ErSetDirq(ErCardStruct *pCard, epicsBoolean Enable, epicsUInt16 Delay, epicsUInt16 Prescaler)
+void ErSetDirq(ErCardStruct *pCard, bool Enable, epicsUInt16 Delay, epicsUInt16 Prescaler)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
@@ -1381,7 +1382,7 @@ epicsStatus ErSetFPMap(ErCardStruct *pCard, int Port, epicsUInt16 Map)
 |*      pCard   = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel = (int)           The distributed bus channel (0-7) that should be enabled or
 |*                                disabled.
-|*      Enable  = (epicsBoolean ) True if we are to enable the selected bus channel.
+|*      Enable  = (bool ) True if we are to enable the selected bus channel.
 |*                                False if we are to disable the selected bus channel.
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -1389,7 +1390,7 @@ epicsStatus ErSetFPMap(ErCardStruct *pCard, int Port, epicsUInt16 Map)
 |* o This routine expects to be called with the Event Receiver card structure locked.
 |*
 \**************************************************************************************************/
-void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
+void ErSetOtb(ErCardStruct *pCard, int Channel, bool Enable)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
@@ -1424,7 +1425,7 @@ void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 |*      pCard   = (ErCardStruct *) Pointer to the Event Receiver card structure.
 |*      Channel = (int)           The level output channel (0-6) that should be enabled or
 |*                                disabled.
-|*      Enable  = (epicsBoolean ) True if we are to enable the selected level output channel
+|*      Enable  = (bool ) True if we are to enable the selected level output channel
 |*                                False if we are to disable the selected level output channel.
 |*
 |*-------------------------------------------------------------------------------------------------
@@ -1432,7 +1433,7 @@ void ErSetOtb(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 |* o This routine expects to be called with the Event Receiver card structure locked.
 |*
 \**************************************************************************************************/
-void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
+void ErSetOtl(ErCardStruct *pCard, int Channel, bool Enable)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
@@ -1489,10 +1490,10 @@ void ErSetOtl(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
 void ErSetOtp(
     ErCardStruct                  *pCard,       /* Pointer to Event Receiver card structure       */
     int                            Channel,     /* Channel number (0-13) of the OTP channel		  */
-    epicsBoolean                   Enable,      /* Enable/Disable flag                            */
+    bool                   Enable,      /* Enable/Disable flag                            */
     epicsUInt32                    Delay,       /* Desired delay                                  */
     epicsUInt32                    Width,       /* Desired width                                  */
-    epicsBoolean                   Pol)         /* Desired polarity                               */
+    bool                   Pol)         /* Desired polarity                               */
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
@@ -1555,7 +1556,7 @@ void ErSetOtp(
 	return;
 }
 
-void ErSetTrg(ErCardStruct *pCard, int Channel, epicsBoolean Enable)
+void ErSetTrg(ErCardStruct *pCard, int Channel, bool Enable)
 {
 	struct MrfErRegs *pEr = (struct MrfErRegs *)pCard->pEr;
 	struct LinuxErCardStruct *pLinuxErCard = ercard_to_linuxercard(pCard);
@@ -1645,11 +1646,11 @@ void ErSetTickPre(ErCardStruct *pCard, epicsUInt16 Counts)
 |*-------------------------------------------------------------------------------------------------
 |* INPUT PARAMETERS:
 |*      pCard     = (ErCardStruct *) Pointer to the Event Receiver card structure.
-|*      Enable    = (epicsBoolean)   If true, enable the Receive Link Violation interrupt.
+|*      Enable    = (bool)   If true, enable the Receive Link Violation interrupt.
 |*                                   If false, disable the Receive Link Violation interrupt.
 |*
 \**************************************************************************************************/
-void ErTaxiIrq(ErCardStruct *pCard, epicsBoolean Enable)
+void ErTaxiIrq(ErCardStruct *pCard, bool Enable)
 {
 	int mask;
 	
