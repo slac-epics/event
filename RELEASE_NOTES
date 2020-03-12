@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+R4.5.1  03/12/2020 K. Kim (khkim)
+        * force tag R4.5.1
+        * add bsa archive template - bsaArchivePVs.template
+
 R4.5.1  02/26/2020 K. Kim (khkim)
         * force tag R4.5.1
         * fix a typo in bsaATTREdef.substitutions
