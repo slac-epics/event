@@ -21,7 +21,7 @@ DB += bsaProcTestAll.db
 # Device edef records
 DB += bsaATTREdef.db
 # bsa archive PVs template
-DB += bsaArchivePVs.template
+DB += bsaArchivePVs.tpl_arch
 
 include $(TOP)/configure/RULES
 #----------------------------------------
