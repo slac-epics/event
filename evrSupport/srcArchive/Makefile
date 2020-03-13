@@ -4,7 +4,7 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 #  #
 
-ARCHIVE += bsaArchivePVs.tpl_arch
+ARCHIVE += bsaArchivePVs.tpl-arch
 
 include $(TOP)/configure/RULES
 #----------------------------------------
