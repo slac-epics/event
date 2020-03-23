@@ -6,6 +6,7 @@ Release Notes for the event package
 event-R4-2-5-CLTS-R3:
         * remove pid history buffer (PIDHST compressrecord)
         * add archive/bsaArchivePVs.tpl-arch, since R3-14-12 does not support ARCHIVER macro to install the archive template
+        * fix a typo in bsaATTREdef.substitutions
 
 event-R4-2-5-CLTS-R2: 11/06/2019 C. Bianchini
 	* Removed PID compress record and updated EDEF dbs:

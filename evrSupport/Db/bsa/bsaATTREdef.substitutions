@@ -31,7 +31,7 @@ file bsaEdefAvg.db
 	  { $(D) ,$(ATTR), $(I),  CUS1H,12,CUS1H,$(EG) ,$(HO),$(LO),$(PR),$(AD), 112, 2800 }
 	  { $(D) ,$(ATTR), $(I),  CUSTH,13,CUSTH,$(EG) ,$(HO),$(LO),$(PR),$(AD), 113, 2800 }
 	  { $(D) ,$(ATTR), $(I),  CUSBR,14,CUSBR,$(EG) ,$(HO),$(LO),$(PR),$(AD), 114, 2800 }
-	  { $(D) ,$(ATTR), $(I),  CUH1H,15,CUS1H,$(EG) ,$(HO),$(LO),$(PR),$(AD), 115, 2800 }
+	  { $(D) ,$(ATTR), $(I),  CUH1H,15,CUH1H,$(EG) ,$(HO),$(LO),$(PR),$(AD), 115, 2800 }
 	  { $(D) ,$(ATTR), $(I),  1H   ,16,  1H  ,$(EG),$(HO),$(LO),$(PR),$(AD), 116, 2800 }
 	  { $(D) ,$(ATTR), $(I),  TH   ,17,  TH  ,$(EG),$(HO),$(LO),$(PR),$(AD), 117, 2800 }
 	  { $(D) ,$(ATTR), $(I),  BR   ,18,  BR  ,$(EG),$(HO),$(LO),$(PR),$(AD), 118, 2800 }
