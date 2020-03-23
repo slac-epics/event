@@ -1,8 +1,12 @@
 Release Notes for the event package
 -----------------------------------
+R4.5.1  03/23/2020 K. Kim (khkim)
+        * force tag R4.5.1
+        * fix typo in bsaATTREdef.substitutions
+
 R4.5.1  03/13/2020 K. Kim (khkim)
         * force tag R4.5.1
-        * rename the bsa archive template to bsaArchivePVs.tpl_arch
+        * rename the bsa archive template to bsaArchivePVs.tpl-arch
         * set archive 1 second monitoring
 
 R4.5.1  03/12/2020 K. Kim (khkim)
