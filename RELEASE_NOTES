@@ -1,5 +1,9 @@
 Release Notes for the event package
 -----------------------------------
+R4.5.1  04/03/2020 K. Kim (khkim)
+        * force tag R4.5.1
+        * fix overiding SYNK_SIZE for intermmeidate substitutions
+
 R4.5.1  03/23/2020 K. Kim (khkim)
         * force tag R4.5.1
         * fix typo in bsaATTREdef.substitutions
