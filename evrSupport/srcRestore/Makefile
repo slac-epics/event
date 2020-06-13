@@ -13,12 +13,10 @@ include $(TOP)/configure/CONFIG
 #
 
 # Rules for installing ChannelWatcher files:
-CFG +=  CONFIG_RESTORE
-
-RESTORES += evrDevTrig.cwConfig
-RESTORES += evrIocTrig.cwConfig
-RESTORES += evrPMXXTrig.cwConfig
-RESTORES += evrTrig.req.template
+RESTORE += evrDevTrig.cwConfig
+RESTORE += evrIocTrig.cwConfig
+RESTORE += evrPMXXTrig.cwConfig
+RESTORE += evrTrig.req.template
 
 
 include $(TOP)/configure/RULES
