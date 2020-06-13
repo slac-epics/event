@@ -1,5 +1,13 @@
 Release Notes for the event package
 -----------------------------------
+R4.5.2  2020-06-13 Bruce Hill
+	Fix RESTORE install of cwconfig files.
+	Note: Removed old variant of RULES.Restore that used RESTORES
+	keyword instead of the standard RESTORE keyword in our EPICS base
+	RULES.Restore file.  If you have an IOC or module which depends
+	on the event module and used the RESTORES keyword to install cwconfig
+	files, please change to use the singular form, RESTORE.
+
 R4.5.1  04/03/2020 K. Kim (khkim)
         * force tag R4.5.1
         * fix overiding SYNK_SIZE for intermmeidate substitutions
