@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+R4.5.3  2020-09-14 K. Kim (khkim)
+        - add c++ exception handler for bsa timing callback to avoid suspended thread
+
 R4.5.2  2020-06-13 Bruce Hill
 	Fix RESTORE install of cwconfig files.
 	Note: Removed old variant of RULES.Restore that used RESTORES
