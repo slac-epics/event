@@ -1,5 +1,10 @@
 Release Notes for the event package
 -----------------------------------
+
+R4.5.4  2021-01-12 K. Kim (khkim)
+        - add a callback for evrPatternProc() subrooutine for EVG
+        - backward compatible for previous version, only EVG will use the callback
+
 R4.5.3  2020-09-14 K. Kim (khkim)
         - add c++ exception handler for bsa timing callback to avoid suspended thread
 
