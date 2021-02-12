@@ -1,6 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 
+R4.5.5  2021-02-12 K. Kim (khkim)
+        - build with BsaCore R1.5.4 to avoid c++ exception in RingBufferSync process
+
 R4.5.4  2021-01-12 K. Kim (khkim)
         - add a callback for evrPatternProc() subrooutine for EVG
         - backward compatible for previous version, only EVG will use the callback
