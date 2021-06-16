@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+R4.7.0: 6/16/2021 J. Chen
+        * Added bsaATTREdef_FACET.substitutions and modified Makefile to support FACET
+
 R4.6.0: 11/06/2019 C. Bianchini
         * Removed PID compress record and updated EDEF dbs:
           bsaATTREdef.substitutions, bsa.c and bsaProcTestAll.substitutions

@@ -20,6 +20,7 @@ DB += bsaTestInput.db
 DB += bsaProcTestAll.db
 # Device edef records
 DB += bsaATTREdef.db
+DB += bsaATTREdef_FACET.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------
