@@ -14,13 +14,13 @@ file bsaProcTest.db
 	      {  $(DEVICE)  , 9,   9, $(LOC)     }
 	      {  $(DEVICE)  ,10,   10, $(LOC)    }
 	      {  $(DEVICE)  ,11,   11, $(LOC)    }
-	      {  $(DEVICE)  ,12,   1H, $(LOC)    }
-	      {  $(DEVICE)  ,13,   TH, $(LOC)    }
-	      {  $(DEVICE)  ,14,   BR, $(LOC)    }
-	      {  $(DEVICE)  ,15,   CUS1H, $(LOC)    }
-	      {  $(DEVICE)  ,16,   CUSTH, $(LOC)    }
-	      {  $(DEVICE)  ,17,   CUSBR, $(LOC)    }
-	      {  $(DEVICE)  ,18,   CUH1H, $(LOC)    }
+	      {  $(DEVICE)  ,12,   CUS1H, $(LOC)    }
+	      {  $(DEVICE)  ,13,   CUSTH, $(LOC)    }
+	      {  $(DEVICE)  ,14,   CUSBR, $(LOC)    }
+	      {  $(DEVICE)  ,15,   CUH1H, $(LOC)    }
+	      {  $(DEVICE)  ,16,   1H,    $(LOC)    }
+	      {  $(DEVICE)  ,17,   TH,    $(LOC)    }
+	      {  $(DEVICE)  ,18,   BR,    $(LOC)    }
 	      {  $(DEVICE)  ,19,   CUHTH, $(LOC)    }
 	      {  $(DEVICE)  ,20,   CUHBR, $(LOC)    }
 }

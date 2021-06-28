@@ -4,6 +4,8 @@ Release Notes for the event package
 R4.7.1  6/29/2021     K. Kim
         * put an official tag after git rebase
           do not use R4.7.0 and R4.6.0, these could not be built
+        * restore back the system EDEF changes on evrSupport/Db/bsa/bsaProcTestAll.substitutions
+          which has been dropped during rebase
 
 git rebase: 6/29/2021 K.Kim
         * to drop changes on bsa.c bsaRecrd.c bsaRecord.dbd in R4.6.0
