@@ -1,6 +1,16 @@
 Release Notes for the event package
 -----------------------------------
 
+R4.8.0  6/29/2021     K. Kim
+        * merge R4.5.0-br_remove_bsa branch into slac-master
+          to pick the recent changes:
+              - build with BsaCore R1.5.4
+              - c++ exception handling
+              - patternProc callback for EVG application
+              - SINK_SIZE=10 as a defulat for user EDEF,
+                the system EDEFs have SINK_SIZE=1 as a default
+ 
+
 merge the branch R4.5.0-br_remove_bsa    06/29/2021   K. Kim
 
 R4.7.1  6/29/2021     K. Kim
