@@ -45,6 +45,7 @@ EVR_SUP_COM_SRCS += evrEvDesc.c
 EVR_SUP_COM_SRCS += evrPattern.c
 EVR_SUP_COM_SRCS += evrModifier5.c
 EVR_SUP_COM_SRCS += evrTime.c
+EVR_SUP_COM_SRCS += wrap_bsaCb.cc
 EVR_SUP_COM_SRCS += evrMessage.c
 EVR_SUP_COM_SRCS += longSubRecord.c
 EVR_SUP_COM_SRCS += bsaRecord.c

@@ -79,7 +79,6 @@
 #include "drvEvr.h"
 
 #include "bsaCallbackApi.h"
-
 /* This is the missing counter limit */
 #define  EVR_MAX_MISS  (100000000)    /* 1 billion */
 

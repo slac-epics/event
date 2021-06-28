@@ -68,6 +68,7 @@
 #include "evrPattern.h"        
 
 #include "bsaCallbackApi.h"
+#include "wrap_bsaCb.h"
 
 #define  EVR_TIME_OK 0
 #define  EVR_TIME_INVALID 1
@@ -121,6 +122,7 @@ static evrTime_ts          eventCodeTime_as[MRF_NUM_EVENTS+1];
 /* EVR Time Timestamp RWMutex */
 static epicsMutexId        evrTimeRWMutex_ps = 0;
 
+static unsigned long bsaExcpCount    =  0; /* Bsa Timing Callback Exception Count    */
 static unsigned long msgCount         = 0; /* # fiducials processed since boot/reset */ 
 static unsigned long msgRolloverCount = 0; /* # time msgCount reached EVR_MAX_INT    */ 
 static unsigned long samePulseCount   = 0; /* # same pulses                          */
@@ -563,7 +565,9 @@ int evrTime(epicsUInt32 mpsModifier)
 	 * acceptable.
 	 */
 	if ( cb ) {
-		cb( cbArg, &bsaData );
+		/* cb( cbArg, &bsaData ); */
+               wrapBsaCb(cb, cbArg, &bsaData, &bsaExcpCount);
+
 	}
 
   epicsMutexMustLock(evrTimeRWMutex_ps);

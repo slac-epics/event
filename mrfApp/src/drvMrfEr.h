@@ -58,6 +58,7 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
 /**************************************************************************************************/
 /*  Other Header Files Required by This File                                                      */
 /**************************************************************************************************/
@@ -257,36 +258,36 @@ typedef void (*DEV_DBUFF_FUNC)  (ErCardStruct *pCard, epicsInt16 Size, void *Buf
 /*  Function Prototypes For Driver Support Routines                                               */
 /**************************************************************************************************/
 
-epicsBoolean   ErCheckTaxi (ErCardStruct*);
+bool   ErCheckTaxi (ErCardStruct*);
 void           ErDebugLevel (epicsInt32);
 epicsUInt16    ErEnableIrq (ErCardStruct*, epicsUInt16);
-void           ErEnableDBuff (ErCardStruct*, epicsBoolean);
+void           ErEnableDBuff (ErCardStruct*, bool);
 void           ErEnableRam (ErCardStruct*, int);
 epicsStatus    ErFinishDrvInit (int);
-void           ErDBuffIrq (ErCardStruct*, epicsBoolean);
-void           ErEventIrq (ErCardStruct*, epicsBoolean);
+void           ErDBuffIrq (ErCardStruct*, bool);
+void           ErEventIrq (ErCardStruct*, bool);
 void           ErFlushFifo (ErCardStruct*);
 ErCardStruct  *ErGetCardStruct (int);
 epicsUInt16    ErGetFpgaVersion (ErCardStruct*);
 epicsUInt32    ErGetSecondsSR (ErCardStruct*);
-epicsBoolean   ErGetRamStatus (ErCardStruct*, int);
+bool   ErGetRamStatus (ErCardStruct*, int);
 epicsStatus    ErGetTicks (int, epicsUInt32*);
-epicsBoolean   ErMasterEnableGet (ErCardStruct*);
-void           ErMasterEnableSet (ErCardStruct*, epicsBoolean);
+bool   ErMasterEnableGet (ErCardStruct*);
+void           ErMasterEnableSet (ErCardStruct*, bool);
 void           ErRegisterDevEventHandler (ErCardStruct*, DEV_EVENT_FUNC);
 void           ErRegisterDevErrorHandler (ErCardStruct*, DEV_ERROR_FUNC);
 void           ErRegisterDevDBuffHandler (ErCardStruct*, DEV_DBUFF_FUNC);
 void           ErResetAll (ErCardStruct*);
-void           ErSetDg (ErCardStruct*, int, epicsBoolean, epicsUInt32, epicsUInt32, epicsUInt16,
-                        epicsBoolean);
-void           ErSetDirq (ErCardStruct*, epicsBoolean, epicsUInt16, epicsUInt16);
+void           ErSetDg (ErCardStruct*, int, bool, epicsUInt32, epicsUInt32, epicsUInt16,
+                        bool);
+void           ErSetDirq (ErCardStruct*, bool, epicsUInt16, epicsUInt16);
 epicsStatus    ErSetFPMap (ErCardStruct*, int, epicsUInt16);
-void           ErSetOtb (ErCardStruct*, int, epicsBoolean);
-void           ErSetOtl (ErCardStruct*, int, epicsBoolean);
-void           ErSetOtp (ErCardStruct*, int, epicsBoolean, epicsUInt32, epicsUInt32, epicsBoolean);
-void           ErSetTrg (ErCardStruct*, int, epicsBoolean);
+void           ErSetOtb (ErCardStruct*, int, bool);
+void           ErSetOtl (ErCardStruct*, int, bool);
+void           ErSetOtp (ErCardStruct*, int, bool, epicsUInt32, epicsUInt32, bool);
+void           ErSetTrg (ErCardStruct*, int, bool);
 void           ErSetTickPre (ErCardStruct*, epicsUInt16);
-void           ErTaxiIrq (ErCardStruct*, epicsBoolean);
+void           ErTaxiIrq (ErCardStruct*, bool);
 void           ErProgramRam (ErCardStruct*, epicsUInt16*, int);
 void           ErUpdateRam (ErCardStruct*, epicsUInt16*);
 
@@ -331,7 +332,7 @@ struct ErCardStruct {
     DBUFF_FUNC      DBuffFunc;              /* Pointer to user-registered data buffer ready rtn.  */
     epicsUInt32     RxvioCount;             /* RXVIO error counter                                */
     epicsUInt16     DBuffSize;              /* Number of bytes in the data stream buffer          */
-    epicsBoolean    DBuffError;             /* True if there was a data buffer error              */
+    bool    DBuffError;             /* True if there was a data buffer error              */
     IOSCANPVT       DBuffReady;             /* Trigger record processing when data buffer ready   */
     epicsUInt16     ErEventTab [EVR_NUM_EVENTS];     /* Current view of the event mapping RAM     */
     IOSCANPVT       IoScanPvt  [EVENT_DELAYED_IRQ+1];/* Event-based record processing structures  */

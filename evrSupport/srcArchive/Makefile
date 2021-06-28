@@ -5,6 +5,7 @@ include $(TOP)/configure/CONFIG
 #  #
 
 ARCHIVE += copperLinac_1H.tpl-arch
+ARCHIVE += bsaArchivePVs.tpl-arch
 
 include $(TOP)/configure/RULES
 #----------------------------------------

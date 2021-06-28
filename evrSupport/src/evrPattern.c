@@ -391,6 +391,11 @@ static long evrPatternProc(longSubRecord *psub)
    * high unused 10 bits of the severity masks (KLUGE!). */
   psub->p  = (psub->a >> 20) & 0x003FF;
   psub->p |= (psub->b >> 10) & 0xFFC00;
+
+  if (psub->dpvt) {
+     long (*__cb)(epicsUInt32 *, epicsTimeStamp *) =  psub->dpvt;
+     __cb(&psub->a, &psub->time);
+  }
   if (psub->val) return -1;
   return 0;
 }
