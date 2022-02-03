@@ -2,6 +2,8 @@
 BSA Test Scenarios
 ------------------
 
+(remarks) this test sceniarios are only for VME system, we are going to add more scenarios for non VME system and BsaCore combinations
+
 1. Prepare application
 - install "bsaPulseId.db" into application
   add the following line into $(TOP)/<application>App/Db/Makefile
