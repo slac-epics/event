@@ -1,6 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 
+R4.8.2  08/10/2022    K. Kim
+        * build agianst BsaCore R1.5.5
+
 R4.8.1  08/10/2022    K. Kim 
         * add a missing RELEASE_NOTES
           commit d2abc8ebabf6b8d32d50b54f21c2e6bae8768107 (HEAD -> slac-master, tag: R4.8.1, origin/slac-master, origin/pre-release, origin/HEAD)
