@@ -1,6 +1,9 @@
 Release Notes for the event package
 -----------------------------------
 
+R4.5.6  2022-08-10 K. Kim (khkm)
+        - build with BsaCore R1.5.5 to make caput reports nan instead of -nan for the NaN buffer entry
+
 R4.5.5  2021-02-12 K. Kim (khkim)
         - build with BsaCore R1.5.4 to avoid c++ exception in RingBufferSync process
 
