@@ -1,6 +1,15 @@
 Release Notes for the event package
 -----------------------------------
 
+R4.8.1  08/10/2022    K. Kim 
+        * add a missing RELEASE_NOTES
+          commit d2abc8ebabf6b8d32d50b54f21c2e6bae8768107 (HEAD -> slac-master, tag: R4.8.1, origin/slac-master, origin/pre-release, origin/HEAD)
+          Author: Christina Pino <cpino@slac.stanford.edu>
+          Date:   Wed Feb 16 14:26:05 2022 -0800
+
+          ENH: updated the evr displays
+
+
 R4.8.0  6/29/2021     K. Kim
         * merge R4.5.0-br_remove_bsa branch into slac-master
           to pick the recent changes:
