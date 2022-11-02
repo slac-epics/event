@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+R4.8.3  11/02/2022    K. Kim
+        * Add missing macro SIZE to bsaATTREdef_FACET.substitutions
+        * Add archive dir to .gitignore
 
 R4.8.2  08/10/2022    K. Kim
         * build agianst BsaCore R1.5.5
