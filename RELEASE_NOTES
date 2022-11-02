@@ -3,6 +3,9 @@ Release Notes for the event package
 #Branching from master branch. CLTS requires changes to the 32 bit version of the event module to allow 
 #setup of new modifier bits used for MPS-Timing communication
 #
+event-R4-2-5-CLTS-R4: CBM
+	*Fix SINK_SIZE to be 1 for SYS EDEF on bsaATTREdef_FACET.substitutions
+
 event-R4-2-5-CLTS-R3:
         * remove pid history buffer (PIDHST compressrecord)
         * add archive/bsaArchivePVs.tpl-arch, since R3-14-12 does not support ARCHIVER macro to install the archive template
