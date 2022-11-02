@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+R4.8.4  11/02/2022    Carolina Bianchini Mattison
+	*Fix SINK_SIZE to be 1 for SYS EDEF on bsaATTREdef_FACET.substitutions
+
 R4.8.3  11/02/2022    K. Kim
         * Add missing macro SIZE to bsaATTREdef_FACET.substitutions
         * Add archive dir to .gitignore
