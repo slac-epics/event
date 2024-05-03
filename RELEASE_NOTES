@@ -1,5 +1,8 @@
 Release Notes for the event package
 -----------------------------------
+R4.9.0  05/03/2024    M. Dunning, K. Luchini, J. Lorelli
+        * Rename files which are common to both event and evrClient, so that both can be included in a single application
+
 R4.8.4  11/02/2022    Carolina Bianchini Mattison
 	*Fix SINK_SIZE to be 1 for SYS EDEF on bsaATTREdef_FACET.substitutions
 
