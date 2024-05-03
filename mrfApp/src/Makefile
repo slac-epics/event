@@ -44,7 +44,7 @@ endif
 #
 CUSTOM_RECORDS += egRecord
 CUSTOM_RECORDS += egeventRecord
-CUSTOM_RECORDS += erRecord
+CUSTOM_RECORDS += erEventRecord
 CUSTOM_RECORDS += ereventRecord
 
 DBDINC += $(CUSTOM_RECORDS)
@@ -55,14 +55,14 @@ DBDINC += $(CUSTOM_RECORDS)
 DBD += drvMrfEg.dbd
 DBD += devMrfEg.dbd
 DBD += devMrfEgEvent.dbd
-DBD += drvMrfEr.dbd
-DBD += devMrfEr.dbd
+DBD += drvMrfErEvent.dbd
+DBD += devMrfErEvent.dbd
 #DBD += devMrfEgLib.dbd
 #DBD += devMrfErLib.dbd
 devMrfEgLib_DBD += devMrfEg.dbd
 devMrfEgLib_DBD += devMrfEgEvent.dbd
 devMrfErLib_DBD += base.dbd
-devMrfErLib_DBD += devMrfEr.dbd
+devMrfErLib_DBD += devMrfErEvent.dbd
 
 #---------------------
 # Build the Event Generator Library
@@ -91,30 +91,30 @@ OBJS_IOC_vxWorks += $(devMrfEg_OBJS)
 # Build the Event Receiver Library
 #
 PROD_IOC_vxWorks += devMrfErLib
-LIBRARY_IOC_RTEMS += devMrfEr
-LIBRARY_IOC_vxWorks += devMrfEr
+LIBRARY_IOC_RTEMS += devMrfErEvent
+LIBRARY_IOC_vxWorks += devMrfErEvent
 ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
-LIBRARY_IOC_Linux += devMrfEr
-devMrfEr_OBJS_Linux += drvLinuxEvr
+LIBRARY_IOC_Linux += devMrfErEvent
+devMrfErEvent_OBJS_Linux += drvLinuxEvr
 endif
 
-devMrfEr_OBJS_RTEMS += drvMrfEr
-devMrfEr_OBJS_vxWorks += drvMrfEr
-devMrfEr_OBJS += devMrfEr
+devMrfErEvent_OBJS_RTEMS += drvMrfErEvent
+devMrfErEvent_OBJS_vxWorks += drvMrfErEvent
+devMrfErEvent_OBJS += devMrfErEvent
 ifeq ($(BSP_SUPPORTS_PCI), YES)
-devMrfEr_OBJS_RTEMS += devLibPMC
-devMrfEr_OBJS_RTEMS += plx9080_eeprom.c
-devMrfEr_OBJS_vxWorks += devLibPMC
-devMrfEr_OBJS_vxWorks += plx9080_eeprom.c
-devMrfEr_OBJS_RTEMS += evrEEPROMFixup
+devMrfErEvent_OBJS_RTEMS += devLibPMC
+devMrfErEvent_OBJS_RTEMS += plx9080_eeprom.c
+devMrfErEvent_OBJS_vxWorks += devLibPMC
+devMrfErEvent_OBJS_vxWorks += plx9080_eeprom.c
+devMrfErEvent_OBJS_RTEMS += evrEEPROMFixup
 endif
-devMrfEr_OBJS += erRecord
-devMrfEr_OBJS += ereventRecord
+devMrfErEvent_OBJS += erEventRecord
+devMrfErEvent_OBJS += ereventRecord
 
-devMrfErLib_OBJS += $(devMrfEr_OBJS)
+devMrfErLib_OBJS += $(devMrfErEvent_OBJS)
 devMrfErLib_SRCS += devMrfErLib_registerRecordDeviceDriver.cpp
 
-OBJS_IOC_vxWorks += $(devMrfEr_OBJS)
+OBJS_IOC_vxWorks += $(devMrfErEvent_OBJS)
 
 #---------------------
 # Build the Library for Accessing VME-64X CR/CSR space
@@ -123,10 +123,10 @@ PROD_IOC_vxWorks  += mrfVme64xLib
 LIBRARY_IOC_RTEMS += mrfVme64x
 LIBRARY_IOC_vxWorks += mrfVme64x
 ifeq ($(EVR_DRIVER_SUPPORT_LINUX), YES)
-LIBRARY_IOC_Linux += drvMrf
-drvMrf_OBJS_Linux += drvLinux
-drvMrf_OBJS_Linux += evrIrqHandlerThread
-drvMrf_OBJS_Linux += erapi.o
+LIBRARY_IOC_Linux += drvMrfEvent
+drvMrfEvent_OBJS_Linux += drvLinux
+drvMrfEvent_OBJS_Linux += evrIrqHandlerThread
+drvMrfEvent_OBJS_Linux += erapi.o
 endif
 
 mrfVme64x_OBJS_RTEMS += mrfVme64x
@@ -143,13 +143,13 @@ OBJS_IOC_vxWorks  += $(mrfVme64x_OBJS)
 #
 #DBD += devMrf.dbd
 #devMrf_DBD += devMrfEg.dbd
-#devMrf_DBD += devMrfEr.dbd
+#devMrf_DBD += devMrfErEvent.dbd
 #
 #PROD_IOC  += devMrf
 #
 #devMrf_SRCS += devMrf_registerRecordDeviceDriver.cpp
 #
-#devMrf_LIBS += devMrfEg devMrfEr mrfVme64x
+#devMrf_LIBS += devMrfEg devMrfErEvent mrfVme64x
 #devMrf_LIBS += $(EPICS_BASE_IOC_LIBS)
 
 #---------------------
@@ -159,8 +159,8 @@ INC += mrfCommon.h
 INC += mrfVme64x.h
 
 INC += drvMrfEg.h
-INC += drvMrfEr.h
-INC += devMrfEr.h
+INC += drvMrfErEvent.h
+INC += devMrfErEvent.h
 
 INC += erapi.h
 

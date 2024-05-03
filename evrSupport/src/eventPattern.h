@@ -1,9 +1,9 @@
 /*=============================================================================
  
-  Name: evrPattern.h
+  Name: eventPattern.h
 
   Abs:  This include file contains definitions and typedefs shared by
-        evrPattern.c and mpgPattern.c for EVR patterns.
+        eventPattern.c and mpgPattern.c for EVR patterns.
 
   Auth: 17 NOV-2006, drogind created 
  
@@ -28,7 +28,7 @@
 extern "C" {
 #endif
 
-/* Definitions and typedefs shared by evrPattern.c and mpgPattern.c  */
+/* Definitions and typedefs shared by eventPattern.c and mpgPattern.c  */
   
 /* Masks used to decode beam code and YY from modifier1 */
 #define MOD1_IDX                0  

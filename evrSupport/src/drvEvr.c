@@ -34,11 +34,11 @@
 #include "epicsEvent.h" 	/* for epicsEvent*        */
 #include "epicsThread.h" 	/* for epicsThreadCreate  */
 #include "epicsMessageQueue.h"
-#include "evrMessage.h"		/* for evrMessageCreate   */
+#include "evrEventMessage.h"		/* for evrMessageCreate   */
 #include "evrTime.h"		/* for evrTimeCount       */
-#include "evrPattern.h"		/* for evrPattern         */
-#include "drvMrfEr.h"		/* for ErRegisterDevDBuffHandler */
-#include "devMrfEr.h"		/* for ErRegisterEventHandler    */
+#include "eventPattern.h"		/* for evrPattern         */
+#include "drvMrfErEvent.h"		/* for ErRegisterDevDBuffHandler */
+#include "devMrfErEvent.h"	/* for ErRegisterEventHandler    */
 #include "drvEvr.h"
 
 #include <stdint.h>

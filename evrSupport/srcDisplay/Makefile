@@ -13,7 +13,7 @@ include $(TOP)/configure/CONFIG
 #PNGS +=
 #GIFS +=
 
-#include $(TOP)/configure/RULES
+include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
 

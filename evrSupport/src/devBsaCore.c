@@ -14,7 +14,7 @@
 #include <bsaRecord.h>
 #include <devSup.h>
 #include <epicsExport.h>
-#include <evrPattern.h>
+#include <eventPattern.h>
 #include <errlog.h>
 #include <dbAccess.h>
 #include <BsaApi.h>

@@ -1,5 +1,5 @@
 /***************************************************************************************************
-|* devMrfEr.c -- EPICS Device Support Module for the Micro-Research Finland (MRF)
+|* devMrfErEvent.c -- EPICS Device Support Module for the Micro-Research Finland (MRF)
 |*               Event Receiver Card
 |*
 |*--------------------------------------------------------------------------------------------------
@@ -86,14 +86,14 @@
 #include <recGbl.h>             /* EPICS Record Support global routine definitions                */
 #include <registryFunction.h>   /* EPICS Registry support library                                 */
 
-#include <erRecord.h>           /* Event Receiver (ER) Record structure                           */
+#include <erEventRecord.h>      /* Event Receiver (ER) Record structure - for event module        */
 #include <ereventRecord.h>      /* Event Receiver Event (EREVENT) record structure                */
 #include <eventRecord.h>        /* Standard EPICS Event Record structure                          */
 #include <biRecord.h>           /* Standard EPICS Event Record structure                          */
 #include <erDefs.h>             /* Common Event Receiver (ER) definitions                         */
 
-#include <devMrfEr.h>           /* MRF Event Receiver device support layer interface              */
-#include <drvMrfEr.h>           /* MRF Event Receiver driver support layer interface              */
+#include <devMrfErEvent.h>      /* MRF Event Receiver device support layer interface - for event module */
+#include <drvMrfErEvent.h>      /* MRF Event Receiver driver support layer interface - for event module */
 
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
 

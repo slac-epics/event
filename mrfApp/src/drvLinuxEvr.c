@@ -12,7 +12,7 @@
 #include <stdbool.h>
 #define  EVR_DRIVER_SUPPORT_MODULE   /* Indicates we are in the driver support module environment */
 #include <signal.h>
-#include "drvMrfEr.h"
+#include "drvMrfErEvent.h"
 #undef EVR_MAX_BUFFER
 #include <epicsExport.h>        /* EPICS Symbol exporting macro definitions                       */
 #include <registryFunction.h>   /* EPICS Registry support library                                 */

@@ -1,5 +1,5 @@
 /***************************************************************************************************
-|* drvMrfEr.h -- Driver Support Layer Interface Definitions for the Micro-Research Finland (MRF)
+|* drvMrfErEvent.h -- Driver Support Layer Interface Definitions for the Micro-Research Finland (MRF)
 |*               Series 200 Event Receiver Card
 |*
 |*--------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ extern "C" {
 
  /*
   * This firmware revision has been verified to use the VME compatible
-  * register map and work with drvMrfEr.c
+  * register map and work with drvMrfErEvent.c
   */
  #define       PMC_EVR_FIRMWARE_REV_VME1       0xF305
 

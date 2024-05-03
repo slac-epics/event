@@ -74,7 +74,7 @@
 #include "dbScan.h"           /* IOSCANPVT      */
 #include "alarm.h"            /* INVALID_ALARM  */
 #include "evrTime.h"          /* evrTimeGetFromEdef        */
-#include "evrPattern.h"       /* EDEF_MAX                  */
+#include "eventPattern.h"       /* EDEF_MAX                  */
 #include "bsa.h"              /* prototypes in this file   */
 #include "drvEvr.h"
 

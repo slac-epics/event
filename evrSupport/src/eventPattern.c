@@ -1,6 +1,6 @@
 /*=============================================================================
  
-  Name: evrPattern.c
+  Name: eventPattern.c
            evrPattern          - 360Hz Pattern Processing
            evrPatternCheck     - Pattern Check
            evrPatternProcInit  - Pattern Record Processing Initialization
@@ -49,9 +49,9 @@
 #include "epicsExport.h"      /* for epicsRegisterFunction */
 #include "longSubRecord.h"    /* for struct longSubRecord  */
 
-#include "evrMessage.h"       /* for EVR_MESSAGE_PATTERN*  */
+#include "evrEventMessage.h"       /* for EVR_MESSAGE_PATTERN*  */
 #include "evrTime.h"          /* evrTime* prototypes       */
-#include "evrPattern.h"       /* for PATTERN* defines      */
+#include "eventPattern.h"       /* for PATTERN* defines      */
 #include "alarm.h"            /* INVALID_ALARM             */
 
 

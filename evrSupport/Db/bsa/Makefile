@@ -17,10 +17,10 @@ DB += bsaEdefFanouts.db
 # Device Simulation
 DB += bsaPulseId.db
 DB += bsaTestInput.db
-DB += bsaProcTestAll.db
+DB += bsaProcTestAll_event.db
 # Device edef records
 DB += bsaATTREdef.db
-DB += bsaATTREdef_FACET.db
+DB += bsaATTREdef_FACET_event.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------

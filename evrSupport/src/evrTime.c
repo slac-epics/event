@@ -63,9 +63,9 @@
 #include "dbScan.h"           /* for post_event            */
 
 #include "mrfCommon.h"        /* MRF_NUM_EVENTS */    
-#include "evrMessage.h"       /* EVR_MAX_INT    */    
+#include "evrEventMessage.h"       /* EVR_MAX_INT    */    
 #include "evrTime.h"       
-#include "evrPattern.h"        
+#include "eventPattern.h"        
 
 #include "bsaCallbackApi.h"
 #include "wrap_bsaCb.h"
@@ -176,7 +176,7 @@ static int evrTimeGetSystem (epicsTimeStamp  *epicsTime_ps, evrTimeId_te id)
                                           1,2,3 = time associated w next pulses
                                           4 = last active pulse
         evrModifier_ta  modifier_a        Write    First 6 longwords of the pattern
-        epicsUInt32   * patternStatus_p   Write    Pattern Status (see evrPattern.h)
+        epicsUInt32   * patternStatus_p   Write    Pattern Status (see eventPattern.h)
         epicsUInt32   * edefAvgDoneMask_p Write    EDEF average-done mask
         epicsUInt32   * edefMinorMask_p   Write    EDEF minor severity mask
         epicsUInt32   * edefMajorMask_p   Write    EDEF major severity mask

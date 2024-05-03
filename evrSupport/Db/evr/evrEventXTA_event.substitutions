@@ -6,7 +6,7 @@
 #
 #==============================================================================
 #
-file evrPatternProc.db {
+file evrPatternProc_event.db {
 pattern { DEV       }
 	{ $(DEVICE) }
 }

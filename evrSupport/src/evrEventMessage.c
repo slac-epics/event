@@ -1,6 +1,6 @@
 /*=============================================================================
 
-  Name: evrMessage.c
+  Name: evrEventMessage.c
            evrMessageCreate    - Initialize Message Space
            evrMessageRegister  - Register Reader of the Message
            evrMessageWrite     - Write a Message
@@ -45,7 +45,7 @@
 #include "epicsThread.h"        /* epicsThreadSleep()          */
 #include "epicsTime.h"          /* epicsTimeStamp              */
 #include "errlog.h"             /* errlogPrintf                */
-#include "evrMessage.h"         /* prototypes in this file     */
+#include "evrEventMessage.h"         /* prototypes in this file     */
 
 #define MAX_DELTA_TIME 400000000
 

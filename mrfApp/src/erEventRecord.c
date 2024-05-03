@@ -71,7 +71,7 @@ DEVELOPMENT CENTER AT ARGONNE NATIONAL LABORATORY (708-252-2000).
 #include	<erDefs.h>
 
 #define GEN_SIZE_OFFSET
-#include	<erRecord.h>
+#include	<erEventRecord.h>
 #undef  GEN_SIZE_OFFSET
 
 #define STATIC	static

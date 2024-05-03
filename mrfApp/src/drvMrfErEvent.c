@@ -1,6 +1,6 @@
  #define EVR_DEBUG 
 /***************************************************************************************************
-|* drvMrfEr.c -- EPICS Driver Support Module for the Micro-Research Finland (MRF)
+|* drvMrfErEvent.c -- EPICS Driver Support Module for the Micro-Research Finland (MRF)
 |*               Series 200 Event Receiver Card
 |*
 |*--------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@
 #endif
 #include <mrfVme64x.h>          /* VME-64X CR/CSR routines and definitions (with MRF extensions)  */
 #include <basicIoOps.h>         /* for out_le16, in_le16 */
-#include "drvMrfEr.h"           /* MRF Series 200 Event Receiver driver support layer interface   */
+#include "drvMrfErEvent.h"      /* MRF Series 200 Event Receiver driver support layer interface   */
 
 /**************************************************************************************************/
 /*  Debug Interest Level                                                                          */
@@ -1462,7 +1462,7 @@ epicsStatus ErDrvInit (void)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    DEBUGPRINT (DP_INFO, drvMrfErFlag, ("drvMrfEr: ErDrvInit() entered\n"));
+    DEBUGPRINT (DP_INFO, drvMrfErFlag, ("drvMrfErEvent: ErDrvInit() entered\n"));
    /*---------------------
     * Prevent any future ErConfigure's
     */
@@ -1542,7 +1542,7 @@ epicsStatus ErFinishDrvInit (int AfterRecordInit)
    /*---------------------
     * Output a debug message if the debug flag is set.
     */
-    DEBUGPRINT (DP_INFO, drvMrfErFlag, ("drvMrfEr: ErFinishDrvInit(%d) called\n", AfterRecordInit));
+    DEBUGPRINT (DP_INFO, drvMrfErFlag, ("drvMrfErEvent: ErFinishDrvInit(%d) called\n", AfterRecordInit));
 
    /*---------------------
     * Loop to enable the interrupt level for every Event Receiver card we know about.
@@ -1733,7 +1733,7 @@ epicsStatus ErDrvReport (int level)
 |*      Reset the IRQFL bit in the Control/Status register and extract the queued events
 |*      and their timestamps from the FIFO.  In order to prevent long spin-loops at interrupt
 |*      level, there is a maximum number of events that will be extracted per interrupt.  This
-|*      value is specified by the EVR_FIFO_EVENT_LIMIT symbol defined in the "drvMrfEr.h" header
+|*      value is specified by the EVR_FIFO_EVENT_LIMIT symbol defined in the "drvMrfErEvent.h" header
 |*      file. For each event extracted from the FIFO, the device-support layer's event handling
 |*      routine is called with the extracted event number and timestamp.
 |*
@@ -2889,7 +2889,7 @@ void ErRegisterDevDBuffHandler (ErCardStruct *pCard, DEV_DBUFF_FUNC DBuffFunc)
 |* This routine is normally only called by the device-support layer.  It registers a listener
 |* for error conditions detected by the Event Receiver's interrupt service routine.
 |* Whenever the interrupt service routine detects a hardware error, we will call the registered
-|* listener and pass it an error code defined in the drvMrfEr.h header file.
+|* listener and pass it an error code defined in the drvMrfErEvent.h header file.
 |*
 |*-------------------------------------------------------------------------------------------------
 |* CALLING SEQUENCE:
@@ -3253,7 +3253,7 @@ void ErSetDirq (ErCardStruct *pCard, bool Enable, epicsUInt16 Delay, epicsUInt16
 |*                                   Ports 4 and 5 are NIM outputs.
 |*
 |*      Map       = (epicsUInt16)    Mapping value for which signal should be mapped to the
-|*                                   selected port. (See definitions in the "drvMrfEr.h" header
+|*                                   selected port. (See definitions in the "drvMrfErEvent.h" header
 |*                                   file).
 |* 
 |*-------------------------------------------------------------------------------------------------

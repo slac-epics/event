@@ -37,13 +37,13 @@ DB += bsaEnergyEdef.db
 # Files for easier IOC deployment, with reasonable defaults
 # for each system when $SYS is defined
 DB += Bsa.db
-DB += Pattern.db
+DB += Pattern_event.db
 DB += VME-trig.db
 DB += VME-TTB-trig.db
 DB += PMC-trig.db
 DB += PCI-trig.db
-DB += EvrPmc.db
-DB += EvrPci.db
+DB += EvrPmc_event.db
+DB += EvrPci_event.db
 
 include $(TOP)/configure/RULES
 #----------------------------------------

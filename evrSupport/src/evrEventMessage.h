@@ -3,7 +3,7 @@
   Name: evrMessage.h
 
   Abs:  This include file contains definitions and typedefs shared by
-        evrMessage.c, devWFevrMessage.c, drvPnet.c, mpgPattern.c, evrPattern.c
+        evrMessage.c, devWFevrMessage.c, drvPnet.c, mpgPattern.c, eventPattern.c
         for EVR/PNET message access.
 
   Auth: 21-Dec-2006, S. Allison

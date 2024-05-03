@@ -40,7 +40,7 @@
 #include "longSubRecord.h"    /* for struct longSubRecord  */
 #include "registryFunction.h" /* for epicsExport           */
 #include "epicsExport.h"      /* for epicsRegisterFunction */
-#include "evrPattern.h"       /* MOD5_NOEDEF_MASK,EDEF_MAX */
+#include "eventPattern.h"       /* MOD5_NOEDEF_MASK,EDEF_MAX */
 
 /*=============================================================================
 

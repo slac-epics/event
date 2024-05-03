@@ -19,59 +19,59 @@ endif
 SRC_DIRS += $(TOP)/mrfApp/src
 
 INC+=evrTime.h
-INC+=evrPattern.h
-INC+=evrMessage.h
+INC+=eventPattern.h
+INC+=evrEventMessage.h
 
 DBDINC += longSubRecord
 DBDINC += bsaRecord
 
-DBD += evrSupport.dbd
+DBD += eventSupport.dbd
 DBD += evrEvInvariantDelay.dbd
 DBD += evrEvDesc.dbd
-DBD += evrPattern.dbd
+DBD += eventPattern.dbd
 DBD += evrModifier5.dbd
 DBD += evrTime.dbd
 DBD += bsa.dbd
 DBD += drvEvr.dbd
 
-LIBRARY_IOC = evrSupport
+LIBRARY_IOC = eventSupport
 ifeq ($(HAVE_BSA_CORE),YES)
-LIBRARY_IOC += evrSupportLegacy
-LIBRARY_IOC += eventBsaSupport
+LIBRARY_IOC += eventSupportLegacy
+LIBRARY_IOC += eventBsaEventSupport
 endif
 
 EVR_SUP_COM_SRCS += evrEvInvariantDelay.c
 EVR_SUP_COM_SRCS += evrEvDesc.c
-EVR_SUP_COM_SRCS += evrPattern.c
+EVR_SUP_COM_SRCS += eventPattern.c
 EVR_SUP_COM_SRCS += evrModifier5.c
 EVR_SUP_COM_SRCS += evrTime.c
 EVR_SUP_COM_SRCS += wrap_bsaCb.cc
-EVR_SUP_COM_SRCS += evrMessage.c
+EVR_SUP_COM_SRCS += evrEventMessage.c
 EVR_SUP_COM_SRCS += longSubRecord.c
 EVR_SUP_COM_SRCS += bsaRecord.c
 EVR_SUP_COM_SRCS += drvEvr.c
 
 
-evrSupport_SRCS       += $(EVR_SUP_COM_SRCS)
+eventSupport_SRCS       += $(EVR_SUP_COM_SRCS)
 
 ifeq ($(HAVE_BSA_CORE),YES)
-evrSupportLegacy_SRCS += $(EVR_SUP_COM_SRCS)
-evrSupportLegacy_SRCS += bsa.c
-evrSupportLegacy_LIBS += $(EPICS_BASE_IOC_LIBS)
-evrSupport_SRCS       += devBsaCore.c
-evrSupport_SRCS       += devAoBsaCore.c
+eventSupportLegacy_SRCS += $(EVR_SUP_COM_SRCS)
+eventSupportLegacy_SRCS += bsa.c
+eventSupportLegacy_LIBS += $(EPICS_BASE_IOC_LIBS)
+eventSupport_SRCS       += devBsaCore.c
+eventSupport_SRCS       += devAoBsaCore.c
 
-eventBsaSupport_SRCS  += bsaRecord.c
-eventBsaSupport_SRCS  += devBsaCore.c
-eventBsaSupport_SRCS  += devAoBsaCore.c
-eventBsaSupport_LIBS  += $(EPICS_BASE_IOC_LIBS)
+eventBsaEventSupport_SRCS  += bsaRecord.c
+eventBsaEventSupport_SRCS  += devBsaCore.c
+eventBsaEventSupport_SRCS  += devAoBsaCore.c
+eventBsaEventSupport_LIBS  += $(EPICS_BASE_IOC_LIBS)
 else
-evrSupport_SRCS       += bsa.c
+eventSupport_SRCS       += bsa.c
 endif
 
 
-#evrSupportLegacy_LIBS += generalTime
-evrSupport_LIBS       += $(EPICS_BASE_IOC_LIBS)
+#eventSupportLegacy_LIBS += generalTime
+eventSupport_LIBS       += $(EPICS_BASE_IOC_LIBS)
 
 #===========================
 
