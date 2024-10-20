@@ -39,6 +39,7 @@ DB += bsaEnergyEdef.db
 # Files for easier IOC deployment, with reasonable defaults
 # for each system when $SYS is defined
 DB += Bsa.db
+DB += Bsa2.db
 DB += Pattern.db
 DB += VME-trig.db
 DB += VME-TTB-trig.db
