@@ -1,5 +1,11 @@
 Release Notes for the event package
 -----------------------------------
+
+R4.5.5-2.0    2024-10-20 K. Kim (khkim)
+              Introduce Bsa2.db template to avoid PV name duplication
+              for llrfHlsApplication due to the destination-aware PACT/AACT PVs 
+              and the backend (internal) PVs in NC BSA
+
 R4.5.5-1.0    2023-11-14  K. Kim (khkim)
               build against timingApi R0.9
                             BsaCore   R1.5.6
