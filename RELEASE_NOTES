@@ -1,7 +1,9 @@
 Release Notes for the event package
 -----------------------------------
-R4.9.1  11/20/2024    Marcio Donadio
+R4.9.2  11/20/2024    Marcio Donadio
 	* Upgraded modules timingApi/R0.9 bsaCore/R1.5.6
+        * There's a symbolic link called R4.9.1 in the release area which
+          doesn't have a correspondent tag. So we are jumping to R4.9.2.
 
 R4.9.0  05/03/2024    M. Dunning, K. Luchini, J. Lorelli
         * Rename files which are common to both event and evrClient, so that both can be included in a single application
