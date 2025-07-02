@@ -55,7 +55,7 @@ Note that the order of the above libraries is important.
     or to xxxApp/src/xxxInclude.dbd:
 
    xxx_DBD += evrSupport.dbd
-   xxx_DBD += devMrfEr.dbd
+   xxx_DBD += devMrfErEvent.dbd
    xxx_DBD += autosave.dbd
 
 (4) In most cases, you can load existing db files with resonable defaults and
@@ -822,13 +822,13 @@ XVI - Library and DBD files for EVR application
 RTEMS/VME&PMC
 	Library		DBD
 	evrSupport	evrSupport.dbd
-	devMrfEr	devMrfEr.dbd
+	devMrfEr	devMrfErEvent.dbd
 	mrfVme64x
 
 LINUX/PMC&PCI
 	Library		DBD
 	evrSupport	evrSupport.dbd
-	devMrfEr	devMrfEr.dbd
+	devMrfEr	devMrfErEvent.dbd
 	drvMrf
 
 XVII - Interrupt handling modes
