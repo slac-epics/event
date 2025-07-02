@@ -10,7 +10,7 @@ file evrPatternTest.db
 pattern { DEVICE        , SIMUL       }
         { IOC:XL04:EV01 , ESIM:XL04:1 }
 }
-file evrPatternProc.db 
+file evrPatternProc_event.db 
 {
 pattern {    DEV          }
         { "IOC:XL04:EV01" }

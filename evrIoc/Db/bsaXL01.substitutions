@@ -57,7 +57,7 @@ file evrPatternAll.db
   pattern { DEVICE     ,        LINK4              , LINK5 ,   LINK6 , TREF , TS1ST, TS2ND }
 	  { IOC:XX01:1 , "IOC:XX01:1:FANOUTSLC PP" ,  ""   ,    ""   , 1E06 ,   1  ,   4   }
 }
-file evrPatternProc.db 
+file evrPatternProc_event.db 
 {
   pattern { DEV }
 	  { IOC:XX01:1}
