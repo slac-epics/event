@@ -10,7 +10,7 @@ DBD += eventTest.dbd
 eventTest_DBD += base.dbd
 eventTest_DBD += devMrfEg.dbd
 eventTest_DBD += devMrfEgEvent.dbd
-eventTest_DBD += devMrfEr.dbd
+eventTest_DBD += devMrfErEvent.dbd
 eventTest_DBD += evgData.dbd
 
 PROD_IOC_RTEMS = eventTest

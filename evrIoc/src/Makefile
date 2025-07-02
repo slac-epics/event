@@ -16,11 +16,11 @@ DBD += evr.dbd
 DBD += evrTest.dbd
 evrTest_DBD += base.dbd
 evrTest_DBD += mpsEvrProc.dbd
-evrTest_DBD += evrSupport.dbd
+evrTest_DBD += eventSupport.dbd
 evr_DBD += base.dbd
 evr_DBD += mpsEvrProc.dbd
-evr_DBD += evrSupport.dbd
-evr_DBD += devMrfEr.dbd
+evr_DBD += eventSupport.dbd
+evr_DBD += devMrfErEvent.dbd
 
 PROD_IOC = evrTest
 PROD_IOC_RTEMS = evr
@@ -31,9 +31,9 @@ evrTest_SRCS += mpsEvrProc.c
 evr_SRCS += evr_registerRecordDeviceDriver.cpp
 evr_SRCS += mpsEvrProc.c
 
-evrTest_LIBS += evrSupport generalTime
+evrTest_LIBS += eventSupport generalTime
 evrTest_LIBS += $(EPICS_BASE_IOC_LIBS)
-evr_LIBS += evrSupport generalTime
+evr_LIBS += eventSupport generalTime
 evr_LIBS += devMrfEr mrfVme64x
 evr_LIBS += $(EPICS_BASE_IOC_LIBS)
 
