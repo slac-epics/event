@@ -1,6 +1,6 @@
 Release Notes for the event package
 -----------------------------------
-R4.9.3  07/XX/2025    Jeremy Lorelli
+R4.9.3  07/03/2025    Jeremy Lorelli
     * Fixed incorrect dbd include
     * Updated test IOC and README to reflect changes made in R4.9.0
 
