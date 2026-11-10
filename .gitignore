@@ -1,8 +1,11 @@
 /cfg/
 /bin/
+evrIoc/bin/
 /lib/
 /db/
+evrIoc/db/
 /dbd/
+evrIoc/dbd/
 /doc/
 /html/
 /include/
@@ -21,4 +24,5 @@ O.*/
 .iocsh_history
 /archive/
 /restore/
+evrIoc/restore/
 RELEASE_SITE

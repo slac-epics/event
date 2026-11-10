@@ -31,7 +31,7 @@
 #               set TS1ST to 0 to ignore the 1st timeslot and the pattern and 
 #               timestamp will only update on time slot 4 at 60hz.
 #
-#         evrEventAll.db - instantiates records for each event code.
+#         evrEventAll_event.db - instantiates records for each event code.
 #         Associated display is evrEventDiags.edl.
 #       DEVICE  Name of the IOC, IOC:<loca>:<unit> 
 #
@@ -44,7 +44,7 @@ file evrPatternAll.db
   pattern { DEVICE        ,  LINK4      ,  LINK5                   , LINK6 , TREF    , TS1ST, TS2ND }
           { IOC:TEST:MP01 ,   ""        ,  "IOC:TEST:MP01:MPSCTRL" ,  ""   , 1.03E06 ,   1  ,   4   }
 }
-file evrEventAll.db 
+file evrEventAll_event.db 
 {
   pattern { DEVICE        }
           { IOC:TEST:MP01 }

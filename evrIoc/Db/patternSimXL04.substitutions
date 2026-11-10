@@ -5,7 +5,7 @@ file evrPatternTestBsa.db {
 }
 
 # EVG EDEF checking simulation for Modifier5/ bsa enable/disable:
-file bsaProcTestAll.db {
+file bsaProcTestAll_event.db {
   pattern {  DEVICE,     LOC     }
 	      { ESIM:XX04:1, SYS0    }
 }

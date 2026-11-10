@@ -48,7 +48,7 @@
 #include "epicsThread.h"      /* for epicsThreadCreate     */
 
 #include "evrTime.h"          /* MAX_EVR_TIME,evrTimeNext3 */
-#include "evrPattern.h"       /* MOD5_BEAMFULL_MASK        */
+#include "eventPattern.h"     /* MOD5_BEAMFULL_MASK        */
 
 typedef struct {
   epicsTimeStamp      timestamp;
