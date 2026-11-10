@@ -8,7 +8,7 @@ file evrPatternAll.db
 	  { IOC:XL16:EV01 ,   ""      ,  ""  ,  ""  , 1.03E06,   1  ,   4  }
 }
 # Event records
-file evrEventAll.db 
+file evrEventAll_event.db 
 {
   pattern { DEVICE   , TREF }
 	  { IOC:XL16:EV01, 1E06 }
