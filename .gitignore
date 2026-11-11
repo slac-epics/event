@@ -1,11 +1,11 @@
 /cfg/
 /bin/
-evrIoc/bin/
+*Ioc/bin/
 /lib/
 /db/
-evrIoc/db/
+*Ioc/db/
 /dbd/
-evrIoc/dbd/
+*Ioc/dbd/
 /doc/
 /html/
 /include/
@@ -24,5 +24,6 @@ O.*/
 .iocsh_history
 /archive/
 /restore/
-evrIoc/restore/
+*Ioc/restore/
 RELEASE_SITE
+envPaths
