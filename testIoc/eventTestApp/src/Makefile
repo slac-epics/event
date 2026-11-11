@@ -19,7 +19,7 @@ eventTest_SRCS += eventTest_registerRecordDeviceDriver.cpp
 eventTest_SRCS += evgData.c
 
 eventTest_LIBS += devMrfEg
-eventTest_LIBS += devMrfEr
+eventTest_LIBS += devMrfErEvent
 eventTest_LIBS += mrfVme64x
 eventTest_LIBS += $(EPICS_BASE_IOC_LIBS)
 
