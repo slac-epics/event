@@ -2,5 +2,6 @@
 # Run "gnumake clean uninstall install" in the application
 # top directory each time this file is changed.
 EVENT=$(TOP)/..
+-include $(EVENT)/../../RELEASE_SITE
 -include $(EVENT)/RELEASE_SITE
 -include $(EVENT)/configure/RELEASE.local
