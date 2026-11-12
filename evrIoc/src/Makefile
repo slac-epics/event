@@ -17,6 +17,7 @@ DBD += evrTest.dbd
 evrTest_DBD += base.dbd
 evrTest_DBD += mpsEvrProc.dbd
 evrTest_DBD += eventSupport.dbd
+evrTest_DBD += devMrfErEvent.dbd
 evr_DBD += base.dbd
 evr_DBD += mpsEvrProc.dbd
 evr_DBD += eventSupport.dbd
