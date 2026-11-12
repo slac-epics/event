@@ -1,5 +1,10 @@
 Release Notes for the event package
 -----------------------------------
+R4.9.4  Nov/12/2026    Marcio Donadio (marcio)
+    * Upgraded timingApi and BsaCore.
+    * Brought evrIoc and testIoc to build again so we have reference of working
+       IOC apps.
+
 R4.9.3  07/03/2025    Jeremy Lorelli
     * Fixed incorrect dbd include
     * Updated test IOC and README to reflect changes made in R4.9.0
